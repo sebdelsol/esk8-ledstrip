@@ -25,7 +25,7 @@
 #define ALPHA_MULT(a, multfrac) FROMFRAC(((a) * (TOFRAC(256)-multfrac)) >> 8)
 
 // ----------------------------------------------------
-myWifi MyWifi;
+myWifi MyWifi; ttoo
 BlueTooth BT;
 Button Button(BUTTON_PIN);
 myADXL345 Accel;
