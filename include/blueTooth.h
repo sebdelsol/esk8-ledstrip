@@ -17,8 +17,6 @@ class BlueTooth
   void start(const bool on);
 
 public:
-  // void addCMD(const char *cmd, void(*func)()) { mSCmd->addCommand(cmd, func); };
-  // char* getArg() { return mSCmd->next(); };
   SoftwareSerial *getBtSerial() { return mBTserial; };
   void answer(const char *txt) { mBTserial->println(txt); };
   bool update() { if (mON) mBTcmd->readStream(); return mON; };
