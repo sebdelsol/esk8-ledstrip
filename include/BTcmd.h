@@ -1,0 +1,47 @@
+#pragma once
+
+#include <Streaming.h>
+#include <MyCmd.h>
+#include <ledstrip.h>
+
+// SET FX_alias what [args>0]
+// GET FX_alias what
+
+#define BTCMD_BUFF_SIZE 127
+#define BTCMD_MAXFX 5
+
+#define BTCMD_TERM '\n'
+#define BTCMD_DELIM " " // strtok_r needs a null-terminated string
+
+class BTcmd
+{
+  struct mRegisteredFX {
+    char desc;
+    FX *fx;
+  };
+
+  mRegisteredFX mFX[BTCMD_MAXFX];
+  byte mNFX = 0;
+
+  Stream* mStream;
+
+  char mBuf[BTCMD_BUFF_SIZE + 1]; // Buffer of stored characters while waiting for terminator character
+  byte mBufPos;                   // Current position in the buffer
+  char *mLast;    // for strtok_r
+  char mDelim[2]; // strtok_r needs a /0 terminated string
+
+  MyCmd mCmd;
+
+  void clearBuffer();
+  void appendToBuffer(char c);
+  void handleCmd();
+
+  char* first() { return strtok_r(mBuf, mDelim, &mLast); };
+  char* next() { return strtok_r(NULL, mDelim, &mLast); };
+
+public:
+
+  BTcmd(Stream &stream);
+  bool registerFX(const FX& fx, char desc);
+  void readStream();
+};
