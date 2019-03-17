@@ -10,7 +10,7 @@
 // ----------------------------------------------------
 #define LED_MAX_MA 700//2000
 #define LED_TICK 15
-#define BT_TICK 100
+#define BT_TICK 15
 
 #define CPU_FREQ 80
 #define SERIAL_BAUD 115200 //9600
@@ -87,7 +87,6 @@ void loop()
   static long alphaBT = 0, alphaBTtarget = 0;
   static bool btOn = true;
 
-  alphaBTtarget = TOFRAC(BT.update() ? 255 : 0);
   EVERY_N_MILLISECONDS(BT_TICK) {
 
     btOn = BT.update();
@@ -106,7 +105,8 @@ void loop()
 
     if (!btOn){
       int x, y, z, oneG;
-      if (Accel.getXYZ(x, y, z, oneG)){
+      float **ypr;
+      if (Accel.getXYZ(ypr, x, y, z, oneG)){
 
         // int fwd = y * max(0, -z); // forward acceleration on the horizontal plane
         int fwd = x;
@@ -123,14 +123,19 @@ void loop()
     }
     else{
       int x, y, z, oneG;
-      if (Accel.getXYZ(x, y, z, oneG)){
-        // Serial << x << " " << y << " " << z << " " << endl;
+      float *ypr;
+      if (Accel.getXYZ(&ypr, x, y, z, oneG)){
+        EVERY_N_MILLISECONDS(50) {
+          int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
+          // *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
+          // Serial << rx << " " << ry << " " << rz << " " << endl;
+          }
       }
 
-      Aqua.setAlpha(0);
-      Fire.setAlpha(0);
-      Plasma.setAlpha(0);
-      Cylon.setAlpha(40);
+      // Aqua.setAlpha(0);
+      // Fire.setAlpha(0);
+      // Plasma.setAlpha(0);
+      // Cylon.setAlpha(40);
     }
 
 

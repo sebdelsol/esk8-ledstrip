@@ -19,5 +19,5 @@ class myMPU6050
 public:
 
   void begin();
-  bool getXYZ(int &x, int &y, int &z, int &oneG);
+  bool getXYZ(float **YPR, int &x, int &y, int &z, int &oneG);
 };

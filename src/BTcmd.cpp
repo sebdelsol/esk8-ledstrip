@@ -55,10 +55,10 @@ void BTcmd::handleCmd()
               mCmd.arg[mCmd.nbArg] = atoi(a);
             }
 
-            // Serial << "Receive " << mCmd.cmd << " " << mCmd.fx << " " << mCmd.what << " ";
-            // for (byte i=0; i<mCmd.nbArg; i++)
-            //   Serial << i << ":" << mCmd.arg[i] << " ";
-            // Serial << endl;
+            Serial << "Receive " << mCmd.cmd << " " << mCmd.fx << " " << mCmd.what << " ";
+            for (byte i=0; i<mCmd.nbArg; i++)
+              Serial << i << ":" << mCmd.arg[i] << " ";
+            Serial << endl;
 
             if (strcmp(mCmd.cmd, "SET")==0){
               if (mCmd.nbArg)
@@ -84,8 +84,9 @@ void BTcmd::readStream()
       handleCmd();
       clearBuffer();
     }
-    else if (isprint(c))
+    else if (isprint(c)){
       appendToBuffer(c);
-
+      // Serial << mBuf << endl;
+    }
   }
 }

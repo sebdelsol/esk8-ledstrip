@@ -125,7 +125,7 @@ void myMPU6050::readAccel() {
 
         // read a packet from FIFO
         mpu.getFIFOBytes(fifoBuffer, packetSize);
-        mpu.resetFIFO();
+        mpu.resetFIFO(); // or we'll end up with a lot of FIFI overflow. it's ok to miss mpu 6050 packets
 
         // track FIFO count here in case there is > 1 packet available
         // (this lets us immediately read more without waiting for an interrupt)
@@ -140,13 +140,13 @@ void myMPU6050::readAccel() {
         // display real acceleration, adjusted to remove gravity
         mpu.dmpGetQuaternion(&Q, fifoBuffer);
         mpu.dmpGetAccel(&aa, fifoBuffer);
-        mpu.dmpGetGravity(&gravity, &Q);
+        // mpu.dmpGetGravity(&gravity, &Q);
         mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
         // Serial << "areal\t" << aaReal.x/8192. << "\t" << aaReal.y/8192. << "\t" << aaReal.z/8192. << endl;
     }
 }
 
-bool myMPU6050::getXYZ(int &x, int &y, int &z, int &oneG) {
+bool myMPU6050::getXYZ(float **YPR, int &x, int &y, int &z, int &oneG) {
   if (dmpReady) {
     readAccel();
 
@@ -156,6 +156,8 @@ bool myMPU6050::getXYZ(int &x, int &y, int &z, int &oneG) {
     y = mY = lerp15by16(mY, aaReal.y, w);
     z = mZ = lerp15by16(mZ, aaReal.z, w);
     mT = t;
+
+    *YPR = ypr;
 
     oneG = ONEG;
   }
