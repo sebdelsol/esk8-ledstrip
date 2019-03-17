@@ -1,5 +1,6 @@
 #include <ledstrip.h>
-#include <adxl345.h>
+// #include <adxl345.h>
+#include <myMpu6050.h>
 #include <ESP8266WiFi.h>
 #include <myWifi.h>
 #include <Button.h>
@@ -28,7 +29,8 @@
 myWifi MyWifi;
 BlueTooth BT;
 Button Button(BUTTON_PIN);
-myADXL345 Accel;
+// myADXL345 Accel;
+myMPU6050 Accel;
 
 LedStrip Leds;
 Fire Fire(true); // reverse
@@ -47,8 +49,8 @@ void setup()
   // pinMode(BUILTIN_LED, OUTPUT);
   // digitalWrite(BUILTIN_LED, LOW);
 
-  Button.begin();
   Accel.begin();
+  Button.begin();
 
   Leds.init(LED_MAX_MA);
   Leds.registerFX(Fire);
@@ -80,12 +82,12 @@ void setup()
 // ----------------------------------------------------
 void loop()
 {
-  // long start = millis();
+  long start = millis();
 
   static long alphaBT = 0, alphaBTtarget = 0;
   static bool btOn = true;
 
-  // alphaBTtarget = TOFRAC(BT.update() ? 255 : 0);
+  alphaBTtarget = TOFRAC(BT.update() ? 255 : 0);
   EVERY_N_MILLISECONDS(BT_TICK) {
 
     btOn = BT.update();
@@ -109,7 +111,7 @@ void loop()
         // int fwd = y * max(0, -z); // forward acceleration on the horizontal plane
         int fwd = x;
         fwd = constrain(fwd * 256 / (oneG/2), -255, 255);
-        // Serial << FROMFRAC(alphaBT) << " " <<fwd << " - " << x << " " << y << " " << z << " " << endl;
+        Serial << FROMFRAC(alphaBT) << " " <<fwd << " .. " << x << " " << y << " " << z << " " << endl;
 
         Plasma.setAlpha(ALPHA_MULT(255-abs(fwd), alphaBT));          // plasma visible when fwd is ~0
         Aqua.setAlpha(ALPHA_MULT(max(fwd, 0), alphaBT)); // aqua visible when fwd is >> 0
@@ -119,11 +121,18 @@ void loop()
         alphaBT = MYLERP(alphaBT, alphaBTtarget, 10); //20/256
       }
     }
+    else{
+      int x, y, z, oneG;
+      if (Accel.getXYZ(x, y, z, oneG)){
+        // Serial << x << " " << y << " " << z << " " << endl;
+      }
 
-    // Aqua.setAlpha(0);
-    // Fire.setAlpha(255);
-    // Plasma.setAlpha(0);
-    // Cylon.setAlpha(255);
+      Aqua.setAlpha(0);
+      Fire.setAlpha(0);
+      Plasma.setAlpha(0);
+      Cylon.setAlpha(40);
+    }
+
 
     Leds.update();
     #ifdef DEBUG_LED
@@ -132,8 +141,8 @@ void loop()
     Leds.show(); // to be called as much as possible for Fastled brightness dithering BUT some flickering issue with the Bluetooth....
   }
 
-  // EVERY_N_MILLISECONDS(1000)
-  //   Leds.getInfo();
+  EVERY_N_MILLISECONDS(1000)
+    Leds.getInfo();
 
   // Leds.show(); // to be called as much as possible for Fastled brightness dithering
 
