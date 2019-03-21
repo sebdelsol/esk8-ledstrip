@@ -15,8 +15,8 @@
 #define CPU_FREQ 80
 #define SERIAL_BAUD 115200 //9600
 
-#define MIN_LIGHT 25
-#define MAX_LIGHT 800
+#define MIN_LIGHT 400// 25
+#define MAX_LIGHT 1024
 
 // #define DEBUG_LED
 
@@ -99,8 +99,9 @@ void loop()
   }
 
   EVERY_N_MILLISECONDS(LED_TICK) {
-    // int light = analogRead(ANALOG_PIN); // read analog input pin 0
-    // byte bright = map(light, MIN_LIGHT, MAX_LIGHT, 255, 0); // to darker the light, the brighter the leds
+    int light = analogRead(ANALOG_PIN); // read analog input pin 0
+    byte bright = map(light, MIN_LIGHT, MAX_LIGHT, 255, 0); // to darker the light, the brighter the leds
+    // Serial << light << " " << bright << endl;
     // Leds.setBrightness(bright);
 
     if (!btOn){
@@ -108,9 +109,7 @@ void loop()
       float **ypr;
       if (Accel.getXYZ(ypr, x, y, z, oneG)){
 
-        // int fwd = y * max(0, -z); // forward acceleration on the horizontal plane
-        int fwd = x;
-        fwd = constrain(fwd * 256 / (oneG/2), -255, 255);
+        int fwd = constrain(x * 256 / (oneG/2), -255, 255);
         Serial << FROMFRAC(alphaBT) << " " <<fwd << " .. " << x << " " << y << " " << z << " " << endl;
 
         Plasma.setAlpha(ALPHA_MULT(255-abs(fwd), alphaBT));          // plasma visible when fwd is ~0
