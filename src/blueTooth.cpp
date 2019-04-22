@@ -12,12 +12,10 @@ BlueTooth::BlueTooth()
   mBTcmd = &BTcmd;
 }
 
-void BlueTooth::init()
+void BlueTooth::init(bool on)
 {
   Serial << "Init BT" << endl;
-  BTSerial.begin("Esk8_2");
-  start(false);
-  Serial << "Init BT done" << endl;
+  start(on);
 }
 
 // Power management
@@ -25,8 +23,14 @@ void BlueTooth::start(const bool on)
 {
   Serial << (on ? "Start" : "Stop") << " BT" << endl;
   mON = on;
-  mON ? btStart() : btStop();
-  Serial << (on ? "Start" : "Stop") << " BT done" << endl;
+  if (mON){
+    btStart();
+    BTSerial.begin("Esk8_2");
+  }else{
+    btStop();
+    BTSerial.end();
+  }
+  // Serial << (on ? "Start" : "Stop") << " BT done" << endl;
 }
 
 void BlueTooth::toggle()

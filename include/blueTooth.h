@@ -22,6 +22,6 @@ public:
   bool registerFX(const FX& fx, char desc) { return mBTcmd->registerFX(fx, desc); };
 
   BlueTooth();
-  void init();
+  void init(bool on=false);
   void toggle();
 };
