@@ -73,7 +73,6 @@ void myMPU6050::begin() {
 
     // get expected DMP packet size for later comparison
     packetSize = mpu.dmpGetFIFOPacketSize();
-    // readAccel();
   } else {
     // ERROR!
     // 1 = initial memory load failed
@@ -111,7 +110,7 @@ bool myMPU6050::readAccel() {
       // reset so we can continue cleanly
       mpu.resetFIFO();
       fifoCount = mpu.getFIFOCount();
-      Serial.println(F("FIFO overflow!"));
+      Serial << "FIFO overflow! " << endl;
 
     // otherwise, check for DMP data ready interrupt (this should happen frequently)
     } else if (mpuIntStatus & _BV(MPU6050_INTERRUPT_DMP_INT_BIT)) {
@@ -120,7 +119,6 @@ bool myMPU6050::readAccel() {
 
       // read a packet from FIFO
       mpu.getFIFOBytes(fifoBuffer, packetSize);
-      mpu.resetFIFO(); // or we'll end up with a lot of FIFI overflow. it's ok to miss mpu 6050 packets
 
       // track FIFO count here in case there is > 1 packet available
       // (this lets us immediately read more without waiting for an interrupt)
@@ -145,7 +143,7 @@ bool myMPU6050::readAccel() {
 }
 
 bool myMPU6050::getXYZ(float **YPR, int &x, int &y, int &z, int &oneG) {
-  if (dmpReady && readAccel()) {
+  if (readAccel()) {
 
     ulong t = millis();
     int w = int(pow(ACCEL_AVG, (t - mT) * ACCEL_BASE_FREQ / 1000.) * 65536.);

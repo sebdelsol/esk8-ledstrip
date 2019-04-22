@@ -29,7 +29,6 @@
 myWifi MyWifi;
 BlueTooth BT;
 Button Button(BUTTON_PIN);
-// myADXL345 Accel;
 myMPU6050 Accel;
 
 LedStrip Leds;
@@ -79,7 +78,7 @@ void setup()
 // ----------------------------------------------------
 void loop()
 {
-  long start = millis();
+  // long start = millis();
 
   static long alphaBT = 0, alphaBTtarget = 0;
   static bool btOn = BT.update();
@@ -95,19 +94,21 @@ void loop()
     }
   }
 
+  int x, y, z, oneG;
+  float *ypr;
+  bool gotAccel = Accel.getXYZ(&ypr, x, y, z, oneG);
+
   EVERY_N_MILLISECONDS(LED_TICK) {
     int light = analogRead(ANALOG_PIN); // read analog input pin 0
     byte bright = map(light, MIN_LIGHT, MAX_LIGHT, 255, 0); // to darker the light, the brighter the leds
     // Serial << light << " " << bright << endl;
     // Leds.setBrightness(bright);
 
-    int x, y, z, oneG;
-    float *ypr;
     if (!btOn){
-      if (Accel.getXYZ(&ypr, x, y, z, oneG)){
+      if (gotAccel){
 
         int fwd = constrain(x * 256 / (oneG/2), -255, 255);
-        // Serial << FROMFRAC(alphaBT) << " " <<fwd << " .. " << x << " " << y << " " << z << " " << endl;
+        Serial << FROMFRAC(alphaBT) << " " <<fwd << " .. " << x << " " << y << " " << z << " " << endl;
 
         Plasma.setAlpha(ALPHA_MULT(255-abs(fwd), alphaBT));          // plasma visible when fwd is ~0
         Aqua.setAlpha(ALPHA_MULT(max(fwd, 0), alphaBT)); // aqua visible when fwd is >> 0
@@ -118,11 +119,11 @@ void loop()
       }
     }
     else{
-      if (Accel.getXYZ(&ypr, x, y, z, oneG)){
+      if (gotAccel){
         EVERY_N_MILLISECONDS(50) {
           int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
-          *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
-          // Serial << rx << " " << ry << " " << rz << " " << endl;
+          // *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
+          Serial << rx << " " << ry << " " << rz << " " << endl;
         }
       }
 
@@ -139,8 +140,8 @@ void loop()
     Leds.show(); // to be called as much as possible for Fastled brightness dithering BUT some flickering issue with the Bluetooth....
   }
 
-  EVERY_N_MILLISECONDS(1000)
-    Leds.getInfo();
+  // EVERY_N_MILLISECONDS(1000)
+  //   Leds.getInfo();
 
   // Leds.show(); // to be called as much as possible for Fastled brightness dithering
 
