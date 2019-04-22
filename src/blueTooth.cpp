@@ -15,6 +15,7 @@ BlueTooth::BlueTooth()
 void BlueTooth::init(bool on)
 {
   Serial << "Init BT" << endl;
+  pinMode(GREEN_PIN, OUTPUT);
   start(on);
 }
 
@@ -25,11 +26,12 @@ void BlueTooth::start(const bool on)
   mON = on;
   if (mON){
     btStart();
-    BTSerial.begin("Esk8_2");
+    BTSerial.begin(BT_TERMINAL_NAME);
   }else{
     btStop();
     BTSerial.end();
   }
+  digitalWrite(GREEN_PIN, mON ? HIGH : LOW);
   // Serial << (on ? "Start" : "Stop") << " BT done" << endl;
 }
 

@@ -6,6 +6,7 @@
 #include <myPins.h>
 
 //#define BT_BAUD 9600 //38400 //9600
+#define BT_TERMINAL_NAME "Esk8"
 
 class BlueTooth
 {

@@ -67,7 +67,6 @@ void setup()
   BT.registerFX(Aqua, 'A');
   BT.registerFX(Plasma, 'P');
   BT.registerFX(Cylon, 'C');
-  // BT.toggle();
 
   // test 74AHCT125n
   // pinMode(LED_PIN, OUTPUT);
@@ -122,17 +121,16 @@ void loop()
       if (Accel.getXYZ(&ypr, x, y, z, oneG)){
         EVERY_N_MILLISECONDS(50) {
           int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
-          // *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
-          Serial << rx << " " << ry << " " << rz << " " << endl;
+          *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
+          // Serial << rx << " " << ry << " " << rz << " " << endl;
         }
       }
 
       // Aqua.setAlpha(0);
       // Plasma.setAlpha(0);
       // Cylon.setAlpha(40);
+      // Fire.setAlpha(255);
     }
-
-    Fire.setAlpha(255);
 
     Leds.update();
     #ifdef DEBUG_LED
