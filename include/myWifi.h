@@ -2,7 +2,7 @@
 
 #define NODEBUG_WEBSOCKETS
 
-#include <ESP8266WiFi.h>
+#include <WiFi.h>//<ESP8266WiFi.h>
 #include <Streaming.h>
 #include <ledstrip.h>
 #include <WebSocketsClient.h>

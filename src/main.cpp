@@ -1,7 +1,7 @@
 #include <ledstrip.h>
 // #include <adxl345.h>
 #include <myMpu6050.h>
-#include <ESP8266WiFi.h>
+#include <WiFi.h>
 #include <myWifi.h>
 #include <Button.h>
 #include <bluetooth.h>
@@ -12,11 +12,11 @@
 #define LED_TICK 15
 #define BT_TICK 15
 
-#define CPU_FREQ 80
+//#define CPU_FREQ 80
 #define SERIAL_BAUD 115200 //9600
 
 #define MIN_LIGHT 400// 25
-#define MAX_LIGHT 1024
+#define MAX_LIGHT 4095
 
 // #define DEBUG_LED
 
@@ -41,16 +41,13 @@ Cylon Cylon;
 // ----------------------------------------------------
 void setup()
 {
-  system_update_cpu_freq(CPU_FREQ);
+  //system_update_cpu_freq(CPU_FREQ);
   Serial.begin(SERIAL_BAUD);
   Serial << endl;
 
-  // !!!! BUILTIN_LED D4 !!!!!
   // pinMode(BUILTIN_LED, OUTPUT);
   // digitalWrite(BUILTIN_LED, LOW);
-
-  Accel.begin();
-  Button.begin();
+  // Serial << "led " << BUILTIN_LED << endl;
 
   Leds.init(LED_MAX_MA);
   Leds.registerFX(Fire);
@@ -70,13 +67,14 @@ void setup()
   BT.registerFX(Aqua, 'A');
   BT.registerFX(Plasma, 'P');
   BT.registerFX(Cylon, 'C');
-  BT.toggle();
+  // BT.toggle();
 
   // test 74AHCT125n
   // pinMode(LED_PIN, OUTPUT);
   // digitalWrite(LED_PIN, HIGH);
 
-  delay(100);   //slow start for reducing amps inflow
+  Button.begin();
+  Accel.begin();
 }
 
 // ----------------------------------------------------
@@ -85,7 +83,7 @@ void loop()
   long start = millis();
 
   static long alphaBT = 0, alphaBTtarget = 0;
-  static bool btOn = true;
+  static bool btOn = BT.update();
 
   EVERY_N_MILLISECONDS(BT_TICK) {
 
@@ -104,13 +102,13 @@ void loop()
     // Serial << light << " " << bright << endl;
     // Leds.setBrightness(bright);
 
+    int x, y, z, oneG;
+    float *ypr;
     if (!btOn){
-      int x, y, z, oneG;
-      float **ypr;
-      if (Accel.getXYZ(ypr, x, y, z, oneG)){
+      if (Accel.getXYZ(&ypr, x, y, z, oneG)){
 
         int fwd = constrain(x * 256 / (oneG/2), -255, 255);
-        Serial << FROMFRAC(alphaBT) << " " <<fwd << " .. " << x << " " << y << " " << z << " " << endl;
+        // Serial << FROMFRAC(alphaBT) << " " <<fwd << " .. " << x << " " << y << " " << z << " " << endl;
 
         Plasma.setAlpha(ALPHA_MULT(255-abs(fwd), alphaBT));          // plasma visible when fwd is ~0
         Aqua.setAlpha(ALPHA_MULT(max(fwd, 0), alphaBT)); // aqua visible when fwd is >> 0
@@ -121,22 +119,20 @@ void loop()
       }
     }
     else{
-      int x, y, z, oneG;
-      float *ypr;
       if (Accel.getXYZ(&ypr, x, y, z, oneG)){
         EVERY_N_MILLISECONDS(50) {
           int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
           // *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
-          // Serial << rx << " " << ry << " " << rz << " " << endl;
-          }
+          Serial << rx << " " << ry << " " << rz << " " << endl;
+        }
       }
 
       // Aqua.setAlpha(0);
-      // Fire.setAlpha(0);
       // Plasma.setAlpha(0);
       // Cylon.setAlpha(40);
     }
 
+    Fire.setAlpha(255);
 
     Leds.update();
     #ifdef DEBUG_LED

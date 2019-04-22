@@ -3,7 +3,7 @@
 void myWifi::off()
 {
   WiFi.mode(WIFI_OFF);
-  WiFi.forceSleepBegin();
+  // WiFi.forceSleepBegin();
 
   mON = false;
   Serial << "Wifi off" << endl;
@@ -11,8 +11,9 @@ void myWifi::off()
 
 void myWifi::on()
 {
+  Serial << "before Connecting";
   WiFi.mode(WIFI_STA);
-  WiFi.forceSleepWake();
+  // WiFi.forceSleepWake();
   WiFi.begin(WIFINAME, WIFIPASS);
 
   Serial << "Connecting";

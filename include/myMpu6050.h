@@ -3,6 +3,7 @@
 #include <Wire.h>
 #include <Streaming.h>
 #include <FastLED.h> // for lerp15by16
+#include <myPins.h>
 
 // #include <I2Cdev.h>
 // #include <MPU6050_6Axis_MotionApps20.h>
@@ -15,7 +16,7 @@ class myMPU6050
   ulong mT = 0;
   int mX = 0, mY = 0, mZ = 0;
 
-  void readAccel();
+  bool readAccel();
 public:
 
   void begin();
