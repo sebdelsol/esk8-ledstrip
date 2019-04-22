@@ -5,10 +5,9 @@
 #include <Streaming.h>
 #include <MyCmd.h>
 
-#define NLEDS       30
-#define COLOR_ORDER GRB
-#define CHIPSET     WS2812B
-#define MAXFX       5
+#define COLOR_ORDER   GRB
+#define CHIPSET       WS2812B
+#define MAXFX         5
 
 //--------------------------------------
 class FX
@@ -16,9 +15,13 @@ class FX
   byte mAlpha = 0; // not visible , call setAlpha
 
 protected:
-  CRGB mLeds[NLEDS];
+  int mNLEDS = 0;
+  CRGB *mLeds;
 
 public:
+  void init(int nLeds) {mNLEDS = nLeds; mLeds = (CRGB *)malloc(nLeds * sizeof(CRGB)); specialInit(nLeds);};
+  virtual void specialInit(int nLeds) {};
+
   void setAlpha(const byte alpha) { mAlpha = alpha; };
   byte getAlpha() { return mAlpha; };
 
@@ -37,7 +40,7 @@ public:
 class Fire : public FX
 {
   byte mCooling, mSparkling;
-  byte mHeat[NLEDS];
+  byte *mHeat;
 
 protected:
   bool mReverse;
@@ -47,6 +50,7 @@ public:
   Fire(const bool reverse = false, const byte cooling = 75, const byte sparkling = 120);
   void update();
 
+  void specialInit(int nLeds) {mHeat = (byte*)malloc(nLeds*sizeof(byte));};
   const char* getName() {return "Fire";};
   void setCmd(const MyCmd &cmd);
   void getCmd(const MyCmd &cmd);
@@ -92,15 +96,19 @@ public:
 //--------------------------------------
 class LedStrip
 {
-  CRGB mLeds[NLEDS];
+  CRGB *mLeds;
+  int  mNLEDS;
+
   FX *mFX[MAXFX];
   byte mNFX = 0;
 
 public:
+  LedStrip(int nLeds) : mNLEDS(nLeds) {mLeds = (CRGB *)malloc(nLeds * sizeof(CRGB));};
+
   void init(const int maxmA = 2000);
   void setBrightness(const byte scale) { FastLED.setBrightness(scale); };
   byte getBrightness() { return FastLED.getBrightness(); };
-  bool registerFX(const FX &fx);
+  bool registerFX(FX &fx);
   void show() { FastLED.show(); };
   byte* getData(int& n);
   void getInfo();

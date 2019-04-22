@@ -1,5 +1,4 @@
 #include <ledstrip.h>
-// #include <adxl345.h>
 #include <myMpu6050.h>
 #include <WiFi.h>
 #include <myWifi.h>
@@ -12,7 +11,6 @@
 #define LED_TICK 15
 #define BT_TICK 15
 
-//#define CPU_FREQ 80
 #define SERIAL_BAUD 115200 //9600
 
 #define MIN_LIGHT 400// 25
@@ -31,7 +29,7 @@ BlueTooth BT;
 Button Button(BUTTON_PIN);
 myMPU6050 Accel;
 
-LedStrip Leds;
+LedStrip Leds(30);
 Fire Fire(true); // reverse
 Aqua Aqua(false); // not reverse
 Plasma Plasma;
@@ -108,7 +106,7 @@ void loop()
       if (gotAccel){
 
         int fwd = constrain(x * 256 / (oneG/2), -255, 255);
-        Serial << FROMFRAC(alphaBT) << " " <<fwd << " .. " << x << " " << y << " " << z << " " << endl;
+        // Serial << FROMFRAC(alphaBT) << " " <<fwd << " .. " << x << " " << y << " " << z << " " << endl;
 
         Plasma.setAlpha(ALPHA_MULT(255-abs(fwd), alphaBT));          // plasma visible when fwd is ~0
         Aqua.setAlpha(ALPHA_MULT(max(fwd, 0), alphaBT)); // aqua visible when fwd is >> 0
@@ -123,27 +121,21 @@ void loop()
         EVERY_N_MILLISECONDS(50) {
           int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
           // *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
-          Serial << rx << " " << ry << " " << rz << " " << endl;
+          // Serial << rx << " " << ry << " " << rz << " " << endl;
         }
       }
-
-      // Aqua.setAlpha(0);
-      // Plasma.setAlpha(0);
-      // Cylon.setAlpha(40);
-      // Fire.setAlpha(255);
     }
 
     Leds.update();
     #ifdef DEBUG_LED
       MyWifi.update();
     #endif
-    Leds.show(); // to be called as much as possible for Fastled brightness dithering BUT some flickering issue with the Bluetooth....
   }
 
   // EVERY_N_MILLISECONDS(1000)
   //   Leds.getInfo();
 
-  // Leds.show(); // to be called as much as possible for Fastled brightness dithering
+  Leds.show(); // to be called as much as possible for Fastled brightness dithering
 
   // perf
   // Serial << "busy " << (millis() - start) << " / " << LED_TICK << "ms         \r";
