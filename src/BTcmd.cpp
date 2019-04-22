@@ -86,7 +86,7 @@ void BTcmd::readStream()
     }
     else if (isprint(c)){
       appendToBuffer(c);
-      Serial << mBuf << endl;
+      //Serial << mBuf << endl;
     }
   }
 }

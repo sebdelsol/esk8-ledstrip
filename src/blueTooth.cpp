@@ -5,6 +5,19 @@
 BluetoothSerial BTSerial;
 BTcmd BTcmd(BTSerial);
 
+bool Connected = false;
+
+void BTcallback(esp_spp_cb_event_t event, esp_spp_cb_param_t *param){
+  if(event == ESP_SPP_SRV_OPEN_EVT){
+    Serial << "Client Connected" << endl;
+    Connected = true;
+  }
+  else if(event == ESP_SPP_CLOSE_EVT){
+    Serial << "Client DisConnected" << endl;
+    Connected = false;
+  }
+}
+
 // inits
 BlueTooth::BlueTooth()
 {
@@ -15,6 +28,7 @@ BlueTooth::BlueTooth()
 void BlueTooth::init(bool on)
 {
   Serial << "Init BT" << endl;
+  BTSerial.register_callback(BTcallback);
   pinMode(GREEN_PIN, OUTPUT);
   start(on);
 }
@@ -26,7 +40,7 @@ void BlueTooth::start(const bool on)
   mON = on;
   if (mON){
     btStart();
-    BTSerial.begin(BT_TERMINAL_NAME);
+    mON = BTSerial.begin(BT_TERMINAL_NAME);
   }else{
     btStop();
     BTSerial.end();
@@ -38,4 +52,10 @@ void BlueTooth::start(const bool on)
 void BlueTooth::toggle()
 {
   start(mON ? false : true);
+}
+
+bool BlueTooth::update()
+{
+  if (mON & Connected) mBTcmd->readStream();
+  return mON;
 }
