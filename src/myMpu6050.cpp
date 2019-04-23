@@ -19,33 +19,32 @@ Quaternion Q;           // [w, x, y, z]         quaternion container
 VectorInt16 aa;         // [x, y, z]            accel sensor measurements
 VectorInt16 aaReal;     // [x, y, z]            gravity-free accel sensor measurements
 VectorFloat gravity;    // [x, y, z]            gravity vector
-float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
+float ypr[3] = {.0f, .0f, .0f};           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
 
 // ================================================================
-volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin has gone high
-void IRAM_ATTR dmpDataReady() { //IRAM_ATTR tells the complier, that this code Must always be in the ESP32's IRAM, the limited 128k IRAM.  use it sparingly.
-  mpuInterrupt = true;
-}
+// volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin has gone high
+// void IRAM_ATTR dmpDataReady() { //IRAM_ATTR tells the compiler, that this code Must always be in the ESP32's IRAM, the limited 128k IRAM.  use it sparingly.
+//   mpuInterrupt = true;
+// }
 
 // ================================================================
 // ===                      INITIAL SETUP                       ===
 // ================================================================
 
 void myMPU6050::begin() {
-  // join I2C bus (I2Cdev library doesn't do this automatically)
   Wire.begin(SDA, SCL);
-  Wire.setClock(400000); // 400kHz I2C clock. Comment this line if having compilation difficulties
+  Wire.setClock(400000); // 400kHz I2C clock.
 
-  Serial.println(F("Initializing I2C devices..."));
+  Serial << "Initializing I2C devices..." << endl;
   mpu.initialize();
-  pinMode(INTERRUPT_PIN, INPUT);
+  // pinMode(INTERRUPT_PIN, INPUT);
 
   // verify connection
-  Serial.println(F("Testing device connections..."));
-  Serial.println(mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed"));
+  Serial << "Testing device connections..." << endl;
+  Serial << (mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed")) << endl;
 
   // load and configure the DMP
-  Serial.println(F("Initializing DMP..."));
+  Serial << "Initializing DMP..." << endl;
   devStatus = mpu.dmpInitialize();
 
   // supply your own gyro offsets here, scaled for min sensitivity
@@ -59,84 +58,64 @@ void myMPU6050::begin() {
   // make sure it worked (returns 0 if so)
   if (devStatus == 0) {
     // turn on the DMP, now that it's ready
-    Serial.println(F("Enabling DMP..."));
+    Serial << "Enabling DMP..." << endl;
     mpu.setDMPEnabled(true);
 
     // enable Arduino interrupt detection
-    Serial << "Enabling interrupt detection (Arduino external interrupt " << digitalPinToInterrupt(INTERRUPT_PIN) << ")" << endl;
-    attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), dmpDataReady, RISING);
+    // Serial << "Enabling interrupt detection (Arduino external interrupt " << digitalPinToInterrupt(INTERRUPT_PIN) << ")" << endl;
+    // attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), dmpDataReady, RISING);
     mpuIntStatus = mpu.getIntStatus();
 
     // set our DMP Ready flag so the main loop() function knows it's okay to use it
-    Serial.println(F("DMP ready! Waiting for first interrupt..."));
+    Serial << "DMP ready! Waiting for first interrupt..." << endl;
     dmpReady = true;
 
     // get expected DMP packet size for later comparison
     packetSize = mpu.dmpGetFIFOPacketSize();
-  } else {
-    // ERROR!
-    // 1 = initial memory load failed
-    // 2 = DMP configuration updates failed
-    // (if it's going to break, usually the code will be 1)
-    Serial.print(F("DMP Initialization failed (code "));
-    Serial.print(devStatus);
-    Serial.println(F(")"));
   }
+  else // ERROR! 1 = initial memory load failed, 2 = DMP configuration updates failed
+    Serial << "DMP Initialization failed (code " << devStatus << ")" << endl;
 }
-
-
 
 // ================================================================
 bool myMPU6050::readAccel() {
   if (dmpReady){
 
-    // wait for MPU interrupt or extra packet(s) available
-    while (!mpuInterrupt && fifoCount < packetSize) {
-      if (mpuInterrupt && fifoCount < packetSize) {
-        // try to get out of the infinite loop
-        fifoCount = mpu.getFIFOCount();
-      }
-    }
-
-    // reset interrupt flag and get INT_STATUS byte
-    mpuInterrupt = false;
-    mpuIntStatus = mpu.getIntStatus();
-
-    // get current FIFO count
+    // something available ?
     fifoCount = mpu.getFIFOCount();
+    if (fifoCount >= packetSize){
+    // if (mpuInterrupt || fifoCount >= packetSize){
+      // reset interrupt flag and get INT_STATUS byte
+      // mpuInterrupt = false;
 
-    // check for overflow (this should never happen unless our code is too inefficient)
-    if ((mpuIntStatus & _BV(MPU6050_INTERRUPT_FIFO_OFLOW_BIT)) || fifoCount >= 1024) {
-      // reset so we can continue cleanly
-      mpu.resetFIFO();
-      fifoCount = mpu.getFIFOCount();
-      Serial << "FIFO overflow! " << endl;
+      mpuIntStatus = mpu.getIntStatus();
 
-    // otherwise, check for DMP data ready interrupt (this should happen frequently)
-    } else if (mpuIntStatus & _BV(MPU6050_INTERRUPT_DMP_INT_BIT)) {
-      // wait for correct available data length, should be a VERY short wait
-      while (fifoCount < packetSize) fifoCount = mpu.getFIFOCount();
+      // check for overflow (this should never happen unless our code is too inefficient)
+      if ((mpuIntStatus & _BV(MPU6050_INTERRUPT_FIFO_OFLOW_BIT)) || fifoCount >= 1024) {
+        // reset so we can continue cleanly
+        mpu.resetFIFO();
+        Serial << "FIFO overflow! " << endl;
+      }
 
-      // read a packet from FIFO
-      mpu.getFIFOBytes(fifoBuffer, packetSize);
+      // otherwise, check for DMP data ready interrupt (this should happen frequently)
+      else if (mpuIntStatus & _BV(MPU6050_INTERRUPT_DMP_INT_BIT)) {
+        // read all available
+        while (fifoCount >= packetSize){
+          mpu.getFIFOBytes(fifoBuffer, packetSize);
+          fifoCount -= packetSize;
+        }
 
-      // track FIFO count here in case there is > 1 packet available
-      // (this lets us immediately read more without waiting for an interrupt)
-      fifoCount -= packetSize;
+        // Euler angles
+        mpu.dmpGetQuaternion(&Q, fifoBuffer);
+        mpu.dmpGetGravity(&gravity, &Q);
+        mpu.dmpGetYawPitchRoll(ypr, &Q, &gravity);
 
-      // display Euler angles in degrees
-      mpu.dmpGetQuaternion(&Q, fifoBuffer);
-      mpu.dmpGetGravity(&gravity, &Q);
-      mpu.dmpGetYawPitchRoll(ypr, &Q, &gravity);
-      // Serial << "ypr\t" << ypr[0] * 180/M_PI << "\t" << ypr[1] * 180/M_PI << "\t" << ypr[2] * 180/M_PI << "\t";
-
-      // display real acceleration, adjusted to remove gravity
-      mpu.dmpGetQuaternion(&Q, fifoBuffer);
-      mpu.dmpGetAccel(&aa, fifoBuffer);
-      // mpu.dmpGetGravity(&gravity, &Q);
-      mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
-      // Serial << "areal\t" << aaReal.x/8192. << "\t" << aaReal.y/8192. << "\t" << aaReal.z/8192. << endl;
-      return true;
+        // real acceleration, adjusted to remove gravity
+        mpu.dmpGetQuaternion(&Q, fifoBuffer);
+        mpu.dmpGetAccel(&aa, fifoBuffer);
+        mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
+        return true;
+      }
     }
   }
   return false;
@@ -145,17 +124,22 @@ bool myMPU6050::readAccel() {
 bool myMPU6050::getXYZ(float **YPR, int &x, int &y, int &z, int &oneG) {
   if (readAccel()) {
 
+    // Serial << "ypr\t" << ypr[0] * 180/M_PI << "\t" << ypr[1] * 180/M_PI << "\t" << ypr[2] * 180/M_PI << "\t";
+    // Serial << "areal\t" << aaReal.x/8192. << "\t" << aaReal.y/8192. << "\t" << aaReal.z/8192. << endl;
+
     ulong t = millis();
     int w = int(pow(ACCEL_AVG, (t - mT) * ACCEL_BASE_FREQ / 1000.) * 65536.);
-    x = mX = lerp15by16(mX, aaReal.x, w);
-    y = mY = lerp15by16(mY, aaReal.y, w);
-    z = mZ = lerp15by16(mZ, aaReal.z, w);
+    mX = lerp15by16(mX, aaReal.x, w);
+    mY = lerp15by16(mY, aaReal.y, w);
+    mZ = lerp15by16(mZ, aaReal.z, w);
     mT = t;
-
-    *YPR = ypr;
-    oneG = ONEG;
-
-    return true;
   }
-  return false;
+
+  x = mX;
+  y = mY;
+  z = mZ;
+  *YPR = ypr;
+  oneG = ONEG;
+
+  return dmpReady;
 }

@@ -37,16 +37,17 @@ void BlueTooth::init(bool on)
 void BlueTooth::start(const bool on)
 {
   Serial << (on ? "Start" : "Stop") << " BT" << endl;
-  mON = on;
-  if (mON){
-    btStart();
+  digitalWrite(GREEN_PIN, on ? HIGH : LOW);
+  if (on){
     mON = BTSerial.begin(BT_TERMINAL_NAME);
-  }else{
-    btStop();
+    digitalWrite(GREEN_PIN, mON ? HIGH : LOW);
+  }
+  else{
+    mON = false;
     BTSerial.end();
   }
-  digitalWrite(GREEN_PIN, mON ? HIGH : LOW);
-  // Serial << (on ? "Start" : "Stop") << " BT done" << endl;
+  Connected = false;
+  // Serial << (mON ? "Start" : "Stop") << " BT done" << endl;
 }
 
 void BlueTooth::toggle()
