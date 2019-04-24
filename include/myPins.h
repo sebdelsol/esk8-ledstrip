@@ -7,4 +7,4 @@
 #define ANALOG_PIN    33 //12 ==> reset ?
 #define LED_PIN       32
 #define BUTTON_PIN    17//14
-#define GREEN_PIN     13//25
+#define GREEN_PIN     15//13//25

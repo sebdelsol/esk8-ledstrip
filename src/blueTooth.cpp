@@ -1,6 +1,7 @@
 
 #include <bluetooth.h>
 #include <stdarg.h>
+#include <rom/rtc.h>
 
 BluetoothSerial BTSerial;
 BTcmd BTcmd(BTSerial);
@@ -25,8 +26,13 @@ BlueTooth::BlueTooth()
   mBTcmd = &BTcmd;
 }
 
+static __NOINIT_ATTR bool WasOn; // HACK
+
 void BlueTooth::init(bool on)
 {
+  if (rtc_get_reset_reason(0) == 12) on = WasOn; // HACK, SW reset is proly crash
+  // Serial << "reset " << rtc_get_reset_reason(0) << endl;
+
   Serial << "Init BT" << endl;
   BTSerial.register_callback(BTcallback);
   pinMode(GREEN_PIN, OUTPUT);
@@ -36,6 +42,7 @@ void BlueTooth::init(bool on)
 // Power management
 void BlueTooth::start(const bool on)
 {
+  WasOn = on; //HACK
   Serial << (on ? "Start" : "Stop") << " BT" << endl;
   digitalWrite(GREEN_PIN, on ? HIGH : LOW);
   if (on){

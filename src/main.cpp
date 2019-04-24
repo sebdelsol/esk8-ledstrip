@@ -83,6 +83,14 @@ void loop()
   static long alphaBT = 255, alphaBTtarget = 0;
   static bool btOn = BT.update();
 
+  int x, y, z, oneG;
+  float *ypr;
+  bool gotAccel = Accel.getXYZ(&ypr, x, y, z, oneG);
+  if (gotAccel){
+    int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
+    // Serial << rx << " " << ry << " " << rz << " " << endl;
+  }
+
   EVERY_N_MILLISECONDS(BT_TICK) {
 
     if (Button.pressed()) {
@@ -92,14 +100,6 @@ void loop()
 
     btOn = BT.update();
     alphaBTtarget = TOFRAC(btOn ? 255 : 0);
-  }
-
-  int x, y, z, oneG;
-  float *ypr;
-  bool gotAccel = Accel.getXYZ(&ypr, x, y, z, oneG);
-  if (gotAccel){
-    int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
-    Serial << rx << " " << ry << " " << rz << " " << endl;
   }
 
   EVERY_N_MILLISECONDS(LED_TICK) {

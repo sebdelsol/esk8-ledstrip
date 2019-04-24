@@ -22,12 +22,6 @@ VectorFloat gravity;    // [x, y, z]            gravity vector
 float ypr[3] = {.0f, .0f, .0f};           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
 
 // ================================================================
-// volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin has gone high
-// void IRAM_ATTR dmpDataReady() { //IRAM_ATTR tells the compiler, that this code Must always be in the ESP32's IRAM, the limited 128k IRAM.  use it sparingly.
-//   mpuInterrupt = true;
-// }
-
-// ================================================================
 // ===                      INITIAL SETUP                       ===
 // ================================================================
 
@@ -37,17 +31,13 @@ void myMPU6050::begin() {
 
   Serial << "Initializing I2C devices..." << endl;
   mpu.initialize();
-  // pinMode(INTERRUPT_PIN, INPUT);
 
   // verify connection
   Serial << "Testing device connections..." << endl;
   Serial << (mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed")) << endl;
 
-  // load and configure the DMP
-  Serial << "Initializing DMP..." << endl;
-  devStatus = mpu.dmpInitialize();
-
   // supply your own gyro offsets here, scaled for min sensitivity
+  Serial << "Set calibration..." << endl;
   mpu.setXGyroOffset(79);
   mpu.setYGyroOffset(23);
   mpu.setZGyroOffset(-7);
@@ -55,19 +45,16 @@ void myMPU6050::begin() {
   mpu.setYAccelOffset(-4463); // 1688 factory default for my test chip
   mpu.setZAccelOffset(1234); // 1688 factory default for my test chip
 
+  // load and configure the DMP
+  Serial << "Initializing DMP..." << endl;
+  devStatus = mpu.dmpInitialize();
+
   // make sure it worked (returns 0 if so)
   if (devStatus == 0) {
     // turn on the DMP, now that it's ready
     Serial << "Enabling DMP..." << endl;
     mpu.setDMPEnabled(true);
-
-    // enable Arduino interrupt detection
-    // Serial << "Enabling interrupt detection (Arduino external interrupt " << digitalPinToInterrupt(INTERRUPT_PIN) << ")" << endl;
-    // attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), dmpDataReady, RISING);
     mpuIntStatus = mpu.getIntStatus();
-
-    // set our DMP Ready flag so the main loop() function knows it's okay to use it
-    Serial << "DMP ready! Waiting for first interrupt..." << endl;
     dmpReady = true;
 
     // get expected DMP packet size for later comparison
@@ -84,9 +71,6 @@ bool myMPU6050::readAccel() {
     // something available ?
     fifoCount = mpu.getFIFOCount();
     if (fifoCount >= packetSize){
-    // if (mpuInterrupt || fifoCount >= packetSize){
-      // reset interrupt flag and get INT_STATUS byte
-      // mpuInterrupt = false;
 
       mpuIntStatus = mpu.getIntStatus();
 
@@ -105,7 +89,7 @@ bool myMPU6050::readAccel() {
           fifoCount -= packetSize;
         }
 
-        // Euler angles
+        // angles
         mpu.dmpGetQuaternion(&Q, fifoBuffer);
         mpu.dmpGetGravity(&gravity, &Q);
         mpu.dmpGetYawPitchRoll(ypr, &Q, &gravity);
