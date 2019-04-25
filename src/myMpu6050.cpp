@@ -52,13 +52,14 @@ void myMPU6050::begin() {
   // make sure it worked (returns 0 if so)
   if (devStatus == 0) {
     // turn on the DMP, now that it's ready
-    Serial << "Enabling DMP..." << endl;
+    Serial << "Enabling DMP...";
     mpu.setDMPEnabled(true);
     mpuIntStatus = mpu.getIntStatus();
     dmpReady = true;
 
     // get expected DMP packet size for later comparison
     packetSize = mpu.dmpGetFIFOPacketSize();
+    Serial << "done" << endl;
   }
   else // ERROR! 1 = initial memory load failed, 2 = DMP configuration updates failed
     Serial << "DMP Initialization failed (code " << devStatus << ")" << endl;

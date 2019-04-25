@@ -29,9 +29,9 @@ void myWifi::on()
   mON = true;
 }
 
-void myWifi::addLeds(const LedStrip &leds)
+void myWifi::addLeds(const BaseLedStrip &leds)
 {
-  mLeds = (LedStrip*)&leds;
+  mLeds = (BaseLedStrip*)&leds;
 }
 
 void myWifi::update()

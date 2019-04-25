@@ -26,12 +26,12 @@ void FX::answer(const MyCmd &cmd, byte arg)
 }
 
 // ----------------------------------------------------
-Fire::Fire(const bool reverse, const byte cooling, const byte sparkling) : mReverse(reverse), mCooling(cooling), mSparkling(sparkling)
+FireFX::FireFX(const bool reverse, const byte cooling, const byte sparkling) : mReverse(reverse), mCooling(cooling), mSparkling(sparkling)
 {
   mPal = HeatColors_p;
 }
 
-void Fire::update()
+void FireFX::update()
 {
   random16_add_entropy(random16());
 
@@ -59,7 +59,7 @@ void Fire::update()
   }
 }
 
-void Fire::setCmd(const MyCmd &cmd)
+void FireFX::setCmd(const MyCmd &cmd)
 {
   switch(cmd.what) {
     case 'C': mCooling = cmd.arg[0]; break;
@@ -69,7 +69,7 @@ void Fire::setCmd(const MyCmd &cmd)
   }
 }
 
-void Fire::getCmd(const MyCmd &cmd)
+void FireFX::getCmd(const MyCmd &cmd)
 {
   switch(cmd.what) {
     case 'C': answer(cmd, mCooling); break;
@@ -80,16 +80,16 @@ void Fire::getCmd(const MyCmd &cmd)
 }
 
 // ----------------------------------------------------
-Aqua::Aqua(const bool reverse, const byte cooling, const byte sparkling) : Fire(reverse, cooling, sparkling)
+AquaFX::AquaFX(const bool reverse, const byte cooling, const byte sparkling) : FireFX(reverse, cooling, sparkling)
 {
   mPal = CRGBPalette16(CRGB::Black, CRGB::Blue, CRGB::Aqua, CRGB::White);
 }
 
 // ----------------------------------------------------
-Plasma::Plasma(const byte wavelenght, const byte period1, const byte period2) : mK(wavelenght), mP1(period1), mP2(period2)
+PlasmaFX::PlasmaFX(const byte wavelenght, const byte period1, const byte period2) : mK(wavelenght), mP1(period1), mP2(period2)
 {}
 
-void Plasma::update()
+void PlasmaFX::update()
 {
   // cos16 & sin16(0 to 65535) => results in -32767 to 32767
   u_long t = (millis() * 66) >> 2; // 65536/1000 => time is 2*PI / sec
@@ -111,7 +111,7 @@ void Plasma::update()
   }
 }
 
-void Plasma::setCmd(const MyCmd &cmd)
+void PlasmaFX::setCmd(const MyCmd &cmd)
 {
   switch(cmd.what) {
     case 'F': mK = cmd.arg[0]; break;
@@ -121,7 +121,7 @@ void Plasma::setCmd(const MyCmd &cmd)
   }
 }
 
-void Plasma::getCmd(const MyCmd &cmd)
+void PlasmaFX::getCmd(const MyCmd &cmd)
 {
   switch(cmd.what) {
     case 'F': answer(cmd, mK); break;
@@ -132,10 +132,10 @@ void Plasma::getCmd(const MyCmd &cmd)
 }
 
 // ----------------------------------------------------
-Cylon::Cylon(const byte r, const byte g, const byte b, const int eyeSize, const int speed) : mEyeSize(eyeSize), mSpeed(speed), mColor(CRGB(r, g, b))
+CylonFX::CylonFX(const byte r, const byte g, const byte b, const int eyeSize, const int speed) : mEyeSize(eyeSize), mSpeed(speed), mColor(CRGB(r, g, b))
 {}
 
-void Cylon::update(){
+void CylonFX::update(){
 
   memset8(mLeds, 0, mNLEDS * sizeof(CRGB)); // clear
 
@@ -157,7 +157,7 @@ void Cylon::update(){
   }
 }
 
-void Cylon::setCmd(const MyCmd &cmd)
+void CylonFX::setCmd(const MyCmd &cmd)
 {
   switch(cmd.what) {
     case 'C': if (cmd.nbArg==3) mColor = CRGB(cmd.arg[0], cmd.arg[1], cmd.arg[2]); break;
@@ -167,7 +167,7 @@ void Cylon::setCmd(const MyCmd &cmd)
   }
 }
 
-void Cylon::getCmd(const MyCmd &cmd)
+void CylonFX::getCmd(const MyCmd &cmd)
 {
   switch(cmd.what) {
     case 'C': answer(cmd, mColor.r, mColor.g, mColor.b); break;
@@ -178,60 +178,31 @@ void Cylon::getCmd(const MyCmd &cmd)
 }
 
 // ----------------------------------------------------
-void LedStrip::init(const int maxmA)
+AllLedStrips::AllLedStrips(const int maxmA)
 {
-  FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(mLeds, mNLEDS); //.setCorrection(TypicalSMD5050); // = TypicalLEDStrip
   FastLED.setMaxPowerInVoltsAndMilliamps(5, maxmA);
   FastLED.countFPS();
 }
 
-bool LedStrip::registerFX(FX& fx)
+bool AllLedStrips::registerStrip(BaseLedStrip &strip)
 {
-  bool ok = mNFX < MAXFX-1;
-  if (ok){
-    mFX[mNFX++] = (FX*)&fx;
-    fx.init(mNLEDS);
-  }
+  bool ok = mNStrips < MAXSTRIP;
+  if (ok)
+    mStrips[mNStrips++] = (BaseLedStrip*)&strip;
   return ok;
 }
 
-void LedStrip::getInfo()
+void AllLedStrips::update()
 {
-  Serial << "FPS " << FastLED.getFPS();
-  for (byte i=0; i < mNFX; i++) {
-    FX *fx = mFX[i];
-    Serial << " - " << fx->getName() << "(" << fx->getAlpha() << ")";
-  }
-  Serial << "                  \n";
+  for (byte i=0; i < mNStrips; i++)
+    mStrips[i]->update();
 }
 
-byte* LedStrip::getData(int& n)
+void AllLedStrips::getInfo()
 {
-  n = mNLEDS * sizeof(CRGB);
-  return (byte*) mLeds;
-}
-
-void LedStrip::update()
-{
-  // copy then blend available fx
-  bool first = true;
-
-  for (byte i=0; i < mNFX; i++) {
-    CRGB *src = mFX[i]->updateAndFade();
-
-    if (src!=NULL) {
-      if (first) { // copy first
-        memcpy8(mLeds, src, mNLEDS * sizeof(CRGB));
-        first = false;
-      }
-      else // then blend
-        for (byte k=0; k < mNLEDS; k++)
-          mLeds[k] += src[k];
-    }
-  }
-
-  if(first) // clear if no FX shown
-    FastLED.clear();
+  Serial << "FPS " << FastLED.getFPS() << endl;
+  for (byte i=0; i < mNStrips; i++)
+    mStrips[i]->getInfo();
 }
 
 // ----------------------------------------------------

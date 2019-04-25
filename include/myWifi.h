@@ -16,13 +16,13 @@
 class myWifi
 {
   bool mON = true;
-  LedStrip* mLeds;
+  BaseLedStrip* mLeds;
   WebSocketsClient webSocket;
 
 public:
   void on();
   void off();
   void toggle() { mON ? off() : on(); };
-  void addLeds(const LedStrip &leds);
+  void addLeds(const BaseLedStrip &leds);
   void update();
 };

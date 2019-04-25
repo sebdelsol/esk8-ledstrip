@@ -29,16 +29,22 @@ BlueTooth BT;
 Button Button(BUTTON_PIN);
 myMPU6050 Accel;
 
-LedStrip Leds(30);
-Fire Fire(true); // reverse
-Aqua Aqua(false); // not reverse
-Plasma Plasma;
-Cylon Cylon;
+AllLedStrips AllLeds(LED_MAX_MA);
+
+LedStrip<30, LED_PIN> Leds("Led");
+FireFX Fire(true); // reverse
+AquaFX Aqua(false); // not reverse
+PlasmaFX Plasma;
+CylonFX Cylon;
+
+LedStrip<15, LEDR_PIN> LedsR("LedR");
+CylonFX CylonR;
+LedStrip<15, LEDF_PIN> LedsF("LedF");
+CylonFX CylonF;
 
 // ----------------------------------------------------
 void setup()
 {
-  //system_update_cpu_freq(CPU_FREQ);
   Serial.begin(SERIAL_BAUD);
   Serial << "-------- START --------" << endl;
 
@@ -48,11 +54,20 @@ void setup()
   // digitalWrite(BUILTIN_LED, LOW);
   // Serial << "led " << BUILTIN_LED << endl;
 
-  Leds.init(LED_MAX_MA);
+  CylonR.setAlpha(255);
+  CylonF.setAlpha(255);
+
+  AllLeds.registerStrip(Leds);
   Leds.registerFX(Fire);
   Leds.registerFX(Aqua);
   Leds.registerFX(Plasma);
   Leds.registerFX(Cylon);
+
+  AllLeds.registerStrip(LedsR);
+  LedsR.registerFX(CylonR);
+
+  AllLeds.registerStrip(LedsF);
+  LedsF.registerFX(CylonF);
 
   #ifdef DEBUG_LED
     MyWifi.on();
@@ -80,9 +95,6 @@ void loop()
 {
   long start = millis();
 
-  static long alphaBT = 255, alphaBTtarget = 0;
-  static bool btOn = BT.update();
-
   int x, y, z, oneG;
   float *ypr;
   bool gotAccel = Accel.getXYZ(&ypr, x, y, z, oneG);
@@ -90,6 +102,9 @@ void loop()
     int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
     // Serial << rx << " " << ry << " " << rz << " " << endl;
   }
+
+  static long alphaBT = 255, alphaBTtarget = 0;
+  static bool btOn = BT.update();
 
   EVERY_N_MILLISECONDS(BT_TICK) {
 
@@ -103,10 +118,10 @@ void loop()
   }
 
   EVERY_N_MILLISECONDS(LED_TICK) {
-    int light = analogRead(ANALOG_PIN); // read analog input pin 0
+    int light = analogRead(LDR_PIN); // read analog input pin 0
     byte bright = map(light, MIN_LIGHT, MAX_LIGHT, 255, 0); // to darker the light, the brighter the leds
-    // Serial << light << " " << bright << endl;
-    // Leds.setBrightness(bright);
+    Serial << light << " " << bright << endl;
+    // AllLeds.setBrightness(bright);
 
     alphaBT = MYLERP(alphaBT, alphaBTtarget, 10); //20/256
     // Serial << alphaBT << " => " << alphaBTtarget << endl;
@@ -133,16 +148,16 @@ void loop()
       }
     }
 
-    Leds.update();
+    AllLeds.update();
     #ifdef DEBUG_LED
       MyWifi.update();
     #endif
   }
 
-  // EVERY_N_MILLISECONDS(1000)
-  //   Leds.getInfo();
+  EVERY_N_MILLISECONDS(1000)
+    AllLeds.getInfo();
 
-  Leds.show(); // to be called as much as possible for Fastled brightness dithering
+  AllLeds.show(); // to be called as much as possible for Fastled brightness dithering
 
   // perf
   // Serial << "busy " << (millis() - start) << " / " << LED_TICK << "ms         \n";

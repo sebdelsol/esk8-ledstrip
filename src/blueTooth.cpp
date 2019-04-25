@@ -35,7 +35,7 @@ void BlueTooth::init(bool on)
 
   Serial << "Init BT" << endl;
   BTSerial.register_callback(BTcallback);
-  pinMode(GREEN_PIN, OUTPUT);
+  pinMode(LIGHT_PIN, OUTPUT);
   start(on);
 }
 
@@ -44,10 +44,10 @@ void BlueTooth::start(const bool on)
 {
   WasOn = on; //HACK
   Serial << (on ? "Start" : "Stop") << " BT" << endl;
-  digitalWrite(GREEN_PIN, on ? HIGH : LOW);
+  digitalWrite(LIGHT_PIN, on ? HIGH : LOW);
   if (on){
     mON = BTSerial.begin(BT_TERMINAL_NAME);
-    digitalWrite(GREEN_PIN, mON ? HIGH : LOW);
+    digitalWrite(LIGHT_PIN, mON ? HIGH : LOW);
   }
   else{
     mON = false;
