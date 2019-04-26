@@ -119,7 +119,8 @@ public:
 
   LedStrip(const String name = String()) : mName(name)
   {
-    mController = &FastLED.addLeds<CHIPSET, LEDPIN, COLOR_ORDER>(mLeds, NLEDS); //.setCorrection(TypicalSMD5050); // = TypicalLEDStrip
+    mController = &FastLED.addLeds<CHIPSET, LEDPIN, COLOR_ORDER>(mLeds, NLEDS);
+    mController->setCorrection(TypicalSMD5050); // = TypicalLEDStrip
   };
 
   bool registerFX(FX& fx)

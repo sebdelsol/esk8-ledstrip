@@ -5,6 +5,7 @@
 #include <Button.h>
 #include <bluetooth.h>
 #include <Streaming.h>
+#include <soc/rtc.h>
 
 // ----------------------------------------------------
 #define LED_MAX_MA 700//2000
@@ -48,7 +49,9 @@ void setup()
   Serial.begin(SERIAL_BAUD);
   Serial << "-------- START --------" << endl;
 
-  //Serial << esp_get_idf_version() << endl;
+  // rtc_clk_cpu_freq_set(RTC_CPU_FREQ_240M);
+  Serial << "CPU freq " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
+  Serial << "Esp32 core " << esp_get_idf_version() << endl;
 
   // pinMode(BUILTIN_LED, OUTPUT);
   // digitalWrite(BUILTIN_LED, LOW);
@@ -120,7 +123,7 @@ void loop()
   EVERY_N_MILLISECONDS(LED_TICK) {
     int light = analogRead(LDR_PIN); // read analog input pin 0
     byte bright = map(light, MIN_LIGHT, MAX_LIGHT, 255, 0); // to darker the light, the brighter the leds
-    Serial << light << " " << bright << endl;
+    // Serial << light << " " << bright << endl;
     // AllLeds.setBrightness(bright);
 
     alphaBT = MYLERP(alphaBT, alphaBTtarget, 10); //20/256
