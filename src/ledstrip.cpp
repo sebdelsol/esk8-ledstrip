@@ -132,8 +132,11 @@ void PlasmaFX::getCmd(const MyCmd &cmd)
 }
 
 // ----------------------------------------------------
-CylonFX::CylonFX(const byte r, const byte g, const byte b, const int eyeSize, const int speed) : mEyeSize(eyeSize), mSpeed(speed), mColor(CRGB(r, g, b))
-{}
+CylonFX::CylonFX(const byte r, const byte g, const byte b, const int eyeSize, const int speed) : mEyeSize(eyeSize), mSpeed(speed), mColor(CRGB(r, g, b)) {};
+
+void CylonFX::specialInit(int nLeds) {
+  if (mSpeed <0) mPos = 65535;
+}
 
 void CylonFX::update(){
 
@@ -173,6 +176,36 @@ void CylonFX::getCmd(const MyCmd &cmd)
     case 'C': answer(cmd, mColor.r, mColor.g, mColor.b); break;
     case 'E': answer(cmd, mEyeSize*255/(mNLEDS-1)); break;
     case 'S': answer(cmd, mSpeed>>3); break;
+    case 'B': answer(cmd, getAlpha()); break;
+  }
+}
+
+// ----------------------------------------------------
+void PulseFX::update(){
+
+  // cos16 & sin16(0 to 65535) => results in -32767 to 32767
+  u_long t = (millis() * 66 * mFreq) >> 8; // 65536/1000 => time is 2*PI * freq
+  for(byte i = 0; i < mNLEDS; i++)
+  {
+    int16_t v = cos16(10*(32768 + cos16(t)) * (i-(mNLEDS>>1)) / (mNLEDS));
+    mLeds[i] = CHSV(mHue, 0xff , (v+32768)>>8);
+  }
+}
+
+void PulseFX::setCmd(const MyCmd &cmd)
+{
+  switch(cmd.what) {
+    case 'H': mHue = cmd.arg[0]; break;
+    case 'F': mFreq = cmd.arg[0]; break;
+    case 'B': setAlpha(cmd.arg[0]); break;
+  }
+}
+
+void PulseFX::getCmd(const MyCmd &cmd)
+{
+  switch(cmd.what) {
+    case 'H': answer(cmd, mHue); break;
+    case 'F': answer(cmd, mFreq); break;
     case 'B': answer(cmd, getAlpha()); break;
   }
 }

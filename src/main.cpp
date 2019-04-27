@@ -38,8 +38,11 @@ AquaFX Aqua(false); // not reverse
 PlasmaFX Plasma;
 CylonFX Cylon;
 
-LedStrip<15, LEDR_PIN> LedsR("LedR");
-CylonFX CylonR;
+LedStrip<30, LEDR_PIN> LedsR("LedR");
+PulseFX PulseR;
+// CylonFX CylonR1(0xff,0,0, 10, 4<<8);
+// CylonFX CylonR2(0xff,0,0, 10, (-4)<<8);
+
 LedStrip<15, LEDF_PIN> LedsF("LedF");
 CylonFX CylonF;
 
@@ -57,7 +60,9 @@ void setup()
   // digitalWrite(BUILTIN_LED, LOW);
   // Serial << "led " << BUILTIN_LED << endl;
 
-  CylonR.setAlpha(255);
+  PulseR.setAlpha(255);
+  // CylonR1.setAlpha(255);
+  // CylonR2.setAlpha(255);
   CylonF.setAlpha(255);
 
   AllLeds.registerStrip(Leds);
@@ -67,7 +72,9 @@ void setup()
   Leds.registerFX(Cylon);
 
   AllLeds.registerStrip(LedsR);
-  LedsR.registerFX(CylonR);
+  LedsR.registerFX(PulseR);
+  // LedsR.registerFX(CylonR1);
+  // LedsR.registerFX(CylonR2);
 
   AllLeds.registerStrip(LedsF);
   LedsF.registerFX(CylonF);

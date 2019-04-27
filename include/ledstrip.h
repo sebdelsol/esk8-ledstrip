@@ -82,6 +82,7 @@ public:
 //---------
 class CylonFX : public FX
 {
+protected:
   int mPos = 0, mEyeSize, mSpeed;
   CRGB mColor;
 
@@ -89,7 +90,23 @@ public:
   CylonFX(const byte r=0x00, const byte g = 0x00, const byte b = 0xff, const int eyeSize = 3, const int speed = 2<<8);
   void update();
 
+  void specialInit(int nLeds);
   const char* getName() {return "Cylon";};
+  void setCmd(const MyCmd &cmd);
+  void getCmd(const MyCmd &cmd);
+};
+
+//---------
+class PulseFX : public FX
+{
+  byte mHue;
+  long mFreq;
+
+public:
+  PulseFX(const byte hue=0, const long fracFreq=256) : mHue(hue), mFreq(fracFreq) {};
+  void update();
+
+  const char* getName() {return "Pulse";};
   void setCmd(const MyCmd &cmd);
   void getCmd(const MyCmd &cmd);
 };
