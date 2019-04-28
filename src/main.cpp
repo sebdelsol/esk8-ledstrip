@@ -1,11 +1,12 @@
 #include <ledstrip.h>
 #include <myMpu6050.h>
-#include <WiFi.h>
 #include <myWifi.h>
 #include <Button.h>
 #include <bluetooth.h>
+#include <config.h>
+
 #include <Streaming.h>
-#include <soc/rtc.h>
+#include <soc/rtc.h> // get cpu freq
 
 // ----------------------------------------------------
 #define LED_MAX_MA 700//2000
@@ -46,11 +47,28 @@ PulseFX PulseR;
 LedStrip<15, LEDF_PIN> LedsF("LedF");
 CylonFX CylonF;
 
+typedef struct {
+  int toto = 1;
+  byte tutu = 3;
+  //char* str = "test";
+  int titi = 201;
+} TstCfg;
+
+Config<TstCfg, 1> test("test");
+
 // ----------------------------------------------------
 void setup()
 {
   Serial.begin(SERIAL_BAUD);
-  Serial << "-------- START --------" << endl;
+  Serial << endl << "-------- START --------" << endl;
+
+  AllConfig AllCFG;
+  AllCFG.RegisterCfg(test);
+  AllCFG.load();
+  Serial << test.mData.toto << " " << test.mData.tutu << " " << test.mData.titi << endl;
+  test.mData.toto = test.mData.toto+1;
+  AllCFG.save();
+  AllCFG.cleanUnRegistered();
 
   // rtc_clk_cpu_freq_set(RTC_CPU_FREQ_240M);
   Serial << "CPU freq " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
