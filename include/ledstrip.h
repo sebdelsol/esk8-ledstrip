@@ -126,7 +126,7 @@ template <int NLEDS, int LEDPIN>
 class LedStrip : public BaseLedStrip
 {
   CRGB mLeds[NLEDS];
-  CLEDController &mController;
+  CLEDController *mController;
   char * mName;
 
   FX *mFX[MAXFX];
@@ -134,12 +134,13 @@ class LedStrip : public BaseLedStrip
 
 public:
 
-  LedStrip(const char* name="") : mController(FastLED.addLeds<CHIPSET, LEDPIN, COLOR_ORDER>(mLeds, NLEDS))
+  LedStrip(const char* name="")
   {
     mName = (char *)malloc(strlen(name) + 1);
     sprintf(mName, "%s", name);
 
-    mController.setCorrection(TypicalSMD5050); // = TypicalLEDStrip
+    mController = &FastLED.addLeds<CHIPSET, LEDPIN, COLOR_ORDER>(mLeds, NLEDS);
+    mController->setCorrection(TypicalSMD5050); // = TypicalLEDStrip
   };
 
   bool registerFX(FX& fx)
@@ -189,7 +190,7 @@ public:
     }
 
     if(!shown) // clear if no FX shown
-      mController.clearLedData();
+      mController->clearLedData();
   };
 };
 
