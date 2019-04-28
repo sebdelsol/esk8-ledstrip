@@ -178,7 +178,7 @@ public:
       FX *fx = mFX[i];
       Serial << " - " << fx->getName() << "(" << fx->getAlpha() << ")";
     }
-    Serial << "                  \n";
+    Serial << "                  " << endl;
   };
 
   byte* getData(int& n)

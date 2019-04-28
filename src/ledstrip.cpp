@@ -13,7 +13,6 @@ CRGB* FX::updateAndFade()
   if (mAlpha > 0) { // 0 is invisible
     update();
     if (mAlpha < 255) // 255 no fade
-      // fadeToBlackBy(mLeds, mNLEDS, 255-mAlpha);
       nscale8_video(mLeds, mNLEDS, mAlpha);
     return mLeds;
   }
@@ -147,12 +146,13 @@ void PlasmaFX::getCmd(const MyCmd &cmd)
 CylonFX::CylonFX(const byte r, const byte g, const byte b, const int eyeSize, const int speed) : mEyeSize(eyeSize), mSpeed(speed), mColor(CRGB(r, g, b))
 {}
 
-void CylonFX::specialInit(int nLeds) {
+void CylonFX::specialInit(int nLeds)
+{
   if (mSpeed <0) mPos = 65535;
 }
 
-void CylonFX::update(){
-
+void CylonFX::update()
+{
   memset8(mLeds, 0, mNLEDS * sizeof(CRGB)); // clear
 
   #define FRAC_SHIFT 4
