@@ -1,5 +1,7 @@
 #include <config.h>
 
+#define FORMAT_SPIFFS_IF_FAILED true
+
 void AllConfig::init()
 {
   Serial << "SPIFFS begin" << endl;

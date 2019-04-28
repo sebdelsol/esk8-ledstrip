@@ -3,8 +3,6 @@
 #include <Streaming.h>
 #include <SPIFFS.h>
 
-#define FORMAT_SPIFFS_IF_FAILED true
-
 #define CFG_ROOT "/"
 #define CFG_EXT ".cfg"
 #define MAXCFG 10
