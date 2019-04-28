@@ -1,6 +1,13 @@
 #include <ledstrip.h>
 
 // ----------------------------------------------------
+void FX::init(int nLeds)
+{
+  mNLEDS = nLeds;
+  mLeds = (CRGB *)malloc(nLeds * sizeof(CRGB));
+  specialInit(nLeds);
+}
+
 CRGB* FX::updateAndFade()
 {
   if (mAlpha > 0) { // 0 is invisible
@@ -29,6 +36,11 @@ void FX::answer(const MyCmd &cmd, byte arg)
 FireFX::FireFX(const bool reverse, const byte cooling, const byte sparkling) : mReverse(reverse), mCooling(cooling), mSparkling(sparkling)
 {
   mPal = HeatColors_p;
+}
+
+void FireFX::specialInit(int nLeds)
+{
+  mHeat = (byte*)malloc(nLeds*sizeof(byte));
 }
 
 void FireFX::update()
@@ -132,7 +144,8 @@ void PlasmaFX::getCmd(const MyCmd &cmd)
 }
 
 // ----------------------------------------------------
-CylonFX::CylonFX(const byte r, const byte g, const byte b, const int eyeSize, const int speed) : mEyeSize(eyeSize), mSpeed(speed), mColor(CRGB(r, g, b)) {};
+CylonFX::CylonFX(const byte r, const byte g, const byte b, const int eyeSize, const int speed) : mEyeSize(eyeSize), mSpeed(speed), mColor(CRGB(r, g, b))
+{}
 
 void CylonFX::specialInit(int nLeds) {
   if (mSpeed <0) mPos = 65535;
@@ -181,14 +194,17 @@ void CylonFX::getCmd(const MyCmd &cmd)
 }
 
 // ----------------------------------------------------
+PulseFX::PulseFX(const byte hue, const long fracFreq, const byte w) : mHue(hue), mFreq(fracFreq), mWavelength(w)
+{}
+
 void PulseFX::update(){
 
   // cos16 & sin16(0 to 65535) => results in -32767 to 32767
   u_long t = (millis() * 66 * mFreq) >> 8; // 65536/1000 => time is 2*PI * freq
-  u_long _cost = mWavelength * (cos16(t) + 32768);
+  long cos_t = mWavelength * (cos16(t) + 32768);
   for(byte i = 0; i < mNLEDS; i++)
   {
-    int16_t v = cos16(_cost * (i-(mNLEDS>>1)) / (mNLEDS));
+    int16_t v = cos16(cos_t * (i-(mNLEDS>>1)) / (mNLEDS));
     mLeds[i] = CHSV(mHue, 0xff , (v + 32768)>>8);
   }
 }

@@ -20,7 +20,7 @@ protected:
   CRGB *mLeds;
 
 public:
-  void init(int nLeds) {mNLEDS = nLeds; mLeds = (CRGB *)malloc(nLeds * sizeof(CRGB)); specialInit(nLeds);};
+  void init(int nLeds);
   virtual void specialInit(int nLeds) {};
 
   void setAlpha(const byte alpha) { mAlpha = alpha; };
@@ -49,9 +49,9 @@ protected:
 
 public:
   FireFX(const bool reverse = false, const byte cooling = 75, const byte sparkling = 120);
+  void specialInit(int nLeds);
   void update();
 
-  void specialInit(int nLeds) {mHeat = (byte*)malloc(nLeds*sizeof(byte));};
   const char* getName() {return "Fire";};
   void setCmd(const MyCmd &cmd);
   void getCmd(const MyCmd &cmd);
@@ -88,9 +88,9 @@ protected:
 
 public:
   CylonFX(const byte r=0x00, const byte g = 0x00, const byte b = 0xff, const int eyeSize = 3, const int speed = 2<<8);
+  void specialInit(int nLeds);
   void update();
 
-  void specialInit(int nLeds);
   const char* getName() {return "Cylon";};
   void setCmd(const MyCmd &cmd);
   void getCmd(const MyCmd &cmd);
@@ -104,7 +104,7 @@ class PulseFX : public FX
   byte mWavelength;
 
 public:
-  PulseFX(const byte hue=0, const long fracFreq=256, const byte w=10) : mHue(hue), mFreq(fracFreq), mWavelength(w) {};
+  PulseFX(const byte hue=0, const long fracFreq=64, const byte w=10);
   void update();
 
   const char* getName() {return "Pulse";};
