@@ -62,6 +62,10 @@ void setup()
   Serial.begin(SERIAL_BAUD);
   Serial << endl << "-------- START --------" << endl;
 
+  // rtc_clk_cpu_freq_set(RTC_CPU_FREQ_240M);
+  Serial << "CPU freq " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
+  Serial << "Esp32 core " << esp_get_idf_version() << endl;
+
   AllCFG.init();
   AllCFG.RegisterCfg(test);
   AllCFG.load();
@@ -69,10 +73,6 @@ void setup()
   // test.mData.toto = test.mData.toto+1;
   AllCFG.save();
   AllCFG.cleanUnRegistered();
-
-  // rtc_clk_cpu_freq_set(RTC_CPU_FREQ_240M);
-  Serial << "CPU freq " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
-  Serial << "Esp32 core " << esp_get_idf_version() << endl;
 
   // pinMode(BUILTIN_LED, OUTPUT);
   // digitalWrite(BUILTIN_LED, LOW);

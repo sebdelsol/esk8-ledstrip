@@ -59,15 +59,13 @@ public:
     Serial << mFName << " loading...";
 
     File f = SPIFFS.open(mFName, "r");
-    if (f)
-    {
-      uint8_t ver = f.read();
-      if (ver!=VER)
+    if (f) {
+      if (byte ver = f.read()!=VER)
         Serial << "bad Version (" << ver << ") should be (" << VER << ")" << endl;
-      else if (f.size()!=sizeof(mData)+1)
-        Serial << "wrong size (" << f.size() << ") should be (" << (sizeof(mData)+1) << ")" << endl;
+      else if (int s = f.size()!=sizeof(mData)+1)
+        Serial << "wrong size (" << s << ") should be (" << (sizeof(mData)+1) << ")" << endl;
       else {
-        f.read((uint8_t *)&mData, sizeof(mData));
+        f.read((byte *)&mData, sizeof(mData));
         Serial << "ok" << endl;
       }
 
@@ -84,10 +82,9 @@ public:
     Serial << mFName << " saving...";
 
     File f = SPIFFS.open(mFName, "w");
-    if (f)
-    {
+    if (f) {
       f.write(VER);
-      f.write((uint8_t *)&mData, sizeof(mData));
+      f.write((byte *)&mData, sizeof(mData));
       f.close();
       Serial << "ok" << endl;
       return true;

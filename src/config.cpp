@@ -24,7 +24,7 @@ void AllConfig::cleanUnRegistered()
     // File ff = SPIFFS.open("/toto", "w");
     // ff.close();
 
-    while( File f=root.openNextFile() ){
+    while( File f=root.openNextFile() ) {
       const char* name = f.name();
       if (!isRegistered(name)){
         Serial << name << "...removed" << endl;
