@@ -254,27 +254,3 @@ void AllLedStrips::getInfo()
   for (byte i=0; i < mNStrips; i++)
     mStrips[i]->getInfo();
 }
-
-// ----------------------------------------------------
-// Fire2::Fire2(const bool reverse) : mReverse(reverse)
-// {
-//   mPal = HeatColors_p;
-// }
-//
-// void Fire2::update()
-// {
-//   for(int i = 0; i < NLEDS; i++) {
-//     byte index = inoise8(i * mXscale, millis() * mSpeed * NLEDS / 255); // X location is constant, but we move along the Y at the rate of millis()
-//     index = min((i * index) >>6, 255);
-//     byte bright = i * 255 / NLEDS;
-//
-//     int j = mReverse ? (NLEDS-1) - i : i;
-//     mLeds[j] = ColorFromPalette(mPal, index, bright, LINEARBLEND);
-//   }
-// }
-//
-// // ----------------------------------------------------
-// Aqua2::Aqua2(const bool reverse) : Fire2(reverse)
-// {
-//   mPal = CRGBPalette16(CRGB::Black, CRGB::Blue, CRGB::Aqua, CRGB::White);
-// }

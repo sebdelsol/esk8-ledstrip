@@ -122,6 +122,23 @@ public:
 };
 
 //--------------------------------------
+class AllLedStrips
+{
+  BaseLedStrip *mStrips[MAXSTRIP];
+  byte mNStrips = 0;
+
+public:
+  AllLedStrips(const int maxmA = 2000);
+  void setBrightness(const byte scale) { FastLED.setBrightness(scale); };
+  byte getBrightness() { return FastLED.getBrightness(); };
+  void show() { FastLED.show(); };
+
+  bool registerStrip(BaseLedStrip &strip);
+  void getInfo();
+  void update();
+};
+
+//--------------------------------------
 template <int NLEDS, int LEDPIN>
 class LedStrip : public BaseLedStrip
 {
@@ -193,43 +210,3 @@ public:
       mController->clearLedData();
   };
 };
-
-class AllLedStrips
-{
-  BaseLedStrip *mStrips[MAXSTRIP];
-  byte mNStrips = 0;
-
-public:
-  AllLedStrips(const int maxmA = 2000);
-  void setBrightness(const byte scale) { FastLED.setBrightness(scale); };
-  byte getBrightness() { return FastLED.getBrightness(); };
-  void show() { FastLED.show(); };
-
-  bool registerStrip(BaseLedStrip &strip);
-  void getInfo();
-  void update();
-};
-
-//---------
-// class Fire2 : public FX
-// {
-//   ulong mXscale = 20;  // How far apart they are in perlin noise
-//   ulong mSpeed = 3;   // How fast they move
-//
-// protected:
-//   bool mReverse = false;
-//   CRGBPalette16 mPal;
-//
-// public:
-//   Fire2(const bool reverse = false);
-//   const char* getName() {return "Fire2";};
-//   void update();
-// };
-//
-// //---------
-// class Aqua2 : public Fire2
-// {
-// public:
-//   Aqua2(const bool reverse = false);
-//   const char* getName() {return "Aqua2";};
-// };
