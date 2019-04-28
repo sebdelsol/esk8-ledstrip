@@ -9,6 +9,7 @@
 #define CHIPSET       WS2812B
 #define MAXFX         5
 #define MAXSTRIP      3
+#define SATURATION    0xff    // for HSV FX
 
 //--------------------------------------
 class FX

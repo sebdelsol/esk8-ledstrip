@@ -119,7 +119,7 @@ void PlasmaFX::update()
 
     // sin(time) + sin(.5 * (x*k + time)) * 2 + sin(sqrt(k*k*(cx*cx+cy*cy)+1) + time);
     int16_t v = sin_t + (sin16((mK*x + t) >> 1) << 1) + sin16(mK*sqrxy + t);
-    mLeds[i] = CHSV(v>>8, 0xf0, 0xff);
+    mLeds[i] = CHSV(v>>8, SATURATION, 0xff);
   }
 }
 
@@ -205,7 +205,7 @@ void PulseFX::update(){
   for(byte i = 0; i < mNLEDS; i++)
   {
     int16_t v = cos16(cos_t * (i-(mNLEDS>>1)) / (mNLEDS));
-    mLeds[i] = CHSV(mHue, 0xff , (v + 32768)>>8);
+    mLeds[i] = CHSV(mHue, SATURATION , (v + 32768)>>8);
   }
 }
 
