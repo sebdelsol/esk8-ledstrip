@@ -79,6 +79,7 @@ public:
 
   bool save()
   {
+    long start = millis();
     Serial << mFName << " saving...";
 
     File f = SPIFFS.open(mFName, "w");
@@ -86,7 +87,7 @@ public:
       f.write(VER);
       f.write((byte *)&mData, sizeof(mData));
       f.close();
-      Serial << "ok" << endl;
+      Serial << "ok, took " << (millis() - start) << "ms" << endl;
       return true;
     }
 
