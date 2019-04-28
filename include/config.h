@@ -53,17 +53,20 @@ public:
 
   bool load()
   {
+    long start = millis();
     Serial << mFName << " loading...";
 
     File f = SPIFFS.open(mFName, "r");
     if (f) {
       if (byte ver = f.read()!=VER)
         Serial << "bad Version (" << ver << ") should be (" << VER << ")" << endl;
+
       else if (int s = f.size()!=sizeof(mData)+1)
         Serial << "wrong size (" << s << ") should be (" << (sizeof(mData)+1) << ")" << endl;
+
       else {
         f.read((byte *)&mData, sizeof(mData));
-        Serial << "ok" << endl;
+        Serial << "ok, took " << (millis() - start) << "ms" << endl;
       }
 
       f.close();

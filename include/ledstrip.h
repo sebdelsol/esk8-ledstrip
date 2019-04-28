@@ -164,7 +164,7 @@ public:
   bool registerFX(FX& fx)
   {
     bool ok = mNFX < MAXFX;
-    if (ok){
+    if (ok) {
       mFX[mNFX++] = (FX*)&fx;
       fx.init(NLEDS);
     }
