@@ -27,7 +27,7 @@ class AllConfig
   bool isRegistered(const char* name);
 
 public:
-  AllConfig();
+  void init();
   bool RegisterCfg(BaseCfg &cfg);
   void cleanUnRegistered();
   void load();
@@ -47,7 +47,7 @@ public:
 
   Config(const char* name)
   {
-    mFName = (char *)malloc(strlen(name) + strlen(CFG_ROOT)+ strlen(CFG_EXT) + 1);
+    mFName = (char *)malloc(strlen(name) + strlen(CFG_ROOT) + strlen(CFG_EXT) + 1);
     sprintf(mFName, "%s%s%s", CFG_ROOT, name, CFG_EXT);
     // AllConfig.RegisterCfg(&this);
   };

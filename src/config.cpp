@@ -1,6 +1,6 @@
 #include <config.h>
 
-AllConfig::AllConfig()
+void AllConfig::init()
 {
   Serial << "SPIFFS begin" << endl;
   mOk = SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED);
@@ -18,21 +18,18 @@ bool AllConfig::isRegistered(const char* name)
 
 void AllConfig::cleanUnRegistered()
 {
-  #define ROOT "/"
   if (mOk){
     Serial << "Clean unregistered config" << endl;
     File root = SPIFFS.open(CFG_ROOT);
-    File f = SPIFFS.open("/toto", "w");
-    f.close();
+    // File ff = SPIFFS.open("/toto", "w");
+    // ff.close();
 
-    File file = root.openNextFile();
-    while(file){
-      const char* name = file.name();
+    while( File f=root.openNextFile() ){
+      const char* name = f.name();
       if (!isRegistered(name)){
         Serial << name << "...removed" << endl;
         SPIFFS.remove(name);
       }
-      file = root.openNextFile();
     }
   }
 }

@@ -50,10 +50,10 @@ CylonFX CylonF;
 typedef struct {
   int toto = 1;
   byte tutu = 3;
-  //char* str = "test";
   int titi = 201;
 } TstCfg;
 
+AllConfig AllCFG;
 Config<TstCfg, 1> test("test");
 
 // ----------------------------------------------------
@@ -62,11 +62,11 @@ void setup()
   Serial.begin(SERIAL_BAUD);
   Serial << endl << "-------- START --------" << endl;
 
-  AllConfig AllCFG;
+  AllCFG.init();
   AllCFG.RegisterCfg(test);
   AllCFG.load();
-  Serial << test.mData.toto << " " << test.mData.tutu << " " << test.mData.titi << endl;
-  test.mData.toto = test.mData.toto+1;
+  // Serial << test.mData.toto << " " << test.mData.tutu << " " << test.mData.titi << endl;
+  // test.mData.toto = test.mData.toto+1;
   AllCFG.save();
   AllCFG.cleanUnRegistered();
 
