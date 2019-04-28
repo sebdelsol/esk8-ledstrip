@@ -101,9 +101,10 @@ class PulseFX : public FX
 {
   byte mHue;
   long mFreq;
+  byte mWavelength;
 
 public:
-  PulseFX(const byte hue=0, const long fracFreq=256) : mHue(hue), mFreq(fracFreq) {};
+  PulseFX(const byte hue=0, const long fracFreq=256, const byte w=10) : mHue(hue), mFreq(fracFreq), mWavelength(w) {};
   void update();
 
   const char* getName() {return "Pulse";};

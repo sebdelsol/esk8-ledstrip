@@ -185,10 +185,11 @@ void PulseFX::update(){
 
   // cos16 & sin16(0 to 65535) => results in -32767 to 32767
   u_long t = (millis() * 66 * mFreq) >> 8; // 65536/1000 => time is 2*PI * freq
+  u_long _cost = mWavelength * (cos16(t) + 32768);
   for(byte i = 0; i < mNLEDS; i++)
   {
-    int16_t v = cos16(10*(32768 + cos16(t)) * (i-(mNLEDS>>1)) / (mNLEDS));
-    mLeds[i] = CHSV(mHue, 0xff , (v+32768)>>8);
+    int16_t v = cos16(_cost * (i-(mNLEDS>>1)) / (mNLEDS));
+    mLeds[i] = CHSV(mHue, 0xff , (v + 32768)>>8);
   }
 }
 
