@@ -104,20 +104,20 @@ PlasmaFX::PlasmaFX(const byte wavelenght, const byte period1, const byte period2
 void PlasmaFX::update()
 {
   // cos16 & sin16(0 to 65535) => results in -32767 to 32767
-  u_long t = (millis() * 66) >> 2; // 65536/1000 => time is 2*PI / (sec * 4)
-  int16_t cos_tp1 = cos16(t/mP1) >> 1;
-  int16_t sin_tp2 = sq(sin16(t/mP2) >> 1);
+  u_long t = (millis() * 66) >> 2; // 65536/1000 => time is 2 pi / (4 sec)
+  int16_t cos_tp1 = cos16(t/mP1) >> 1; // .5 cos(time/mP1)
+  int16_t sin_tp2 = sq(sin16(t/mP2)) >> 2; // (.5 sin(time/mP2))^2
   int16_t sin_t = sin16(t);
 
   int16_t x = -5215;
-  int16_t step = 10430 / mNLEDS;  // 65536 / (2*pi) => x (-.5 to .5)
+  int16_t step = 10430 / mNLEDS;  // 10430 = 65536 / (2 pi) => x (-.5 to .5)
 
   for (byte i=0; i < mNLEDS; i++, x += step) {
-    //  cx = x + .5 * cos(time/mP1); cy = .5 * sin(time/mP2);
+    //  cx = x + .5 cos(time/mP1); cy = .5 sin(time/mP2);
     int16_t cx = x + cos_tp1;
     int16_t sqrxy = sqrt16((cx*cx + sin_tp2) >> 16) << 8;
 
-    // sin(time) + sin(.5 * (x*k + time)) * 2 + sin(sqrt(k*k*(cx*cx+cy*cy)+1) + time);
+    // sin(time) + 2 sin(.5 (x k + time)) + sin(sqrt(k^2(cx^2 + cy^2) + 1) + time);
     int16_t v = sin_t + (sin16((mK*x + t) >> 1) << 1) + sin16(mK*sqrxy + t);
     mLeds[i] = CHSV(v>>8, SATURATION, 0xff);
   }
@@ -194,7 +194,7 @@ void CylonFX::getCmd(const MyCmd &cmd)
 }
 
 // ----------------------------------------------------
-PulseFX::PulseFX(const byte hue, const long fracFreq, const byte w) : mHue(hue), mFreq(fracFreq), mWavelength(w)
+PulseFX::PulseFX(const byte hue, const long frac8, const byte w) : mHue(hue), mFreq(frac8), mWavelength(w)
 {}
 
 void PulseFX::update(){

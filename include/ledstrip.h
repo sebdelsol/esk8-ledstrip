@@ -105,7 +105,7 @@ class PulseFX : public FX
   byte mWavelength;
 
 public:
-  PulseFX(const byte hue=0, const long fracFreq=64, const byte w=10);
+  PulseFX(const byte hue=0, const long frac8=64, const byte w=10);
   void update();
 
   const char* getName() {return "Pulse";};
