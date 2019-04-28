@@ -201,7 +201,7 @@ void PulseFX::update(){
 
   // cos16 & sin16(0 to 65535) => results in -32767 to 32767
   u_long t = (millis() * 66 * mFreq) >> 8; // 65536/1000 => time is 2*PI * freq
-  long cos_t = mWavelength * (cos16(t) + 32768);
+  long cos_t = mWavelength * (cos16(t) + 32768); 
   for(byte i = 0; i < mNLEDS; i++)
   {
     int16_t v = cos16(cos_t * (i-(mNLEDS>>1)) / (mNLEDS));

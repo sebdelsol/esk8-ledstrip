@@ -15,43 +15,35 @@ uint16_t fifoCount;     // count of all bytes currently in FIFO
 uint8_t fifoBuffer[64]; // FIFO storage buffer
 
 // orientation/motion vars
-Quaternion Q;           // [w, x, y, z]         quaternion container
-VectorInt16 aa;         // [x, y, z]            accel sensor measurements
-VectorInt16 aaReal;     // [x, y, z]            gravity-free accel sensor measurements
-VectorFloat gravity;    // [x, y, z]            gravity vector
-float ypr[3] = {.0f, .0f, .0f};           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
+Quaternion Q;                     // [w, x, y, z]         quaternion container
+VectorInt16 aa;                   // [x, y, z]            accel sensor measurements
+VectorInt16 aaReal;               // [x, y, z]            gravity-free accel sensor measurements
+VectorFloat gravity;              // [x, y, z]            gravity vector
+float ypr[3] = {.0f, .0f, .0f};   // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
 
-// ================================================================
-// ===                      INITIAL SETUP                       ===
-// ================================================================
-
+//--------------------------------------
 void myMPU6050::begin() {
   Wire.begin(SDA, SCL);
   Wire.setClock(400000); // 400kHz I2C clock.
 
-  Serial << "Initializing I2C devices..." << endl;
+  Serial << "Initializing mpu...";
   mpu.initialize();
 
   // verify connection
-  Serial << "Testing device connections..." << endl;
   Serial << (mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed")) << endl;
 
-  // supply your own gyro offsets here, scaled for min sensitivity
-  Serial << "Set calibration..." << endl;
+  // supply gyro offsets
   mpu.setXGyroOffset(79);
   mpu.setYGyroOffset(23);
   mpu.setZGyroOffset(-7);
-  mpu.setXAccelOffset(-1599); // 1688 factory default for my test chip
-  mpu.setYAccelOffset(-4463); // 1688 factory default for my test chip
-  mpu.setZAccelOffset(1234); // 1688 factory default for my test chip
+  mpu.setXAccelOffset(-1599);
+  mpu.setYAccelOffset(-4463);
+  mpu.setZAccelOffset(1234);
 
-  // load and configure the DMP
-  Serial << "Initializing DMP..." << endl;
+  // Serial << "Initializing DMP..." << endl;
   devStatus = mpu.dmpInitialize();
 
-  // make sure it worked (returns 0 if so)
-  if (devStatus == 0) {
-    // turn on the DMP, now that it's ready
+  if (devStatus == 0) { // did it work ?
     Serial << "Enabling DMP...";
     mpu.setDMPEnabled(true);
     mpuIntStatus = mpu.getIntStatus();
@@ -75,14 +67,13 @@ bool myMPU6050::readAccel() {
 
       mpuIntStatus = mpu.getIntStatus();
 
-      // check for overflow (this should never happen unless our code is too inefficient)
+      // check for overflow
       if ((mpuIntStatus & _BV(MPU6050_INTERRUPT_FIFO_OFLOW_BIT)) || fifoCount >= 1024) {
-        // reset so we can continue cleanly
-        mpu.resetFIFO();
+        mpu.resetFIFO(); // reset so we can continue cleanly
         Serial << "FIFO overflow! " << endl;
       }
 
-      // otherwise, check for DMP data ready interrupt (this should happen frequently)
+      // otherwise, check for DMP data ready interrupt
       else if (mpuIntStatus & _BV(MPU6050_INTERRUPT_DMP_INT_BIT)) {
         // read all available
         while (fifoCount >= packetSize){

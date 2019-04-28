@@ -5,9 +5,6 @@
 #include <FastLED.h> // for lerp15by16
 #include <myPins.h>
 
-// #include <I2Cdev.h>
-// #include <MPU6050_6Axis_MotionApps20.h>
-
 #define ACCEL_AVG .9
 #define ACCEL_BASE_FREQ 60.
 
