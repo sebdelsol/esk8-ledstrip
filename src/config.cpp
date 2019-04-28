@@ -21,8 +21,6 @@ void AllConfig::cleanUnRegistered()
   if (mOk){
     Serial << "Clean unregistered config" << endl;
     File root = SPIFFS.open(CFG_ROOT);
-    // File ff = SPIFFS.open("/toto", "w");
-    // ff.close();
 
     while( File f=root.openNextFile() ) {
       const char* name = f.name();

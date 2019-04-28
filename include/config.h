@@ -49,7 +49,6 @@ public:
   {
     mFName = (char *)malloc(strlen(name) + strlen(CFG_ROOT) + strlen(CFG_EXT) + 1);
     sprintf(mFName, "%s%s%s", CFG_ROOT, name, CFG_EXT);
-    // AllConfig.RegisterCfg(&this);
   };
 
   char* getName() { return mFName; };
