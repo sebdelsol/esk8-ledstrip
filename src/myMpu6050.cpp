@@ -30,7 +30,7 @@ void myMPU6050::begin() {
   mpu.initialize();
 
   // verify connection
-  Serial << (mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed")) << endl;
+  Serial << "connection " << (mpu.testConnection() ? F("successful") : F("failed")) << endl;
 
   // supply gyro offsets
   mpu.setXGyroOffset(79);
@@ -54,7 +54,7 @@ void myMPU6050::begin() {
     Serial << "done" << endl;
   }
   else // ERROR! 1 = initial memory load failed, 2 = DMP configuration updates failed
-    Serial << "DMP Initialization failed (code " << devStatus << ")" << endl;
+    Serial << "DMP Initialization failed (" << devStatus << ")" << endl;
 }
 
 // ================================================================

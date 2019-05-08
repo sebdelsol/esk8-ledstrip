@@ -5,6 +5,7 @@ void FX::init(int nLeds)
 {
   mNLEDS = nLeds;
   mLeds = (CRGB *)malloc(nLeds * sizeof(CRGB));
+  memset8(mLeds, 0, nLeds * sizeof(CRGB)); // clear
   specialInit(nLeds);
 }
 
@@ -189,6 +190,40 @@ void CylonFX::getCmd(const MyCmd &cmd)
     case 'C': answer(cmd, mColor.r, mColor.g, mColor.b); break;
     case 'E': answer(cmd, mEyeSize*255/(mNLEDS-1)); break;
     case 'S': answer(cmd, mSpeed>>3); break;
+    case 'B': answer(cmd, getAlpha()); break;
+  }
+}
+
+// ----------------------------------------------------
+TwinkleFX::TwinkleFX(const byte hue, const byte f) : mHue(hue), mDiv(f)
+{}
+
+void TwinkleFX::update()
+{
+  random16_set_seed(535);  // The randomizer needs to be re-set each time through the loop in order for the 'random' numbers to be the same each time through.
+
+  for (int i = 0; i<mNLEDS; i++) {
+    byte fader = sin8(millis()/random8(mDiv, mDiv<<1));                                  // The random number for each 'i' will be the same every time.
+    byte hue = sin8(millis()/random8(mDiv<<1, mDiv<<2))>>2;                                  // The random number for each 'i' will be the same every time.
+    // mLeds[i] = ColorFromPalette(currentPalette, i*20, fader, currentBlending);       // Now, let's run it through the palette lookup.
+    mLeds[i] = CHSV(hue, SATURATION , fader);
+  }
+}
+
+void TwinkleFX::setCmd(const MyCmd &cmd)
+{
+  switch(cmd.what) {
+    case 'H': mHue = cmd.arg[0]; break;
+    case 'D': mDiv = cmd.arg[0]; break;
+    case 'B': setAlpha(cmd.arg[0]); break;
+  }
+}
+
+void TwinkleFX::getCmd(const MyCmd &cmd)
+{
+  switch(cmd.what) {
+    case 'H': answer(cmd, mHue); break;
+    case 'D': answer(cmd, mDiv); break;
     case 'B': answer(cmd, getAlpha()); break;
   }
 }

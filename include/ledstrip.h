@@ -113,6 +113,21 @@ public:
   void getCmd(const MyCmd &cmd);
 };
 
+//---------
+class TwinkleFX : public FX
+{
+  byte mHue;
+  byte mDiv;
+
+public:
+  TwinkleFX(const byte hue=0, const byte d=5);
+  void update();
+
+  const char* getName() {return "Pulse";};
+  void setCmd(const MyCmd &cmd);
+  void getCmd(const MyCmd &cmd);
+};
+
 //--------------------------------------
 class BaseLedStrip
 {

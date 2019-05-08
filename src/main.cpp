@@ -39,12 +39,13 @@ AquaFX Aqua(false); // not reverse
 PlasmaFX Plasma;
 CylonFX Cylon;
 
-LedStrip<30, LEDR_PIN> LedsR("LedR");
-PulseFX PulseR;
+LedStrip<36, LEDR_PIN> LedsR("LedR");
+TwinkleFX PulseR;
+// PulseFX PulseR;
 // CylonFX CylonR1(0xff,0,0, 10, 4<<8);
 // CylonFX CylonR2(0xff,0,0, 10, (-4)<<8);
 
-LedStrip<15, LEDF_PIN> LedsF("LedF");
+LedStrip<36, LEDF_PIN> LedsF("LedF");
 CylonFX CylonF;
 
 typedef struct {
@@ -146,7 +147,7 @@ void loop()
   }
 
   EVERY_N_MILLISECONDS(LED_TICK) {
-    int light = analogRead(LDR_PIN); // read analog input pin 0
+    int light = analogRead(LDR_PIN);
     byte bright = map(light, MIN_LIGHT, MAX_LIGHT, 255, 0); // to darker the light, the brighter the leds
     // Serial << light << " " << bright << endl;
     // AllLeds.setBrightness(bright);
@@ -171,7 +172,6 @@ void loop()
         EVERY_N_MILLISECONDS(50) {
           // int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
           // *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
-          // Serial << rx << " " << ry << " " << rz << " " << endl;
         }
       }
     }
