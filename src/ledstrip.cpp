@@ -208,6 +208,8 @@ void TwinkleFX::update()
     // mLeds[i] = ColorFromPalette(currentPalette, i*20, fader, currentBlending);       // Now, let's run it through the palette lookup.
     mLeds[i] = CHSV(hue, SATURATION , fader);
   }
+
+  random16_set_seed(millis()); // "restart" random for other FX
 }
 
 void TwinkleFX::setCmd(const MyCmd &cmd)
