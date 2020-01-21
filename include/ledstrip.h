@@ -34,7 +34,8 @@ public:
   virtual void setCmd(const MyCmd &cmd);
   virtual void getCmd(const MyCmd &cmd);
 
-  CRGB* updateAndFade();
+  //CRGB* updateAndFade();
+  void updateAndBlend(CRGB* dst);
   virtual void update();
 };
 
@@ -205,6 +206,15 @@ public:
 
   void update()
   {
+    mController->clearLedData();
+
+    for (byte i=0; i < mNFX; i++)
+      mFX[i]->updateAndBlend(mLeds);
+  };
+
+  /*
+  void update()
+  {
     // copy then blend available fx
     bool shown = false;
 
@@ -217,6 +227,7 @@ public:
           shown = true;
         }
         else // then blend
+
           for (byte k=0; k < NLEDS; k++)
             mLeds[k] += src[k];
       }
@@ -225,4 +236,5 @@ public:
     if(!shown) // clear if no FX shown
       mController->clearLedData();
   };
+  */
 };

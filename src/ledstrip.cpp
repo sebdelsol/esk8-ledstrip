@@ -9,6 +9,7 @@ void FX::init(int nLeds)
   specialInit(nLeds);
 }
 
+/*
 CRGB* FX::updateAndFade()
 {
   if (mAlpha > 0) { // 0 is invisible
@@ -18,6 +19,15 @@ CRGB* FX::updateAndFade()
     return mLeds;
   }
   return NULL;
+}
+*/
+
+void FX::updateAndBlend(CRGB* display)
+{
+  if (mAlpha > 0) { // 0 is invisible
+    update();
+    nblend(display, mLeds, mNLEDS, mAlpha);
+  }
 }
 
 void FX::answer(const MyCmd &cmd, byte arg1, byte arg2, byte arg3)
@@ -33,7 +43,7 @@ void FX::answer(const MyCmd &cmd, byte arg)
 }
 
 // ----------------------------------------------------
-FireFX::FireFX(const bool reverse, const byte cooling, const byte sparkling) : mReverse(reverse), mCooling(cooling), mSparkling(sparkling)
+FireFX::FireFX(const bool reverse, const byte cooling, const byte sparkling) : mCooling(cooling), mSparkling(sparkling), mReverse(reverse)
 {
   mPal = HeatColors_p;
 }
