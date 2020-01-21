@@ -8,6 +8,8 @@
 #include <Streaming.h>
 #include <soc/rtc.h> // get cpu freq
 
+#define toto 5
+
 // ----------------------------------------------------
 #define LED_MAX_MA 700//2000
 #define LED_TICK 15
