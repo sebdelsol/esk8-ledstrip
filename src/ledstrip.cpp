@@ -9,25 +9,20 @@ void FX::init(int nLeds)
   specialInit(nLeds);
 }
 
-/*
-CRGB* FX::updateAndFade()
-{
-  if (mAlpha > 0) { // 0 is invisible
-    update();
-    if (mAlpha < 255) // 255 no fade
-      nscale8_video(mLeds, mNLEDS, mAlpha);
-    return mLeds;
-  }
-  return NULL;
-}
-*/
 
-void FX::updateAndBlend(CRGB* display)
+bool FX::updateAndScaleIn(CRGB *dst)
 {
   if (mAlpha > 0) { // 0 is invisible
+
     update();
-    nblend(display, mLeds, mNLEDS, mAlpha);
+    memcpy8(dst, mLeds, mNLEDS * sizeof(CRGB));
+
+    if (mAlpha < 255) // 255 no fade
+      nscale8_video(dst, mNLEDS, mAlpha);
+
+    return true;
   }
+  return false;
 }
 
 void FX::answer(const MyCmd &cmd, byte arg1, byte arg2, byte arg3)

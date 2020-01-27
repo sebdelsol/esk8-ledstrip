@@ -40,10 +40,10 @@ PlasmaFX Plasma;
 CylonFX Cylon;
 
 LedStrip<36, LEDR_PIN> LedsR("LedR");
-TwinkleFX PulseR;
-// PulseFX PulseR;
-// CylonFX CylonR1(0xff,0,0, 10, 4<<8);
-// CylonFX CylonR2(0xff,0,0, 10, (-4)<<8);
+// TwinkleFX PulseR;
+PulseFX PulseR;
+CylonFX CylonR1(0xff,0,0, 10, 4<<8);
+CylonFX CylonR2(0xff,0,0, 10, (-4)<<8);
 
 LedStrip<36, LEDF_PIN> LedsF("LedF");
 CylonFX CylonF;
@@ -79,9 +79,9 @@ void setup()
   // digitalWrite(BUILTIN_LED, LOW);
   // Serial << "led " << BUILTIN_LED << endl;
 
-  PulseR.setAlpha(255);
-  // CylonR1.setAlpha(255);
-  // CylonR2.setAlpha(255);
+  PulseR.setAlpha(25);
+  CylonR1.setAlpha(255);
+  CylonR2.setAlpha(255);
   CylonF.setAlpha(255);
 
   AllLeds.registerStrip(Leds);
@@ -92,8 +92,8 @@ void setup()
 
   AllLeds.registerStrip(LedsR);
   LedsR.registerFX(PulseR);
-  // LedsR.registerFX(CylonR1);
-  // LedsR.registerFX(CylonR2);
+  LedsR.registerFX(CylonR1);
+  LedsR.registerFX(CylonR2);
 
   AllLeds.registerStrip(LedsF);
   LedsF.registerFX(CylonF);
@@ -127,10 +127,12 @@ void loop()
   int x, y, z, oneG;
   float *ypr;
   bool gotAccel = Accel.getXYZ(&ypr, x, y, z, oneG);
+  /*
   if (gotAccel){
     int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
-    // Serial << rx << " " << ry << " " << rz << " " << endl;
+    Serial << rx << " " << ry << " " << rz << " " << endl;
   }
+  */
 
   static long alphaBT = 255, alphaBTtarget = 0;
   static bool btOn = BT.update();

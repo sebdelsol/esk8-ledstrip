@@ -34,9 +34,8 @@ public:
   virtual void setCmd(const MyCmd &cmd);
   virtual void getCmd(const MyCmd &cmd);
 
-  //CRGB* updateAndFade();
-  void updateAndBlend(CRGB* dst);
   virtual void update();
+  bool updateAndScaleIn(CRGB *dst);
 };
 
 //--------------------------------------
@@ -159,7 +158,7 @@ public:
 template <int NLEDS, int LEDPIN>
 class LedStrip : public BaseLedStrip
 {
-  CRGB mLeds[NLEDS];
+  CRGB mDisplay[NLEDS];
   CLEDController *mController;
   char * mName;
 
@@ -173,7 +172,7 @@ public:
     mName = (char *)malloc(strlen(name) + 1);
     sprintf(mName, "%s", name);
 
-    mController = &FastLED.addLeds<CHIPSET, LEDPIN, COLOR_ORDER>(mLeds, NLEDS);
+    mController = &FastLED.addLeds<CHIPSET, LEDPIN, COLOR_ORDER>(mDisplay, NLEDS);
     mController->setCorrection(TypicalSMD5050); // = TypicalLEDStrip
   };
 
@@ -201,40 +200,30 @@ public:
   {
     Serial << "getdata" << NLEDS << endl;
     n = NLEDS * sizeof(CRGB);
-    return (byte*) mLeds;
+    return (byte*) mDisplay;
   };
 
   void update()
   {
-    mController->clearLedData();
-
-    for (byte i=0; i < mNFX; i++)
-      mFX[i]->updateAndBlend(mLeds);
-  };
-
-  /*
-  void update()
-  {
-    // copy then blend available fx
+    CRGB tmp[NLEDS];
     bool shown = false;
 
     for (byte i=0; i < mNFX; i++) {
-      CRGB *src = mFX[i]->updateAndFade();
+      FX *fx = mFX[i];
 
-      if (src!=NULL) {
-        if (!shown) { // copy first
-          memcpy8(mLeds, src, NLEDS * sizeof(CRGB));
+      if (!shown) { //direct copy in mDisplay
+        if (fx->updateAndScaleIn(mDisplay))
           shown = true;
-        }
-        else // then blend
-
-          for (byte k=0; k < NLEDS; k++)
-            mLeds[k] += src[k];
+      }
+      else { //copy in tmp then blend
+        if (fx->updateAndScaleIn(tmp))
+          for (byte i=0; i < NLEDS; i++)
+            mDisplay[i] |= tmp[i]; // blend max
       }
     }
 
-    if(!shown) // clear if no FX shown
+    if (!shown) // nothing shown, clear leds
       mController->clearLedData();
   };
-  */
+
 };
