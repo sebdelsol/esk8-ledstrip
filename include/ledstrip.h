@@ -205,25 +205,25 @@ public:
 
   void update()
   {
-    CRGB tmp[NLEDS];
-    bool shown = false;
+    byte i = 0;
 
-    for (byte i=0; i < mNFX; i++) {
-      FX *fx = mFX[i];
+    //direct copy in mDisplay
+    for (; i < mNFX; i++) 
+      if (mFX[i]->updateAndScaleIn(mDisplay))
+        break;
 
-      if (!shown) { //direct copy in mDisplay
-        if (fx->updateAndScaleIn(mDisplay))
-          shown = true;
-      }
-      else { //copy in tmp then blend
-        if (fx->updateAndScaleIn(tmp))
-          for (byte i=0; i < NLEDS; i++)
-            mDisplay[i] |= tmp[i]; // blend max
-      }
+    if (i==mNFX) // nothing shown, clear leds
+      mController->clearLedData();
+
+    else { //copy in tmp then blend
+      CRGB tmp[NLEDS];
+  
+      for (; i < mNFX; i++)
+        if (mFX[i]->updateAndScaleIn(tmp))
+            for (byte k=0; k < NLEDS; k++)
+              mDisplay[k] |= tmp[k]; // blend max
     }
 
-    if (!shown) // nothing shown, clear leds
-      mController->clearLedData();
   };
 
 };
