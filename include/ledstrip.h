@@ -35,7 +35,7 @@ public:
   virtual void getCmd(const MyCmd &cmd);
 
   virtual void update();
-  bool updateAndScale(CRGB *dst);
+  bool getUpdateTo(CRGB *dst);
 };
 
 //--------------------------------------
@@ -209,7 +209,7 @@ public:
 
     // direct copy in mDisplay
     for (; i < mNFX; i++) 
-      if (mFX[i]->updateAndScale(mDisplay))
+      if (mFX[i]->getUpdateTo(mDisplay))
         break;
 
     // copy in tmp then blend
@@ -218,7 +218,7 @@ public:
       CRGB tmp[NLEDS];
   
       for (; i < mNFX; i++)
-        if (mFX[i]->updateAndScale(tmp))
+        if (mFX[i]->getUpdateTo(tmp))
             for (byte k=0; k < NLEDS; k++)
               mDisplay[k] |= tmp[k]; // = max(mDisplay[k], tmp[k])
     }

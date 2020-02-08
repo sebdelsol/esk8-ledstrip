@@ -10,7 +10,7 @@ void FX::init(int nLeds)
 }
 
 
-bool FX::updateAndScale(CRGB *dst)
+bool FX::getUpdateTo(CRGB *dst)
 {
   if (mAlpha > 0) { // 0 is invisible
 
