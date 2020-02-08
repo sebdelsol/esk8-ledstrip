@@ -9,7 +9,7 @@
 #include <soc/rtc.h> // get cpu freq
 
 // ----------------------------------------------------
-#define LED_MAX_MA 700//2000
+#define LED_MAX_MA 800//2000
 #define LED_TICK 15
 #define BT_TICK 15
 

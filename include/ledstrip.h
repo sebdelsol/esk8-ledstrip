@@ -160,7 +160,7 @@ class LedStrip : public BaseLedStrip
 {
   CRGB mDisplay[NLEDS];
   CLEDController *mController;
-  char * mName;
+  char *mName;
 
   FX *mFX[MAXFX];
   byte mNFX = 0;
@@ -200,30 +200,31 @@ public:
   {
     Serial << "getdata" << NLEDS << endl;
     n = NLEDS * sizeof(CRGB);
-    return (byte*) mDisplay;
+    return (byte *) mDisplay;
   };
 
   void update()
   {
-    byte i = 0;
+    byte i = 0; // led count
 
-    //direct copy in mDisplay
+    // direct copy in mDisplay
     for (; i < mNFX; i++) 
       if (mFX[i]->updateAndScaleIn(mDisplay))
         break;
 
-    if (i==mNFX) // nothing shown, clear leds
-      mController->clearLedData();
-
-    else { //copy in tmp then blend
+    // copy in tmp then blend
+    if (i < mNFX) 
+    {
       CRGB tmp[NLEDS];
   
       for (; i < mNFX; i++)
         if (mFX[i]->updateAndScaleIn(tmp))
             for (byte k=0; k < NLEDS; k++)
-              mDisplay[k] |= tmp[k]; // blend max
+              mDisplay[k] |= tmp[k]; // = max(mDisplay[k], tmp[k])
     }
-
+    // nothing shown, clear leds
+    else 
+      mController->clearLedData();
   };
 
 };
