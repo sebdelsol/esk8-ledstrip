@@ -9,17 +9,16 @@ void FX::init(int nLeds)
   specialInit(nLeds);
 }
 
-
-bool FX::getUpdateTo(CRGB *dst)
+bool FX::getUpdateIn(CRGBSet dst)
 {
-  if (mAlpha > 0) { // 0 is invisible
-
+  if (mAlpha > 0) // 0 is invisible
+  { 
     update();
-    memcpy8(dst, mLeds, mNLEDS * sizeof(CRGB));
-
+    memcpy8(dst.leds, mLeds, mNLEDS * sizeof(CRGB));
+    
     if (mAlpha < 255) // 255 no fade
-      nscale8_video(dst, mNLEDS, mAlpha);
-
+      dst.nscale8_video(mAlpha);
+    
     return true;
   }
   return false;
@@ -150,9 +149,6 @@ void PlasmaFX::getCmd(const MyCmd &cmd)
 
 // ----------------------------------------------------
 CylonFX::CylonFX(const byte r, const byte g, const byte b, const int eyeSize, const int speed) : mEyeSize(eyeSize), mSpeed(speed), mColor(CRGB(r, g, b))
-{}
-
-void CylonFX::specialInit(int nLeds)
 {
   if (mSpeed <0) mPos = 65535;
 }
@@ -200,7 +196,7 @@ void CylonFX::getCmd(const MyCmd &cmd)
 }
 
 // ----------------------------------------------------
-TwinkleFX::TwinkleFX(const byte hue, const byte f) : mHue(hue), mDiv(f)
+TwinkleFX::TwinkleFX(const byte hue, const byte hueScale, const byte f) : mHue(hue), mHueScale(hueScale), mDiv(f)
 {}
 
 void TwinkleFX::update()
@@ -209,9 +205,8 @@ void TwinkleFX::update()
 
   for (int i = 0; i<mNLEDS; i++) {
     byte fader = sin8(millis()/random8(mDiv, mDiv<<1));                                  // The random number for each 'i' will be the same every time.
-    byte hue = sin8(millis()/random8(mDiv<<1, mDiv<<2))>>2;                                  // The random number for each 'i' will be the same every time.
-    // mLeds[i] = ColorFromPalette(currentPalette, i*20, fader, currentBlending);       // Now, let's run it through the palette lookup.
-    mLeds[i] = CHSV(hue, SATURATION , fader);
+    byte hue = sin8(millis()/random8(mDiv<<1, mDiv<<2))>>mHueScale;                                  // The random number for each 'i' will be the same every time.
+    mLeds[i] = CHSV(mHue + hue, SATURATION , fader);
   }
 
   random16_set_seed(millis()); // "restart" random for other FX
@@ -280,7 +275,7 @@ bool AllLedStrips::registerStrip(BaseLedStrip &strip)
 {
   bool ok = mNStrips < MAXSTRIP;
   if (ok)
-    mStrips[mNStrips++] = (BaseLedStrip*)&strip;
+    mStrips[mNStrips++] = &strip;
   return ok;
 }
 

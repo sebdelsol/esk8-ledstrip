@@ -2,7 +2,7 @@
 #include <I2Cdev.h>
 #include <MPU6050_6Axis_MotionApps20.h>
 
-#define ONEG            16384
+#define ONEG            8192 //16384
 
 MPU6050 mpu;
 
@@ -32,6 +32,8 @@ void myMPU6050::begin() {
   // verify connection
   Serial << "connection " << (mpu.testConnection() ? F("successful") : F("failed")) << endl;
 
+  mpu.PrintActiveOffsets();
+
   // supply gyro offsets
   mpu.setXGyroOffset(79);
   mpu.setYGyroOffset(23);
@@ -39,6 +41,8 @@ void myMPU6050::begin() {
   mpu.setXAccelOffset(-1599);
   mpu.setYAccelOffset(-4463);
   mpu.setZAccelOffset(1234);
+
+  mpu.PrintActiveOffsets(); 
 
   // Serial << "Initializing DMP..." << endl;
   devStatus = mpu.dmpInitialize();
@@ -102,12 +106,17 @@ bool myMPU6050::getXYZ(float **YPR, int &x, int &y, int &z, int &oneG) {
 
     // Serial << "ypr\t" << ypr[0] * 180/M_PI << "\t" << ypr[1] * 180/M_PI << "\t" << ypr[2] * 180/M_PI << "\t";
     // Serial << "areal\t" << aaReal.x/8192. << "\t" << aaReal.y/8192. << "\t" << aaReal.z/8192. << endl;
+    // Serial << "aa\t" << aa.x << "\t" << aa.y << "\t" << aa.z << endl;
+    // Serial << "areal\t" << aaReal.x << "\t" << aaReal.y << "\t" << aaReal.z << endl;
 
     ulong t = millis();
     int w = int(pow(ACCEL_AVG, (t - mT) * ACCEL_BASE_FREQ / 1000.) * 65536.);
-    mX = lerp15by16(mX, aaReal.x, w);
-    mY = lerp15by16(mY, aaReal.y, w);
-    mZ = lerp15by16(mZ, aaReal.z, w);
+    // mX = lerp15by16(mX, aaReal.x, w);
+    // mY = lerp15by16(mY, aaReal.y, w);
+    // mZ = lerp15by16(mZ, aaReal.z, w);
+    mX = lerp15by16(mX, aa.x, w);
+    mY = lerp15by16(mY, aa.y, w);
+    mZ = lerp15by16(mZ, aa.z, w);
     mT = t;
   }
 

@@ -14,7 +14,7 @@
 //--------------------------------------
 class FX
 {
-  byte mAlpha = 0; // not visible , call setAlpha
+  byte mAlpha = 255; // visible
 
 protected:
   int mNLEDS = 0;
@@ -35,7 +35,7 @@ public:
   virtual void getCmd(const MyCmd &cmd);
 
   virtual void update();
-  bool getUpdateTo(CRGB *dst);
+  bool getUpdateIn(CRGBSet dst);
 };
 
 //--------------------------------------
@@ -84,13 +84,14 @@ public:
 class CylonFX : public FX
 {
 protected:
-  int mPos = 0, mEyeSize, mSpeed;
+  int mPos = 0, mEyeSize, mSpeed;  
   CRGB mColor;
 
 public:
   CylonFX(const byte r=0x00, const byte g = 0x00, const byte b = 0xff, const int eyeSize = 3, const int speed = 2<<8);
-  void specialInit(int nLeds);
   void update();
+
+  void setEyeSize(const int eyeSize) {mEyeSize = eyeSize;};
 
   const char* getName() {return "Cylon";};
   void setCmd(const MyCmd &cmd);
@@ -118,12 +119,13 @@ class TwinkleFX : public FX
 {
   byte mHue;
   byte mDiv;
+  byte mHueScale;
 
-public:
-  TwinkleFX(const byte hue=0, const byte d=5);
+public: 
+  TwinkleFX(const byte hue=0, const byte hueScale=5, const byte d=5);
   void update();
 
-  const char* getName() {return "Pulse";};
+  const char* getName() {return "Twinkle";};
   void setCmd(const MyCmd &cmd);
   void getCmd(const MyCmd &cmd);
 };
@@ -137,7 +139,7 @@ public:
   virtual byte* getData(int& n); // for myWifi
 };
 
-//--------------------------------------
+//---------
 class AllLedStrips
 {
   BaseLedStrip *mStrips[MAXSTRIP];
@@ -155,10 +157,13 @@ public:
 };
 
 //--------------------------------------
+
 template <int NLEDS, int LEDPIN>
 class LedStrip : public BaseLedStrip
 {
-  CRGB mDisplay[NLEDS];
+  CRGBArray<NLEDS> mBuffer;
+  CRGBArray<NLEDS> mDisplay;
+
   CLEDController *mController;
   char *mName;
 
@@ -180,7 +185,7 @@ public:
   {
     bool ok = mNFX < MAXFX;
     if (ok) {
-      mFX[mNFX++] = (FX*)&fx;
+      mFX[mNFX++] = &fx;
       fx.init(NLEDS);
     }
     return ok;
@@ -200,30 +205,27 @@ public:
   {
     Serial << "getdata" << NLEDS << endl;
     n = NLEDS * sizeof(CRGB);
-    return (byte *) mDisplay;
+    return (byte *) mDisplay.leds;
   };
 
   void update()
   {
-    byte i = 0; // led count
+    byte i = 0; // fx count
 
     // direct copy in mDisplay
     for (; i < mNFX; i++) 
-      if (mFX[i]->getUpdateTo(mDisplay))
+      if (mFX[i]->getUpdateIn(mDisplay))
         break;
 
     // copy in tmp then blend
-    if (i < mNFX) 
+    if (++i <= mNFX) 
     {
-      CRGB tmp[NLEDS];
-  
       for (; i < mNFX; i++)
-        if (mFX[i]->getUpdateTo(tmp))
-            for (byte k=0; k < NLEDS; k++)
-              mDisplay[k] |= tmp[k]; // = max(mDisplay[k], tmp[k])
+        if (mFX[i]->getUpdateIn(mBuffer))
+            mDisplay |= mBuffer; // max of each RGB component
     }
     // nothing shown, clear leds
-    else 
+    else
       mController->clearLedData();
   };
 
