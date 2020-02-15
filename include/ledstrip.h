@@ -214,14 +214,14 @@ public:
 
     for (; i < mNFX; i++) // direct copy in mDisplay
       if (mFX[i]->getUpdateIn(mDisplay))
-        break;
+        break; // fx drawn !
 
     if (++i <= mNFX) { // some fx left ?
       for (; i < mNFX; i++) // copy in mBuffer & blend in mDisplay
         if (mFX[i]->getUpdateIn(mBuffer))
-            mDisplay |= mBuffer; // max of RGB
+            mDisplay |= mBuffer; // fx drawn, blend max of RGB
     }
-    else // if no fx shown, clear leds
+    else // if no fx drawn, clear the ledstrip
       mController->clearLedData();
   };
 
