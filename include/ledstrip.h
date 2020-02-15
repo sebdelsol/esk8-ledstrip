@@ -219,7 +219,7 @@ public:
     if (++i <= mNFX) { // some fx left ?
       for (; i < mNFX; i++) // copy in mBuffer & blend in mDisplay
         if (mFX[i]->getUpdateIn(mBuffer))
-            mDisplay |= mBuffer; // fx drawn, blend max of RGB
+            mDisplay |= mBuffer; // fx drawn, get max of each RGB component
     }
     else // if no fx drawn, clear the ledstrip
       mController->clearLedData();
