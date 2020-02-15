@@ -35,7 +35,7 @@ public:
   virtual void getCmd(const MyCmd &cmd);
 
   virtual void update();
-  bool getUpdateIn(CRGBSet dst);
+  bool drawOn(CRGBSet dst);
 };
 
 //--------------------------------------
@@ -212,16 +212,16 @@ public:
   {
     byte i = 0; // fx count
 
-    for (; i < mNFX; i++) // direct copy in mDisplay
-      if (mFX[i]->getUpdateIn(mDisplay)) // fx shown ?
-        break; // fx drawn, now we've to blend
+    for (; i < mNFX; i++) // 1st fx is drawn on mDisplay
+      if (mFX[i]->drawOn(mDisplay))
+        break; // now we've to blend
 
     if (++i <= mNFX) { // some fx left ?
-      for (; i < mNFX; i++) // copy in mBuffer & blend in mDisplay
-        if (mFX[i]->getUpdateIn(mBuffer)) // fx shown ?
+      for (; i < mNFX; i++) // draw on mBuffer & blend with mDisplay
+        if (mFX[i]->drawOn(mBuffer)) 
             mDisplay |= mBuffer; // blend = get the max of each RGB component
     }
-    else // if no fx shown, clear the ledstrip
+    else // if no fx drawn, clear the ledstrip
       mController->clearLedData();
   };
 

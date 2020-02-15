@@ -9,7 +9,7 @@ void FX::init(int nLeds)
   specialInit(nLeds);
 }
 
-bool FX::getUpdateIn(CRGBSet dst)
+bool FX::drawOn(CRGBSet dst)
 {
   if (mAlpha > 0) // 0 is invisible
   { 
