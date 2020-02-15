@@ -16,7 +16,7 @@ bool FX::getUpdateIn(CRGBSet dst)
     update();
     memcpy8(dst.leds, mLeds, mNLEDS * sizeof(CRGB));
     
-    if (mAlpha < 255) // 255 no fade
+    if (mAlpha < 255) // 255 = no fade
       dst.nscale8_video(mAlpha);
     
     return true;

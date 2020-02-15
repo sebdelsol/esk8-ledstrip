@@ -161,8 +161,8 @@ public:
 template <int NLEDS, int LEDPIN>
 class LedStrip : public BaseLedStrip
 {
-  CRGBArray<NLEDS> mBuffer;
-  CRGBArray<NLEDS> mDisplay;
+  CRGBArray<NLEDS> mBuffer; // tmp buffer for copying & fading of each fx
+  CRGBArray<NLEDS> mDisplay; // target display
 
   CLEDController *mController;
   char *mName;
@@ -212,20 +212,16 @@ public:
   {
     byte i = 0; // fx count
 
-    // direct copy in mDisplay
-    for (; i < mNFX; i++) 
+    for (; i < mNFX; i++) // direct copy in mDisplay
       if (mFX[i]->getUpdateIn(mDisplay))
         break;
 
-    // copy in tmp then blend
-    if (++i <= mNFX) 
-    {
-      for (; i < mNFX; i++)
+    if (++i <= mNFX) { // some fx left ?
+      for (; i < mNFX; i++) // copy in mBuffer & blend in mDisplay
         if (mFX[i]->getUpdateIn(mBuffer))
-            mDisplay |= mBuffer; // max of each RGB component
+            mDisplay |= mBuffer; // max of RGB
     }
-    // nothing shown, clear leds
-    else
+    else // if no fx shown, clear leds
       mController->clearLedData();
   };
 
