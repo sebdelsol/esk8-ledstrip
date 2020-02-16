@@ -102,8 +102,7 @@ AquaFX::AquaFX(const bool reverse, const byte cooling, const byte sparkling) : F
 }
 
 // ----------------------------------------------------
-PlasmaFX::PlasmaFX(const byte wavelenght, const byte period1, const byte period2) : mK(wavelenght), mP1(period1), mP2(period2)
-{}
+PlasmaFX::PlasmaFX(const byte wavelenght, const byte period1, const byte period2) : mK(wavelenght), mP1(period1), mP2(period2) {}
 
 void PlasmaFX::update()
 {
@@ -196,16 +195,15 @@ void CylonFX::getCmd(const MyCmd &cmd)
 }
 
 // ----------------------------------------------------
-TwinkleFX::TwinkleFX(const byte hue, const byte hueScale, const byte f) : mHue(hue), mHueScale(hueScale), mDiv(f)
-{}
+TwinkleFX::TwinkleFX(const byte hue, const byte hueScale, const byte f) : mHue(hue), mHueScale(hueScale), mDiv(f) {}
 
 void TwinkleFX::update()
 {
   random16_set_seed(535);  // The randomizer needs to be re-set each time through the loop in order for the 'random' numbers to be the same each time through.
 
   for (int i = 0; i<mNLEDS; i++) {
-    byte fader = sin8(millis()/random8(mDiv, mDiv<<1));                                  // The random number for each 'i' will be the same every time.
-    byte hue = sin8(millis()/random8(mDiv<<1, mDiv<<2))>>mHueScale;                                  // The random number for each 'i' will be the same every time.
+    byte fader = sin8(millis()/random8(mDiv, mDiv<<1));               // The random number for each 'i' will be the same every time.
+    byte hue = sin8(millis()/random8(mDiv<<1, mDiv<<2)) >> mHueScale; // The random number for each 'i' will be the same every time.
     mLeds[i] = CHSV(mHue + hue, SATURATION , fader);
   }
 
@@ -231,8 +229,7 @@ void TwinkleFX::getCmd(const MyCmd &cmd)
 }
 
 // ----------------------------------------------------
-PulseFX::PulseFX(const byte hue, const long frac8, const byte w) : mHue(hue), mFreq(frac8), mWavelength(w)
-{}
+PulseFX::PulseFX(const byte hue, const long frac8, const byte w) : mHue(hue), mFreq(frac8), mWavelength(w) {}
 
 void PulseFX::update(){
 

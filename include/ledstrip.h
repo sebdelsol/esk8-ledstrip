@@ -217,7 +217,7 @@ public:
       if (mFX[i]->drawOn(mDisplay))
         break; // now we've to blend
 
-    // some fx left ?
+    // some fx left to draw ?
     if (++i <= mNFX) { 
       // draw on mBuffer & blend with mDisplay
       for (; i < mNFX; i++) 
