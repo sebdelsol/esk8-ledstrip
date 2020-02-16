@@ -34,8 +34,7 @@ myMPU6050 Accel;
 AllLedStrips AllLeds(LED_MAX_MA);
 
 LedStrip<30, LED_PIN> Leds("Led");
-// FireFX(const bool reverse = false, const byte cooling = 75, const byte sparkling = 120);
-FireFX Fire(false, 75, 120); 
+FireFX Fire(false, 75, 120); // (const bool reverse = false, const byte cooling = 75, const byte sparkling = 120);
 TwinkleFX Twinkle;
 // AquaFX Aqua(false, 40, 100); // not reverse
 // PlasmaFX Plasma;
@@ -136,10 +135,6 @@ void setup()
   // AllCFG.save();
   // AllCFG.cleanUnRegistered();
 
-  // pinMode(BUILTIN_LED, OUTPUT);
-  // digitalWrite(BUILTIN_LED, LOW);
-  // Serial << "led " << BUILTIN_LED << endl;
-
   AllLeds.registerStrip(Leds);
   Leds.registerFX(Fire);
   // Leds.registerFX(Aqua);
@@ -174,10 +169,6 @@ void setup()
   // BT.registerFX(Plasma, 'P');
   // BT.registerFX(Cylon, 'C');
 
-  // test 74AHCT125n
-  // pinMode(LED_PIN, OUTPUT);
-  // digitalWrite(LED_PIN, HIGH);
-
   // Button.begin();
   Accel.begin();
 }
@@ -194,12 +185,6 @@ void loop()
   int x, y, z, oneG;
   float *ypr;
   bool gotAccel = Accel.getXYZ(&ypr, x, y, z, oneG);
-  /*
-  if (gotAccel){
-    int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
-    Serial << rx << " " << ry << " " << rz << " " << endl;
-  }
-  */
 
   // static long alphaBT = 255, alphaBTtarget = 0;
   // static bool btOn = BT.update();
@@ -223,6 +208,8 @@ void loop()
 
     // alphaBT = MYLERP(alphaBT, alphaBTtarget, 10); //20/256
     // Serial << alphaBT << " => " << alphaBTtarget << endl;
+    // int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
+    // Serial << rx << " " << ry << " " << rz << " " << endl;
 
     // if (!btOn){
       if (gotAccel){
@@ -241,13 +228,6 @@ void loop()
         CylonF1.setEyeSize(eyesizeF);
         CylonF2.setEyeSize(eyesizeF);
         TwinkleF.setAlpha(twinkF);
-
-        // Plasma.setAlpha(255-abs(fwd)); // plasma visible when fwd is ~0
-        // Aqua.setAlpha(max(fwd, 0)); // aqua visible when fwd is >> 0
-        // Fire.setAlpha(max(-fwd, 0)); // fire visible when fwd is << 0
-        // Plasma.setAlpha(0); // plasma visible when fwd is ~0
-        // Aqua.setAlpha(0); // aqua visible when fwd is >> 0
-        // Fire.setAlpha(0); // fire visible when fwd is << 0
 
         // PulseR.setAlpha(max(-fwd, 0)); // fire visible when fwd is << 0
         // Plasma.setAlpha(ALPHA_MULT(255-abs(fwd), alphaBT));          // plasma visible when fwd is ~0
@@ -277,6 +257,4 @@ void loop()
 
   AllLeds.show(); // to be called as much as possible for Fastled brightness dithering
 
-  // perf
-  // Serial << "busy " << (millis() - start) << " / " << LED_TICK << "ms         \n";
 }

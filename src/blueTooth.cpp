@@ -44,15 +44,14 @@ void BlueTooth::start(const bool on)
 {
   WasOn = on; //HACK
   Serial << (on ? "Start" : "Stop") << " BT" << endl;
-  digitalWrite(LIGHT_PIN, on ? HIGH : LOW);
   if (on){
     mON = BTSerial.begin(BT_TERMINAL_NAME);
-    digitalWrite(LIGHT_PIN, mON ? HIGH : LOW);
   }
   else{
     mON = false;
     BTSerial.end();
   }
+  digitalWrite(LIGHT_PIN, mON ? HIGH : LOW);
   Connected = false;
   // Serial << (mON ? "Start" : "Stop") << " BT done" << endl;
 }

@@ -212,16 +212,20 @@ public:
   {
     byte i = 0; // fx count
 
-    for (; i < mNFX; i++) // 1st fx is drawn on mDisplay
+    // 1st fx is drawn on mDisplay
+    for (; i < mNFX; i++) 
       if (mFX[i]->drawOn(mDisplay))
         break; // now we've to blend
 
-    if (++i <= mNFX) { // some fx left ?
-      for (; i < mNFX; i++) // draw on mBuffer & blend with mDisplay
+    // some fx left ?
+    if (++i <= mNFX) { 
+      // draw on mBuffer & blend with mDisplay
+      for (; i < mNFX; i++) 
         if (mFX[i]->drawOn(mBuffer)) 
-            mDisplay |= mBuffer; // blend = get the max of each RGB component
+            mDisplay |= mBuffer; // get the max of each RGB component
     }
-    else // if no fx drawn, clear the ledstrip
+    // if no fx drawn, clear the ledstrip
+    else 
       mController->clearLedData();
   };
 
