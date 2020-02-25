@@ -110,13 +110,10 @@ bool myMPU6050::getXYZ(float **YPR, int &x, int &y, int &z, int &oneG) {
     // Serial << "areal\t" << aaReal.x << "\t" << aaReal.y << "\t" << aaReal.z << endl;
 
     ulong t = millis();
-    int w = int(pow(ACCEL_AVG, (t - mT) * ACCEL_BASE_FREQ / 1000.) * 65536.);
-    // mX = lerp15by16(mX, aaReal.x, w);
-    // mY = lerp15by16(mY, aaReal.y, w);
-    // mZ = lerp15by16(mZ, aaReal.z, w);
-    mX = lerp15by16(mX, aa.x, w);
-    mY = lerp15by16(mY, aa.y, w);
-    mZ = lerp15by16(mZ, aa.z, w);
+    int w = -int(pow(1. - ACCEL_AVG, (t - mT) * ACCEL_BASE_FREQ / 1000.) * 65536.);
+    mX = lerp15by16(mX, aaReal.x, w);
+    mY = lerp15by16(mY, aaReal.y, w);
+    mZ = lerp15by16(mZ, aaReal.z, w);
     mT = t;
   }
 

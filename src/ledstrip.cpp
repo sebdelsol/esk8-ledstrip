@@ -147,9 +147,9 @@ void PlasmaFX::getCmd(const MyCmd &cmd)
 }
 
 // ----------------------------------------------------
-CylonFX::CylonFX(const byte r, const byte g, const byte b, const int eyeSize, const int speed) : mEyeSize(eyeSize), mSpeed(speed), mColor(CRGB(r, g, b))
+CylonFX::CylonFX(const long color, const int eyeSize, const int speed) : mEyeSize(eyeSize), mSpeed(speed), mColor(CRGB(color))
 {
-  if (mSpeed <0) mPos = 65535;
+  mPos = mSpeed < 0 ? 65535 : 0;
 }
 
 void CylonFX::update()
@@ -195,7 +195,16 @@ void CylonFX::getCmd(const MyCmd &cmd)
 }
 
 // ----------------------------------------------------
-TwinkleFX::TwinkleFX(const byte hue, const byte hueScale, const byte f) : mHue(hue), mHueScale(hueScale), mDiv(f) {}
+TwinkleFX::TwinkleFX(const byte hue, const byte hueDiv, const byte div) : mHueDiv(hueDiv), mDiv(div) 
+{
+  mHSV = CHSV(hue, 0xff, 0xff);
+}
+
+TwinkleFX::TwinkleFX(const CRGB color, const byte hueDiv, const byte div) : mHueDiv(hueDiv), mDiv(div)
+{
+  mHSV = rgb2hsv_approximate(color);
+}
+
 
 void TwinkleFX::update()
 {
@@ -203,8 +212,8 @@ void TwinkleFX::update()
 
   for (int i = 0; i<mNLEDS; i++) {
     byte fader = sin8(millis()/random8(mDiv, mDiv<<1));               // The random number for each 'i' will be the same every time.
-    byte hue = sin8(millis()/random8(mDiv<<1, mDiv<<2)) >> mHueScale; // The random number for each 'i' will be the same every time.
-    mLeds[i] = CHSV(mHue + hue, SATURATION , fader);
+    byte hue = sin8(millis()/random8(mDiv<<1, mDiv<<2)) >> mHueDiv; // The random number for each 'i' will be the same every time.
+    mLeds[i] = CHSV(mHSV.h + hue, mHSV.s , fader);
   }
 
   random16_set_seed(millis()); // "restart" random for other FX
@@ -213,7 +222,7 @@ void TwinkleFX::update()
 void TwinkleFX::setCmd(const MyCmd &cmd)
 {
   switch(cmd.what) {
-    case 'H': mHue = cmd.arg[0]; break;
+    case 'H': mHSV.h = cmd.arg[0]; break;
     case 'D': mDiv = cmd.arg[0]; break;
     case 'B': setAlpha(cmd.arg[0]); break;
   }
@@ -222,7 +231,7 @@ void TwinkleFX::setCmd(const MyCmd &cmd)
 void TwinkleFX::getCmd(const MyCmd &cmd)
 {
   switch(cmd.what) {
-    case 'H': answer(cmd, mHue); break;
+    case 'H': answer(cmd, mHSV.h); break;
     case 'D': answer(cmd, mDiv); break;
     case 'B': answer(cmd, getAlpha()); break;
   }

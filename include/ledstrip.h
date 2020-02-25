@@ -84,11 +84,11 @@ public:
 class CylonFX : public FX
 {
 protected:
-  int mPos = 0, mEyeSize, mSpeed;  
+  int mPos, mEyeSize, mSpeed;  
   CRGB mColor;
 
 public:
-  CylonFX(const byte r=0x00, const byte g = 0x00, const byte b = 0xff, const int eyeSize = 3, const int speed = 2<<8);
+  CylonFX(const long color=0x0000FF, const int eyeSize = 3, const int speed = 2<<8);
   void update();
 
   void setEyeSize(const int eyeSize) {mEyeSize = eyeSize;};
@@ -117,12 +117,13 @@ public:
 //---------
 class TwinkleFX : public FX
 {
-  byte mHue;
+  CHSV mHSV;
   byte mDiv;
-  byte mHueScale;
+  byte mHueDiv;
 
 public: 
-  TwinkleFX(const byte hue=0, const byte hueScale=5, const byte d=5);
+  TwinkleFX(const byte hue=0, const byte hueDiv=5, const byte div=5);
+  TwinkleFX(const CRGB color=0xff0000, const byte hueDiv=5, const byte div=5);
   void update();
 
   const char* getName() {return "Twinkle";};

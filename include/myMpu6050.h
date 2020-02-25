@@ -5,7 +5,7 @@
 #include <FastLED.h> // for lerp15by16
 #include <myPins.h>
 
-#define ACCEL_AVG .9
+#define ACCEL_AVG .1
 #define ACCEL_BASE_FREQ 60.
 
 class myMPU6050

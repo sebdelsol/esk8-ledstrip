@@ -25,6 +25,11 @@
 #define MYLERP(from, to, s) ((from<<8) + (s<<7) + (to-from)*s) >> 8 // s is a fract of 256
 #define ALPHA_MULT(a, multfrac) FROMFRAC(((a) * (TOFRAC(256)-multfrac)) >> 8)
 
+// -------------------
+#define AQUA_MENTHE   0x7FFFD4
+#define LUSH_LAVA     0xFF4500
+#define PHANTOM_BLUE  0x191970
+
 // ----------------------------------------------------
 myWifi MyWifi;
 // BlueTooth BT;
@@ -35,19 +40,19 @@ AllLedStrips AllLeds(LED_MAX_MA);
 
 LedStrip<30, LED_PIN> Leds("Led");
 FireFX Fire(false, 75, 120); // (const bool reverse = false, const byte cooling = 75, const byte sparkling = 120);
-TwinkleFX Twinkle;
+TwinkleFX Twinkle(0);
 // AquaFX Aqua(false, 40, 100); // not reverse
 // PlasmaFX Plasma;
 
 LedStrip<36, LEDR_PIN> LedsR("LedR");
-TwinkleFX TwinkleR(15);
-CylonFX CylonR1(0xff,0x10,0, 7, 4<<8);
-CylonFX CylonR2(0xff,0x10,0, 7, -4<<8);
+TwinkleFX TwinkleR(CRGB(LUSH_LAVA)); //15 //orange
+CylonFX CylonR1(LUSH_LAVA, 7, 3<<8); //0xff1000
+CylonFX CylonR2(LUSH_LAVA, 7, -3<<8);
 
 LedStrip<36, LEDF_PIN> LedsF("LedF");
-TwinkleFX TwinkleF(140);
-CylonFX CylonF1(0xc0,0xc0,0xff,  3, 4<<8);
-CylonFX CylonF2(0xc0,0xc0,0xff,  3, -4<<8);
+TwinkleFX TwinkleF(CRGB(AQUA_MENTHE)); //140 // aqua
+CylonFX CylonF1(AQUA_MENTHE,  3, 3<<8); //0xc0c0ff
+CylonFX CylonF2(AQUA_MENTHE,  3, -3<<8);
 
 // typedef struct {
 //   int toto = 1;
@@ -143,7 +148,6 @@ void setup()
 
   AllLeds.registerStrip(LedsR);
   LedsR.registerFX(TwinkleR);
-  TwinkleR.setAlpha(10);
   LedsR.registerFX(CylonR1);
   LedsR.registerFX(CylonR2);
 
@@ -214,20 +218,22 @@ void loop()
     // if (!btOn){
       if (gotAccel){
 
-        int fwd = constrain(-y * 256 / (oneG/8), -255, 255);
+        int fwd = constrain(-y * 256 / (oneG/32), -255, 255);
         // Serial << eyesize << "   " << fwd << " .. " << x << " " << y << " " << z << " " << endl;
 
-        int eyesizeR = map(max(-fwd, 0), 0, 256, 5, 10);
-        int twinkR = map(max(-fwd, 0), 0, 256, 5, 128);
+        int eyesizeR = map(max(-fwd, 0), 0, 256, 3, 10);
+        int twinkR = map(max(-fwd, 0), 0, 256, 5, 256);
         CylonR1.setEyeSize(eyesizeR);
         CylonR2.setEyeSize(eyesizeR);
         TwinkleR.setAlpha(twinkR);
 
         int eyesizeF = map(max(fwd, 0), 0, 256, 2, 7);
-        int twinkF = map(max(fwd, 0), 0, 256, 5, 128);
+        int twinkF = map(max(fwd, 0), 0, 256, 5, 256);
         CylonF1.setEyeSize(eyesizeF);
         CylonF2.setEyeSize(eyesizeF);
         TwinkleF.setAlpha(twinkF);
+
+        Serial << x <<" "<< y <<" "<< z << " " << fwd << "   " << eyesizeR << " .. " << eyesizeF << endl;
 
         // PulseR.setAlpha(max(-fwd, 0)); // fire visible when fwd is << 0
         // Plasma.setAlpha(ALPHA_MULT(255-abs(fwd), alphaBT));          // plasma visible when fwd is ~0
