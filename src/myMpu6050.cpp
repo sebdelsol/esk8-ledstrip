@@ -2,7 +2,7 @@
 #include <I2Cdev.h>
 #include <MPU6050_6Axis_MotionApps20.h>
 
-#define ONEG            8192 //16384
+#define ONEG 7780 //8192
 
 MPU6050 mpu;
 
@@ -21,6 +21,9 @@ VectorInt16 aaReal;               // [x, y, z]            gravity-free accel sen
 VectorFloat gravity;              // [x, y, z]            gravity vector
 float ypr[3] = {.0f, .0f, .0f};   // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
 
+bool gravityOK = false;
+long startTime;
+
 //--------------------------------------
 void myMPU6050::begin() {
   Wire.begin(SDA, SCL);
@@ -34,14 +37,14 @@ void myMPU6050::begin() {
 
   mpu.PrintActiveOffsets();
 
-  // supply gyro offsets
-  mpu.setXGyroOffset(79);
-  mpu.setYGyroOffset(23);
-  mpu.setZGyroOffset(-7);
-  mpu.setXAccelOffset(-1599);
-  mpu.setYAccelOffset(-4463);
-  mpu.setZAccelOffset(1234);
-
+  // supply gyro offsets // seems not useful with dmp
+  mpu.setXGyroOffset(77);
+  mpu.setYGyroOffset(4);
+  mpu.setZGyroOffset(8);
+  mpu.setXAccelOffset(-1772);
+  mpu.setYAccelOffset(-155);
+  mpu.setZAccelOffset(1270);
+ 
   mpu.PrintActiveOffsets(); 
 
   // Serial << "Initializing DMP..." << endl;
@@ -59,9 +62,30 @@ void myMPU6050::begin() {
   }
   else // ERROR! 1 = initial memory load failed, 2 = DMP configuration updates failed
     Serial << "DMP Initialization failed (" << devStatus << ")" << endl;
+
+  startTime = millis();
 }
 
 // ================================================================
+
+#define GRAV_CONV_DURATION 15000 //time for gravity to be correct ?
+void myMPU6050::dmpGetLinearAccel(VectorInt16 *v, VectorInt16 *vRaw, VectorFloat *gravity)
+{
+    if (!gravityOK){
+      v -> x = vRaw -> x;
+      v -> y = vRaw -> y;
+      v -> z = vRaw -> z;
+      if (millis() - startTime > GRAV_CONV_DURATION) 
+        gravityOK = true;
+    }
+    else {
+      // get rid of the gravity component (+1g = +8192 in standard DMP FIFO packet, sensitivity is 2g)
+      v -> x = vRaw -> x - gravity -> x * ONEG;
+      v -> y = vRaw -> y - gravity -> y * ONEG;
+      v -> z = vRaw -> z - gravity -> z * ONEG;
+    }
+}
+
 bool myMPU6050::readAccel() {
   if (dmpReady){
 
@@ -93,7 +117,7 @@ bool myMPU6050::readAccel() {
         // real acceleration, adjusted to remove gravity
         mpu.dmpGetQuaternion(&Q, fifoBuffer);
         mpu.dmpGetAccel(&aa, fifoBuffer);
-        mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
+        dmpGetLinearAccel(&aaReal, &aa, &gravity);
         return true;
       }
     }
@@ -104,17 +128,23 @@ bool myMPU6050::readAccel() {
 bool myMPU6050::getXYZ(float **YPR, int &x, int &y, int &z, int &oneG) {
   if (readAccel()) {
 
-    // Serial << "ypr\t" << ypr[0] * 180/M_PI << "\t" << ypr[1] * 180/M_PI << "\t" << ypr[2] * 180/M_PI << "\t";
-    // Serial << "areal\t" << aaReal.x/8192. << "\t" << aaReal.y/8192. << "\t" << aaReal.z/8192. << endl;
-    // Serial << "aa\t" << aa.x << "\t" << aa.y << "\t" << aa.z << endl;
-    // Serial << "areal\t" << aaReal.x << "\t" << aaReal.y << "\t" << aaReal.z << endl;
+    ulong t = micros();
+    long dt = t - mT;
+    mT = t;
 
-    ulong t = millis();
-    int w = -int(pow(1. - ACCEL_AVG, (t - mT) * ACCEL_BASE_FREQ / 1000.) * 65536.);
+    uint16_t w = - int(pow(1. - ACCEL_AVG, dt * ACCEL_BASE_FREQ / 1000000.) * 65536.); // 1 - (1-accel_avg) ^ (dt * 60 / 1000) using fract16
     mX = lerp15by16(mX, aaReal.x, w);
     mY = lerp15by16(mY, aaReal.y, w);
     mZ = lerp15by16(mZ, aaReal.z, w);
-    mT = t;
+
+    // Serial << "[ grav OK  " << dt/1000. << "ms, w=" << w/65536. << "]  ";;
+    // Serial << "[ dt  " << dt/1000. << "ms, w=" << w/65536. << "]  ";;
+    // Serial << "[ ypr  " << ypr[0] * 180/M_PI << "  " << ypr[1] * 180/M_PI << "  " << ypr[2] * 180/M_PI << "]  ";
+    // Serial << "[ grav  " << (gravityOK ? "OK":"NOT ok") << "\t" << gravity.x << "  " << gravity.y << "  " << gravity.z << "]  ";
+    // Serial << "[ AVG  " << mX << "  " << mY << "  " << mZ << "]  ";
+    // Serial << "[ aa  " << aa.x << "\t" << aa.y << "\t" << aa.z << "]  "; 
+    // Serial << "[ areal  " << aaReal.x << "\t" << aaReal.y << "\t" << aaReal.z << "]  ";
+    // Serial << "\r"; //endl;
   }
 
   x = mX;

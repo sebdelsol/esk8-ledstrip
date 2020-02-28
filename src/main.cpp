@@ -50,7 +50,7 @@ CylonFX CylonR1(LUSH_LAVA, 7, 3<<8); //0xff1000
 CylonFX CylonR2(LUSH_LAVA, 7, -3<<8);
 
 LedStrip<36, LEDF_PIN> LedsF("LedF");
-TwinkleFX TwinkleF(CRGB(AQUA_MENTHE)); //140 // aqua
+TwinkleFX TwinkleF(140); //140 // aqua
 CylonFX CylonF1(AQUA_MENTHE,  3, 3<<8); //0xc0c0ff
 CylonFX CylonF2(AQUA_MENTHE,  3, -3<<8);
 
@@ -132,6 +132,9 @@ void setup()
   Serial << "CPU freq " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
   Serial << "Esp32 core " << esp_get_idf_version() << endl;
 
+  pinMode(LIGHT_PIN, OUTPUT);
+  digitalWrite(LIGHT_PIN, LOW);
+
   // AllCFG.init();
   // AllCFG.RegisterCfg(test);
   // AllCFG.load();
@@ -184,8 +187,6 @@ void loop()
     ArduinoOTA.handle();
   #endif
 
-  long start = millis();
-
   int x, y, z, oneG;
   float *ypr;
   bool gotAccel = Accel.getXYZ(&ypr, x, y, z, oneG);
@@ -197,6 +198,7 @@ void loop()
 
   //   if (Button.pressed()) {
   //       Serial << "button pressed " << endl;
+  //       // digitalWrite(LIGHT_PIN, !digitalRead(LIGHT_PIN));
   //       BT.toggle();
   //   }
 
@@ -218,22 +220,46 @@ void loop()
     // if (!btOn){
       if (gotAccel){
 
-        int fwd = constrain(-y * 256 / (oneG/32), -255, 255);
-        // Serial << eyesize << "   " << fwd << " .. " << x << " " << y << " " << z << " " << endl;
+        #define SMOOTH_ACC 3200 // 6500 //.05
+        #define THRES_ACC 20
+        #define MAX_ACC 255
 
-        int eyesizeR = map(max(-fwd, 0), 0, 256, 3, 10);
-        int twinkR = map(max(-fwd, 0), 0, 256, 5, 256);
-        CylonR1.setEyeSize(eyesizeR);
-        CylonR2.setEyeSize(eyesizeR);
-        TwinkleR.setAlpha(twinkR);
+        // static int ACC = 0;
+        // int acc = constrain(y /2, -MAX_ACC, MAX_ACC) << 7;
+        // // ACC = acc*ACC < 0 || abs(acc) > abs(ACC) ? acc : lerp15by16(ACC, acc, SMOOTH_ACC);
+        // ACC = abs(acc) > abs(ACC) ? acc : lerp15by16(ACC, acc, SMOOTH_ACC);
 
-        int eyesizeF = map(max(fwd, 0), 0, 256, 2, 7);
-        int twinkF = map(max(fwd, 0), 0, 256, 5, 256);
-        CylonF1.setEyeSize(eyesizeF);
-        CylonF2.setEyeSize(eyesizeF);
-        TwinkleF.setAlpha(twinkF);
+        // acc = ACC >> 7;
+        // int rwd = max(-acc, 0);
+        // int fwd = max(acc, 0);
 
-        Serial << x <<" "<< y <<" "<< z << " " << fwd << "   " << eyesizeR << " .. " << eyesizeF << endl;
+        int acc = constrain(y /2, -MAX_ACC, MAX_ACC) << 8;
+
+        static int FWD = 0;
+        int fwd = max(acc, 0);
+        FWD = fwd > FWD ? fwd : lerp16by16(FWD, fwd, SMOOTH_ACC);
+        fwd = FWD >> 8;
+
+        static int RWD = 0;
+        int rwd = max(-acc, 0);
+        RWD = rwd > RWD ? rwd : lerp16by16(RWD, rwd, SMOOTH_ACC);
+        rwd = RWD >> 8;
+
+        int eyeR = map(rwd, THRES_ACC, MAX_ACC, 2, 10);
+        int alphaR = max(0, int(map(rwd, THRES_ACC, MAX_ACC, 0, 255)));
+        CylonR1.setEyeSize(eyeR);
+        CylonR2.setEyeSize(eyeR);
+        TwinkleR.setAlpha(alphaR);
+
+        int eyeF = map(fwd, THRES_ACC, MAX_ACC, 2, 10);
+        int alphaF = max(0, int(map(fwd, THRES_ACC, MAX_ACC, 0, 255)));
+        CylonF1.setEyeSize(eyeF);
+        CylonF2.setEyeSize(eyeF);
+        TwinkleF.setAlpha(alphaF);
+
+        // Serial << "[areal  " << x << "\t" << y << "\t" << z << "]\t";
+        // Serial << "[fwd " << fwd << "\trwd " << rwd << "]\t"; //"\t ACC " << acc << "]\t";
+        // Serial << "[eyeR " << eyeR << "\teyeF " << eyeF << "\talphaR " << alphaR << "\talphaF " << alphaF <<  "]" << endl; //"       \r";//endl;
 
         // PulseR.setAlpha(max(-fwd, 0)); // fire visible when fwd is << 0
         // Plasma.setAlpha(ALPHA_MULT(255-abs(fwd), alphaBT));          // plasma visible when fwd is ~0
@@ -258,8 +284,8 @@ void loop()
     #endif
   }
 
-  EVERY_N_MILLISECONDS(1000)
-    AllLeds.getInfo();
+  // EVERY_N_MILLISECONDS(1000)
+  //   AllLeds.getInfo();
 
   AllLeds.show(); // to be called as much as possible for Fastled brightness dithering
 
