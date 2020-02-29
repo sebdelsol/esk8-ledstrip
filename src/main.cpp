@@ -2,7 +2,7 @@
 #define USE_OTA
 // #define USE_BT
 // #define DEBUG_LED
-#define DEBG_SERIAL
+// #define DEBG_SERIAL
 
 // ----------------------------------------------------
 // #include <config.h>

@@ -8,7 +8,7 @@
 
 void OTA::begin()
 {
-  int count = 10;
+  int count = 5;
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFINAME, WIFIPASS);
 
@@ -24,7 +24,6 @@ void OTA::begin()
 
   // No authentication by default
   // ArduinoOTA.setPassword("admin");
-
   // Password can be set with it's md5 value as well
   // MD5(admin) = 21232f297a57a5a743894a0e4a801fc3
   // ArduinoOTA.setPasswordHash("21232f297a57a5a743894a0e4a801fc3");
