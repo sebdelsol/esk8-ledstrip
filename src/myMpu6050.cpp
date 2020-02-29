@@ -33,10 +33,9 @@ void myMPU6050::begin() {
   mpu.initialize();
 
   // verify connection
-  Serial << "connection " << (mpu.testConnection() ? F("successful") : F("failed")) << endl;
+  Serial << "connection " << (mpu.testConnection() ? F("successful") : F("failed"));// << endl;
 
-  mpu.PrintActiveOffsets();
-
+  // mpu.PrintActiveOffsets();
   // supply gyro offsets // seems not useful with dmp
   mpu.setXGyroOffset(77);
   mpu.setYGyroOffset(4);
@@ -44,10 +43,8 @@ void myMPU6050::begin() {
   mpu.setXAccelOffset(-1772);
   mpu.setYAccelOffset(-155);
   mpu.setZAccelOffset(1270);
- 
   mpu.PrintActiveOffsets(); 
 
-  // Serial << "Initializing DMP..." << endl;
   devStatus = mpu.dmpInitialize();
 
   if (devStatus == 0) { // did it work ?
