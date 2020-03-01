@@ -92,9 +92,9 @@ void setup()
 
   AllLeds.registerStrip(Leds);
   Leds.registerFX(Fire);
+  Leds.registerFX(Fire2);
   Leds.registerFX(Aqua);
   Leds.registerFX(Aqua2);
-  Leds.registerFX(Fire2);
   Leds.registerFX(Plasma);
 
   AllLeds.registerStrip(LedsR);
