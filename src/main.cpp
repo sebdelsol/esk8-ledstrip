@@ -25,11 +25,11 @@
 #endif
 
 // ----------------------------------------------------
-#define LED_MAX_MA 800//2000
+#define LED_MAX_MA 800
 #define LED_TICK 15
 #define BT_TICK 15
 
-#define SERIAL_BAUD 115200 //9600
+#define SERIAL_BAUD 115200 
 
 // ----------------------------------------------------
 myWifi MyWifi;
@@ -62,6 +62,7 @@ TwinkleFX TwinkleF(140); // aqua
 CylonFX CylonF1(AQUA_MENTHE,  3, 3<<8);
 CylonFX CylonF2(AQUA_MENTHE,  3, -3<<8);
 
+// ----------------------------------------------------
 // typedef struct {
 //   int toto = 1;
 //   byte tutu = 3;
