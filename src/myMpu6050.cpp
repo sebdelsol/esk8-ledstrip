@@ -64,8 +64,8 @@ void myMPU6050::begin() {
 }
 
 // ================================================================
-
 #define GRAV_CONV_DURATION 15000 //time for gravity to be correct ?
+
 void myMPU6050::dmpGetLinearAccel(VectorInt16 *v, VectorInt16 *vRaw, VectorFloat *gravity)
 {
     if (!gravityOK){
@@ -134,14 +134,16 @@ bool myMPU6050::getXYZ(float **YPR, int &x, int &y, int &z, int &oneG) {
     mY = lerp15by16(mY, aaReal.y, w);
     mZ = lerp15by16(mZ, aaReal.z, w);
 
-    // Serial << "[ grav OK  " << dt/1000. << "ms, w=" << w/65536. << "]  ";;
-    // Serial << "[ dt  " << dt/1000. << "ms, w=" << w/65536. << "]  ";;
-    // Serial << "[ ypr  " << ypr[0] * 180/M_PI << "  " << ypr[1] * 180/M_PI << "  " << ypr[2] * 180/M_PI << "]  ";
-    // Serial << "[ grav  " << (gravityOK ? "OK":"NOT ok") << "\t" << gravity.x << "  " << gravity.y << "  " << gravity.z << "]  ";
-    // Serial << "[ AVG  " << mX << "  " << mY << "  " << mZ << "]  ";
-    // Serial << "[ aa  " << aa.x << "\t" << aa.y << "\t" << aa.z << "]  "; 
-    // Serial << "[ areal  " << aaReal.x << "\t" << aaReal.y << "\t" << aaReal.z << "]  ";
-    // Serial << "\r"; //endl;
+    // #define MPU_DBG
+    #ifdef MPU_DBG
+      Serial << "[ dt " << dt/1000. << "ms, w=" << w/65536. << "]  ";
+      Serial << "[ ypr " << ypr[0] * 180/M_PI << "  " << ypr[1] * 180/M_PI << "  " << ypr[2] * 180/M_PI << "]  ";
+      Serial << "[ grav " << (gravityOK ? "OK":"NOT ok") << "\t" << gravity.x << "  " << gravity.y << "  " << gravity.z << "]  ";
+      Serial << "[ avg " << mX << "  " << mY << "  " << mZ << "]  ";
+      Serial << "[ acc " << aa.x << "\t" << aa.y << "\t" << aa.z << "]  "; 
+      Serial << "[ real " << aaReal.x << "\t" << aaReal.y << "\t" << aaReal.z << "]  ";
+      Serial << "\r"; //endl;
+    #endif
   }
 
   x = mX;
