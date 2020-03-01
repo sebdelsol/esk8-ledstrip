@@ -1,6 +1,6 @@
 
 #define USE_OTA
-// #define USE_BT
+// #define USE_BT // see platformio & use "board_build.partitions = huge_app.csv"
 // #define DEBUG_LED
 // #define DEBG_SERIAL
 // #define USE_LIGHTPROBE
