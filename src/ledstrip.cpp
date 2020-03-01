@@ -271,7 +271,7 @@ void PulseFX::getCmd(const MyCmd &cmd)
 }
 
 // ----------------------------------------------------
-AllLedStrips::AllLedStrips(const int maxmA)
+AllLedStrips::AllLedStrips(const int maxmA, Stream &serial) : mSerial(&serial)
 {
   FastLED.setMaxPowerInVoltsAndMilliamps(5, maxmA);
   FastLED.countFPS();
@@ -280,8 +280,10 @@ AllLedStrips::AllLedStrips(const int maxmA)
 bool AllLedStrips::registerStrip(BaseLedStrip &strip)
 {
   bool ok = mNStrips < MAXSTRIP;
-  if (ok)
+  if (ok){
     mStrips[mNStrips++] = &strip;
+    strip.setSerial(mSerial);
+  }
   return ok;
 }
 
@@ -293,7 +295,7 @@ void AllLedStrips::update()
 
 void AllLedStrips::getInfo()
 {
-  Serial << "FPS " << FastLED.getFPS() << endl;
+  *mSerial << "FPS " << FastLED.getFPS() << endl;
   for (byte i=0; i < mNStrips; i++)
     mStrips[i]->getInfo();
 }

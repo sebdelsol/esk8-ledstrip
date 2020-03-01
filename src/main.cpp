@@ -1,9 +1,9 @@
 
 #define USE_OTA
-#define USE_TELNET //needs USE_OTA to work
+// #define USE_TELNET //needs USE_OTA to work
 // #define USE_BT // see platformio & use "board_build.partitions = huge_app.csv"
 // #define DEBUG_LED
-#define DEBG_SERIAL
+// #define DEBG_SERIAL
 // #define USE_LIGHTPROBE
 
 // ----------------------------------------------------
@@ -42,7 +42,7 @@
 myWifi MyWifi;
 Button Button(BUTTON_PIN);
 myMPU6050 Accel;
-AllLedStrips AllLeds(LED_MAX_MA);
+AllLedStrips AllLeds(LED_MAX_MA, Serial);
 
 // ----------------------------------------------------
 #define NBLEDS_MIDDLE 30
@@ -140,7 +140,7 @@ void setup()
   #endif
 
   Button.begin();
-  Accel.begin();
+  Accel.begin(Serial);
 }
 
 // ----------------------------------------------------

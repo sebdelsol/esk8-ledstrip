@@ -22,19 +22,18 @@ VectorInt16 aaReal;               // [x, y, z]            gravity-free accel sen
 VectorFloat gravity;              // [x, y, z]            gravity vector
 float ypr[3] = {.0f, .0f, .0f};   // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
 
-bool gravityOK = false;
-long startTime;
-
 //--------------------------------------
-void myMPU6050::begin() {
+void myMPU6050::begin(Stream &serial)
+{
+  mSerial = &serial;
   Wire.begin(SDA, SCL);
   Wire.setClock(400000); // 400kHz I2C clock.
 
-  Serial << "Initializing mpu...";
+  *mSerial << "Initializing mpu...";
   mpu.initialize();
 
   // verify connection
-  Serial << "connection " << (mpu.testConnection() ? F("successful") : F("failed"));// << endl;
+  *mSerial << "connection " << (mpu.testConnection() ? F("successful") : F("failed"));// << endl;
 
   // mpu.PrintActiveOffsets();
   // supply gyro offsets // seems not useful with dmp
@@ -52,19 +51,18 @@ void myMPU6050::begin() {
     mpu.CalibrateGyro(6);
     mpu.PrintActiveOffsets();
 
-    Serial << "Enabling DMP...";
+    *mSerial << "Enabling DMP...";
     mpu.setDMPEnabled(true);
     mpuIntStatus = mpu.getIntStatus();
     dmpReady = true;
 
     // get expected DMP packet size for later comparison
     packetSize = mpu.dmpGetFIFOPacketSize();
-    Serial << "done" << endl;
+    *mSerial << "done" << endl;
   }
   else // ERROR! 1 = initial memory load failed, 2 = DMP configuration updates failed
-    Serial << "DMP Initialization failed (" << devStatus << ")" << endl;
+    *mSerial << "DMP Initialization failed (" << devStatus << ")" << endl;
 
-  startTime = millis();
 }
 
 // ================================================================
@@ -80,7 +78,7 @@ bool myMPU6050::readAccel() {
       // check for overflow
       if ((mpuIntStatus & _BV(MPU6050_INTERRUPT_FIFO_OFLOW_BIT)) || fifoCount >= 1024) {
         mpu.resetFIFO(); // reset so we can continue cleanly
-        Serial << "FIFO overflow! " << endl;
+        *mSerial << "FIFO overflow! " << endl;
       }
 
       // otherwise, check for DMP data ready interrupt
@@ -121,13 +119,13 @@ bool myMPU6050::getXYZ(float **YPR, int &x, int &y, int &z, int &oneG) {
 
     // #define MPU_DBG
     #ifdef MPU_DBG
-      Serial << "[ dt " << dt/1000. << "ms, w=" << w/65536. << "]  ";
-      Serial << "[ ypr " << ypr[0] * 180/M_PI << "  " << ypr[1] * 180/M_PI << "  " << ypr[2] * 180/M_PI << "]  ";
-      Serial << "[ grav " << (gravityOK ? "OK":"NOT ok") << "\t" << gravity.x << "  " << gravity.y << "  " << gravity.z << "]  ";
-      Serial << "[ avg " << mX << "  " << mY << "  " << mZ << "]  ";
-      Serial << "[ acc " << aa.x << "\t" << aa.y << "\t" << aa.z << "]  "; 
-      Serial << "[ real " << aaReal.x << "\t" << aaReal.y << "\t" << aaReal.z << "]  ";
-      Serial << "\r"; //endl;
+      *mSerial << "[ dt " << dt/1000. << "ms, w=" << w/65536. << "]  ";
+      *mSerial << "[ ypr " << ypr[0] * 180/M_PI << "  " << ypr[1] * 180/M_PI << "  " << ypr[2] * 180/M_PI << "]  ";
+      *mSerial << "[ grav " << gravity.x << "  " << gravity.y << "  " << gravity.z << "]  ";
+      *mSerial << "[ avg " << mX << "  " << mY << "  " << mZ << "]  ";
+      *mSerial << "[ acc " << aa.x << "\t" << aa.y << "\t" << aa.z << "]  "; 
+      *mSerial << "[ real " << aaReal.x << "\t" << aaReal.y << "\t" << aaReal.z << "]  ";
+      *mSerial << "\r"; //endl;
     #endif
   }
 

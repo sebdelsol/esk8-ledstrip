@@ -134,10 +134,13 @@ public:
 //--------------------------------------
 class BaseLedStrip
 {
+protected:
+  Stream* mSerial;
 public:
   virtual void getInfo(); // for AllLedStrips
   virtual void update();  // for AllLedStrips
   virtual byte* getData(int& n); // for myWifi
+  void setSerial(Stream *serial) {mSerial = serial;};
 };
 
 //---------
@@ -145,9 +148,10 @@ class AllLedStrips
 {
   BaseLedStrip *mStrips[MAXSTRIP];
   byte mNStrips = 0;
+  Stream* mSerial;
 
 public:
-  AllLedStrips(const int maxmA = 2000);
+  AllLedStrips(const int maxmA, Stream &serial);
   void setBrightness(const byte scale) { FastLED.setBrightness(scale); };
   byte getBrightness() { return FastLED.getBrightness(); };
   void show() { FastLED.show(); };
@@ -194,17 +198,17 @@ public:
 
   void getInfo()
   {
-    Serial << mName;
+    *mSerial << mName;
     for (byte i=0; i < mNFX; i++) {
       FX *fx = mFX[i];
-      Serial << " - " << fx->getName() << "(" << fx->getAlpha() << ")";
+      *mSerial << " - " << fx->getName() << "(" << fx->getAlpha() << ")";
     }
-    Serial << "                  " << endl;
+    *mSerial << "                  " << endl;
   };
 
   byte* getData(int& n)
   {
-    Serial << "getdata" << NLEDS << endl;
+    *mSerial << "getdata" << NLEDS << endl;
     n = NLEDS * sizeof(CRGB);
     return (byte *) mDisplay.leds;
   };
