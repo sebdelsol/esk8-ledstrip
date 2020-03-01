@@ -1,8 +1,9 @@
 
 #define USE_OTA
+#define USE_TELNET //needs USE_OTA to work
 // #define USE_BT // see platformio & use "board_build.partitions = huge_app.csv"
 // #define DEBUG_LED
-// #define DEBG_SERIAL
+#define DEBG_SERIAL
 // #define USE_LIGHTPROBE
 
 // ----------------------------------------------------
@@ -22,6 +23,12 @@
 #ifdef USE_OTA
   #include <OTA.h>
   OTA Ota;
+
+  #ifdef USE_TELNET
+    #include <TelnetSpy.h>
+    TelnetSpy SerialAndTelnet;
+    #define Serial  SerialAndTelnet
+  #endif
 #endif
 
 // ----------------------------------------------------
@@ -141,6 +148,9 @@ void loop()
 {
   #ifdef USE_OTA
     Ota.update();
+    #ifdef USE_TELNET
+      SerialAndTelnet.handle();
+    #endif
   #endif
 
   int x, y, z, oneG;
@@ -224,6 +234,7 @@ void loop()
             Serial << "[fwd " << fwd << "\trwd " << rwd << "]\t"; //"\t ACC " << acc << "]\t";
             Serial << "[eyeR " << eyeR << "\teyeF " << eyeF << "\talphaR " << alphaR << "\talphaF " << alphaF << "\talphaP " << alphaP << "]" << endl; //"       \r";//endl;
           #endif
+
       #ifdef USE_BT
         }
       #endif

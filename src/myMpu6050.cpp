@@ -1,8 +1,9 @@
 #include <myMpu6050.h>
 #include <I2Cdev.h>
-#include <MPU6050_6Axis_MotionApps20.h>
+//#include <MPU6050_6Axis_MotionApps20.h>
+#include <MPU6050_6Axis_MotionApps_V6_12.h> //better
 
-#define ONEG 7780 //8192
+#define ONEG 8192
 
 MPU6050 mpu;
 
@@ -43,11 +44,14 @@ void myMPU6050::begin() {
   mpu.setXAccelOffset(-1772);
   mpu.setYAccelOffset(-155);
   mpu.setZAccelOffset(1270);
-  mpu.PrintActiveOffsets(); 
 
   devStatus = mpu.dmpInitialize();
 
   if (devStatus == 0) { // did it work ?
+    mpu.CalibrateAccel(6);
+    mpu.CalibrateGyro(6);
+    mpu.PrintActiveOffsets();
+
     Serial << "Enabling DMP...";
     mpu.setDMPEnabled(true);
     mpuIntStatus = mpu.getIntStatus();
@@ -64,25 +68,6 @@ void myMPU6050::begin() {
 }
 
 // ================================================================
-#define GRAV_CONV_DURATION 15000 //time for gravity to be correct ?
-
-void myMPU6050::dmpGetLinearAccel(VectorInt16 *v, VectorInt16 *vRaw, VectorFloat *gravity)
-{
-    if (!gravityOK){
-      v -> x = vRaw -> x;
-      v -> y = vRaw -> y;
-      v -> z = vRaw -> z;
-      if (millis() - startTime > GRAV_CONV_DURATION) 
-        gravityOK = true;
-    }
-    else {
-      // get rid of the gravity component (+1g = +8192 in standard DMP FIFO packet, sensitivity is 2g)
-      v -> x = vRaw -> x - gravity -> x * ONEG;
-      v -> y = vRaw -> y - gravity -> y * ONEG;
-      v -> z = vRaw -> z - gravity -> z * ONEG;
-    }
-}
-
 bool myMPU6050::readAccel() {
   if (dmpReady){
 
@@ -114,7 +99,7 @@ bool myMPU6050::readAccel() {
         // real acceleration, adjusted to remove gravity
         mpu.dmpGetQuaternion(&Q, fifoBuffer);
         mpu.dmpGetAccel(&aa, fifoBuffer);
-        dmpGetLinearAccel(&aaReal, &aa, &gravity);
+        mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
         return true;
       }
     }
