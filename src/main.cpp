@@ -3,6 +3,7 @@
 // #define USE_BT
 // #define DEBUG_LED
 // #define DEBG_SERIAL
+// #define USE_LIGHTPROBE
 
 // ----------------------------------------------------
 // #include <config.h>
@@ -117,7 +118,6 @@ void setup()
       MyWifi.addLeds(Leds);
     #else
       MyWifi.off();
-      btStop(); // turnoff bt too
     #endif
   #endif
 
@@ -146,7 +146,6 @@ void loop()
   float *ypr;
   bool gotAccel = Accel.getXYZ(&ypr, x, y, z, oneG);
 
-
   #ifdef USE_BT
     static bool btOn = BT.update();
 
@@ -163,20 +162,23 @@ void loop()
   #endif
 
   EVERY_N_MILLISECONDS(LED_TICK) {
-    // #define MIN_LIGHT 400// 25
-    // #define MAX_LIGHT 4095
-    // int light = analogRead(LDR_PIN);
-    // byte bright = map(light, MIN_LIGHT, MAX_LIGHT, 255, 0); // to darker the light, the brighter the leds
-    // Serial << light << " " << bright << endl;
-    // AllLeds.setBrightness(bright);
+
+    #ifdef USE_LIGHTPROBE
+      #define MIN_LIGHT 400// 25
+      #define MAX_LIGHT 4095
+      int light = analogRead(LDR_PIN);
+      byte bright = map(light, MIN_LIGHT, MAX_LIGHT, 255, 0); // to darker the light, the brighter the leds
+      Serial << light << " " << bright << endl;
+      AllLeds.setBrightness(bright);
+    #endif
 
     if (gotAccel){
 
       #ifdef USE_BT
         if (btOn) {
           EVERY_N_MILLISECONDS(50) {
-            // int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
-            // *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
+            int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
+            *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
           } 
         } 
         else {
