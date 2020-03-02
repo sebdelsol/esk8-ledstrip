@@ -195,6 +195,23 @@ void CylonFX::getCmd(const MyCmd &cmd)
 }
 
 // ----------------------------------------------------
+RunningFX::RunningFX(const long color, const int width, const int speed) : mWidth(width), mSpeed(speed), mColor(CRGB(color))
+{}
+
+void RunningFX::update()
+{
+  fill_solid(mLeds, mNLEDS, mColor);
+
+  u_long t = millis() * 66 * mSpeed; // 65536/1000 => 2pi * time 
+  u_long x = 0; 
+  u_long dx = 32768 / mWidth;
+  for (byte i=0; i < mNLEDS; i++, x += dx) {
+    int _sin = sin16(x + t);
+    mLeds[i].nscale8(_sin > 0 ? _sin>>8 : 0);
+  }
+}
+
+// ----------------------------------------------------
 TwinkleFX::TwinkleFX(const byte hue, const byte hueDiv, const byte div) : mHueDiv(hueDiv), mDiv(div) 
 {
   mHSV = CHSV(hue, 0xff, 0xff);
@@ -204,7 +221,6 @@ TwinkleFX::TwinkleFX(const CRGB color, const byte hueDiv, const byte div) : mHue
 {
   mHSV = rgb2hsv_approximate(color);
 }
-
 
 void TwinkleFX::update()
 {

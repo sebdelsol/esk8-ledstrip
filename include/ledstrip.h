@@ -31,8 +31,8 @@ public:
   void answer(const MyCmd &cmd, byte arg);
 
   virtual const char* getName();
-  virtual void setCmd(const MyCmd &cmd);
-  virtual void getCmd(const MyCmd &cmd);
+  virtual void setCmd(const MyCmd &cmd) {};
+  virtual void getCmd(const MyCmd &cmd) {};
 
   virtual void update();
   bool drawOn(CRGBSet dst);
@@ -96,6 +96,22 @@ public:
   const char* getName() {return "Cylon";};
   void setCmd(const MyCmd &cmd);
   void getCmd(const MyCmd &cmd);
+};
+
+//---------
+class RunningFX : public FX
+{
+protected:
+  int mSpeed, mWidth;  
+  CRGB mColor;
+
+public:
+  RunningFX(const long color=0x0000FF, const int width = 5, const int speed = 2);
+  void update();
+
+  void setSpeed(const int speed) {mSpeed = speed;};
+
+  const char* getName() {return "Running";};
 };
 
 //---------

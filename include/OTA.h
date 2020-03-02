@@ -4,7 +4,11 @@
 
 class OTA
 {
+long startTime;
+bool started;
+
 public:
     void begin();
+    void setup()    ;
     void update();
 };

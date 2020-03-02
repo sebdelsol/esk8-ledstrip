@@ -12,21 +12,19 @@ void OTA::begin()
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFINAME, WIFIPASS);
 
-  Serial << "OTA Connecting";
-  while(WiFi.status() != WL_CONNECTED && count-- > 0) {
-    delay(500);
-    Serial << ".";
-  }
-  Serial << endl << "OTA Connected, IP address: " << WiFi.localIP() << endl;
+  startTime = millis();
+  // Serial << "OTA Connecting";
+  // while(WiFi.status() != WL_CONNECTED && count-- > 0) {
+  //   delay(500);
+  //   Serial << ".";
+  // }
+  // Serial << endl << "OTA Connected, IP address: " << WiFi.localIP() << endl;
+}
 
+void OTA::setup()
+{
   // ArduinoOTA.setPort(3232); // already deafult port
   ArduinoOTA.setHostname("esk8");
-
-  // No authentication by default
-  // ArduinoOTA.setPassword("admin");
-  // Password can be set with it's md5 value as well
-  // MD5(admin) = 21232f297a57a5a743894a0e4a801fc3
-  // ArduinoOTA.setPasswordHash("21232f297a57a5a743894a0e4a801fc3");
 
   ArduinoOTA
     .onStart([]() {
@@ -59,5 +57,15 @@ void OTA::begin()
 
 void OTA::update() 
 {
-  ArduinoOTA.handle();
+  if (!started){
+    if  (millis() - startTime < 10000) {
+      if (WiFi.status() == WL_CONNECTED) {
+        started = true;
+        Serial << endl << "OTA Connected, IP address: " << WiFi.localIP() << endl;
+        setup();
+      }
+    }
+  }
+  else
+    ArduinoOTA.handle();
 }

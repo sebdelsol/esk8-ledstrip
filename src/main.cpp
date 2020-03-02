@@ -35,7 +35,6 @@
 #define LED_MAX_MA 800
 #define LED_TICK 15
 #define BT_TICK 15
-
 #define SERIAL_BAUD 115200 
 
 // ----------------------------------------------------
@@ -51,6 +50,7 @@ AllLedStrips AllLeds(LED_MAX_MA, Serial);
 #define AQUA_MENTHE   0x7FFFD4
 #define LUSH_LAVA     0xFF4500
 #define PHANTOM_BLUE  0x191970
+#define YELLOW        0xffff00
 
 LedStrip<NBLEDS_MIDDLE, LED_PIN> Leds("Led");
 FireFX Fire(true, 75, 120); 
@@ -63,11 +63,13 @@ LedStrip<NBLEDS_TIP, LEDR_PIN> LedsR("LedR");
 TwinkleFX TwinkleR(CRGB(LUSH_LAVA)); //15 //orange
 CylonFX CylonR1(LUSH_LAVA, 7, 3<<8); 
 CylonFX CylonR2(LUSH_LAVA, 7, -3<<8);
+RunningFX RunR(YELLOW, 5, 2); //RunningFX(color,width,speed);
 
 LedStrip<NBLEDS_TIP, LEDF_PIN> LedsF("LedF");
 TwinkleFX TwinkleF(140); // aqua
 CylonFX CylonF1(AQUA_MENTHE,  3, 3<<8);
 CylonFX CylonF2(AQUA_MENTHE,  3, -3<<8);
+RunningFX RunF(YELLOW, 5, 2); //RunningFX(color,width,speed);
 
 // ----------------------------------------------------
 // typedef struct {
@@ -108,11 +110,13 @@ void setup()
   LedsR.registerFX(TwinkleR);
   LedsR.registerFX(CylonR1);
   LedsR.registerFX(CylonR2);
+  LedsR.registerFX(RunR);
 
   AllLeds.registerStrip(LedsF);
   LedsF.registerFX(TwinkleF);
   LedsF.registerFX(CylonF1);
   LedsF.registerFX(CylonF2);
+  LedsF.registerFX(RunF);
 
   // switch off blue led
   pinMode(LIGHT_PIN, OUTPUT);
@@ -154,8 +158,8 @@ void loop()
   #endif
 
   int x, y, z, oneG;
-  float *ypr;
-  bool gotAccel = Accel.getXYZ(&ypr, x, y, z, oneG);
+  float *ypr, wz;
+  bool gotAccel = Accel.getXYZ(&ypr, wz, x, y, z, oneG);
 
   #ifdef USE_BT
     static bool btOn = BT.update();
@@ -198,6 +202,13 @@ void loop()
           #define THRES_ACC 20
           #define MAX_ACC 255
 
+          #define NeutralZ .025
+          #define maxZ .2
+          int runSpeed = wz > 0 ? 3 : -3;
+          wz = wz >0 ? wz : -wz;
+          int runAlpha = wz > NeutralZ ? min(int((wz-NeutralZ) * 255 / maxZ), 255) : 0;
+          int invAlpha = 255 - runAlpha;
+
           int acc = constrain(y /2, -MAX_ACC, MAX_ACC) << 8;
 
           static int FWD = 0;
@@ -214,13 +225,21 @@ void loop()
           int alphaR = max(0, int(map(rwd, THRES_ACC, MAX_ACC, 0, 255)));
           CylonR1.setEyeSize(eyeR);
           CylonR2.setEyeSize(eyeR);
-          TwinkleR.setAlpha(alphaR);
+          CylonR1.setAlpha(invAlpha);
+          CylonR2.setAlpha(invAlpha);
+          TwinkleR.setAlpha((alphaR * invAlpha)>>8);
+          RunR.setAlpha(runAlpha);
+          RunR.setSpeed(runSpeed);
 
           int eyeF = map(fwd, THRES_ACC, MAX_ACC, 2, 10);
           int alphaF = max(0, int(map(fwd, THRES_ACC, MAX_ACC, 0, 255)));
           CylonF1.setEyeSize(eyeF);
           CylonF2.setEyeSize(eyeF);
-          TwinkleF.setAlpha(alphaF);
+          CylonF1.setAlpha(invAlpha);
+          CylonF2.setAlpha(invAlpha);
+          TwinkleF.setAlpha((alphaF * invAlpha)>>8);
+          RunF.setAlpha(runAlpha);
+          RunF.setSpeed(runSpeed);
 
           Aqua.setAlpha(alphaF);
           Aqua2.setAlpha(alphaF);

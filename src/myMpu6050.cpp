@@ -26,6 +26,7 @@ float ypr[3] = {.0f, .0f, .0f};   // [yaw, pitch, roll]   yaw/pitch/roll contain
 void myMPU6050::begin(Stream &serial)
 {
   mSerial = &serial;
+  
   Wire.begin(SDA, SCL);
   Wire.setClock(400000); // 400kHz I2C clock.
 
@@ -105,30 +106,37 @@ bool myMPU6050::readAccel() {
   return false;
 }
 
-bool myMPU6050::getXYZ(float **YPR, int &x, int &y, int &z, int &oneG) {
+#define ONEMil 1000000.
+
+bool myMPU6050::getXYZ(float **YPR, float &wz, int &x, int &y, int &z, int &oneG) 
+{
   if (readAccel()) {
 
     ulong t = micros();
     long dt = t - mT;
     mT = t;
 
-    uint16_t w = - int(pow(1. - ACCEL_AVG, dt * ACCEL_BASE_FREQ / 1000000.) * 65536.); // 1 - (1-accel_avg) ^ (dt * 60 / 1000) using fract16
-    mX = lerp15by16(mX, aaReal.x, w);
-    mY = lerp15by16(mY, aaReal.y, w);
-    mZ = lerp15by16(mZ, aaReal.z, w);
+    uint16_t smooth = - int(pow(1. - ACCEL_AVG, dt * ACCEL_BASE_FREQ / ONEMil) * 65536.); // 1 - (1-accel_avg) ^ (dt * 60 / 1000) using fract16
+    mX = lerp15by16(mX, aaReal.x, smooth);
+    mY = lerp15by16(mY, aaReal.y, smooth);
+    mZ = lerp15by16(mZ, aaReal.z, smooth);
+
+    mWz = (ypr[0] - mAngz) * ONEMil / dt;
+    mAngz = ypr[0];
 
     // #define MPU_DBG
     #ifdef MPU_DBG
-      *mSerial << "[ dt " << dt/1000. << "ms, w=" << w/65536. << "]  ";
+      *mSerial << "[ dt " << dt/1000. << "ms, smooth " << smooth/65536. << ", Wz " << mWz  << "]  ";
       *mSerial << "[ ypr " << ypr[0] * 180/M_PI << "  " << ypr[1] * 180/M_PI << "  " << ypr[2] * 180/M_PI << "]  ";
       *mSerial << "[ grav " << gravity.x << "  " << gravity.y << "  " << gravity.z << "]  ";
       *mSerial << "[ avg " << mX << "  " << mY << "  " << mZ << "]  ";
-      *mSerial << "[ acc " << aa.x << "\t" << aa.y << "\t" << aa.z << "]  "; 
+      *mSerial << "[ acc " << aa.x << "\t" << aa.y << "\t" << aa.z << "]  ";
       *mSerial << "[ real " << aaReal.x << "\t" << aaReal.y << "\t" << aaReal.z << "]  ";
-      *mSerial << "\r"; //endl;
+      *mSerial << "                 \r"; //endl;
     #endif
   }
 
+  wz = mWz;
   x = mX;
   y = mY;
   z = mZ;

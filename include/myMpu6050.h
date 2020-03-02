@@ -13,6 +13,7 @@ class myMPU6050
 {
   ulong mT = 0;
   int mX = 0, mY = 0, mZ = 0;
+  float mAngz = .0, mWz = .0;
   Stream* mSerial;
 
   bool readAccel();
@@ -20,5 +21,5 @@ class myMPU6050
 public:
 
   void begin(Stream &serial);
-  bool getXYZ(float **YPR, int &x, int &y, int &z, int &oneG);
+  bool getXYZ(float **YPR, float &wz, int &x, int &y, int &z, int &oneG);
 };
