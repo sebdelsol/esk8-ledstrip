@@ -153,8 +153,8 @@ void loop()
     #endif
   #endif
 
-  int x, y, z, oneG;
-  float *ypr, wz;
+  int wz, x, y, z, oneG;
+  float *ypr;
   bool gotAccel = Accel.getXYZ(&ypr, wz, x, y, z, oneG);
 
   #ifdef USE_BT
@@ -175,7 +175,7 @@ void loop()
   EVERY_N_MILLISECONDS(LED_TICK) {
 
     #ifdef USE_LIGHTPROBE
-      #define MIN_LIGHT 400// 25
+      #define MIN_LIGHT 400
       #define MAX_LIGHT 4095
       int light = analogRead(LDR_PIN);
       byte bright = map(light, MIN_LIGHT, MAX_LIGHT, 255, 0); // to darker the light, the brighter the leds
@@ -183,7 +183,7 @@ void loop()
       AllLeds.setBrightness(bright);
     #endif
 
-    if (gotAccel){
+    if (gotAccel) {
 
       #ifdef USE_BT
         if (btOn) {
@@ -196,19 +196,18 @@ void loop()
       #endif
           //----------------------
           int runSpeed =  ((wz>0) - (wz<0)) * 3;
-
           RunR.setSpeed(runSpeed);
           RunF.setSpeed(runSpeed);
 
           //------
-          #define NeutralZ  .025
-          #define maxZ      .2
-          wz = wz >0 ? wz : -wz;
-          int alpha = wz > NeutralZ ? min(int((wz-NeutralZ) * 255 / maxZ), 255) : 0;
-          int invAlpha = 255 - alpha;
-
+          #define NeutralZ  1638 //.025
+          #define maxZ      13107 //.2
+          wz = abs(wz);
+          int alpha = wz > NeutralZ ? min((wz-NeutralZ) * 255 / maxZ, 255) : 0;
           RunR.setAlpha(alpha);
           RunF.setAlpha(alpha);
+
+          int invAlpha = 255 - alpha;
 
           //----------------------
           #define SMOOTH_ACC  3200 // 6500 //.05

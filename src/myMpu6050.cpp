@@ -108,7 +108,7 @@ bool myMPU6050::readAccel() {
 
 #define ONEMil 1000000.
 
-bool myMPU6050::getXYZ(float **YPR, float &wz, int &x, int &y, int &z, int &oneG) 
+bool myMPU6050::getXYZ(float **YPR, int &wz, int &x, int &y, int &z, int &oneG) 
 {
   if (readAccel()) {
 
@@ -121,8 +121,9 @@ bool myMPU6050::getXYZ(float **YPR, float &wz, int &x, int &y, int &z, int &oneG
     mY = lerp15by16(mY, aaReal.y, smooth);
     mZ = lerp15by16(mZ, aaReal.z, smooth);
 
-    mWz = (ypr[0] - mAngz) * ONEMil / dt;
-    mAngz = ypr[0];
+    int cAngz = 65536. * ypr[0];
+    mWz = (cAngz - mAngz) * ONEMil / dt;
+    mAngz = cAngz;
 
     // #define MPU_DBG
     #ifdef MPU_DBG
