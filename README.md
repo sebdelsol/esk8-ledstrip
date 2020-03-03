@@ -1,5 +1,5 @@
 # Esk8
-Led strip controlled by an accelerometer for an eSK8
+Led strip controlled by an accelerometer for an eSK8, with basic companion app
 
 Hardware:
 * [Esk8 PCB](https://easyeda.com/seb.morin/esk8) 
