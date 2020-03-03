@@ -12,17 +12,13 @@ void OTA::begin()
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFINAME, WIFIPASS);
 
-  startTime = millis();
-  // Serial << "OTA Connecting";
-  // while(WiFi.status() != WL_CONNECTED && count-- > 0) {
-  //   delay(500);
-  //   Serial << ".";
-  // }
-  // Serial << endl << "OTA Connected, IP address: " << WiFi.localIP() << endl;
-}
+  Serial << "OTA Connecting";
+  while(WiFi.status() != WL_CONNECTED && count-- > 0) {
+    delay(500);
+    Serial << ".";
+  }
+  Serial << endl << "OTA Connected, IP address: " << WiFi.localIP() << endl;
 
-void OTA::setup()
-{
   // ArduinoOTA.setPort(3232); // already deafult port
   ArduinoOTA.setHostname("esk8");
 
@@ -57,15 +53,5 @@ void OTA::setup()
 
 void OTA::update() 
 {
-  if (!started){
-    if  (millis() - startTime < 10000) {
-      if (WiFi.status() == WL_CONNECTED) {
-        started = true;
-        Serial << endl << "OTA Connected, IP address: " << WiFi.localIP() << endl;
-        setup();
-      }
-    }
-  }
-  else
-    ArduinoOTA.handle();
+  ArduinoOTA.handle();
 }

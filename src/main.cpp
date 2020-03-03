@@ -198,24 +198,41 @@ void loop()
         } 
         else {
       #endif
+          //----------------------
+          #define NeutralZ .025
+          #define maxZ .2
+          int runSpeed =  ((wz>0) - (wz<0)) * 3;
+          wz = wz >0 ? wz : -wz;
+          int alpha = wz > NeutralZ ? min(int((wz-NeutralZ) * 255 / maxZ), 255) : 0;
+          int invAlpha = 255 - alpha;
+
+          RunR.setAlpha(alpha);
+          RunR.setSpeed(runSpeed);
+
+          RunF.setAlpha(alpha);
+          RunF.setSpeed(runSpeed);
+
+          //----------------------
           #define SMOOTH_ACC 3200 // 6500 //.05
           #define THRES_ACC 20
           #define MAX_ACC 255
-
-          #define NeutralZ .025
-          #define maxZ .2
-          int runSpeed = wz > 0 ? 3 : -3;
-          wz = wz >0 ? wz : -wz;
-          int runAlpha = wz > NeutralZ ? min(int((wz-NeutralZ) * 255 / maxZ), 255) : 0;
-          int invAlpha = 255 - runAlpha;
-
           int acc = constrain(y /2, -MAX_ACC, MAX_ACC) << 8;
 
+          //------
           static int FWD = 0;
           int fwd = max(acc, 0);
           FWD = fwd > FWD ? fwd : lerp16by16(FWD, fwd, SMOOTH_ACC);
           fwd = FWD >> 8;
 
+          int eyeF = map(fwd, THRES_ACC, MAX_ACC, 2, 10);
+          int alphaF = max(0, int(map(fwd, THRES_ACC, MAX_ACC, 0, 255)));
+          CylonF1.setEyeSize(eyeF);
+          CylonF2.setEyeSize(eyeF);
+          TwinkleF.setAlpha((alphaF * (invAlpha + 1))>>8);
+          CylonF1.setAlpha(invAlpha);
+          CylonF2.setAlpha(invAlpha);
+
+          //------
           static int RWD = 0;
           int rwd = max(-acc, 0);
           RWD = rwd > RWD ? rwd : lerp16by16(RWD, rwd, SMOOTH_ACC);
@@ -225,22 +242,11 @@ void loop()
           int alphaR = max(0, int(map(rwd, THRES_ACC, MAX_ACC, 0, 255)));
           CylonR1.setEyeSize(eyeR);
           CylonR2.setEyeSize(eyeR);
+          TwinkleR.setAlpha((alphaR * (invAlpha + 1))>>8);
           CylonR1.setAlpha(invAlpha);
           CylonR2.setAlpha(invAlpha);
-          TwinkleR.setAlpha((alphaR * invAlpha)>>8);
-          RunR.setAlpha(runAlpha);
-          RunR.setSpeed(runSpeed);
 
-          int eyeF = map(fwd, THRES_ACC, MAX_ACC, 2, 10);
-          int alphaF = max(0, int(map(fwd, THRES_ACC, MAX_ACC, 0, 255)));
-          CylonF1.setEyeSize(eyeF);
-          CylonF2.setEyeSize(eyeF);
-          CylonF1.setAlpha(invAlpha);
-          CylonF2.setAlpha(invAlpha);
-          TwinkleF.setAlpha((alphaF * invAlpha)>>8);
-          RunF.setAlpha(runAlpha);
-          RunF.setSpeed(runSpeed);
-
+          //----------------------
           Aqua.setAlpha(alphaF);
           Aqua2.setAlpha(alphaF);
           Fire.setAlpha(alphaR);
@@ -250,7 +256,8 @@ void loop()
 
           #ifdef DEBG_SERIAL
             Serial << "[areal  " << x << "\t" << y << "\t" << z << "]\t";
-            Serial << "[fwd " << fwd << "\trwd " << rwd << "]\t"; //"\t ACC " << acc << "]\t";
+            Serial << "[fwd " << fwd << "\trwd " << rwd << "\tACC " << acc << "]\t";
+            Serial << "[alpha " << alpha << "\tinv " << invAlpha << "]\t";
             Serial << "[eyeR " << eyeR << "\teyeF " << eyeF << "\talphaR " << alphaR << "\talphaF " << alphaF << "\talphaP " << alphaP << "]" << endl; //"       \r";//endl;
           #endif
 
