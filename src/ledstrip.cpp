@@ -102,7 +102,8 @@ AquaFX::AquaFX(const bool reverse, const byte cooling, const byte sparkling) : F
 }
 
 // ----------------------------------------------------
-PlasmaFX::PlasmaFX(const byte wavelenght, const byte period1, const byte period2) : mK(wavelenght), mP1(period1), mP2(period2) {}
+PlasmaFX::PlasmaFX(const byte wavelenght, const byte period1, const byte period2) : mK(wavelenght), mP1(period1), mP2(period2) 
+{}
 
 void PlasmaFX::update()
 {
@@ -152,12 +153,10 @@ CylonFX::CylonFX(const long color, const int eyeSize, const int speed) : mEyeSiz
   mPos = mSpeed < 0 ? 65535 : 0;
 }
 
-void CylonFX::update()
+void CylonFX::_update(int p)
 {
-  memset8(mLeds, 0, mNLEDS * sizeof(CRGB)); // clear
-
   #define FRAC_SHIFT 4
-  long pos16 = (ease16InOutQuad(mPos) * (mNLEDS - mEyeSize - 1)) >> (16-FRAC_SHIFT);
+  long pos16 = (ease16InOutQuad(p) * (mNLEDS - mEyeSize - 1)) >> (16-FRAC_SHIFT);
   int pos = pos16 >> FRAC_SHIFT;
   byte frac = (pos16 & 0x0F) << FRAC_SHIFT;
 
@@ -166,6 +165,13 @@ void CylonFX::update()
     mLeds[++pos] = mColor;
   if (pos < mNLEDS-1)
     mLeds[++pos] = mColor % frac;
+}
+
+void CylonFX::update()
+{
+  memset8(mLeds, 0, mNLEDS * sizeof(CRGB)); // clear
+
+  _update(mPos);
 
   mPos += mSpeed;
   if (mPos <= 0 || mPos >= 65535) { // rebound ?
@@ -191,6 +197,28 @@ void CylonFX::getCmd(const MyCmd &cmd)
     case 'E': answer(cmd, mEyeSize*255/(mNLEDS-1)); break;
     case 'S': answer(cmd, mSpeed>>3); break;
     case 'B': answer(cmd, getAlpha()); break;
+  }
+}
+
+// ----------------------------------------------------
+DblCylonFX::DblCylonFX(const long color, const int eyeSize, const int speed) : CylonFX(color, eyeSize, speed)
+{
+  mPos2 = 65535-mPos;
+}
+
+void DblCylonFX::update()
+{
+  memset8(mLeds, 0, mNLEDS * sizeof(CRGB)); // clear
+
+  _update(mPos);
+  _update(mPos2);
+
+  mPos += mSpeed;
+  mPos2 -= mSpeed;
+  if (mPos <= 0 || mPos >= 65535) { // rebound ?
+    mPos = constrain(mPos, 0, 65535);
+    mPos2 = constrain(mPos2, 0, 65535);
+    mSpeed = - mSpeed;
   }
 }
 

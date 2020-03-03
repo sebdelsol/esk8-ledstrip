@@ -61,14 +61,12 @@ PlasmaFX Plasma;
 
 LedStrip<NBLEDS_TIP, LEDR_PIN> LedsR("LedR");
 TwinkleFX TwinkleR(CRGB(LUSH_LAVA)); //15 //orange
-CylonFX CylonR1(LUSH_LAVA, 7, 3<<8); 
-CylonFX CylonR2(LUSH_LAVA, 7, -3<<8);
+DblCylonFX CylonR(LUSH_LAVA, 7, 3<<8); 
 RunningFX RunR(YELLOW, 5, 2); //RunningFX(color,width,speed);
 
 LedStrip<NBLEDS_TIP, LEDF_PIN> LedsF("LedF");
 TwinkleFX TwinkleF(140); // aqua
-CylonFX CylonF1(AQUA_MENTHE,  3, 3<<8);
-CylonFX CylonF2(AQUA_MENTHE,  3, -3<<8);
+DblCylonFX CylonF(AQUA_MENTHE,  3, 3<<8);
 RunningFX RunF(YELLOW, 5, 2); //RunningFX(color,width,speed);
 
 // ----------------------------------------------------
@@ -108,14 +106,12 @@ void setup()
 
   AllLeds.registerStrip(LedsR);
   LedsR.registerFX(TwinkleR);
-  LedsR.registerFX(CylonR1);
-  LedsR.registerFX(CylonR2);
+  LedsR.registerFX(CylonR);
   LedsR.registerFX(RunR);
 
   AllLeds.registerStrip(LedsF);
   LedsF.registerFX(TwinkleF);
-  LedsF.registerFX(CylonF1);
-  LedsF.registerFX(CylonF2);
+  LedsF.registerFX(CylonF);
   LedsF.registerFX(RunF);
 
   // switch off blue led
@@ -226,11 +222,9 @@ void loop()
 
           int eyeF = map(fwd, THRES_ACC, MAX_ACC, 2, 10);
           int alphaF = max(0, int(map(fwd, THRES_ACC, MAX_ACC, 0, 255)));
-          CylonF1.setEyeSize(eyeF);
-          CylonF2.setEyeSize(eyeF);
+          CylonF.setEyeSize(eyeF);
+          CylonF.setAlpha(invAlpha);
           TwinkleF.setAlpha((alphaF * (invAlpha + 1))>>8);
-          CylonF1.setAlpha(invAlpha);
-          CylonF2.setAlpha(invAlpha);
 
           //------
           static int RWD = 0;
@@ -240,11 +234,9 @@ void loop()
 
           int eyeR = map(rwd, THRES_ACC, MAX_ACC, 2, 10);
           int alphaR = max(0, int(map(rwd, THRES_ACC, MAX_ACC, 0, 255)));
-          CylonR1.setEyeSize(eyeR);
-          CylonR2.setEyeSize(eyeR);
+          CylonR.setEyeSize(eyeR);
+          CylonR.setAlpha(invAlpha);
           TwinkleR.setAlpha((alphaR * (invAlpha + 1))>>8);
-          CylonR1.setAlpha(invAlpha);
-          CylonR2.setAlpha(invAlpha);
 
           //----------------------
           Aqua.setAlpha(alphaF);

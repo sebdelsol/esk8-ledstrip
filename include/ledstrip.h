@@ -87,6 +87,8 @@ protected:
   int mPos, mEyeSize, mSpeed;  
   CRGB mColor;
 
+  void _update(int p); 
+
 public:
   CylonFX(const long color=0x0000FF, const int eyeSize = 3, const int speed = 2<<8);
   void update();
@@ -96,6 +98,19 @@ public:
   const char* getName() {return "Cylon";};
   void setCmd(const MyCmd &cmd);
   void getCmd(const MyCmd &cmd);
+};
+
+//---------
+class DblCylonFX : public CylonFX
+{
+protected:
+  int mPos2;
+
+public:
+  DblCylonFX(const long color=0x0000FF, const int eyeSize = 3, const int speed = 2<<8);
+  void update();
+
+  const char* getName() {return "DblCylon";};
 };
 
 //---------
