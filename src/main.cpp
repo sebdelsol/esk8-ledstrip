@@ -32,9 +32,9 @@
 #endif
 
 // ----------------------------------------------------
-#define LED_MAX_MA 800
-#define LED_TICK 15
-#define BT_TICK 15
+#define LED_MAX_MA  800 // mA
+#define LED_TICK    15  // ms
+#define BT_TICK     15  // ms
 #define SERIAL_BAUD 115200 
 
 // ----------------------------------------------------
@@ -45,7 +45,7 @@ AllLedStrips AllLeds(LED_MAX_MA, Serial);
 
 // ----------------------------------------------------
 #define NBLEDS_MIDDLE 30
-#define NBLEDS_TIP 36
+#define NBLEDS_TIP    36
 
 #define AQUA_MENTHE   0x7FFFD4
 #define LUSH_LAVA     0xFF4500
@@ -53,14 +53,14 @@ AllLedStrips AllLeds(LED_MAX_MA, Serial);
 #define YELLOW        0xffff00
 
 LedStrip<NBLEDS_MIDDLE, LED_PIN> Leds("Led");
-FireFX Fire(true); 
-AquaFX Aqua(false); // not reverse
+FireFX Fire(true); //reverse
+AquaFX Aqua(false); 
 TwinkleFX FireTwk(0); // red
 TwinkleFX AquaTwk(CRGB(AQUA_MENTHE));
 PlasmaFX Plasma;
 
 LedStrip<NBLEDS_TIP, LEDR_PIN> LedsR("LedR");
-TwinkleFX TwinkleR(CRGB(LUSH_LAVA)); //15 //orange
+TwinkleFX TwinkleR(CRGB(LUSH_LAVA));
 DblCylonFX CylonR(LUSH_LAVA); 
 RunningFX RunR(YELLOW, 5); //width
 
@@ -195,23 +195,25 @@ void loop()
         else {
       #endif
           //----------------------
-          #define NeutralZ .025
-          #define maxZ .2
           int runSpeed =  ((wz>0) - (wz<0)) * 3;
+
+          RunR.setSpeed(runSpeed);
+          RunF.setSpeed(runSpeed);
+
+          //------
+          #define NeutralZ  .025
+          #define maxZ      .2
           wz = wz >0 ? wz : -wz;
           int alpha = wz > NeutralZ ? min(int((wz-NeutralZ) * 255 / maxZ), 255) : 0;
           int invAlpha = 255 - alpha;
 
           RunR.setAlpha(alpha);
-          RunR.setSpeed(runSpeed);
-
           RunF.setAlpha(alpha);
-          RunF.setSpeed(runSpeed);
 
           //----------------------
-          #define SMOOTH_ACC 3200 // 6500 //.05
-          #define THRES_ACC 20
-          #define MAX_ACC 255
+          #define SMOOTH_ACC  3200 // 6500 //.05
+          #define THRES_ACC   20
+          #define MAX_ACC     255
           int acc = constrain(y /2, -MAX_ACC, MAX_ACC) << 8;
 
           //------
@@ -244,6 +246,7 @@ void loop()
           Fire.setAlpha(alphaR);
           FireTwk.setAlpha(alphaR);
           
+          //------
           int alphaP = max(0, 255 - max(alphaR, alphaF));
           Plasma.setAlpha(alphaP);
 
