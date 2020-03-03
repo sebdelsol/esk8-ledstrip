@@ -8,6 +8,6 @@ Hardware:
   * [MPU 6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/)
   * [WS2812B](https://www.aliexpress.com/wholesale?catId=0&SearchText=ws2812b): IP67 0.5m @ 144Leds/m and 1m @ 60Leds/m
 
-    * 3x 470Ω resistors, 10kΩ resistor, 220Ω resistor
-    * 1000μF capacitor
-    * LDR, blue LED, 12x12 switch
+    * 3x 470Ω resistors & 1x 1000μF capacitor
+    * 1x 10kΩ resistor & LDR 
+    * 1x 220Ω resistor, blue LED & 12x12 switch
