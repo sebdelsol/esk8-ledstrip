@@ -106,23 +106,21 @@ bool myMPU6050::readAccel() {
   return false;
 }
 
-#define ONEMil 1000000.
-
 bool myMPU6050::getXYZ(float **YPR, int &wz, int &x, int &y, int &z, int &oneG) 
 {
   if (readAccel()) {
 
-    ulong t = micros();
+    ulong t = millis();
     long dt = t - mT;
     mT = t;
 
-    uint16_t smooth = - int(pow(1. - ACCEL_AVG, dt * ACCEL_BASE_FREQ / ONEMil) * 65536.); // 1 - (1-accel_avg) ^ (dt * 60 / 1000) using fract16
+    uint16_t smooth = - int(pow(1. - ACCEL_AVG, dt * ACCEL_BASE_FREQ / 1000.) * 65536.); // 1 - (1-accel_avg) ^ (dt * 60 / 1000) using fract16
     mX = lerp15by16(mX, aaReal.x, smooth);
     mY = lerp15by16(mY, aaReal.y, smooth);
     mZ = lerp15by16(mZ, aaReal.z, smooth);
 
-    int cAngz = 65536. * ypr[0];
-    mWz = (cAngz - mAngz) * ONEMil / dt;
+    int cAngz = 65536 * ypr[0];
+    mWz = (cAngz - mAngz) * 1000 / dt;
     mAngz = cAngz;
 
     // #define MPU_DBG
