@@ -53,21 +53,21 @@ AllLedStrips AllLeds(LED_MAX_MA, Serial);
 #define YELLOW        0xffff00
 
 LedStrip<NBLEDS_MIDDLE, LED_PIN> Leds("Led");
-FireFX Fire(true, 75, 120); 
-TwinkleFX Fire2(0);
-AquaFX Aqua(false, 75, 120); // not reverse
-TwinkleFX Aqua2(CRGB(AQUA_MENTHE));
+FireFX Fire(true); 
+AquaFX Aqua(false); // not reverse
+TwinkleFX FireTwk(0); // red
+TwinkleFX AquaTwk(CRGB(AQUA_MENTHE));
 PlasmaFX Plasma;
 
 LedStrip<NBLEDS_TIP, LEDR_PIN> LedsR("LedR");
 TwinkleFX TwinkleR(CRGB(LUSH_LAVA)); //15 //orange
-DblCylonFX CylonR(LUSH_LAVA, 7, 3<<8); 
-RunningFX RunR(YELLOW, 5, 2); //RunningFX(color,width,speed);
+DblCylonFX CylonR(LUSH_LAVA); 
+RunningFX RunR(YELLOW, 5); //width
 
 LedStrip<NBLEDS_TIP, LEDF_PIN> LedsF("LedF");
 TwinkleFX TwinkleF(140); // aqua
-DblCylonFX CylonF(AQUA_MENTHE,  3, 3<<8);
-RunningFX RunF(YELLOW, 5, 2); //RunningFX(color,width,speed);
+DblCylonFX CylonF(AQUA_MENTHE);
+RunningFX RunF(YELLOW, 5); // width
 
 // ----------------------------------------------------
 // typedef struct {
@@ -99,9 +99,9 @@ void setup()
 
   AllLeds.registerStrip(Leds);
   Leds.registerFX(Fire);
-  Leds.registerFX(Fire2);
+  Leds.registerFX(FireTwk);
   Leds.registerFX(Aqua);
-  Leds.registerFX(Aqua2);
+  Leds.registerFX(AquaTwk);
   Leds.registerFX(Plasma);
 
   AllLeds.registerStrip(LedsR);
@@ -240,9 +240,10 @@ void loop()
 
           //----------------------
           Aqua.setAlpha(alphaF);
-          Aqua2.setAlpha(alphaF);
+          AquaTwk.setAlpha(alphaF);
           Fire.setAlpha(alphaR);
-          Fire2.setAlpha(alphaR);
+          FireTwk.setAlpha(alphaR);
+          
           int alphaP = max(0, 255 - max(alphaR, alphaF));
           Plasma.setAlpha(alphaP);
 
