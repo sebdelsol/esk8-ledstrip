@@ -9,9 +9,9 @@ Hardware:
 * [WS2812B](https://www.aliexpress.com/wholesale?catId=0&SearchText=ws2812b)
 
 * 3x 470Ω resistors
-* 1x 10kΩ resistors
-* 1x 220Ω resistors
+* 1x 10kΩ resistor
+* 1x 220Ω resistor
 * 1x 1000μF capacitor
 * 1x LDR
-* 1 blue LED
-* 1 12x12 switch
+* 1x blue LED
+* 1x 12x12 switch
