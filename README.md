@@ -1,5 +1,6 @@
 # Esk8
 Led strip controlled by an accelerometer for an eSK8, with basic companion app
+
 <img src="https://i.imgur.com/fsrZ5Zs.jpg" width="200">
 
 Hardware:
