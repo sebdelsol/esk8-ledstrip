@@ -1,7 +1,7 @@
 # Esk8
 Led strips controlled by an accelerometer for an eSK8, with a basic companion app
 
-<img src="https://i.imgur.com/bn5Pk2N.jpg" height="200"> <img src="https://i.imgur.com/fsrZ5Zs.jpg" height="200"> <img src="https://i.imgur.com/7UupGBk.jpgf" height="200"> 
+<img src="https://i.imgur.com/bn5Pk2N.jpg" height="250"> <img src="https://i.imgur.com/fsrZ5Zs.jpg" height="250"> <img src="https://i.imgur.com/7UupGBk.jpgf" height="250"> 
 
 # Please check the [PCB & schematic](https://easyeda.com/seb.morin/esk8) 
 
