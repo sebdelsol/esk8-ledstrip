@@ -4,7 +4,7 @@ Led strip controlled by an accelerometer for an eSK8, with basic companion app
 <img src="https://i.imgur.com/bn5Pk2N.jpg" height="200"> <img src="https://i.imgur.com/fsrZ5Zs.jpg" height="200"> <img src="https://i.imgur.com/7UupGBk.jpgf" height="200"> 
 
 Hardware:
-* [Esk8 PCB](https://easyeda.com/seb.morin/esk8) 
+* [PCB & schematic](https://easyeda.com/seb.morin/esk8) 
   * [Lolin32](https://wiki.wemos.cc/products:lolin32:lolin32)
   * [SN74AHCT125](https://www.ti.com/product/SN74AHCT125)
   * [MPU 6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/)
