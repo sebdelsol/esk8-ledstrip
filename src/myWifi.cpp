@@ -24,8 +24,7 @@ void myWifi::on()
   }
   Serial << endl << "Connected, IP address: " << WiFi.localIP() << endl;
   // digitalWrite(BUILTIN_LED, LOW); // led on
-
-	webSocket.begin(SOCK_ADDR, SOCK_PORT);
+  webSocket.begin(SOCK_ADDR, SOCK_PORT);
   mON = true;
 }
 
