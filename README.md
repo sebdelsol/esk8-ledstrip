@@ -5,8 +5,6 @@ Led strips controlled by an accelerometer for an eSK8, with a basic companion ap
 
 # Please check the [PCB & schematic](https://easyeda.com/seb.morin/esk8) 
 
-Hardware:
-
 Qty | Component
 --- | ----
 1x|[Lolin32](https://wiki.wemos.cc/products:lolin32:lolin32)
