@@ -10,8 +10,8 @@ Qty | Component
 1x|[Lolin32](https://wiki.wemos.cc/products:lolin32:lolin32)
 1x|[SN74AHCT125](https://www.ti.com/product/SN74AHCT125)
 1x|[MPU 6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/)
-0.5m|WS2812B IP67, 144Leds/m
-1m|WS2812B IP67, 60Leds/m
+0.5m|WS2812B IP67 strip, 144Leds/m
+1m|WS2812B IP67 strip, 60Leds/m
 3x|470Ω resistors
 1x|1000μF capacitor
 1x|10kΩ resistor
