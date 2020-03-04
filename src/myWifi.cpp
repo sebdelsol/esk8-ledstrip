@@ -38,10 +38,10 @@ void myWifi::update()
   if (mON) {
     webSocket.loop();
 
-		if (mLeds) {
+    if (mLeds) {
       int length;
-			byte *data = mLeds->getData(length);
-			webSocket.sendBIN(data, length);
-		}
+      byte *data = mLeds->getData(length);
+      webSocket.sendBIN(data, length);
+    }
   }
 }
