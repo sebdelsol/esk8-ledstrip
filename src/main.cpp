@@ -211,9 +211,9 @@ void loop()
 
           //----------------------
           #define SMOOTH_ACC  3200 // 6500 //.05
-          #define THRES_ACC   20
+          #define THRES_ACC   30
           #define MAX_ACC     255
-          int acc = constrain(y /2, -MAX_ACC, MAX_ACC) << 8;
+          int acc = constrain(y / 3, -MAX_ACC, MAX_ACC) << 8;
 
           //------
           static int FWD = 0;
