@@ -9,6 +9,8 @@
 #define ACCEL_AVG .05 //.1
 #define ACCEL_BASE_FREQ 60.
 
+#define TOdeg(x) ( x * 180/M_PI )
+
 class myMPU6050
 {
   ulong mT = 0;
