@@ -217,8 +217,8 @@ void loop()
           #define SMOOTH_ACC  1600//3200 //.05
           #define THRES_ACC   30
           #define MAX_ACC     256
-          #define MINeye      2
-          #define MAXeye      5
+          #define MINeye      5
+          #define MAXeye      10
 
           int acc = constrain(y / 4, -MAX_ACC, MAX_ACC) << 8;
 
