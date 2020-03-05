@@ -135,7 +135,8 @@ bool myMPU6050::getXYZ(float **YPR, int &wz, int &x, int &y, int &z, int &oneG)
     #endif
   }
 
-  wz = mWz;  x = mX;  y = mY;  z = mZ;  *YPR = ypr;  oneG = ONEG;
+  wz = mWz;  x = mX;  y = mY;  z = mZ; 
+  *YPR = ypr;  oneG = ONEG;
 
   return dmpReady;
 }
