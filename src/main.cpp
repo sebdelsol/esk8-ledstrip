@@ -48,15 +48,19 @@ AllLedStrips AllLeds(LED_MAX_MA, Serial);
 #define NBLEDS_TIP    36
 
 #define AQUA_MENTHE   0x7FFFD4
+#define AQUA          0x00FFFF
 #define LUSH_LAVA     0xFF4500
 #define PHANTOM_BLUE  0x191970
 #define YELLOW        0xffff00
 
 LedStrip<NBLEDS_MIDDLE, LED_PIN> Leds("Led");
-FireFX Fire(true); //reverse
-AquaFX Aqua(false); 
+// FireFX Fire(true); //reverse
+// AquaFX Aqua(false); 
+RunningFX Fire(LUSH_LAVA, 10, 3); //width, speed
+RunningFX Aqua(AQUA_MENTHE, 10, -3); 
+
 TwinkleFX FireTwk(0); // red
-TwinkleFX AquaTwk(CRGB(AQUA_MENTHE));
+TwinkleFX AquaTwk(140);//CRGB(AQUA_MENTHE));
 PlasmaFX Plasma;
 
 LedStrip<NBLEDS_TIP, LEDR_PIN> LedsR("LedR");
@@ -200,7 +204,7 @@ void loop()
           RunF.setSpeed(runSpeed);
 
           //------
-          #define NeutralZ  1638 //.025
+          #define NeutralZ  3276 //.05 //1638 //.025
           #define maxZ      13107 //.2
           wz = abs(wz);
           int alpha = wz > NeutralZ ? min((wz-NeutralZ) * 255 / maxZ, 255) : 0;
@@ -210,31 +214,34 @@ void loop()
           int invAlpha = 255 - alpha;
 
           //----------------------
-          #define SMOOTH_ACC  3200 // 6500 //.05
+          #define SMOOTH_ACC  1600//3200 //.05
           #define THRES_ACC   30
-          #define MAX_ACC     255
-          int acc = constrain(y / 3, -MAX_ACC, MAX_ACC) << 8;
+          #define MAX_ACC     256
+          #define MINeye      2
+          #define MAXeye      5
+
+          int acc = constrain(y / 4, -MAX_ACC, MAX_ACC) << 8;
 
           //------
           static int FWD = 0;
-          int fwd = max(acc, 0);
+          int fwd = constrain(acc, 0, 65535);
           FWD = fwd > FWD ? fwd : lerp16by16(FWD, fwd, SMOOTH_ACC);
-          fwd = FWD >> 8;
 
-          int eyeF = map(fwd, THRES_ACC, MAX_ACC, 2, 10);
-          int alphaF = max(0, int(map(fwd, THRES_ACC, MAX_ACC, 0, 255)));
+          int alphaF = constrain((FWD - (THRES_ACC<<8))/(MAX_ACC-THRES_ACC), 0, 255);
+          int eyeF = MINeye + (((MAXeye-MINeye) * alphaF) >>8);
+
           CylonF.setEyeSize(eyeF);
           CylonF.setAlpha(invAlpha);
           TwinkleF.setAlpha((alphaF * (invAlpha + 1))>>8);
 
           //------
           static int RWD = 0;
-          int rwd = max(-acc, 0);
+          int rwd = constrain(-acc, 0, 65535);
           RWD = rwd > RWD ? rwd : lerp16by16(RWD, rwd, SMOOTH_ACC);
-          rwd = RWD >> 8;
 
-          int eyeR = map(rwd, THRES_ACC, MAX_ACC, 2, 10);
-          int alphaR = max(0, int(map(rwd, THRES_ACC, MAX_ACC, 0, 255)));
+          int alphaR = constrain((RWD - (THRES_ACC<<8))/(MAX_ACC-THRES_ACC), 0, 255);
+          int eyeR = MINeye + (((MAXeye-MINeye) * alphaR) >>8);
+
           CylonR.setEyeSize(eyeR);
           CylonR.setAlpha(invAlpha);
           TwinkleR.setAlpha((alphaR * (invAlpha + 1))>>8);

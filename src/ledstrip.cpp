@@ -256,7 +256,7 @@ void TwinkleFX::update()
 
   for (int i = 0; i<mNLEDS; i++) {
     byte fader = sin8(millis()/random8(mDiv, mDiv<<1));               // The random number for each 'i' will be the same every time.
-    byte hue = sin8(millis()/random8(mDiv<<1, mDiv<<2)) >> mHueDiv; // The random number for each 'i' will be the same every time.
+    byte hue = sin8(millis()/random8(mDiv, mDiv)) >> mHueDiv; // The random number for each 'i' will be the same every time.
     mLeds[i] = CHSV(mHSV.h + hue, mHSV.s , fader);
   }
 

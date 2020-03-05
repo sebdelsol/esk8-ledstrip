@@ -125,13 +125,13 @@ bool myMPU6050::getXYZ(float **YPR, int &wz, int &x, int &y, int &z, int &oneG)
 
     // #define MPU_DBG
     #ifdef MPU_DBG
-      *mSerial << "[ dt " << dt/1000. << "ms, smooth " << smooth/65536. << ", Wz " << mWz  << "]  ";
-      *mSerial << "[ ypr " << ypr[0] * 180/M_PI << "  " << ypr[1] * 180/M_PI << "  " << ypr[2] * 180/M_PI << "]  ";
-      *mSerial << "[ grav " << gravity.x << "  " << gravity.y << "  " << gravity.z << "]  ";
-      *mSerial << "[ avg " << mX << "  " << mY << "  " << mZ << "]  ";
-      *mSerial << "[ acc " << aa.x << "\t" << aa.y << "\t" << aa.z << "]  ";
-      *mSerial << "[ real " << aaReal.x << "\t" << aaReal.y << "\t" << aaReal.z << "]  ";
-      *mSerial << "                 \r"; //endl;
+      *mSerial << "[ dt " << dt/1000. << "ms\t smooth" << smooth/65536. << "\t Wz " << mWz  << "]\t ";
+      // *mSerial << "[ ypr " << ypr[0] * 180/M_PI << "\t " << ypr[1] * 180/M_PI << "\t  " << ypr[2] * 180/M_PI << "]\t ";
+      *mSerial << "[ grav " << gravity.x << "\t" << gravity.y << " \t" << gravity.z << "]\t ";
+      *mSerial << "[ avg " << mX << "\t " << mY << "\t " << mZ << "]\t ";
+      *mSerial << "[ acc " << aa.x << "\t " << aa.y << "\t " << aa.z << "]\t ";
+      *mSerial << "[ real " << aaReal.x << "\t " << aaReal.y << "\t " << aaReal.z << "]\t ";
+      *mSerial << "                                 \r"; //endl;
     #endif
   }
 

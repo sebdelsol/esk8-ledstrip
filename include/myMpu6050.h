@@ -6,7 +6,7 @@
 #include <myPins.h>
 #include <helper_3dmath.h>
 
-#define ACCEL_AVG .1
+#define ACCEL_AVG .05 //.1
 #define ACCEL_BASE_FREQ 60.
 
 class myMPU6050
