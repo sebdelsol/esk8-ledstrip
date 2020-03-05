@@ -220,7 +220,9 @@ void loop()
           #define MINeye      5
           #define MAXeye      10
 
-          int acc = constrain(y / 4, -MAX_ACC, MAX_ACC) << 8;
+          #define ZERO_STANDUP -500
+
+          int acc = constrain((y + ZERO_STANDUP) / 4, -MAX_ACC, MAX_ACC) << 8;
 
           //------
           static int FWD = 0;
