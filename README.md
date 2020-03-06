@@ -3,7 +3,7 @@
 
 <img src="https://github.com/sebdelsol/Esk8/blob/master/esk8.gif" height="225"> <img src="https://i.imgur.com/27TWWlc.png" height="225"> <img src="https://i.imgur.com/bn5Pk2N.jpg" height="225"> <img src="https://i.imgur.com/fsrZ5Zs.jpg" height="225">
 
-# Please check the [PCB & schematic](https://easyeda.com/seb.morin/esk8|height=250) 
+# Please check the [PCB & schematic](https://easyeda.com/seb.morin/esk8) 
 
 Qty | Component
 --- | ----
