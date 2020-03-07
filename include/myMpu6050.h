@@ -9,13 +9,22 @@
 #define ACCEL_AVG .05 //.1
 #define ACCEL_BASE_FREQ 60.
 
-#define TOdeg(x) ( x * 180/M_PI )
+//----------------------------- OFFSETS
 
-
-// #define MPU_ZERO
+// #define MPU_ZERO // if you want to compute the offset
 #ifdef MPU_ZERO
   void MPUzero(Stream &serial, void (*handleOta)());
 #endif
+
+#define XGyroOffset 80 //77
+#define YGyroOffset 4
+#define ZGyroOffset 8
+#define XAccelOffset -1843 // -1772
+#define YAccelOffset -267 // -155
+#define ZAccelOffset 1297 // 1270
+
+//-----------------------------
+#define TOdeg(x) ( x * 180/M_PI )
 
 class myMPU6050
 {

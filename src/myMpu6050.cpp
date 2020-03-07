@@ -41,14 +41,9 @@ void myMPU6050::begin(Stream &serial, void (*handleOta)())
   // verify connection
   *mSerial << "connection " << (mpu.testConnection() ? F("successful") : F("failed"));// << endl;
 
-  // mpu.PrintActiveOffsets();
-  // supply gyro offsets // seems not useful with dmp
-  mpu.setXGyroOffset(80); //(77);
-  mpu.setYGyroOffset(4);
-  mpu.setZGyroOffset(8);
-  mpu.setXAccelOffset(-1843); //(-1772);
-  mpu.setYAccelOffset(-267); //(-155);
-  mpu.setZAccelOffset(1297); //(1270);
+  // supply accel & gyro offsets 
+  mpu.setXGyroOffset(XGyroOffset);    mpu.setYGyroOffset(YGyroOffset);    mpu.setZGyroOffset(ZGyroOffset);
+  mpu.setXAccelOffset(XAccelOffset);  mpu.setYAccelOffset(YAccelOffset);  mpu.setZAccelOffset(ZAccelOffset); 
 
   devStatus = mpu.dmpInitialize();
 
