@@ -12,7 +12,8 @@
 
 //----------------------------- OFFSETS
 
-// #define MPU_ZERO // if you need to compute the offset
+// if you need to compute the offset
+// #define MPU_ZERO 
 #ifdef MPU_ZERO
   void MPUzero(Stream &serial, void (*handleOta)());
 #endif
@@ -25,8 +26,6 @@
 #define ZAccelOffset  1297 // 1270
 
 //-----------------------------
-#define TOdeg(x) ( x * 180/M_PI )
-
 class myMPU6050
 {
   ulong mT = 0;

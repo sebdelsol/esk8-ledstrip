@@ -126,6 +126,7 @@ bool myMPU6050::getXYZ(float **YPR, int &wz, int &x, int &y, int &z, int &oneG)
 
     // #define MPU_DBG
     #ifdef MPU_DBG
+      #define TOdeg(x) ( x * 180/M_PI )
       *mSerial << "[ dt " << dt << "ms\t smooth" << smooth/65536. << "\t Wz " << mWz  << "]\t ";
       *mSerial << "[ ypr " << TOdeg(ypr[0]) << "\t " << TOdeg(ypr[1]) << "\t " << TOdeg(ypr[2]) << "]\t ";
       *mSerial << "[ grav " << gravity.x << "\t " << gravity.y << "\t " << gravity.z << "]\t ";
