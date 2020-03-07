@@ -1,7 +1,7 @@
 #include <myMpu6050.h>
 #include <I2Cdev.h>
-//#include <MPU6050_6Axis_MotionApps20.h>
-#include <MPU6050_6Axis_MotionApps_V6_12.h> //better
+#include <MPU6050_6Axis_MotionApps20.h>
+// #include <MPU6050_6Axis_MotionApps_V6_12.h> // issue with gravity ?
 
 #define ONEG 8192
 
@@ -23,8 +23,13 @@ VectorFloat gravity;              // [x, y, z]            gravity vector
 float ypr[3] = {.0f, .0f, .0f};   // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
 
 //--------------------------------------
-void myMPU6050::begin(Stream &serial)
+void myMPU6050::begin(Stream &serial, void (*handleOta)())
 {
+
+  #ifdef MPU_ZERO
+    MPUzero(serial, handleOta);
+  #endif
+
   mSerial = &serial;
   
   Wire.begin(SDA, SCL);
@@ -38,12 +43,12 @@ void myMPU6050::begin(Stream &serial)
 
   // mpu.PrintActiveOffsets();
   // supply gyro offsets // seems not useful with dmp
-  mpu.setXGyroOffset(77);
+  mpu.setXGyroOffset(80); //(77);
   mpu.setYGyroOffset(4);
   mpu.setZGyroOffset(8);
-  mpu.setXAccelOffset(-1772);
-  mpu.setYAccelOffset(-155);
-  mpu.setZAccelOffset(1270);
+  mpu.setXAccelOffset(-1843); //(-1772);
+  mpu.setYAccelOffset(-267); //(-155);
+  mpu.setZAccelOffset(1297); //(1270);
 
   devStatus = mpu.dmpInitialize();
 
@@ -120,18 +125,20 @@ bool myMPU6050::getXYZ(float **YPR, int &wz, int &x, int &y, int &z, int &oneG)
     mZ = lerp15by16(mZ, aaReal.z, smooth);
 
     int cAngz = 65536 * ypr[0];
-    mWz = (cAngz - mAngz) * 1000 / dt;
+    int wz = constrain((cAngz - mAngz) * 1000 / dt, -32768, 32767);
+    mWz = lerp15by16(mWz, wz, smooth);
     mAngz = cAngz;
 
     // #define MPU_DBG
     #ifdef MPU_DBG
-      *mSerial << "[ dt " << dt/1000. << "ms\t smooth" << smooth/65536. << "\t Wz " << mWz  << "]\t ";
+      *mSerial << "[ dt " << dt << "ms\t smooth" << smooth/65536. << "\t Wz " << mWz  << "]\t ";
       *mSerial << "[ ypr " << TOdeg(ypr[0]) << "\t " << TOdeg(ypr[1]) << "\t " << TOdeg(ypr[2]) << "]\t ";
       *mSerial << "[ grav " << gravity.x << "\t " << gravity.y << "\t " << gravity.z << "]\t ";
       *mSerial << "[ avg " << mX << "\t " << mY << "\t " << mZ << "]\t ";
       *mSerial << "[ acc " << aa.x << "\t " << aa.y << "\t " << aa.z << "]\t ";
       *mSerial << "[ real " << aaReal.x << "\t " << aaReal.y << "\t " << aaReal.z << "]\t ";
-      *mSerial << "                                 \r"; //endl;
+      // *mSerial << "                                 \r"; //endl;
+      *mSerial << endl;
     #endif
   }
 

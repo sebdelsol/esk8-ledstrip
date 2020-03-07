@@ -11,6 +11,12 @@
 
 #define TOdeg(x) ( x * 180/M_PI )
 
+
+// #define MPU_ZERO
+#ifdef MPU_ZERO
+  void MPUzero(Stream &serial, void (*handleOta)());
+#endif
+
 class myMPU6050
 {
   ulong mT = 0;
@@ -21,6 +27,6 @@ class myMPU6050
   
 public:
 
-  void begin(Stream &serial);
+  void begin(Stream &serial, void (*handleOta)());
   bool getXYZ(float **YPR, int &wz, int &x, int &y, int &z, int &oneG);
 };

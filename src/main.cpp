@@ -20,6 +20,7 @@
   BlueTooth BT;
 #endif
 
+// ----------------------------------------------------
 #ifdef USE_OTA
   #include <OTA.h>
   OTA Ota;
@@ -30,6 +31,16 @@
     #define Serial  SerialAndTelnet
   #endif
 #endif
+
+void handleOta()
+{
+  #ifdef USE_OTA
+    Ota.update();
+    #ifdef USE_TELNET
+      SerialAndTelnet.handle();
+    #endif
+  #endif
+}
 
 // ----------------------------------------------------
 #define LED_MAX_MA  800 // mA
@@ -144,18 +155,13 @@ void setup()
   #endif
 
   Button.begin();
-  Accel.begin(Serial);
+  Accel.begin(Serial, &handleOta);
 }
 
 // ----------------------------------------------------
 void loop()
 {
-  #ifdef USE_OTA
-    Ota.update();
-    #ifdef USE_TELNET
-      SerialAndTelnet.handle();
-    #endif
-  #endif
+  handleOta();
 
   int wz, x, y, z, oneG;
   float *ypr;
@@ -220,9 +226,7 @@ void loop()
           #define MINeye      5
           #define MAXeye      10
 
-          #define ZERO_STANDUP -500
-
-          int acc = constrain((y + ZERO_STANDUP) / 4, -MAX_ACC, MAX_ACC) << 8;
+          int acc = constrain(y / 4, -MAX_ACC, MAX_ACC) << 8;
 
           //------
           static int FWD = 0;
