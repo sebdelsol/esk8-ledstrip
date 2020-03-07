@@ -107,7 +107,7 @@ protected:
   int mPos2;
 
 public:
-  DblCylonFX(const long color=0x0000FF, const int eyeSize = 3, const int speed = 2<<8);
+  DblCylonFX(const long color=0x0000FF, const int eyeSize = 3, const int speed = 3<<8);
   void update();
 
   const char* getName() {return "DblCylon";};
