@@ -41,11 +41,11 @@ void myMPU6050::begin(Stream &serial, void (*handleOta)())
   // verify connection
   *mSerial << "connection " << (mpu.testConnection() ? F("successful") : F("failed"));// << endl;
 
+  devStatus = mpu.dmpInitialize();
+
   // supply accel & gyro offsets 
   mpu.setXGyroOffset(XGyroOffset);    mpu.setYGyroOffset(YGyroOffset);    mpu.setZGyroOffset(ZGyroOffset);
   mpu.setXAccelOffset(XAccelOffset);  mpu.setYAccelOffset(YAccelOffset);  mpu.setZAccelOffset(ZAccelOffset); 
-
-  devStatus = mpu.dmpInitialize();
 
   if (devStatus == 0) { // did it work ?
     mpu.CalibrateAccel(6);
