@@ -9,7 +9,7 @@
 
 # Components 
 
-Qty | Components | 22$
+Qty | Components | ⮕22$
 ---: | :---| :---
 *1*|[Lolin32](https://wiki.wemos.cc/products:lolin32:lolin32)| *5$*
 *1*|[SN74AHCT125](https://www.ti.com/product/SN74AHCT125) | *1$*
