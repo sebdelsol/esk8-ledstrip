@@ -9,8 +9,9 @@
 
 # Components 
 
-Qty | Components | ⮕22$
+Qty | Components | ⮕24$
 ---: | :---| :---
+*1*| PCB| *2$*
 *1*|[Lolin32](https://wiki.wemos.cc/products:lolin32:lolin32)| *5$*
 *1*|[SN74AHCT125](https://www.ti.com/product/SN74AHCT125) | *1$*
 *1*|[MPU 6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/) | *2$*
