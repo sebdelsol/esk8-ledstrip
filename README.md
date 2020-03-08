@@ -23,4 +23,4 @@ Qty | Component | ~Price
 1x|220Ω resistor | <10¢
 1x|blue LED | <10¢
 1x|12x12 switch | <10¢
- . |total | **22$**
+  . |**total** | **22$**
