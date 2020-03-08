@@ -1,3 +1,24 @@
+
+// ----------------------------------------------------
+// gow it works:
+
+// typedef struct {
+//   int toto = 1;
+//   byte tutu = 3;
+//   int titi = 201;
+// } TstCfg;
+
+// AllConfig AllCFG;
+// Config<TstCfg, 1> test("test");
+
+// AllCFG.init();
+  // AllCFG.RegisterCfg(test);
+  // AllCFG.load();
+  // // Serial << test.mData.toto << " " << test.mData.tutu << " " << test.mData.titi << endl;
+  // // test.mData.toto = test.mData.toto+1;
+  // AllCFG.save();
+  // AllCFG.cleanUnRegistered();
+
 #pragma once
 
 #include <Streaming.h>
@@ -31,8 +52,6 @@ public:
   void load();
   void save();
 };
-
-// AllConfig AllCFG;
 
 // ----------------------------------------------------
 template <typename DATASTRUCT, int VER>

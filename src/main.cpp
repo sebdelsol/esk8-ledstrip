@@ -65,11 +65,8 @@ AllLedStrips AllLeds(LED_MAX_MA, Serial);
 #define YELLOW        0xffff00
 
 LedStrip<NBLEDS_MIDDLE, LED_PIN> Leds("Led");
-// FireFX Fire(true); //reverse
-// AquaFX Aqua(false); 
-RunningFX Fire(LUSH_LAVA, 10, 3); //width, speed
-RunningFX Aqua(AQUA_MENTHE, 10, -3); 
-
+RunningFX Fire(LUSH_LAVA, 10, 3); //width, speed // FireFX Fire(true); //reverse
+RunningFX Aqua(AQUA_MENTHE, 10, -3); // AquaFX Aqua(false); 
 TwinkleFX FireTwk(0); // red
 TwinkleFX AquaTwk(140);//CRGB(AQUA_MENTHE));
 PlasmaFX Plasma;
@@ -85,16 +82,6 @@ DblCylonFX CylonF(AQUA_MENTHE);
 RunningFX RunF(YELLOW, 5); // width
 
 // ----------------------------------------------------
-// typedef struct {
-//   int toto = 1;
-//   byte tutu = 3;
-//   int titi = 201;
-// } TstCfg;
-
-// AllConfig AllCFG;
-// Config<TstCfg, 1> test("test");
-
-// ----------------------------------------------------
 void setup()
 {
   Serial.begin(SERIAL_BAUD);
@@ -103,14 +90,6 @@ void setup()
   // rtc_clk_cpu_freq_set(RTC_CPU_FREQ_240M);
   Serial << "Esp32 core " << esp_get_idf_version() << endl;
   Serial << "CPU freq " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
-
-  // AllCFG.init();
-  // AllCFG.RegisterCfg(test);
-  // AllCFG.load();
-  // // Serial << test.mData.toto << " " << test.mData.tutu << " " << test.mData.titi << endl;
-  // // test.mData.toto = test.mData.toto+1;
-  // AllCFG.save();
-  // AllCFG.cleanUnRegistered();
 
   AllLeds.registerStrip(Leds);
   Leds.registerFX(Fire);
