@@ -43,7 +43,7 @@ void myMPU6050::begin(Stream &serial, void (*handleOta)())
 
   devStatus = mpu.dmpInitialize();
 
-  // supply accel & gyro offsets 
+  // supply accel & gyro offsets, use #define MPU_ZERO for computing the offsets
   mpu.setXGyroOffset(XGyroOffset);    mpu.setYGyroOffset(YGyroOffset);    mpu.setZGyroOffset(ZGyroOffset);
   mpu.setXAccelOffset(XAccelOffset);  mpu.setYAccelOffset(YAccelOffset);  mpu.setZAccelOffset(ZAccelOffset); 
 
