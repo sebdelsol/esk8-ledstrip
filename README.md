@@ -9,17 +9,18 @@
 
 # Components 
 
-Qty | Component
---- | ----
-1x|[Lolin32](https://wiki.wemos.cc/products:lolin32:lolin32)
-1x|[SN74AHCT125](https://www.ti.com/product/SN74AHCT125)
-1x|[MPU 6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/)
-0.5m|WS2812B IP67 strip, 144Leds/m
-1m|WS2812B IP67 strip, 60Leds/m
-3x|470Ω resistors
-1x|1000μF capacitor
-1x|10kΩ resistor
-1x|LDR 
-1x|220Ω resistor
-1x|blue LED
-1x|12x12 switch
+Qty | Component | ~Price
+--- | ----| ----
+1x|[Lolin32](https://wiki.wemos.cc/products:lolin32:lolin32)| 5$
+1x|[SN74AHCT125](https://www.ti.com/product/SN74AHCT125) | 1$
+1x|[MPU 6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/) | 2$
+0.5m|WS2812B IP67 strip, 144Leds/m | 8$
+1m|WS2812B IP67 strip, 60Leds/m | 5$
+3x|470Ω resistors | <10¢
+1x|1000μF capacitor | <10¢
+1x|10kΩ resistor | <10¢
+1x|LDR | <10¢
+1x|220Ω resistor | <10¢
+1x|blue LED | <10¢
+1x|12x12 switch | <10¢
+ . |total | **22$**
