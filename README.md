@@ -16,7 +16,7 @@ Qty | Components | ⮕24$
 1|[SN74AHCT125](https://www.ti.com/product/SN74AHCT125) | *1$*
 1|[MPU 6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/) | *2$*
 0.5m|WS2812B IP67, 144Leds/m | *9$*
-1m|WS2812B IP67, 60Leds/m | *5$*
+1m|WS2812B IP67, 60Leds/m | *4.5$*
 3|470Ω resistors | *1¢*
 1|1000μF capacitor | *1¢*
 1|10kΩ resistor | *1¢*
