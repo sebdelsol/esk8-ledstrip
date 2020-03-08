@@ -9,8 +9,8 @@
 
 # Components 
 
-Qty | Component | ~Price
---- | ----| ----
+Qty | Components | ~22$
+:---  | :---| :---
 1x|[Lolin32](https://wiki.wemos.cc/products:lolin32:lolin32)| 5$
 1x|[SN74AHCT125](https://www.ti.com/product/SN74AHCT125) | 1$
 1x|[MPU 6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/) | 2$
@@ -23,4 +23,3 @@ Qty | Component | ~Price
 1x|220Ω resistor | 1¢
 1x|blue LED | 1¢
 1x|12x12 switch | 1¢
-  . |**total** | **~22$**
