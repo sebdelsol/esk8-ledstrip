@@ -16,11 +16,11 @@ Qty | Component | ~Price
 1x|[MPU 6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/) | 2$
 0.5m|WS2812B IP67 strip, 144Leds/m | 9$
 1m|WS2812B IP67 strip, 60Leds/m | 5$
-3x|470Ω resistors | <10¢
-1x|1000μF capacitor | <10¢
-1x|10kΩ resistor | <10¢
-1x|LDR | <10¢
-1x|220Ω resistor | <10¢
-1x|blue LED | <10¢
-1x|12x12 switch | <10¢
-  . |**total** | **23$**
+3x|470Ω resistors | 1¢
+1x|1000μF capacitor | 1¢
+1x|10kΩ resistor | 1¢
+1x|LDR | 1¢
+1x|220Ω resistor | 1¢
+1x|blue LED | 1¢
+1x|12x12 switch | 1¢
+  . |**total** | **~22$**
