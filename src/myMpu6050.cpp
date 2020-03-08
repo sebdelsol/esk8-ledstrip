@@ -110,31 +110,32 @@ bool myMPU6050::getXYZ(float **YPR, int &wz, int &x, int &y, int &z, int &oneG)
 {
   if (readAccel()) {
 
+    #define STAYS_SHORT(x) constrain(x, -32768, 32767)
+    #define TOdeg(x) (x * 180/M_PI)
+
     ulong t = millis();
     long dt = t - mT;
     mT = t;
 
     uint16_t smooth = - int(pow(1. - ACCEL_AVG, dt * ACCEL_BASE_FREQ / 1000.) * 65536.); // 1 - (1-accel_avg) ^ (dt * 60 / 1000) using fract16
-    mX = lerp15by16(mX, aaReal.x, smooth);
-    mY = lerp15by16(mY, aaReal.y, smooth);
-    mZ = lerp15by16(mZ, aaReal.z, smooth);
+    mX = lerp15by16(mX, STAYS_SHORT(aaReal.x), smooth);
+    mY = lerp15by16(mY, STAYS_SHORT(aaReal.y), smooth);
+    mZ = lerp15by16(mZ, STAYS_SHORT(aaReal.z), smooth);
 
     int cAngz = 65536 * ypr[0];
-    int wz = constrain((cAngz - mAngz) * 1000 / dt, -32768, 32767);
+    int wz = STAYS_SHORT((cAngz - mAngz) * 1000 / dt);
     mWz = lerp15by16(mWz, wz, smooth);
     mAngz = cAngz;
 
     // #define MPU_DBG
     #ifdef MPU_DBG
-      #define TOdeg(x) ( x * 180/M_PI )
       *mSerial << "[ dt " << dt << "ms\t smooth" << smooth/65536. << "\t Wz " << mWz  << "]\t ";
       *mSerial << "[ ypr " << TOdeg(ypr[0]) << "\t " << TOdeg(ypr[1]) << "\t " << TOdeg(ypr[2]) << "]\t ";
       *mSerial << "[ grav " << gravity.x << "\t " << gravity.y << "\t " << gravity.z << "]\t ";
       *mSerial << "[ avg " << mX << "\t " << mY << "\t " << mZ << "]\t ";
       *mSerial << "[ acc " << aa.x << "\t " << aa.y << "\t " << aa.z << "]\t ";
       *mSerial << "[ real " << aaReal.x << "\t " << aaReal.y << "\t " << aaReal.z << "]\t ";
-      // *mSerial << "                                 \r"; //endl;
-      *mSerial << endl;
+      *mSerial << endl; // *mSerial << "                                 \r"; //endl;
     #endif
   }
 
