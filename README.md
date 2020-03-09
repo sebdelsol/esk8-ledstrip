@@ -1,4 +1,4 @@
-# eSK8
+# eSK8 motion LEDs
 ***Led strips controlled by an accelerometer for an eSK8 with a basic companion app***
 
 <img src="https://media.giphy.com/media/IhCHKo42Hx7WFkRmzQ/giphy.gif" height="300"> <img src="https://media.giphy.com/media/fY5xLxGayUptPZuTfG/giphy.gif" height="300"> <img src="https://media.giphy.com/media/RfYtkG17dUJyVmbPet/giphy.gif" height="300"> 
