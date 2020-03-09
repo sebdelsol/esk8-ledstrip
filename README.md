@@ -10,7 +10,7 @@
 # Components 
 
 Qty | Components | *20$*
-:---: | :---| :---
+---: | :---| ---:
 1| PCB| *2$*
 1|[Lolin32](https://wiki.wemos.cc/products:lolin32:lolin32)| *4$*
 1|[SN74AHCT125](https://www.ti.com/product/SN74AHCT125) | *50¢*
