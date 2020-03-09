@@ -7,7 +7,7 @@
 
 <img src="https://image.easyeda.com/histories/aaf838e4a54c468f9502dc529522ac38.png" height="225"> <img src="https://i.imgur.com/bn5Pk2N.jpg" height="225"> <img src="https://i.imgur.com/fsrZ5Zs.jpg" height="225">
 
-# Components 
+# BOM
 
 Qty | Components | *20€*
 ---:| :---| ---:
