@@ -3,7 +3,7 @@
 
 <img src="https://media.giphy.com/media/IhCHKo42Hx7WFkRmzQ/giphy.gif" height="300"> <img src="https://media.giphy.com/media/fY5xLxGayUptPZuTfG/giphy.gif" height="300"> <img src="https://media.giphy.com/media/RfYtkG17dUJyVmbPet/giphy.gif" height="300"> 
 
-# Please check the [PCB & schematic](https://easyeda.com/seb.morin/esk8) 
+# Please check the [PCB & Schematic](https://easyeda.com/seb.morin/esk8) 
 
 <img src="https://image.easyeda.com/histories/aaf838e4a54c468f9502dc529522ac38.png" height="225"> <img src="https://i.imgur.com/bn5Pk2N.jpg" height="225"> <img src="https://i.imgur.com/fsrZ5Zs.jpg" height="225">
 
