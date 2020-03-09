@@ -9,11 +9,11 @@
 
 # Components 
 
-Qty | Components | ⮕24$
+Qty | Components | ⮕23$
 ---: | :---| :---
 1| PCB| *2$*
 1|[Lolin32](https://wiki.wemos.cc/products:lolin32:lolin32)| *5$*
-1|[SN74AHCT125](https://www.ti.com/product/SN74AHCT125) | *1$*
+1|[SN74AHCT125](https://www.ti.com/product/SN74AHCT125) | *50¢*
 1|[MPU 6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/) | *2$*
 0.5m|WS2812B IP67, 144Leds/m | *9$*
 1m|WS2812B IP67, 60Leds/m | *4.5$*
