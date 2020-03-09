@@ -9,7 +9,7 @@
 
 # Components 
 
-Qty | Components | ⮕20$
+Qty | Components | 20$
 ---: | :---| :---
 1| PCB| *2$*
 1|[Lolin32](https://wiki.wemos.cc/products:lolin32:lolin32)| *4$*
