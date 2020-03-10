@@ -189,8 +189,8 @@ void loop()
           RunF.setSpeed(runSpeed);
 
           //------
-          #define NeutralZ  3276 //.05 //1638 //.025
-          #define maxZ      13107 //.2
+          #define NeutralZ  3000 
+          #define maxZ      7000 
           wz = abs(wz);
           int alpha = wz > NeutralZ ? min((wz-NeutralZ) * 255 / maxZ, 255) : 0;
           RunR.setAlpha(alpha);
@@ -205,7 +205,7 @@ void loop()
           #define MINeye      5
           #define MAXeye      10
 
-          int acc = constrain(y / 3, -MAX_ACC, MAX_ACC) << 8;
+          int acc = constrain(y / 2, -MAX_ACC, MAX_ACC) << 8;
 
           //------
           static int FWD = 0;
