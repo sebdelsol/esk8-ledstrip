@@ -32,9 +32,8 @@ void myMPU6050::begin(Stream &serial, void (*handleOta)())
   Wire.begin(SDA, SCL);
   Wire.setClock(400000); // 400kHz I2C clock.
 
-  *mSerial << "Initializing mpu...";
   mpu.initialize();
-  *mSerial << "connection " << (mpu.testConnection() ? F("successful") : F("failed"));
+  *mSerial << "MPU connection " << (mpu.testConnection() ? F("successful") : F("failed")) << endl;
   devStatus = mpu.dmpInitialize();
 
   // supply accel & gyro offsets, use #define MPU_ZERO for computing the offsets
@@ -46,10 +45,9 @@ void myMPU6050::begin(Stream &serial, void (*handleOta)())
     mpu.CalibrateGyro(6);
     mpu.PrintActiveOffsets();
 
-    *mSerial << "Enabling DMP...";
     mpu.setDMPEnabled(true);
     dmpReady = true;
-    *mSerial << "done" << endl;
+    *mSerial << "DMP enabled" << endl;
   }
   else // ERROR! 1 = initial memory load failed, 2 = DMP configuration updates failed
     *mSerial << "DMP Initialization failed (" << devStatus << ")" << endl;
