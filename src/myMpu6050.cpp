@@ -21,8 +21,7 @@ float ypr[3] = {.0f, .0f, .0f};   // [yaw, pitch, roll]   yaw/pitch/roll contain
 
 //--------------------------------------
 void myMPU6050::begin(Stream &serial, void (*handleOta)())
-{
-
+{ 
   #ifdef MPU_ZERO
     MPUzero(serial, handleOta);
   #endif
@@ -53,11 +52,11 @@ void myMPU6050::begin(Stream &serial, void (*handleOta)())
   }
   else // ERROR! 1 = initial memory load failed, 2 = DMP configuration updates failed
     *mSerial << "DMP Initialization failed (" << devStatus << ")" << endl;
-
 }
 
 // ================================================================
-bool myMPU6050::readAccel() {
+bool myMPU6050::readAccel()
+{
   if (dmpReady && mpu.dmpGetCurrentFIFOPacket(fifoBuffer)) {
     // angles
     mpu.dmpGetQuaternion(&Q, fifoBuffer);
