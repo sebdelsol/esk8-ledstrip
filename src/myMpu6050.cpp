@@ -9,10 +9,7 @@ MPU6050 mpu;
 
 // MPU control/status vars
 bool dmpReady = false;  // set true if DMP init was successful
-uint8_t mpuIntStatus;   // holds actual interrupt status byte from MPU
 uint8_t devStatus;      // return status after each device operation (0 = success, !0 = error)
-uint16_t packetSize;    // expected DMP packet size (default is 42 bytes)
-uint16_t fifoCount;     // count of all bytes currently in FIFO
 uint8_t fifoBuffer[64]; // FIFO storage buffer
 
 // orientation/motion vars
@@ -37,10 +34,7 @@ void myMPU6050::begin(Stream &serial, void (*handleOta)())
 
   *mSerial << "Initializing mpu...";
   mpu.initialize();
-
-  // verify connection
-  *mSerial << "connection " << (mpu.testConnection() ? F("successful") : F("failed"));// << endl;
-
+  *mSerial << "connection " << (mpu.testConnection() ? F("successful") : F("failed"));
   devStatus = mpu.dmpInitialize();
 
   // supply accel & gyro offsets, use #define MPU_ZERO for computing the offsets
@@ -54,11 +48,7 @@ void myMPU6050::begin(Stream &serial, void (*handleOta)())
 
     *mSerial << "Enabling DMP...";
     mpu.setDMPEnabled(true);
-    mpuIntStatus = mpu.getIntStatus();
     dmpReady = true;
-
-    // get expected DMP packet size for later comparison
-    packetSize = mpu.dmpGetFIFOPacketSize();
     *mSerial << "done" << endl;
   }
   else // ERROR! 1 = initial memory load failed, 2 = DMP configuration updates failed
@@ -68,40 +58,16 @@ void myMPU6050::begin(Stream &serial, void (*handleOta)())
 
 // ================================================================
 bool myMPU6050::readAccel() {
-  if (dmpReady){
+  if (dmpReady && mpu.dmpGetCurrentFIFOPacket(fifoBuffer)) {
+    // angles
+    mpu.dmpGetQuaternion(&Q, fifoBuffer);
+    mpu.dmpGetGravity(&gravity, &Q);
+    mpu.dmpGetYawPitchRoll(ypr, &Q, &gravity);
 
-    // something available ?
-    fifoCount = mpu.getFIFOCount();
-    if (fifoCount >= packetSize){
-
-      mpuIntStatus = mpu.getIntStatus();
-
-      // check for overflow
-      if ((mpuIntStatus & _BV(MPU6050_INTERRUPT_FIFO_OFLOW_BIT)) || fifoCount >= 1024) {
-        mpu.resetFIFO(); // reset so we can continue cleanly
-        *mSerial << "FIFO overflow! " << endl;
-      }
-
-      // otherwise, check for DMP data ready interrupt
-      else if (mpuIntStatus & _BV(MPU6050_INTERRUPT_DMP_INT_BIT)) {
-        // read all available
-        while (fifoCount >= packetSize){
-          mpu.getFIFOBytes(fifoBuffer, packetSize);
-          fifoCount -= packetSize;
-        }
-
-        // angles
-        mpu.dmpGetQuaternion(&Q, fifoBuffer);
-        mpu.dmpGetGravity(&gravity, &Q);
-        mpu.dmpGetYawPitchRoll(ypr, &Q, &gravity);
-
-        // real acceleration, adjusted to remove gravity
-        mpu.dmpGetQuaternion(&Q, fifoBuffer);
-        mpu.dmpGetAccel(&aa, fifoBuffer);
-        mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
-        return true;
-      }
-    }
+    // real acceleration, adjusted to remove gravity
+    mpu.dmpGetAccel(&aa, fifoBuffer);
+    mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
+    return true;
   }
   return false;
 }
