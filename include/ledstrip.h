@@ -87,10 +87,11 @@ protected:
   int mPos, mEyeSize, mSpeed;  
   CRGB mColor;
 
-  void _update(int p); 
+  void showEye(int p); 
+  bool doRebound();
 
 public:
-  CylonFX(const long color=0x0000FF, const int eyeSize = 3, const int speed = 2<<8);
+  CylonFX(const CRGB color=0x0000FF, const int eyeSize = 3, const int speed = 2<<8);
   void update();
 
   void setEyeSize(const int eyeSize) {mEyeSize = eyeSize;};
@@ -107,7 +108,7 @@ protected:
   int mPos2;
 
 public:
-  DblCylonFX(const long color=0x0000FF, const int eyeSize = 3, const int speed = 3<<8);
+  DblCylonFX(const CRGB color=0x0000FF, const int eyeSize = 3, const int speed = 3<<8);
   void update();
 
   const char* getName() {return "DblCylon";};
@@ -121,7 +122,7 @@ protected:
   CRGB mColor;
 
 public:
-  RunningFX(const long color=0x0000FF, const int width = 5, const int speed = 2);
+  RunningFX(const CRGB color=0x0000FF, const int width = 5, const int speed = 2);
   void update();
 
   void setSpeed(const int speed) {mSpeed = speed;};

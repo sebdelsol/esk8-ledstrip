@@ -43,43 +43,41 @@ void handleOta()
 }
 
 // ----------------------------------------------------
-#define LED_MAX_MA  800 // mA
-#define LED_TICK    15  // ms
-#define BT_TICK     15  // ms
-#define SERIAL_BAUD 115200 
+#define   LED_MAX_MA  800 // mA
+#define   LED_TICK    15  // ms
+#define   BT_TICK     15  // ms
+#define   SERIAL_BAUD 115200 
 
 // ----------------------------------------------------
-myWifi MyWifi;
-Button Button(BUTTON_PIN);
-myMPU6050 Accel;
-AllLedStrips AllLeds(LED_MAX_MA, Serial);
+myWifi        MyWifi;
+Button        Button(BUTTON_PIN);
+myMPU6050     Accel;
+AllLedStrips  AllLeds(LED_MAX_MA, Serial);
 
 // ----------------------------------------------------
-#define NBLEDS_MIDDLE 30
-#define NBLEDS_TIP    36
+#define     NBLEDS_MIDDLE 30
+#define     NBLEDS_TIPS   36
 
-#define AQUA_MENTHE   0x7FFFD4
-#define AQUA          0x00FFFF
-#define LUSH_LAVA     0xFF4500
-#define PHANTOM_BLUE  0x191970
-#define YELLOW        0xffff00
+#define     AQUA_MENTHE   CRGB(0x7FFFD4)
+#define     LUSH_LAVA     CRGB(0xFF4500)
+#define     HUE_AQUA_BLUE 140
 
-LedStrip<NBLEDS_MIDDLE, LED_PIN> Leds("Led");
-RunningFX Fire(LUSH_LAVA, 10, 3); //width, speed // FireFX Fire(true); //reverse
-RunningFX Aqua(AQUA_MENTHE, 10, -3); // AquaFX Aqua(false); 
-TwinkleFX FireTwk(0); // red
-TwinkleFX AquaTwk(140);//CRGB(AQUA_MENTHE));
-PlasmaFX Plasma;
+LedStrip    <NBLEDS_MIDDLE, LED_PIN>  Leds("Led");
+RunningFX   Fire(LUSH_LAVA, 10, 3); //width, speed        // FireFX Fire(true); //reverse
+TwinkleFX   FireTwk(HUE_RED); 
+RunningFX   Aqua(AQUA_MENTHE, 10, -3);                    // AquaFX Aqua(false); 
+TwinkleFX   AquaTwk(HUE_AQUA_BLUE);
+PlasmaFX    Plasma;
 
-LedStrip<NBLEDS_TIP, LEDR_PIN> LedsR("LedR");
-TwinkleFX TwinkleR(CRGB(LUSH_LAVA));
-DblCylonFX CylonR(LUSH_LAVA); 
-RunningFX RunR(YELLOW, 5); //width
+LedStrip    <NBLEDS_TIPS, LEDR_PIN>   LedsR("LedR");
+TwinkleFX   TwinkleR(LUSH_LAVA);
+DblCylonFX  CylonR(CRGB::Red); //LUSH_LAVA
+RunningFX   RunR(CRGB::Gold); 
 
-LedStrip<NBLEDS_TIP, LEDF_PIN> LedsF("LedF");
-TwinkleFX TwinkleF(140); // aqua
-DblCylonFX CylonF(AQUA_MENTHE);
-RunningFX RunF(YELLOW, 5); // width
+LedStrip    <NBLEDS_TIPS, LEDF_PIN>   LedsF("LedF");
+TwinkleFX   TwinkleF(HUE_AQUA_BLUE); 
+DblCylonFX  CylonF(AQUA_MENTHE);
+RunningFX   RunF(CRGB::Gold);
 
 // ----------------------------------------------------
 void setup()
