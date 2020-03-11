@@ -11,8 +11,7 @@ void FX::init(int nLeds)
 
 bool FX::drawOn(CRGBSet dst)
 {
-  if (mAlpha > 0) // 0 is invisible
-  { 
+  if (mAlpha > 0) { // 0 is invisible
     update();
     memcpy8(dst.leds, mLeds, mNLEDS * sizeof(CRGB));
     
@@ -21,7 +20,6 @@ bool FX::drawOn(CRGBSet dst)
     
     return true;
   }
-  return false;
 }
 
 void FX::answer(const MyCmd &cmd, byte arg1, byte arg2, byte arg3)
