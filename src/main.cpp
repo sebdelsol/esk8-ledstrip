@@ -92,9 +92,9 @@ void setup()
   #define Register3FX(l, f1, f2, f3)          AllLeds.registerStrip(l);   l.registerFX(f1); l.registerFX(f2); l.registerFX(f3);
   #define Register5FX(l, f1, f2, f3, f4, f5)  Register3FX(l, f1, f2, f3); l.registerFX(f4); l.registerFX(f5);
   
-  Register5FX(Leds,   Fire,       FireTwk,  Aqua,   AquaTwk,  Plasma);
-  Register3FX(LedsR,  TwinkleR,   CylonR,   RunR);
-  Register3FX(LedsF,  TwinkleF,   CylonF,   RunF);
+  Register5FX(Leds,   Fire,       FireTwk,    Aqua,   AquaTwk,    Plasma);
+  Register3FX(LedsR,  TwinkleR,   CylonR,     RunR);
+  Register3FX(LedsF,  TwinkleF,   CylonF,     RunF);
 
   #ifdef USE_OTA
     Ota.begin();
