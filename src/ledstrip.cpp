@@ -44,7 +44,7 @@ FireFX::FireFX(const bool reverse, const byte cooling, const byte sparkling) : m
 
 void FireFX::specialInit(int nLeds)
 {
-  mHeat = (byte*)malloc(nLeds*sizeof(byte));
+  mHeat = (byte *)malloc(nLeds * sizeof(byte));
 }
 
 void FireFX::update()
