@@ -64,8 +64,8 @@ AllLedStrips  AllLeds(LED_MAX_MA, Serial);
 
 LedStrip    <NBLEDS_MIDDLE, LED_PIN>  Leds("Led");
 RunningFX   Fire(LUSH_LAVA, 10, 3); //width, speed        // FireFX Fire(true); //reverse
-TwinkleFX   FireTwk(HUE_RED); 
 RunningFX   Aqua(AQUA_MENTHE, 10, -3);                    // AquaFX Aqua(false); 
+TwinkleFX   FireTwk(HUE_RED); 
 TwinkleFX   AquaTwk(HUE_AQUA_BLUE);
 PlasmaFX    Plasma;
 
@@ -85,30 +85,16 @@ void setup()
   Serial.begin(SERIAL_BAUD);
   Serial << endl << "-------- START --------" << endl;
 
-  // rtc_clk_cpu_freq_set(RTC_CPU_FREQ_240M);
+  rtc_clk_cpu_freq_set(RTC_CPU_FREQ_240M);
   Serial << "Esp32 core " << esp_get_idf_version() << endl;
   Serial << "CPU freq " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
 
-  AllLeds.registerStrip(Leds);
-  Leds.registerFX(Fire);
-  Leds.registerFX(FireTwk);
-  Leds.registerFX(Aqua);
-  Leds.registerFX(AquaTwk);
-  Leds.registerFX(Plasma);
-
-  AllLeds.registerStrip(LedsR);
-  LedsR.registerFX(TwinkleR);
-  LedsR.registerFX(CylonR);
-  LedsR.registerFX(RunR);
-
-  AllLeds.registerStrip(LedsF);
-  LedsF.registerFX(TwinkleF);
-  LedsF.registerFX(CylonF);
-  LedsF.registerFX(RunF);
-
-  // switch off blue led
-  pinMode(LIGHT_PIN, OUTPUT);
-  digitalWrite(LIGHT_PIN, LOW);
+  #define Register3FX(l, f1, f2, f3)          AllLeds.registerStrip(l);   l.registerFX(f1); l.registerFX(f2); l.registerFX(f3);
+  #define Register5FX(l, f1, f2, f3, f4, f5)  Register3FX(l, f1, f2, f3); l.registerFX(f4); l.registerFX(f5);
+  
+  Register5FX(Leds,   Fire,       FireTwk,  Aqua,   AquaTwk,  Plasma);
+  Register3FX(LedsR,  TwinkleR,   CylonR,   RunR);
+  Register3FX(LedsF,  TwinkleF,   CylonF,   RunF);
 
   #ifdef USE_OTA
     Ota.begin();
@@ -128,6 +114,9 @@ void setup()
     BT.registerFX(Plasma, 'P');
     BT.registerFX(Cylon, 'C');
   #else    
+    // switch off blue led
+    pinMode(LIGHT_PIN, OUTPUT);
+    digitalWrite(LIGHT_PIN, LOW);
     btStop(); // turnoff bt 
   #endif
 
