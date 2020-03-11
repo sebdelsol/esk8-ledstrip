@@ -11,7 +11,6 @@
 #define ACCEL_BASE_FREQ 60. // based on a 60fps measure
 
 //----------------------------- OFFSETS
-
 // if you need to compute the offset
 // #define MPU_ZERO 
 #ifdef MPU_ZERO
@@ -26,12 +25,27 @@
 #define ZAccelOffset  1297 // 1270
 
 //-----------------------------
+#define ONEG 8192
+#define STAYS_SHORT(x) constrain(x, -32768, 32767)
+#define TOdeg(x) (x * 180/M_PI)
+
+//-----------------------------
 class myMPU6050
 {
   ulong mT = 0;
   int mX = 0, mY = 0, mZ = 0, mWz = 0;
   Stream* mSerial;
 
+  bool mDmpReady = false;           // set true if DMP init was successful
+  uint8_t mFifoBuffer[64];          // FIFO storage buffer
+
+  Quaternion mQuat;                 // [w, x, y, z]         quaternion container
+  VectorInt16 mGy;                  // [x, y, z]            gyro sensor measurements
+  VectorInt16 mAcc;                 // [x, y, z]            accel sensor measurements
+  VectorInt16 mAccReal;             // [x, y, z]            gravity-free accel sensor measurements
+  VectorFloat mGrav;                // [x, y, z]            gravity vector
+  float mYPR[3] = {.0f, .0f, .0f};  // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
+  
   bool readAccel();
   
 public:

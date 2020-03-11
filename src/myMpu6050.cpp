@@ -3,22 +3,7 @@
 #include <MPU6050_6Axis_MotionApps20.h>
 // #include <MPU6050_6Axis_MotionApps_V6_12.h> // issue with gravity ?
 
-#define ONEG 8192
-
 MPU6050 mpu;
-
-// MPU control/status vars
-bool dmpReady = false;  // set true if DMP init was successful
-uint8_t devStatus;      // return status after each device operation (0 = success, !0 = error)
-uint8_t fifoBuffer[64]; // FIFO storage buffer
-
-// orientation/motion vars
-Quaternion Q;                     // [w, x, y, z]         quaternion container
-VectorInt16 gy;                   // [x, y, z]            gyro sensor measurements
-VectorInt16 aa;                   // [x, y, z]            accel sensor measurements
-VectorInt16 aaReal;               // [x, y, z]            gravity-free accel sensor measurements
-VectorFloat gravity;              // [x, y, z]            gravity vector
-float ypr[3] = {.0f, .0f, .0f};   // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
 
 //--------------------------------------
 void myMPU6050::begin(Stream &serial, void (*handleOta)())
@@ -34,7 +19,7 @@ void myMPU6050::begin(Stream &serial, void (*handleOta)())
 
   mpu.initialize();
   *mSerial << "MPU connection " << (mpu.testConnection() ? F("successful") : F("failed")) << endl;
-  devStatus = mpu.dmpInitialize();
+  uint8_t devStatus = mpu.dmpInitialize();
 
   // supply accel & gyro offsets, use #define MPU_ZERO for computing the offsets
   mpu.setXGyroOffset(XGyroOffset);    mpu.setYGyroOffset(YGyroOffset);    mpu.setZGyroOffset(ZGyroOffset);
@@ -46,7 +31,8 @@ void myMPU6050::begin(Stream &serial, void (*handleOta)())
     mpu.PrintActiveOffsets();
 
     mpu.setDMPEnabled(true);
-    dmpReady = true;
+    mDmpReady = true;
+
     *mSerial << "DMP enabled" << endl;
   }
   else // ERROR! 1 = initial memory load failed, 2 = DMP configuration updates failed
@@ -56,18 +42,18 @@ void myMPU6050::begin(Stream &serial, void (*handleOta)())
 // ================================================================
 bool myMPU6050::readAccel()
 {
-  if (dmpReady && mpu.dmpGetCurrentFIFOPacket(fifoBuffer)) {
+  if (mDmpReady && mpu.dmpGetCurrentFIFOPacket(mFifoBuffer)) {
     // angles
-    mpu.dmpGetQuaternion(&Q, fifoBuffer);
-    mpu.dmpGetGravity(&gravity, &Q);
-    mpu.dmpGetYawPitchRoll(ypr, &Q, &gravity);
+    mpu.dmpGetQuaternion(&mQuat, mFifoBuffer);
+    mpu.dmpGetGravity(&mGrav, &mQuat);
+    mpu.dmpGetYawPitchRoll(mYPR, &mQuat, &mGrav);
 
     // angular speed
-    mpu.dmpGetGyro(&gy, fifoBuffer);
+    mpu.dmpGetGyro(&mGy, mFifoBuffer);
 
     // real acceleration, adjusted to remove gravity
-    mpu.dmpGetAccel(&aa, fifoBuffer);
-    mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
+    mpu.dmpGetAccel(&mAcc, mFifoBuffer);
+    mpu.dmpGetLinearAccel(&mAccReal, &mAcc, &mGrav);
     return true;
   }
   return false;
@@ -77,34 +63,31 @@ bool myMPU6050::getXYZ(float **YPR, int &wz, int &x, int &y, int &z, int &oneG)
 {
   if (readAccel()) {
 
-    #define STAYS_SHORT(x) constrain(x, -32768, 32767)
-    #define TOdeg(x) (x * 180/M_PI)
-
     ulong t = micros();
     long dt = t - mT;
     mT = t;
 
     uint16_t smooth = - int(pow(1. - ACCEL_AVG, dt * ACCEL_BASE_FREQ * .000001) * 65536.); // 1 - (1-accel_avg) ^ (dt * 60 / 1000 000) using fract16
-    mX = lerp15by16(mX, aaReal.x, smooth);
-    mY = lerp15by16(mY, aaReal.y, smooth);
-    mZ = lerp15by16(mZ, aaReal.z, smooth);
-    mWz = lerp15by16(mWz, STAYS_SHORT(gy.z * -655), smooth);
+    mX = lerp15by16(mX, mAccReal.x, smooth);
+    mY = lerp15by16(mY, mAccReal.y, smooth);
+    mZ = lerp15by16(mZ, mAccReal.z, smooth);
+    mWz = lerp15by16(mWz, STAYS_SHORT(mGy.z * -655), smooth);
 
     // #define MPU_DBG
     #ifdef MPU_DBG
-      *mSerial << "[ gyr " << mWz << "\t " << gy.x << "\t " << gy.y << "\t " << gy.z << "]\t ";
+      *mSerial << "[ gyr " << mWz << "\t " << mGy.x << "\t " << mGy.y << "\t " << mGy.z << "]\t ";
       *mSerial << "[ dt " << dt*.001 << "ms\t smooth" << smooth/65536. << "\t Wz " << mWz  << "]\t ";
-      *mSerial << "[ ypr " << TOdeg(ypr[0]) << "\t " << TOdeg(ypr[1]) << "\t " << TOdeg(ypr[2]) << "]\t ";
-      *mSerial << "[ grav " << gravity.x << "\t " << gravity.y << "\t " << gravity.z << "]\t ";
+      *mSerial << "[ ypr " << TOdeg(mYPR[0]) << "\t " << TOdeg(mYPR[1]) << "\t " << TOdeg(mYPR[2]) << "]\t ";
+      *mSerial << "[ grav " << mGrav.x << "\t " << mGrav.y << "\t " << mGrav.z << "]\t ";
       *mSerial << "[ avg " << mX << "\t " << mY << "\t " << mZ << "]\t ";
-      *mSerial << "[ acc " << aa.x << "\t " << aa.y << "\t " << aa.z << "]\t ";
-      *mSerial << "[ real " << aaReal.x << "\t " << aaReal.y << "\t " << aaReal.z << "]\t ";
+      *mSerial << "[ acc " << mAcc.x << "\t " << mAcc.y << "\t " << mAcc.z << "]\t ";
+      *mSerial << "[ real " << mAccReal.x << "\t " << mAccReal.y << "\t " << mAccReal.z << "]\t ";
       *mSerial << endl; // *mSerial << "                                 \r"; //endl;
     #endif
   }
 
   wz = mWz;  x = mX;  y = mY;  z = mZ; 
-  *YPR = ypr;  oneG = ONEG;
+  *YPR = mYPR;  oneG = ONEG;
 
-  return dmpReady;
+  return mDmpReady;
 }
