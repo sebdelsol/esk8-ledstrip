@@ -71,7 +71,7 @@ PlasmaFX    Plasma;
 
 LedStrip    <NBLEDS_TIPS, LEDR_PIN>   LedsR("LedR");
 TwinkleFX   TwinkleR(LUSH_LAVA);
-DblCylonFX  CylonR(CRGB::Red); 
+DblCylonFX  CylonR(LUSH_LAVA); 
 RunningFX   RunR(CRGB::Gold); 
 
 LedStrip    <NBLEDS_TIPS, LEDF_PIN>   LedsF("LedF");
