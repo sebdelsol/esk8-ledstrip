@@ -151,8 +151,8 @@ CylonFX::CylonFX(const CRGB color, const int eyeSize, const int speed) : mEyeSiz
 void CylonFX::showEye(int sign)
 {
   #define FRAC_SHIFT 4
-  int  p = triwave8(millis() * (mSpeed * 12 / 1000) / 100) <<8; //* 258;
-  p = sign < 0 ? 65535-p : p;
+  int  p = triwave8(millis() * mSpeed * 38 / 10000) <<8; // speed = 1<<3, 1.5 second period 
+  if (sign < 0) p = 65535 - p;
   long pos16 = (ease16InOutQuad(p) * (mNLEDS - mEyeSize - 1)) >> (16-FRAC_SHIFT);
   int pos = pos16 >> FRAC_SHIFT;
   byte frac = (pos16 & 0x0F) << FRAC_SHIFT;
