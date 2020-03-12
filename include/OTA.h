@@ -4,6 +4,7 @@
 
 class OTA
 {
+    bool mOn = false;
 public:
     void begin();
     void update();
