@@ -26,13 +26,11 @@ bool FX::drawOn(CRGBSet dst)
 void FX::answer(const MyCmd &cmd, byte arg1, byte arg2, byte arg3)
 {
   *cmd.answer << cmd.fx << " " <<  cmd.what << " " << arg1 << " " << arg2 << " " << arg3 << endl;
-  // Serial << "Send " << cmd.fx << " " <<  cmd.what << " " << arg1 << " " << arg2 << " " << arg3 << endl;
 }
 
 void FX::answer(const MyCmd &cmd, byte arg)
 {
   *cmd.answer << cmd.fx << " " <<  cmd.what << " " << arg << endl;
-  // Serial << "Send " << cmd.fx << " " <<  cmd.what << " " << arg << endl;
 }
 
 // ----------------------------------------------------
