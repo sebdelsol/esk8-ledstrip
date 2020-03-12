@@ -101,8 +101,7 @@ AquaFX::AquaFX(const bool reverse, const byte cooling, const byte sparkling) : F
 }
 
 // ----------------------------------------------------
-PlasmaFX::PlasmaFX(const byte wavelenght, const byte period1, const byte period2) : mK(wavelenght), mP1(period1), mP2(period2) 
-{}
+PlasmaFX::PlasmaFX(const byte wavelenght, const byte period1, const byte period2) : mK(wavelenght), mP1(period1), mP2(period2) {}
 
 void PlasmaFX::update()
 {
@@ -147,8 +146,7 @@ void PlasmaFX::getCmd(const MyCmd &cmd)
 }
 
 // ----------------------------------------------------
-CylonFX::CylonFX(const CRGB color, const int eyeSize, const int speed) : mEyeSize(eyeSize), mSpeed(speed), mColor(color)
-{ }
+CylonFX::CylonFX(const CRGB color, const int eyeSize, const int speed) : mEyeSize(eyeSize), mSpeed(speed), mColor(color) {}
 
 void CylonFX::showEye(int sign)
 {
@@ -193,8 +191,7 @@ void CylonFX::getCmd(const MyCmd &cmd)
 }
 
 // ----------------------------------------------------
-DblCylonFX::DblCylonFX(const CRGB color, const int eyeSize, const int speed) : CylonFX(color, eyeSize, speed)
-{ }
+DblCylonFX::DblCylonFX(const CRGB color, const int eyeSize, const int speed) : CylonFX(color, eyeSize, speed) {}
 
 void DblCylonFX::update()
 {
@@ -204,8 +201,7 @@ void DblCylonFX::update()
 }
 
 // ----------------------------------------------------
-RunningFX::RunningFX(const CRGB color, const int width, const int speed) : mWidth(width), mSpeed(speed), mColor(color)
-{}
+RunningFX::RunningFX(const CRGB color, const int width, const int speed) : mWidth(width), mSpeed(speed), mColor(color) {}
 
 void RunningFX::update()
 {

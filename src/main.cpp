@@ -63,20 +63,20 @@ AllLedStrips  AllLeds(LED_MAX_MA, Serial);
 #define     HUE_AQUA_BLUE 140
 
 LedStrip    <NBLEDS_MIDDLE, LED_PIN>  Leds("Led");
-RunningFX   Fire(LUSH_LAVA, 10, 3); //width, speed        // FireFX Fire(true); //reverse
-RunningFX   Aqua(AQUA_MENTHE, 10, -3);                    // AquaFX Aqua(false); 
+RunningFX   Fire(LUSH_LAVA, 10, 3);     // FireFX Fire(true); //reverse
+RunningFX   Aqua(AQUA_MENTHE, 10, -3);  // AquaFX Aqua(false); 
 TwinkleFX   FireTwk(HUE_RED); 
 TwinkleFX   AquaTwk(HUE_AQUA_BLUE);
 PlasmaFX    Plasma;
 
 LedStrip    <NBLEDS_TIPS, LEDR_PIN>   LedsR("LedR");
-TwinkleFX   TwinkleR(LUSH_LAVA);
 DblCylonFX  CylonR(LUSH_LAVA); 
+TwinkleFX   TwinkleR(LUSH_LAVA);
 RunningFX   RunR(CRGB::Gold); 
 
 LedStrip    <NBLEDS_TIPS, LEDF_PIN>   LedsF("LedF");
-TwinkleFX   TwinkleF(HUE_AQUA_BLUE); 
 DblCylonFX  CylonF(AQUA_MENTHE);
+TwinkleFX   TwinkleF(HUE_AQUA_BLUE); 
 RunningFX   RunF(CRGB::Gold);
 
 // ----------------------------------------------------
