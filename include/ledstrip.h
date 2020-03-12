@@ -84,14 +84,13 @@ public:
 class CylonFX : public FX
 {
 protected:
-  int mPos, mEyeSize, mSpeed;  
+  int mEyeSize, mSpeed;  
   CRGB mColor;
 
-  void showEye(int p); 
-  bool doRebound();
+  void showEye(int sign=1); 
 
 public:
-  CylonFX(const CRGB color=0x0000FF, const int eyeSize = 3, const int speed = 2<<8);
+  CylonFX(const CRGB color=0x0000FF, const int eyeSize = 3, const int speed = 1<<8);
   void update();
 
   void setEyeSize(const int eyeSize) {mEyeSize = eyeSize;};

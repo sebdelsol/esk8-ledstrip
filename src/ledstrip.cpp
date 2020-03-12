@@ -20,6 +20,7 @@ bool FX::drawOn(CRGBSet dst)
     
     return true;
   }
+  return false;
 }
 
 void FX::answer(const MyCmd &cmd, byte arg1, byte arg2, byte arg3)
@@ -106,7 +107,7 @@ PlasmaFX::PlasmaFX(const byte wavelenght, const byte period1, const byte period2
 void PlasmaFX::update()
 {
   // cos16 & sin16(0 to 65535) => results in -32767 to 32767
-  u_long t = (millis() * 66) >> 2;          // 65536/1000 => 2pi * time / 4
+  u_long t = (millis() * 66) >> 3;          // 65536/1000 => 2pi * time / 8
   int16_t cos_tp1 = cos16(t/mP1) >> 1;      // .5 cos(time/mP1)
   int16_t sin_tp2 = sq(sin16(t/mP2)) >> 2;  // (.5 sin(time/mP2))^2
   int16_t sin_t = sin16(t);
@@ -147,13 +148,12 @@ void PlasmaFX::getCmd(const MyCmd &cmd)
 
 // ----------------------------------------------------
 CylonFX::CylonFX(const CRGB color, const int eyeSize, const int speed) : mEyeSize(eyeSize), mSpeed(speed), mColor(color)
-{
-  mPos = mSpeed < 0 ? 65535 : 0;
-}
+{ }
 
-void CylonFX::showEye(int p)
+void CylonFX::showEye(int sign)
 {
   #define FRAC_SHIFT 4
+  uint16_t  p = (sign * triwave8(millis() * (mSpeed * 12 / 1000) / 100)) <<8; //* 257;
   long pos16 = (ease16InOutQuad(p) * (mNLEDS - mEyeSize - 1)) >> (16-FRAC_SHIFT);
   int pos = pos16 >> FRAC_SHIFT;
   byte frac = (pos16 & 0x0F) << FRAC_SHIFT;
@@ -165,21 +165,10 @@ void CylonFX::showEye(int p)
     mLeds[++pos] = mColor % frac;
 }
 
-bool CylonFX::doRebound()
-{
-  mPos += mSpeed;
-  if (mPos <= 0 || mPos >= 65535) { // rebound ?
-    mSpeed = - mSpeed;
-    mPos = constrain(mPos, 0, 65535);
-    return true;
-  }
-}
-
 void CylonFX::update()
 {
   memset8(mLeds, 0, mNLEDS * sizeof(CRGB)); // clear
-  showEye(mPos);
-  doRebound();
+  showEye();
 }
 
 void CylonFX::setCmd(const MyCmd &cmd)
@@ -204,19 +193,13 @@ void CylonFX::getCmd(const MyCmd &cmd)
 
 // ----------------------------------------------------
 DblCylonFX::DblCylonFX(const CRGB color, const int eyeSize, const int speed) : CylonFX(color, eyeSize, speed)
-{
-  mPos2 = 65535-mPos;
-}
+{ }
 
 void DblCylonFX::update()
 {
   memset8(mLeds, 0, mNLEDS * sizeof(CRGB)); // clear
-  showEye(mPos);
-  showEye(mPos2);
-
-  mPos2 -= mSpeed;
-  if (doRebound())
-    mPos2 = constrain(mPos2, 0, 65535);
+  // showEye(1);
+  showEye(-1);
 }
 
 // ----------------------------------------------------
@@ -251,9 +234,10 @@ void TwinkleFX::update()
 {
   random16_set_seed(535);  // The randomizer needs to be re-set each time through the loop in order for the 'random' numbers to be the same each time through.
 
+  int t = millis();
   for (int i = 0; i<mNLEDS; i++) {
-    byte fader = sin8(millis()/random8(mDiv, mDiv<<1));       // The random number for each 'i' will be the same every time.
-    byte hue = sin8(millis()/random8(mDiv, mDiv)) >> mHueDiv; // ditto
+    byte fader = sin8(t/random8(mDiv, mDiv<<1));       // The random number for each 'i' will be the same every time.
+    byte hue = sin8(t/random8(mDiv, mDiv)) >> mHueDiv; // ditto
     mLeds[i] = CHSV(mHSV.h + hue, mHSV.s , fader);
   }
 
@@ -316,6 +300,7 @@ AllLedStrips::AllLedStrips(const int maxmA, Stream &serial) : mSerial(&serial)
 {
   FastLED.setMaxPowerInVoltsAndMilliamps(5, maxmA);
   FastLED.countFPS();
+  FastLED.setDither(BINARY_DITHER);
 }
 
 bool AllLedStrips::registerStrip(BaseLedStrip &strip)

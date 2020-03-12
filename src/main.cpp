@@ -43,8 +43,8 @@ void handleOta()
 }
 
 // ----------------------------------------------------
-#define   LED_MAX_MA  800 // mA
-#define   LED_TICK    15  // ms
+#define   LED_MAX_MA  1500 // mA
+#define   LED_TICK    7  // ms
 #define   BT_TICK     15  // ms
 #define   SERIAL_BAUD 115200 
 
@@ -253,5 +253,4 @@ void loop()
   #endif
 
   AllLeds.show(); // to be called as much as possible for Fastled brightness dithering
-
 }
