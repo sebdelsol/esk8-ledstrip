@@ -107,7 +107,7 @@ PlasmaFX::PlasmaFX(const byte wavelenght, const byte period1, const byte period2
 void PlasmaFX::update()
 {
   // cos16 & sin16(0 to 65535) => results in -32767 to 32767
-  u_long t = (millis() * 66) >> 3;          // 65536/1000 => 2pi * time / 8
+  u_long t = (millis() * 66) >> 2;          // 65536/1000 => 2pi * time / 4
   int16_t cos_tp1 = cos16(t/mP1) >> 1;      // .5 cos(time/mP1)
   int16_t sin_tp2 = sq(sin16(t/mP2)) >> 2;  // (.5 sin(time/mP2))^2
   int16_t sin_t = sin16(t);
@@ -154,7 +154,7 @@ void CylonFX::showEye(int sign)
 {
   #define FRAC_SHIFT 4
   int  p = triwave8(millis() * (mSpeed * 12 / 1000) / 100) <<8; //* 258;
-  if (sign < 0) p = 65535-p;
+  p = sign < 0 ? 65535-p : p;
   long pos16 = (ease16InOutQuad(p) * (mNLEDS - mEyeSize - 1)) >> (16-FRAC_SHIFT);
   int pos = pos16 >> FRAC_SHIFT;
   byte frac = (pos16 & 0x0F) << FRAC_SHIFT;
