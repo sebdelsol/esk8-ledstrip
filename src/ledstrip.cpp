@@ -146,11 +146,11 @@ void PlasmaFX::getCmd(const MyCmd &cmd)
 // ----------------------------------------------------
 CylonFX::CylonFX(const CRGB color, const int eyeSize, const int speed) : mEyeSize(eyeSize), mSpeed(speed), mColor(color) {}
 
-void CylonFX::showEye(int sign)
+void CylonFX::showEye(bool reverse)
 {
   #define FRAC_SHIFT 4
   int  p = triwave8(millis() * mSpeed * 38 / 10000) << 8; // speed = 1<<3, 1.5 second period 
-  if (sign < 0) p = 65535 - p;
+  if (reverse) p = 65535 - p;
   long pos16 = (ease16InOutQuad(p) * (mNLEDS - mEyeSize - 1)) >> (16-FRAC_SHIFT);
   int pos = pos16 >> FRAC_SHIFT;
   byte frac = (pos16 & 0x0F) << FRAC_SHIFT;
@@ -194,8 +194,8 @@ DblCylonFX::DblCylonFX(const CRGB color, const int eyeSize, const int speed) : C
 void DblCylonFX::update()
 {
   CLEAR_LED(mLeds, mNLEDS)
-  showEye(1);
-  showEye(-1);
+  showEye();
+  showEye(true); //reverse
 }
 
 // ----------------------------------------------------
