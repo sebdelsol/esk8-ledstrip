@@ -92,9 +92,8 @@ protected:
 
 public:
   CylonFX(const CRGB color=0x0000FF, const int eyeSize = 3, const int speed = 1<<3);
-  void update();
-
   void setEyeSize(const int eyeSize) {mEyeSize = eyeSize;};
+  void update();
 
   const char* getName() {return "Cylon";};
   void setCmd(const MyCmd &cmd);
@@ -123,9 +122,8 @@ protected:
 
 public:
   RunningFX(const CRGB color=0x0000FF, const int width = 5, const int speed = 2);
-  void update();
-
   void setSpeed(const int speed) {mSpeed = speed;};
+  void update();
 
   const char* getName() {return "Running";};
 };
