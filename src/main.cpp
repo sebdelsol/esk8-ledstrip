@@ -190,7 +190,7 @@ void loop()
           #define THRES_ACC   30
           #define MAX_ACC     256
           #define MINeye      5
-          #define MAXeye      7
+          #define MAXeye      10
 
           int acc = constrain(y / 2, -MAX_ACC, MAX_ACC) << 8;
 
