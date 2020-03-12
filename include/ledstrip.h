@@ -40,34 +40,6 @@ public:
 };
 
 //--------------------------------------
-class FireFX : public FX
-{
-  byte mCooling, mSparkling;
-  byte *mHeat;
-
-protected:
-  bool mReverse;
-  CRGBPalette16 mPal;
-
-public:
-  FireFX(const bool reverse = false, const byte cooling = 75, const byte sparkling = 120);
-  void specialInit(int nLeds);
-  void update();
-
-  const char* getName() {return "Fire";};
-  void setCmd(const MyCmd &cmd);
-  void getCmd(const MyCmd &cmd);
-};
-
-//---------
-class AquaFX : public FireFX
-{
-public:
-  AquaFX(const bool reverse, const byte cooling = 75, const byte sparkling = 120);
-  const char* getName() {return "Aqua";};
-};
-
-//---------
 class PlasmaFX : public FX
 {
   byte mK, mP1, mP2;
