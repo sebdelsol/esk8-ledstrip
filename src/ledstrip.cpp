@@ -5,7 +5,7 @@ void FX::init(int nLeds)
 {
   mNLEDS = nLeds;
   mLeds = (CRGB *)malloc(nLeds * sizeof(CRGB));
-  memset8(mLeds, 0, nLeds * sizeof(CRGB)); // clear
+  CLEAR_LED(mLeds, nLeds);
   specialInit(nLeds);
 }
 
@@ -151,7 +151,7 @@ CylonFX::CylonFX(const CRGB color, const int eyeSize, const int speed) : mEyeSiz
 void CylonFX::showEye(int sign)
 {
   #define FRAC_SHIFT 4
-  int  p = triwave8(millis() * mSpeed * 38 / 10000) <<8; // speed = 1<<3, 1.5 second period 
+  int  p = triwave8(millis() * mSpeed * 38 / 10000) << 8; // speed = 1<<3, 1.5 second period 
   if (sign < 0) p = 65535 - p;
   long pos16 = (ease16InOutQuad(p) * (mNLEDS - mEyeSize - 1)) >> (16-FRAC_SHIFT);
   int pos = pos16 >> FRAC_SHIFT;
@@ -166,7 +166,7 @@ void CylonFX::showEye(int sign)
 
 void CylonFX::update()
 {
-  memset8(mLeds, 0, mNLEDS * sizeof(CRGB)); // clear
+  CLEAR_LED(mLeds, mNLEDS)
   showEye();
 }
 
@@ -195,7 +195,7 @@ DblCylonFX::DblCylonFX(const CRGB color, const int eyeSize, const int speed) : C
 
 void DblCylonFX::update()
 {
-  memset8(mLeds, 0, mNLEDS * sizeof(CRGB)); // clear
+  CLEAR_LED(mLeds, mNLEDS)
   showEye(1);
   showEye(-1);
 }

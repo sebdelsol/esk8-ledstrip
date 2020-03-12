@@ -10,6 +10,7 @@
 #define MAXFX         5
 #define MAXSTRIP      3
 #define SATURATION    0xff    // for HSV FX
+#define CLEAR_LED(l, n)   memset8(l, 0, n * sizeof(CRGB)); 
 
 //--------------------------------------
 class FX
