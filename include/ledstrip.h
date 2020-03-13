@@ -75,9 +75,6 @@ public:
 //---------
 class DblCylonFX : public CylonFX
 {
-protected:
-  int mPos2;
-
 public:
   using CylonFX::CylonFX;
   void update();
