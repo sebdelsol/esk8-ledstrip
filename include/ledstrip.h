@@ -63,7 +63,7 @@ protected:
   void showEye(bool reverse=false); 
 
 public:
-  CylonFX(const CRGB color=0x0000FF, const int eyeSize = 3, const int speed = 1<<3);
+  CylonFX(const CRGB color=0x0000FF, const int eyeSize = 3, const int speed = 3<<3);
   void setEyeSize(const int eyeSize) {mEyeSize = eyeSize;};
   void update();
 
@@ -79,7 +79,7 @@ protected:
   int mPos2;
 
 public:
-  DblCylonFX(const CRGB color=0x0000FF, const int eyeSize = 3, const int speed = 3<<3);
+  using CylonFX::CylonFX;
   void update();
 
   const char* getName() {return "DblCylon";};

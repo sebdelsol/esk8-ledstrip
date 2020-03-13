@@ -124,8 +124,6 @@ void CylonFX::getCmd(const MyCmd &cmd)
 }
 
 // ----------------------------------------------------
-DblCylonFX::DblCylonFX(const CRGB color, const int eyeSize, const int speed) : CylonFX(color, eyeSize, speed) {}
-
 void DblCylonFX::update()
 {
   CLEAR_LED(mLeds, mNLEDS)
