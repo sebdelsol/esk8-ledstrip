@@ -60,7 +60,8 @@ protected:
   int mEyeSize, mSpeed;  
   CRGB mColor;
 
-  void showEye(bool reverse=false); 
+  void showEye(int p); 
+  int  getPos();
 
 public:
   CylonFX(const CRGB color=0x0000FF, const int eyeSize = 3, const int speed = 3<<3);
