@@ -101,22 +101,6 @@ public:
 };
 
 //---------
-class PulseFX : public FX
-{
-  byte mHue;
-  long mFreq;
-  byte mWavelength;
-
-public:
-  PulseFX(const byte hue=0, const long frac8=64, const byte w=10);
-  void update();
-
-  const char* getName() {return "Pulse";};
-  void setCmd(const MyCmd &cmd);
-  void getCmd(const MyCmd &cmd);
-};
-
-//---------
 class TwinkleFX : public FX
 {
   CHSV mHSV;

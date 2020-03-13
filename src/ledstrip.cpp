@@ -193,39 +193,6 @@ void TwinkleFX::getCmd(const MyCmd &cmd)
 }
 
 // ----------------------------------------------------
-PulseFX::PulseFX(const byte hue, const long frac8, const byte w) : mHue(hue), mFreq(frac8), mWavelength(w) {}
-
-void PulseFX::update(){
-
-  // cos16 & sin16(0 to 65535) => results in -32767 to 32767
-  u_long t = (millis() * 66 * mFreq) >> 8; // 65536/1000 => time is 2*PI * freq
-  long cos_t = mWavelength * (cos16(t) + 32768);
-
-  for(byte i = 0; i < mNLEDS; i++) {
-    int16_t v = cos16(cos_t * (i-(mNLEDS>>1)) / (mNLEDS));
-    mLeds[i] = CHSV(mHue, SATURATION , (v + 32768)>>8);
-  }
-}
-
-void PulseFX::setCmd(const MyCmd &cmd)
-{
-  switch(cmd.what) {
-    case 'H': mHue = cmd.arg[0]; break;
-    case 'F': mFreq = cmd.arg[0]; break;
-    case 'B': setAlpha(cmd.arg[0]); break;
-  }
-}
-
-void PulseFX::getCmd(const MyCmd &cmd)
-{
-  switch(cmd.what) {
-    case 'H': answer(cmd, mHue); break;
-    case 'F': answer(cmd, mFreq); break;
-    case 'B': answer(cmd, getAlpha()); break;
-  }
-}
-
-// ----------------------------------------------------
 AllLedStrips::AllLedStrips(const int maxmA, Stream &serial) : mSerial(&serial)
 {
   FastLED.setMaxPowerInVoltsAndMilliamps(5, maxmA);
