@@ -59,7 +59,7 @@ void BTcmd::handleCmd()
         if (what!=NULL){ 
 
           #define BTCMD_MAXARGS 3
-          byte args[BTCMD_MAXARGS];
+          int args[BTCMD_MAXARGS];
           byte nbArg;
 
           for (nbArg = 0; nbArg < BTCMD_MAXARGS; nbArg++) {
@@ -70,7 +70,7 @@ void BTcmd::handleCmd()
 
           if (strcmp(cmd, "set")==0)
               objCmd->set(what, args, nbArg);
-              
+
           else if (strcmp(cmd, "get")==0) {
             nbArg = objCmd->get(what, args);
             
