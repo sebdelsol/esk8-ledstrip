@@ -24,6 +24,19 @@ public:
   byte get(char* name, int* toGet);
 };
 
+// #define REGISTER_CMD0(class, name, doCode) \
+//     registerCmd(this, name, \
+//       [](void* obj, int* toSet, byte n) { \
+//         if (n==0) { \
+//           class* self = (class *)obj; \
+//           doCode; \
+//         } \
+//       }, \
+//       [](void* obj, int* toGet) -> byte  { \
+//         return 0; \
+//       } \
+//     );
+
 #define REGISTER_CMD(class, name, setCode, toGet0) \
     registerCmd(this, name, \
       [](void* obj, int* toSet, byte n) { \

@@ -6,7 +6,7 @@
 // #define DEBUG_LED
 // #define DEBG_SERIAL
 // #define USE_LIGHTPROBE
-#define USE_CFG
+// #define USE_CFG
 
 // ----------------------------------------------------
 #include <ledstrip.h>
@@ -85,6 +85,9 @@ TwinkleFX   TwinkleF(HUE_AQUA_BLUE);
 RunningFX   RunF(CRGB::Gold);
 
 // ----------------------------------------------------
+
+// void saveCfg();
+
 class CFG : public OBJCmd
 {
 public:
@@ -126,6 +129,8 @@ public:
 
     REGISTER_CMD_CFG(minEye);
     REGISTER_CMD_CFG(maxEye);
+
+    // REGISTER_CMD0(CFG, "save", {saveCfg();}) 
   };
 };
 
@@ -133,8 +138,10 @@ public:
   AllConfig AllCFG;
   Config<CFG, 1> SavedCfg("SavedCfg");
   #define Cfg SavedCfg.mData
+  // void saveCfg() { AllCFG.save(); }
 #else
   CFG Cfg;
+  // void saveCfg() { }
 #endif
 
 
