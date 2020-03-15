@@ -1,7 +1,7 @@
 
 #define USE_OTA
-// #define USE_TELNET //needs USE_OTA to work
-// #define USE_BT // see platformio & use "board_build.partitions = huge_app.csv"
+#define USE_TELNET //needs USE_OTA to work
+#define USE_BT // see platformio & use "board_build.partitions = huge_app.csv"
 // #define DEBUG_LED
 // #define DEBG_SERIAL
 // #define USE_LIGHTPROBE
@@ -134,7 +134,6 @@ void loop()
   bool gotAccel = Accel.getXYZ(&ypr, wz, x, y, z, oneG);
 
   #ifdef USE_BT
-    static bool btOn = BT.update();
 
     EVERY_N_MILLISECONDS(BT_TICK) {
 
@@ -144,7 +143,10 @@ void loop()
           BT.toggle();
       }
 
-      btOn = BT.update();
+      if (BT.update()) {
+        // int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
+        // *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
+      } 
     }
   #endif
 
@@ -161,82 +163,68 @@ void loop()
 
     if (gotAccel) {
 
-      #ifdef USE_BT
-        if (btOn) {
-          EVERY_N_MILLISECONDS(50) {
-            int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
-            *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
-          } 
-        } 
-        else {
-      #endif
-          //----------------------
-          int runSpeed =  ((wz>0) - (wz<0)) * 3;
-          RunR.setSpeed(runSpeed);
-          RunF.setSpeed(runSpeed);
+      int runSpeed =  ((wz>0) - (wz<0)) * 3;
+      RunR.setSpeed(runSpeed);
+      RunF.setSpeed(runSpeed);
 
-          //------
-          #define NeutralZ  3000 
-          #define maxZ      7000 
-          wz = abs(wz);
-          int alpha = wz > NeutralZ ? min((wz-NeutralZ) * 255 / maxZ, 255) : 0;
-          RunR.setAlpha(alpha);
-          RunF.setAlpha(alpha);
+      //------
+      #define NeutralZ  3000 
+      #define maxZ      7000 
+      wz = abs(wz);
+      int alpha = wz > NeutralZ ? min((wz-NeutralZ) * 255 / maxZ, 255) : 0;
+      RunR.setAlpha(alpha);
+      RunF.setAlpha(alpha);
 
-          int invAlpha = 255 - alpha;
+      int invAlpha = 255 - alpha;
 
-          //----------------------
-          #define SMOOTH_ACC  1600//3200 //.05
-          #define THRES_ACC   30
-          #define MAX_ACC     256
-          #define MINeye      5
-          #define MAXeye      10
+      //----------------------
+      #define SMOOTH_ACC  1600//3200 //.05
+      #define THRES_ACC   30
+      #define MAX_ACC     256
+      #define MINeye      5
+      #define MAXeye      10
 
-          int acc = constrain(y / 2, -MAX_ACC, MAX_ACC) << 8;
+      int acc = constrain(y / 2, -MAX_ACC, MAX_ACC) << 8;
 
-          //------
-          static int FWD = 0;
-          int fwd = constrain(acc, 0, 65535);
-          FWD = fwd > FWD ? fwd : lerp16by16(FWD, fwd, SMOOTH_ACC);
+      //------
+      static int FWD = 0;
+      int fwd = constrain(acc, 0, 65535);
+      FWD = fwd > FWD ? fwd : lerp16by16(FWD, fwd, SMOOTH_ACC);
 
-          int alphaF = constrain((FWD - (THRES_ACC<<8))/(MAX_ACC-THRES_ACC), 0, 255);
-          int eyeF = MINeye + (((MAXeye-MINeye) * alphaF) >>8);
+      int alphaF = constrain((FWD - (THRES_ACC<<8))/(MAX_ACC-THRES_ACC), 0, 255);
+      int eyeF = MINeye + (((MAXeye-MINeye) * alphaF) >>8);
 
-          CylonF.setEyeSize(eyeF);
-          CylonF.setAlpha(invAlpha);
-          TwinkleF.setAlpha((alphaF * (invAlpha + 1))>>8);
+      CylonF.setEyeSize(eyeF);
+      CylonF.setAlpha(invAlpha);
+      TwinkleF.setAlpha((alphaF * (invAlpha + 1))>>8);
 
-          //------
-          static int RWD = 0;
-          int rwd = constrain(-acc, 0, 65535);
-          RWD = rwd > RWD ? rwd : lerp16by16(RWD, rwd, SMOOTH_ACC);
+      //------
+      static int RWD = 0;
+      int rwd = constrain(-acc, 0, 65535);
+      RWD = rwd > RWD ? rwd : lerp16by16(RWD, rwd, SMOOTH_ACC);
 
-          int alphaR = constrain((RWD - (THRES_ACC<<8))/(MAX_ACC-THRES_ACC), 0, 255);
-          int eyeR = MINeye + (((MAXeye-MINeye) * alphaR) >>8);
+      int alphaR = constrain((RWD - (THRES_ACC<<8))/(MAX_ACC-THRES_ACC), 0, 255);
+      int eyeR = MINeye + (((MAXeye-MINeye) * alphaR) >>8);
 
-          CylonR.setEyeSize(eyeR);
-          CylonR.setAlpha(invAlpha);
-          TwinkleR.setAlpha((alphaR * (invAlpha + 1))>>8);
+      CylonR.setEyeSize(eyeR);
+      CylonR.setAlpha(invAlpha);
+      TwinkleR.setAlpha((alphaR * (invAlpha + 1))>>8);
 
-          //----------------------
-          Aqua.setAlpha(alphaF);
-          AquaTwk.setAlpha(alphaF);
-          Fire.setAlpha(alphaR);
-          FireTwk.setAlpha(alphaR);
-          
-          //------
-          int alphaP = max(0, 255 - max(alphaR, alphaF));
-          Plasma.setAlpha(alphaP);
+      //----------------------
+      Aqua.setAlpha(alphaF);
+      AquaTwk.setAlpha(alphaF);
+      Fire.setAlpha(alphaR);
+      FireTwk.setAlpha(alphaR);
+      
+      //------
+      int alphaP = max(0, 255 - max(alphaR, alphaF));
+      Plasma.setAlpha(alphaP);
 
-          #ifdef DEBG_SERIAL
-            Serial << "[areal  " << x << "\t" << y << "\t" << z << "]\t";
-            Serial << "[fwd " << fwd << "\trwd " << rwd << "\tACC " << acc << "]\t";
-            Serial << "[alpha " << alpha << "\tinv " << invAlpha << "]\t";
-            Serial << "[eyeR " << eyeR << "\teyeF " << eyeF << "\talphaR " << alphaR << "\talphaF " << alphaF << "\talphaP " << alphaP << "]" << endl; //"       \r";//endl;
-          #endif
-
-      #ifdef USE_BT
-        }
+      #ifdef DEBG_SERIAL
+        Serial << "[areal  " << x << "\t" << y << "\t" << z << "]\t";
+        Serial << "[fwd " << fwd << "\trwd " << rwd << "\tACC " << acc << "]\t";
+        Serial << "[alpha " << alpha << "\tinv " << invAlpha << "]\t";
+        Serial << "[eyeR " << eyeR << "\teyeF " << eyeF << "\talphaR " << alphaR << "\talphaF " << alphaF << "\talphaP " << alphaP << "]" << endl; //"       \r";//endl;
       #endif
     }
 

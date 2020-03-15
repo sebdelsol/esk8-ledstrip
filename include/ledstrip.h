@@ -13,7 +13,7 @@
 #define CLEAR_LED(l, n) memset8(l, 0, n * sizeof(CRGB)); 
 
 //--------------------------------------
-class FX : protected OBJCmd
+class FX : public OBJCmd
 {
   byte mAlpha = 255; // visible
 
