@@ -80,6 +80,25 @@ TwinkleFX   TwinkleF(HUE_AQUA_BLUE);
 RunningFX   RunF(CRGB::Gold);
 
 // ----------------------------------------------------
+class CFG : public OBJCmd
+{
+public:
+  bool ledR = true;
+  bool ledF = true;
+  bool led = true;
+  CFG();
+};
+
+CFG::CFG()
+{
+  REGISTER_CMD(CFG,  "ledR",  { self->ledR = arg0; }, self->ledR)
+  REGISTER_CMD(CFG,  "ledF",  { self->ledF = arg0; }, self->ledF)
+  REGISTER_CMD(CFG,  "led",   { self->led = arg0; },  self->led)
+}
+
+CFG Cfg;
+
+// ----------------------------------------------------
 void setup()
 {
   Serial.begin(SERIAL_BAUD);
@@ -108,12 +127,15 @@ void setup()
   #endif
 
   #ifdef USE_BT
-    #define BT_REGISTER_3OBJ(o1, o2, o3) BT.registerObj(o1, #o1); BT.registerObj(o2, #o2); BT.registerObj(o3, #o3);
-    #define BT_REGISTER_5OBJ(o1, o2, o3, o4, o5) BT_REGISTER_3OBJ(o1, o2, o3); BT.registerObj(o4, #o4); BT.registerObj(o5, #o5);
+    #define BT_REGISTER_OBJ(o) BT.registerObj(o, #o);
+    #define BT_REGISTER_3OBJ(o1, o2, o3) BT_REGISTER_OBJ(o1); BT_REGISTER_OBJ(o2); BT_REGISTER_OBJ(o3);
+    #define BT_REGISTER_5OBJ(o1, o2, o3, o4, o5) BT_REGISTER_3OBJ(o1, o2, o3); BT_REGISTER_OBJ(o4); BT_REGISTER_OBJ(o5);
+    
     BT.init(true);
     BT_REGISTER_5OBJ(Fire,      FireTwk,    Aqua,   AquaTwk,    Plasma);
     BT_REGISTER_3OBJ(TwinkleR,  CylonR,     RunR);
     BT_REGISTER_3OBJ(TwinkleF,  CylonF,     RunF);
+    BT_REGISTER_OBJ(Cfg);
   #else    
     // switch off blue led
     pinMode(LIGHT_PIN, OUTPUT);
@@ -145,8 +167,10 @@ void loop()
       }
 
       if (BT.update()) {
-        // int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
-        // *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
+        if (gotAccel) {
+          // int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
+          // *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
+        }
       } 
     }
   #endif
@@ -165,17 +189,12 @@ void loop()
     if (gotAccel) {
 
       int runSpeed =  ((wz>0) - (wz<0)) * 3;
-      RunR.setSpeed(runSpeed);
-      RunF.setSpeed(runSpeed);
 
       //------
       #define NeutralZ  3000 
       #define maxZ      7000 
       wz = abs(wz);
       int alpha = wz > NeutralZ ? min((wz-NeutralZ) * 255 / maxZ, 255) : 0;
-      RunR.setAlpha(alpha);
-      RunF.setAlpha(alpha);
-
       int invAlpha = 255 - alpha;
 
       //----------------------
@@ -195,9 +214,13 @@ void loop()
       int alphaF = constrain((FWD - (THRES_ACC<<8))/(MAX_ACC-THRES_ACC), 0, 255);
       int eyeF = MINeye + (((MAXeye-MINeye) * alphaF) >>8);
 
-      CylonF.setEyeSize(eyeF);
-      CylonF.setAlpha(invAlpha);
-      TwinkleF.setAlpha((alphaF * (invAlpha + 1))>>8);
+      if (Cfg.ledF) { 
+        RunF.setSpeed(runSpeed);
+        RunF.setAlpha(alpha);
+        CylonF.setEyeSize(eyeF);
+        CylonF.setAlpha(invAlpha);
+        TwinkleF.setAlpha((alphaF * (invAlpha + 1))>>8);
+      }
 
       //------
       static int RWD = 0;
@@ -207,19 +230,23 @@ void loop()
       int alphaR = constrain((RWD - (THRES_ACC<<8))/(MAX_ACC-THRES_ACC), 0, 255);
       int eyeR = MINeye + (((MAXeye-MINeye) * alphaR) >>8);
 
-      CylonR.setEyeSize(eyeR);
-      CylonR.setAlpha(invAlpha);
-      TwinkleR.setAlpha((alphaR * (invAlpha + 1))>>8);
+      if (Cfg.ledR) { 
+        RunR.setSpeed(runSpeed);
+        RunR.setAlpha(alpha);
+        CylonR.setEyeSize(eyeR);
+        CylonR.setAlpha(invAlpha);
+        TwinkleR.setAlpha((alphaR * (invAlpha + 1))>>8);
+      }
 
       //----------------------
-      Aqua.setAlpha(alphaF);
-      AquaTwk.setAlpha(alphaF);
-      Fire.setAlpha(alphaR);
-      FireTwk.setAlpha(alphaR);
-      
-      //------
       int alphaP = max(0, 255 - max(alphaR, alphaF));
-      Plasma.setAlpha(alphaP);
+      if (Cfg.led) {
+        Aqua.setAlpha(alphaF);
+        AquaTwk.setAlpha(alphaF);
+        Fire.setAlpha(alphaR);
+        FireTwk.setAlpha(alphaR);
+        Plasma.setAlpha(alphaP);
+      }
 
       #ifdef DEBG_SERIAL
         Serial << "[areal  " << x << "\t" << y << "\t" << z << "]\t";
