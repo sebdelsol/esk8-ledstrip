@@ -68,10 +68,9 @@ void BTcmd::handleCmd()
             args[nbArg] = atoi(a);
           }
 
-          if (strcmp(cmd, "set")==0) {
-            if (nbArg)
+          if (strcmp(cmd, "set")==0)
               objCmd->set(what, args, nbArg);
-          }
+              
           else if (strcmp(cmd, "get")==0) {
             nbArg = objCmd->get(what, args);
             
