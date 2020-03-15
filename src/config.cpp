@@ -26,11 +26,14 @@ void AllConfig::cleanUnRegistered()
 
     while( File f=root.openNextFile() ) {
       const char* name = f.name();
+      Serial << name << "...do remove ?" << endl;
       if (!isRegistered(name)) {
         Serial << name << "...removed" << endl;
         SPIFFS.remove(name);
       }
+      f.close();
     }
+    root.close();
   }
 }
 
