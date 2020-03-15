@@ -23,7 +23,7 @@ bool BTcmd::registerObj(const OBJCmd& obj, char* name)
   if (ok) {
     mOBJ[mNOBJ].obj = (OBJCmd*)&obj;
     
-    char* str = (char *)malloc((strlen(name) + 1) * sizeof(char));
+    char* str = (char *)malloc(strlen(name) + 1);
     strcpy(str, name);
     mOBJ[mNOBJ++].name = str;
   }

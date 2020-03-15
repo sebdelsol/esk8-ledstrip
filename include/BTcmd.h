@@ -18,8 +18,8 @@
 class BTcmd
 {
   struct mRegisteredOBJ {
-    char* name;
-    OBJCmd *obj;
+    char*   name;
+    OBJCmd* obj;
   };
 
   mRegisteredOBJ mOBJ[BTCMD_MAXOBJ];
@@ -27,10 +27,10 @@ class BTcmd
 
   Stream* mStream;
 
-  char mBuf[BTCMD_BUFF_SIZE + 1]; // Buffer of stored characters while waiting for terminator character
-  byte mBufPos;                   // Current position in the buffer
-  char *mLast;    // for strtok_r
-  char mDelim[2]; // strtok_r needs a /0 terminated string
+  char  mBuf[BTCMD_BUFF_SIZE + 1]; // Buffer of stored characters while waiting for terminator character
+  byte  mBufPos;                   // Current position in the buffer
+  char* mLast;    // for strtok_r
+  char  mDelim[2]; // strtok_r needs a /0 terminated string
 
   void clearBuffer();
   void appendToBuffer(char c);

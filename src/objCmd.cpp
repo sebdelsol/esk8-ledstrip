@@ -8,7 +8,7 @@ bool OBJCmd::registerCmd(void *obj, char *name, setFunc set, getFunc get)
     mCmd[mNCMD].set = set;
     mCmd[mNCMD].get = get;
     
-    char* str = (char *)malloc((strlen(name) + 1) * sizeof(char));
+    char* str = (char *)malloc(strlen(name) + 1);
     strcpy(str, name);
     mCmd[mNCMD++].name = str;
   }
