@@ -182,7 +182,7 @@ public:
 
   byte* getData(int& n)
   {
-    *mSerial << "getdata" << NLEDS << endl;
+    // *mSerial << "getdata" << NLEDS << endl;
     n = NLEDS * sizeof(CRGB);
     return (byte *) mDisplay.leds;
   };

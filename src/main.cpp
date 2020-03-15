@@ -6,15 +6,19 @@
 // #define DEBUG_LED
 // #define DEBG_SERIAL
 // #define USE_LIGHTPROBE
+#define USE_CFG
 
 // ----------------------------------------------------
-// #include <config.h>
 #include <ledstrip.h>
 #include <myMpu6050.h>
 #include <myWifi.h>
 #include <Button.h>
 #include <Streaming.h>
 #include <soc/rtc.h> // get cpu freq
+
+#ifdef USE_CFG
+  #include <config.h>
+#endif
 
 #ifdef USE_BT
   #include <bluetooth.h>
@@ -45,7 +49,7 @@ void handleOta()
 
 // ----------------------------------------------------
 #define   LED_MAX_MA  1500 // mA
-#define   LED_TICK    7  // ms
+#define   LED_TICK    15  // ms
 #define   BT_TICK     15  // ms
 #define   SERIAL_BAUD 115200 
 
@@ -125,7 +129,14 @@ public:
   };
 };
 
-CFG Cfg;
+#ifdef USE_CFG
+  AllConfig AllCFG;
+  Config<CFG, 1> SavedCfg("SavedCfg");
+  #define Cfg SavedCfg.mData
+#else
+  CFG Cfg;
+#endif
+
 
 // ----------------------------------------------------
 void setup()
@@ -136,6 +147,14 @@ void setup()
   rtc_clk_cpu_freq_set(RTC_CPU_FREQ_240M);
   Serial << "Esp32 core " << esp_get_idf_version() << endl;
   Serial << "CPU freq " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
+
+  #ifdef USE_CFG
+    AllCFG.init();
+    AllCFG.RegisterCfg(SavedCfg);
+    AllCFG.load();
+    AllCFG.save();
+    AllCFG.cleanUnRegistered();
+  #endif
 
   #define Register3FX(l, f1, f2, f3)          AllLeds.registerStrip(l);   l.registerFX(f1); l.registerFX(f2); l.registerFX(f3);
   #define Register5FX(l, f1, f2, f3, f4, f5)  Register3FX(l, f1, f2, f3); l.registerFX(f4); l.registerFX(f5);
@@ -149,7 +168,7 @@ void setup()
   #else
     #ifdef DEBUG_LED
       MyWifi.on();
-      MyWifi.addLeds(Leds);
+      MyWifi.addLeds(LedsF);
     #else
       MyWifi.off();
     #endif
