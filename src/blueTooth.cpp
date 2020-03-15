@@ -51,9 +51,12 @@ void BlueTooth::start(const bool on)
     mON = false;
     BTSerial.end();
   }
+  Serial << (mON ? "Started" : "Stopped") << " BT" << endl;
   digitalWrite(LIGHT_PIN, mON ? HIGH : LOW);
   Connected = false;
-  // Serial << (mON ? "Start" : "Stop") << " BT done" << endl;
+
+  if (mON)
+    mStartTime = millis();
 }
 
 void BlueTooth::toggle()
@@ -63,6 +66,11 @@ void BlueTooth::toggle()
 
 bool BlueTooth::update()
 {
-  if (mON & Connected) mBTcmd->readStream();
+  if (mON) {
+    if (Connected) 
+      mBTcmd->readStream();
+    else if(millis() - mStartTime > AUTO_STOP_IF_NOTCONNECTED)
+      start(false);
+  }
   return mON;
 }
