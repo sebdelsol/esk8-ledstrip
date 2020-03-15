@@ -16,6 +16,7 @@
 class FX : public OBJCmd
 {
   byte mAlpha = 255; // visible
+  byte mLinearAlpha = 255; // for getAlpha
 
 protected:
   int mNLEDS = 0;
@@ -25,8 +26,8 @@ public:
   void init(int nLeds);
   virtual void specialInit(int nLeds) {};
 
-  void setAlpha(const byte alpha) { mAlpha = alpha; };
-  byte getAlpha() { return mAlpha; };
+  void setAlpha(const byte alpha);
+  byte getAlpha();
 
   virtual const char* getName();
   virtual void update();

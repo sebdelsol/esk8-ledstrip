@@ -8,7 +8,18 @@ void FX::init(int nLeds)
   CLEAR_LED(mLeds, nLeds);
   specialInit(nLeds);
 
-  REGISTER_CMD_SIMPLE(FX,  "alpha", self->mAlpha)
+  REGISTER_CMD(FX,  "alpha", { self->setAlpha(arg0); },  self->getAlpha())
+}
+
+void FX::setAlpha(const byte alpha) 
+{ 
+  mAlpha = (alpha*alpha)>>8; 
+  mLinearAlpha = alpha; 
+}
+
+byte FX::getAlpha() 
+{ 
+  return mLinearAlpha; 
 }
 
 bool FX::drawOn(CRGBSet dst)
