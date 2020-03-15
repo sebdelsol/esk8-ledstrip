@@ -8,7 +8,7 @@ void FX::init(int nLeds)
   CLEAR_LED(mLeds, nLeds);
   specialInit(nLeds);
 
-  REGISTER_CMD(FX,  "alpha", { self->setAlpha(arg0); },  self->getAlpha())
+  REGISTER_CMD_SIMPLE(FX,  "alpha", self->mAlpha)
 }
 
 bool FX::drawOn(CRGBSet dst)
@@ -28,9 +28,9 @@ bool FX::drawOn(CRGBSet dst)
 // ----------------------------------------------------
 PlasmaFX::PlasmaFX(const byte wavelenght, const byte period1, const byte period2) : mK(wavelenght), mP1(period1), mP2(period2) 
 {
-  REGISTER_CMD(PlasmaFX,  "p1",   { self->mP1 = arg0; },   self->mP1)
-  REGISTER_CMD(PlasmaFX,  "p2",   { self->mP2 = arg0; },   self->mP2)
-  REGISTER_CMD(PlasmaFX,  "freq", { self->mK = arg0; },    self->mK)
+  REGISTER_CMD_SIMPLE(PlasmaFX,  "p1",    self->mP1)
+  REGISTER_CMD_SIMPLE(PlasmaFX,  "p2",    self->mP2)
+  REGISTER_CMD_SIMPLE(PlasmaFX,  "freq",  self->mK)
 }
 
 void PlasmaFX::update()
@@ -100,7 +100,7 @@ void DblCylonFX::update()
 // ----------------------------------------------------
 RunningFX::RunningFX(const CRGB color, const int width, const int speed) : mWidth(width), mSpeed(speed), mColor(color) 
 {
-  REGISTER_CMD(RunningFX,  "speed",   { self->mSpeed = arg0; }, self->mSpeed)
+  REGISTER_CMD_SIMPLE(RunningFX,  "speed", self->mSpeed)
 }
 
 void RunningFX::update()
@@ -131,8 +131,8 @@ TwinkleFX::TwinkleFX(const CRGB color, const byte hueDiv, const byte div) : mHue
 
 void TwinkleFX::registerAllCmd()
 {
-  REGISTER_CMD(TwinkleFX,  "hue", { self->mHSV.h = arg0; },  self->mHSV.h)
-  REGISTER_CMD(TwinkleFX,  "div", { self->mDiv = arg0; },    self->mDiv)
+  REGISTER_CMD_SIMPLE(TwinkleFX,  "hue", self->mHSV.h)
+  REGISTER_CMD_SIMPLE(TwinkleFX,  "div", self->mDiv)
 }
 
 void TwinkleFX::update()

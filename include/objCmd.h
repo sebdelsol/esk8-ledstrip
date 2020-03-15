@@ -40,6 +40,8 @@ public:
       } \
     );
 
+#define REGISTER_CMD_SIMPLE(class, name, var) REGISTER_CMD(class, name, { var = arg0; }, var) 
+
 #define REGISTER_CMD3(class, name, setCode, toGet0, toGet1, toGet2) \
     registerCmd(this, name, \
       [](void* obj, byte* toSet, byte n) { \
