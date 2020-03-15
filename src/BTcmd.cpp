@@ -74,6 +74,7 @@ void BTcmd::handleCmd()
           }
           else if (strcmp(cmd, "get")==0) {
             nbArg = objCmd->get(what, args);
+            
             if (nbArg) { // answer
               *mStream << objName << " " << what;
               for (byte i=0; i < nbArg; i++)
