@@ -1,7 +1,9 @@
 
-// #define USE_OTA
+#define USE_BT // see p latformio & use "board_build.partitions = huge_app.csv"
+
+// #define USE_OTA // not compatible with BT since it uses "board_build.partitions = huge_app.csv"
 // #define USE_TELNET //needs USE_OTA to work
-#define USE_BT // see platformio & use "board_build.partitions = huge_app.csv"
+
 // #define DEBG_LEDINFO
 // #define DEBUG_LED
 // #define DEBG_SERIAL
@@ -48,7 +50,7 @@ void handleOta()
 }
 
 // ----------------------------------------------------
-#define   LED_MAX_MA  1500 // mA
+#define   LED_MAX_MA  1000 // mA
 #define   LED_TICK    15  // ms
 #define   BT_TICK     15  // ms
 #define   SERIAL_BAUD 115200 
@@ -92,20 +94,20 @@ class CFG : public OBJCmd
 {
 public:
   // update ?
-  bool ledR = true;
-  bool ledF = true;
-  bool led = true;
+  bool ledR       = true;
+  bool ledF       = true;
+  bool led        = true;
 
   // for rotation
   byte runSpeed   = 3;
-  int neutralWZ    = 3000;
-  int maxWZ        = 7000; 
+  int neutralWZ   = 3000;
+  int maxWZ       = 7000; 
 
   // for acc
-  byte divAcc    = 2;
-  int smoothAcc  = 1600;
-  byte thresAcc  = 30;
-  int maxAcc     = 256;
+  byte divAcc     = 2;
+  int smoothAcc   = 1600;
+  byte thresAcc   = 30;
+  int maxAcc      = 256;
   
   // Cylons
   byte minEye     = 5;
