@@ -165,8 +165,7 @@ AllLedStrips::AllLedStrips(const int maxmA, Stream &serial) : mSerial(&serial)
 {
   FastLED.setMaxPowerInVoltsAndMilliamps(5, maxmA);
   FastLED.countFPS();
-  // FastLED.setDither(BINARY_DITHER);
-  FastLED.setDither(0);
+  FastLED.setDither(BINARY_DITHER);
 }
 
 bool AllLedStrips::registerStrip(BaseLedStrip &strip)
