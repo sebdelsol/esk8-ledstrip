@@ -1,27 +1,29 @@
 #pragma once
 
 #include <Streaming.h>
-#include <MyCmd.h>
-#include <ledstrip.h>
+// #include <MyCmd.h>
+#include <objCmd.h>
+
+//#include <ledstrip.h>
 
 // SET FX_alias what [args>0]
 // GET FX_alias what
 
 #define BTCMD_BUFF_SIZE 127
-#define BTCMD_MAXFX 5
+#define BTCMD_MAXOBJ 15
 
 #define BTCMD_TERM '\n'
 #define BTCMD_DELIM " " // strtok_r needs a null-terminated string
 
 class BTcmd
 {
-  struct mRegisteredFX {
-    char desc;
-    FX *fx;
+  struct mRegisteredOBJ {
+    char* name;
+    OBJCmd *obj;
   };
 
-  mRegisteredFX mFX[BTCMD_MAXFX];
-  byte mNFX = 0;
+  mRegisteredOBJ mOBJ[BTCMD_MAXOBJ];
+  byte mNOBJ = 0;
 
   Stream* mStream;
 
@@ -29,8 +31,6 @@ class BTcmd
   byte mBufPos;                   // Current position in the buffer
   char *mLast;    // for strtok_r
   char mDelim[2]; // strtok_r needs a /0 terminated string
-
-  MyCmd mCmd;
 
   void clearBuffer();
   void appendToBuffer(char c);
@@ -42,6 +42,8 @@ class BTcmd
 public:
 
   BTcmd(Stream &stream);
-  bool registerFX(const FX& fx, char desc);
+  bool registerObj(const OBJCmd& obj, char* name);
+  OBJCmd* getObjCmdFromName(char* name);
+
   void readStream();
 };

@@ -108,11 +108,11 @@ void setup()
   #endif
 
   #ifdef USE_BT
+    #define REGISTER_OBJ(obj) registerObj(obj, #obj)
     BT.init();
-    BT.registerFX(Fire, 'F');
-    BT.registerFX(Aqua, 'A');
-    BT.registerFX(Plasma, 'P');
-    BT.registerFX(Cylon, 'C');
+    BT.REGISTER_OBJ(Fire);
+    BT.REGISTER_OBJ(Aqua);
+    BT.REGISTER_OBJ(Plasma);
   #else    
     // switch off blue led
     pinMode(LIGHT_PIN, OUTPUT);

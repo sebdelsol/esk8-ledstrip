@@ -3,17 +3,17 @@
 #include <FastLED.h>
 #include <myPins.h>
 #include <Streaming.h>
-#include <MyCmd.h>
+#include <objCmd.h>
 
-#define COLOR_ORDER   GRB
-#define CHIPSET       WS2812B
-#define MAXFX         5
-#define MAXSTRIP      3
-#define SATURATION    0xff    // for HSV FX
-#define CLEAR_LED(l, n)   memset8(l, 0, n * sizeof(CRGB)); 
+#define COLOR_ORDER     GRB
+#define CHIPSET         WS2812B
+#define MAXFX           5
+#define MAXSTRIP        3
+#define SATURATION      0xff    // for HSV FX
+#define CLEAR_LED(l, n) memset8(l, 0, n * sizeof(CRGB)); 
 
 //--------------------------------------
-class FX
+class FX : protected OBJCmd
 {
   byte mAlpha = 255; // visible
 
@@ -28,13 +28,7 @@ public:
   void setAlpha(const byte alpha) { mAlpha = alpha; };
   byte getAlpha() { return mAlpha; };
 
-  void answer(const MyCmd &cmd, byte arg1, byte arg2, byte arg3);
-  void answer(const MyCmd &cmd, byte arg);
-
   virtual const char* getName();
-  virtual void setCmd(const MyCmd &cmd) {};
-  virtual void getCmd(const MyCmd &cmd) {};
-
   virtual void update();
   bool drawOn(CRGBSet dst);
 };
@@ -49,8 +43,6 @@ public:
   void update();
 
   const char* getName() {return "Plasma";};
-  void setCmd(const MyCmd &cmd);
-  void getCmd(const MyCmd &cmd);
 };
 
 //---------
@@ -69,8 +61,6 @@ public:
   void update();
 
   const char* getName() {return "Cylon";};
-  void setCmd(const MyCmd &cmd);
-  void getCmd(const MyCmd &cmd);
 };
 
 //---------
@@ -108,11 +98,10 @@ class TwinkleFX : public FX
 public: 
   TwinkleFX(const byte hue=0, const byte hueDiv=5, const byte div=5);
   TwinkleFX(const CRGB color=0xff0000, const byte hueDiv=5, const byte div=5);
+  void registerAllCmd();
   void update();
 
   const char* getName() {return "Twinkle";};
-  void setCmd(const MyCmd &cmd);
-  void getCmd(const MyCmd &cmd);
 };
 
 //--------------------------------------

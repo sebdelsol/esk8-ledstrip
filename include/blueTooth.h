@@ -18,9 +18,9 @@ class BlueTooth
 
 public:
   BluetoothSerial *getBtSerial() { return mBTserial; };
-  void answer(const char *txt) { mBTserial->println(txt); };
+  // void answer(const char *txt) { mBTserial->println(txt); };
   bool update();
-  bool registerFX(const FX& fx, char desc) { return mBTcmd->registerFX(fx, desc); };
+  bool registerObj(const OBJCmd& obj, char* name) { return mBTcmd->registerObj(obj, name); };
 
   BlueTooth();
   void init(bool on=false);

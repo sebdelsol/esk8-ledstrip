@@ -4,15 +4,28 @@ BTcmd::BTcmd(Stream &stream) : mStream(&stream), mLast(NULL)
 {
   strcpy(mDelim, BTCMD_DELIM);
   clearBuffer();
-  mCmd.answer = &stream;
 }
 
-bool BTcmd::registerFX(const FX& fx, char desc)
+
+OBJCmd* BTcmd::getObjCmdFromName(char* name)
 {
-  bool ok = mNFX < BTCMD_MAXFX-1;
+  for (byte i = 0; i < mNOBJ; i++) //look for the obj
+    if (strcmp(name, mOBJ[i].name)==0)
+      return mOBJ[i].obj;
+  
+  return NULL;
+}
+
+
+bool BTcmd::registerObj(const OBJCmd& obj, char* name)
+{
+  bool ok = mNOBJ < BTCMD_MAXOBJ-1;
   if (ok) {
-    mFX[mNFX].fx = (FX*)&fx;
-    mFX[mNFX++].desc = desc;
+    mOBJ[mNOBJ].obj = (OBJCmd*)&obj;
+    
+    char* str = (char *)malloc((strlen(name) + 1) * sizeof(char));
+    strcpy(str, name);
+    mOBJ[mNOBJ++].name = str;
   }
   return ok;
 }
@@ -33,41 +46,41 @@ void BTcmd::appendToBuffer(char c)
 
 void BTcmd::handleCmd()
 {
-  // cmd are [SET or GET] [FX one char desc] [what one char] [byte args]
-  mCmd.cmd = first();
-  if (mCmd.cmd!=NULL) {
+  char *cmd = first();
+  if (cmd!=NULL) {
+    
+    char *objName = next();
+    if (objName!=NULL) {
 
-    char *fxStr = next();
-    if (fxStr!=NULL && strlen(fxStr)==1) { // only 1 char
+      OBJCmd* objCmd = getObjCmdFromName(objName);
+      if(objCmd!=NULL) {
 
-      mCmd.fx = *fxStr;
+        char *what = next();
+        if (what!=NULL){ 
 
-      for (int i = 0; i < mNFX; i++) { //look for the fx
-        if (mCmd.fx==mFX[i].desc) {
+          #define BTCMD_MAXARGS 3
+          byte args[BTCMD_MAXARGS];
+          byte nbArg;
 
-          char *whatStr = next();
-          if (whatStr!=NULL && strlen(whatStr)==1){ // only 1 char
-
-            mCmd.what = *whatStr;
-            for (mCmd.nbArg = 0; mCmd.nbArg < BTCMD_MAXARGS; mCmd.nbArg++) {
-              char *a = next();
-              if (a==NULL) break;
-              mCmd.arg[mCmd.nbArg] = atoi(a);
-            }
-
-            Serial << "Receive " << mCmd.cmd << " " << mCmd.fx << " " << mCmd.what << " ";
-            for (byte i=0; i<mCmd.nbArg; i++)
-              Serial << i << ":" << mCmd.arg[i] << " ";
-            Serial << endl;
-
-            if (strcmp(mCmd.cmd, "SET")==0){
-              if (mCmd.nbArg)
-                mFX[i].fx->setCmd(mCmd);
-            }
-            else if (strcmp(mCmd.cmd, "GET")==0)
-              mFX[i].fx->getCmd(mCmd);
+          for (nbArg = 0; nbArg < BTCMD_MAXARGS; nbArg++) {
+            char *a = next();
+            if (a==NULL) break;
+            args[nbArg] = atoi(a);
           }
-          break;
+
+          if (strcmp(cmd, "SET")==0) {
+            if (nbArg)
+              objCmd->set(what, args, nbArg);
+          }
+          else if (strcmp(cmd, "GET")==0) {
+            nbArg = objCmd->get(what, args);
+            if (nbArg) { // answer
+              *mStream << *objName << " " << *what;
+              for (byte i=0; i < nbArg; i++)
+                *mStream << " " << args[i];
+              *mStream << endl;
+            }
+          }
         }
       }
     }

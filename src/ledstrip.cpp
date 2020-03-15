@@ -7,6 +7,8 @@ void FX::init(int nLeds)
   mLeds = (CRGB *)malloc(nLeds * sizeof(CRGB));
   CLEAR_LED(mLeds, nLeds);
   specialInit(nLeds);
+
+  REGISTER_CMD(FX,  "alpha", { self->setAlpha(arg0); },  self->getAlpha())
 }
 
 bool FX::drawOn(CRGBSet dst)
@@ -23,18 +25,13 @@ bool FX::drawOn(CRGBSet dst)
   return false;
 }
 
-void FX::answer(const MyCmd &cmd, byte arg1, byte arg2, byte arg3)
-{
-  *cmd.answer << cmd.fx << " " <<  cmd.what << " " << arg1 << " " << arg2 << " " << arg3 << endl;
-}
-
-void FX::answer(const MyCmd &cmd, byte arg)
-{
-  *cmd.answer << cmd.fx << " " <<  cmd.what << " " << arg << endl;
-}
-
 // ----------------------------------------------------
-PlasmaFX::PlasmaFX(const byte wavelenght, const byte period1, const byte period2) : mK(wavelenght), mP1(period1), mP2(period2) {}
+PlasmaFX::PlasmaFX(const byte wavelenght, const byte period1, const byte period2) : mK(wavelenght), mP1(period1), mP2(period2) 
+{
+  REGISTER_CMD(PlasmaFX,  "p1",   { self->mP1 = arg0; },   self->mP1)
+  REGISTER_CMD(PlasmaFX,  "p2",   { self->mP2 = arg0; },   self->mP2)
+  REGISTER_CMD(PlasmaFX,  "freq", { self->mK = arg0; },    self->mK)
+}
 
 void PlasmaFX::update()
 {
@@ -58,28 +55,13 @@ void PlasmaFX::update()
   }
 }
 
-void PlasmaFX::setCmd(const MyCmd &cmd)
-{
-  switch(cmd.what) {
-    case 'F': mK = cmd.arg[0]; break;
-    case 'O': mP1 = cmd.arg[0]; break;
-    case 'T': mP2 = cmd.arg[0]; break;
-    case 'B': setAlpha(cmd.arg[0]); break;
-  }
-}
-
-void PlasmaFX::getCmd(const MyCmd &cmd)
-{
-  switch(cmd.what) {
-    case 'F': answer(cmd, mK); break;
-    case 'O': answer(cmd, mP1); break;
-    case 'T': answer(cmd, mP2); break;
-    case 'B': answer(cmd, getAlpha()); break;
-  }
-}
-
 // ----------------------------------------------------
-CylonFX::CylonFX(const CRGB color, const int eyeSize, const int speed) : mEyeSize(eyeSize), mSpeed(speed), mColor(color) {}
+CylonFX::CylonFX(const CRGB color, const int eyeSize, const int speed) : mEyeSize(eyeSize), mSpeed(speed), mColor(color) 
+{
+  REGISTER_CMD3(CylonFX, "color",   { self->mColor = CRGB(arg0, arg1, arg2); },        self->mColor.r,   self->mColor.g,   self->mColor.b)
+  REGISTER_CMD(CylonFX,  "eyeSize", { self->setEyeSize(arg0*(self->mNLEDS-1)/255); },  self->mEyeSize*255/(self->mNLEDS-1))
+  REGISTER_CMD(CylonFX,  "speed",   { self->mSpeed = arg0<<3; },                       self->mSpeed>>3)
+}
 
 int CylonFX::getPos() 
 {
@@ -106,26 +88,6 @@ void CylonFX::update()
   showEye(getPos());
 }
 
-void CylonFX::setCmd(const MyCmd &cmd)
-{
-  switch(cmd.what) {
-    case 'C': if (cmd.nbArg==3) mColor = CRGB(cmd.arg[0], cmd.arg[1], cmd.arg[2]); break;
-    case 'E': mEyeSize = cmd.arg[0]*(mNLEDS-1)/255; break;
-    case 'S': mSpeed = cmd.arg[0]<<3; break;
-    case 'B': setAlpha(cmd.arg[0]); break;
-  }
-}
-
-void CylonFX::getCmd(const MyCmd &cmd)
-{
-  switch(cmd.what) {
-    case 'C': answer(cmd, mColor.r, mColor.g, mColor.b); break;
-    case 'E': answer(cmd, mEyeSize*255/(mNLEDS-1)); break;
-    case 'S': answer(cmd, mSpeed>>3); break;
-    case 'B': answer(cmd, getAlpha()); break;
-  }
-}
-
 // ----------------------------------------------------
 void DblCylonFX::update()
 {
@@ -136,7 +98,10 @@ void DblCylonFX::update()
 }
 
 // ----------------------------------------------------
-RunningFX::RunningFX(const CRGB color, const int width, const int speed) : mWidth(width), mSpeed(speed), mColor(color) {}
+RunningFX::RunningFX(const CRGB color, const int width, const int speed) : mWidth(width), mSpeed(speed), mColor(color) 
+{
+  REGISTER_CMD(RunningFX,  "speed",   { self->mSpeed = arg0; }, self->mSpeed)
+}
 
 void RunningFX::update()
 {
@@ -155,11 +120,19 @@ void RunningFX::update()
 TwinkleFX::TwinkleFX(const byte hue, const byte hueDiv, const byte div) : mHueDiv(hueDiv), mDiv(div) 
 {
   mHSV = CHSV(hue, 0xff, 0xff);
+  registerAllCmd();
 }
 
 TwinkleFX::TwinkleFX(const CRGB color, const byte hueDiv, const byte div) : mHueDiv(hueDiv), mDiv(div)
 {
   mHSV = rgb2hsv_approximate(color);
+  registerAllCmd();
+}
+
+void TwinkleFX::registerAllCmd()
+{
+  REGISTER_CMD(TwinkleFX,  "hue", { self->mHSV.h = arg0; },  self->mHSV.h)
+  REGISTER_CMD(TwinkleFX,  "div", { self->mDiv = arg0; },    self->mDiv)
 }
 
 void TwinkleFX::update()
@@ -174,24 +147,6 @@ void TwinkleFX::update()
   }
 
   random16_set_seed(millis()); // "restart" random for other FX
-}
-
-void TwinkleFX::setCmd(const MyCmd &cmd)
-{
-  switch(cmd.what) {
-    case 'H': mHSV.h = cmd.arg[0]; break;
-    case 'D': mDiv = cmd.arg[0]; break;
-    case 'B': setAlpha(cmd.arg[0]); break;
-  }
-}
-
-void TwinkleFX::getCmd(const MyCmd &cmd)
-{
-  switch(cmd.what) {
-    case 'H': answer(cmd, mHSV.h); break;
-    case 'D': answer(cmd, mDiv); break;
-    case 'B': answer(cmd, getAlpha()); break;
-  }
 }
 
 // ----------------------------------------------------
