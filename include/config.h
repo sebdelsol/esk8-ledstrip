@@ -31,6 +31,7 @@
 class BaseCfg
 {
 public:
+  virtual void getDefault();
   virtual bool load();
   virtual bool save();
   virtual char* getName();
@@ -49,6 +50,7 @@ public:
   void init();
   bool RegisterCfg(BaseCfg &cfg);
   void cleanUnRegistered();
+  void getDefault();
   void load();
   void save();
 };
@@ -60,15 +62,21 @@ class Config : public BaseCfg
   char      *mFName;
 
 public:
-  DATASTRUCT  mData;
+  DATASTRUCT*  mData;
 
-  Config(const char* name)
+  DATASTRUCT   mDefault;
+
+  Config(const char* name, DATASTRUCT *data)
   {
     mFName = (char *)malloc(strlen(name) + strlen(CFG_ROOT) + strlen(CFG_EXT) + 1);
     sprintf(mFName, "%s%s%s", CFG_ROOT, name, CFG_EXT);
+    mData = data;
+    memcpy(&mDefault, data, sizeof(DATASTRUCT));
   };
 
   char* getName() { return mFName; };
+
+  void getDefault() { memcpy(mData, &mDefault, sizeof(DATASTRUCT)); };
 
   bool load()
   {
@@ -80,11 +88,11 @@ public:
       if (byte ver = f.read()!=VER)
         Serial << "bad Version (" << ver << ") should be (" << VER << ")" << endl;
 
-      else if (int s = f.size()!=sizeof(mData)+1)
+      else if (int s = f.size()!=sizeof(DATASTRUCT)+1)
         Serial << "wrong size (" << s << ") should be (" << (sizeof(mData)+1) << ")" << endl;
 
       else {
-        f.read((byte *)&mData, sizeof(mData));
+        f.read((byte *)mData, sizeof(DATASTRUCT));
         Serial << "ok, took " << (millis() - start) << "ms" << endl;
       }
 
@@ -104,7 +112,7 @@ public:
     File f = SPIFFS.open(mFName, "w");
     if (f) {
       f.write(VER);
-      f.write((byte *)&mData, sizeof(mData));
+      f.write((byte *)mData, sizeof(DATASTRUCT));
       f.close();
       Serial << "ok, took " << (millis() - start) << "ms" << endl;
       return true;

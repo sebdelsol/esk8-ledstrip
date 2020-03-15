@@ -8,7 +8,7 @@
 // #define DEBUG_LED
 // #define DEBG_SERIAL
 // #define USE_LIGHTPROBE
-// #define USE_CFG
+#define USE_CFG
 
 // ----------------------------------------------------
 #include <ledstrip.h>
@@ -87,12 +87,9 @@ TwinkleFX   TwinkleF(HUE_AQUA_BLUE);
 RunningFX   RunF(CRGB::Gold);
 
 // ----------------------------------------------------
-
-// void saveCfg();
-
-class CFG : public OBJCmd
+// Config to be saved & loaded
+typedef struct 
 {
-public:
   // update ?
   bool ledR       = true;
   bool ledF       = true;
@@ -112,9 +109,23 @@ public:
   // Cylons
   byte minEye     = 5;
   byte maxEye     = 10;
+} CFG;
 
-  CFG(){
-    #define REGISTER_CMD_CFG(var) REGISTER_CMD_SIMPLE(CFG, #var, self->var)
+CFG Cfg;
+
+#ifdef USE_CFG
+  AllConfig AllCFG;
+  Config<CFG, 1> SavedCfg("SavedCfg", &Cfg);
+#endif
+
+// For Blutooth cmd 
+class CFGclass : public OBJCmd
+{
+public:
+  CFG *cfg;  
+  CFGclass(CFG *cfg) : cfg(cfg)
+  {
+    #define REGISTER_CMD_CFG(var) REGISTER_CMD_SIMPLE(CFGclass, #var, self->cfg->var)
 
     REGISTER_CMD_CFG(ledR);
     REGISTER_CMD_CFG(ledF);
@@ -132,20 +143,14 @@ public:
     REGISTER_CMD_CFG(minEye);
     REGISTER_CMD_CFG(maxEye);
 
-    // REGISTER_CMD0(CFG, "save", {saveCfg();}) 
+    #ifdef USE_CFG
+      REGISTER_CMD0(CFGclass, "save",     {AllCFG.save();}) 
+      REGISTER_CMD0(CFGclass, "default",  {AllCFG.getDefault();}) 
+    #endif
   };
 };
 
-#ifdef USE_CFG
-  AllConfig AllCFG;
-  Config<CFG, 1> SavedCfg("SavedCfg");
-  #define Cfg SavedCfg.mData
-  // void saveCfg() { AllCFG.save(); }
-#else
-  CFG Cfg;
-  // void saveCfg() { }
-#endif
-
+CFGclass MainCfg(&Cfg);
 
 // ----------------------------------------------------
 void setup()
@@ -161,8 +166,8 @@ void setup()
     AllCFG.init();
     AllCFG.RegisterCfg(SavedCfg);
     AllCFG.load();
-    AllCFG.save();
-    AllCFG.cleanUnRegistered();
+    // AllCFG.save();
+    // AllCFG.cleanUnRegistered();
   #endif
 
   #define Register3FX(l, f1, f2, f3)          AllLeds.registerStrip(l);   l.registerFX(f1); l.registerFX(f2); l.registerFX(f3);
@@ -192,7 +197,7 @@ void setup()
     BT_REGISTER_5OBJ(Fire,      FireTwk,    Aqua,   AquaTwk,    Plasma);
     BT_REGISTER_3OBJ(TwinkleR,  CylonR,     RunR);
     BT_REGISTER_3OBJ(TwinkleF,  CylonF,     RunF);
-    BT_REGISTER_OBJ(Cfg);
+    BT.registerObj(MainCfg, "Cfg");
   #else    
     // switch off blue led
     pinMode(LIGHT_PIN, OUTPUT);

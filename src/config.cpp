@@ -31,7 +31,8 @@ void AllConfig::cleanUnRegistered()
         Serial << name << "...removed" << endl;
         SPIFFS.remove(name);
       }
-      f.close();
+      else 
+        f.close();
     }
     root.close();
   }
@@ -57,4 +58,11 @@ void AllConfig::save()
   if (mOk)
     for (byte i=0; i < mNcfg; i++)
       mCFG[i]->save();
+}
+
+void AllConfig::getDefault()
+{
+  if (mOk)
+    for (byte i=0; i < mNcfg; i++)
+      mCFG[i]->getDefault();
 }
