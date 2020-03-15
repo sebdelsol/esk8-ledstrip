@@ -2,6 +2,7 @@
 // #define USE_OTA
 // #define USE_TELNET //needs USE_OTA to work
 #define USE_BT // see platformio & use "board_build.partitions = huge_app.csv"
+#define DEBG_LEDINFO
 // #define DEBUG_LED
 // #define DEBG_SERIAL
 // #define USE_LIGHTPROBE
@@ -83,17 +84,37 @@ RunningFX   RunF(CRGB::Gold);
 class CFG : public OBJCmd
 {
 public:
+  // update ?
   bool ledR = true;
   bool ledF = true;
   bool led = true;
+
+  // for rotation
+  byte runSpeed   = 3;
+  int NeutralZ    = 3000;
+  int maxZ        = 7000; 
+
+  // for acc
+  byte DIV_ACC    = 2;
+  int SMOOTH_ACC  = 1600;
+  byte THRES_ACC  = 30;
+  int MAX_ACC     = 256;
+  
+  byte MINeye     = 5;
+  byte MAXeye     = 10;
+
   CFG();
 };
 
 CFG::CFG()
 {
-  REGISTER_CMD(CFG,  "ledR",  { self->ledR = arg0; }, self->ledR)
-  REGISTER_CMD(CFG,  "ledF",  { self->ledF = arg0; }, self->ledF)
-  REGISTER_CMD(CFG,  "led",   { self->led = arg0; },  self->led)
+  REGISTER_CMD_SIMPLE(CFG,  "runSpeed",  self->runSpeed)
+  REGISTER_CMD_SIMPLE(CFG,  "ledR",  self->ledR)
+  REGISTER_CMD_SIMPLE(CFG,  "ledF",  self->ledF)
+  REGISTER_CMD_SIMPLE(CFG,  "led",  self->led)
+  // REGISTER_CMD(CFG,  "ledR",  { self->ledR = arg0; }, self->ledR)
+  // REGISTER_CMD(CFG,  "ledF",  { self->ledF = arg0; }, self->ledF)
+  // REGISTER_CMD(CFG,  "led",   { self->led = arg0; },  self->led)
 }
 
 CFG Cfg;
@@ -188,31 +209,23 @@ void loop()
 
     if (gotAccel) {
 
-      int runSpeed =  ((wz>0) - (wz<0)) * 3;
+      int runSpeed =  ((wz>0) - (wz<0)) * Cfg.runSpeed;
 
       //------
-      #define NeutralZ  3000 
-      #define maxZ      7000 
       wz = abs(wz);
-      int alpha = wz > NeutralZ ? min((wz-NeutralZ) * 255 / maxZ, 255) : 0;
-      int invAlpha = 255 - alpha;
+      byte alpha = wz > Cfg.NeutralZ ? min((wz-Cfg.NeutralZ) * 255 / Cfg.maxZ, 255) : 0;
+      byte invAlpha = 255 - alpha;
 
       //----------------------
-      #define SMOOTH_ACC  1600//3200 //.05
-      #define THRES_ACC   30
-      #define MAX_ACC     256
-      #define MINeye      5
-      #define MAXeye      10
-
-      int acc = constrain(y / 2, -MAX_ACC, MAX_ACC) << 8;
+      int acc = constrain(y / Cfg.DIV_ACC, -Cfg.MAX_ACC, Cfg.MAX_ACC) << 8;
 
       //------
       static int FWD = 0;
       int fwd = constrain(acc, 0, 65535);
-      FWD = fwd > FWD ? fwd : lerp16by16(FWD, fwd, SMOOTH_ACC);
+      FWD = fwd > FWD ? fwd : lerp16by16(FWD, fwd, Cfg.SMOOTH_ACC);
 
-      int alphaF = constrain((FWD - (THRES_ACC<<8))/(MAX_ACC-THRES_ACC), 0, 255);
-      int eyeF = MINeye + (((MAXeye-MINeye) * alphaF) >>8);
+      int alphaF = constrain((FWD - (Cfg.THRES_ACC<<8))/(Cfg.MAX_ACC - Cfg.THRES_ACC), 0, 255);
+      int eyeF = Cfg.MINeye + (((Cfg.MAXeye - Cfg.MINeye) * alphaF) >>8);
 
       if (Cfg.ledF) { 
         RunF.setSpeed(runSpeed);
@@ -225,10 +238,10 @@ void loop()
       //------
       static int RWD = 0;
       int rwd = constrain(-acc, 0, 65535);
-      RWD = rwd > RWD ? rwd : lerp16by16(RWD, rwd, SMOOTH_ACC);
+      RWD = rwd > RWD ? rwd : lerp16by16(RWD, rwd, Cfg.SMOOTH_ACC);
 
-      int alphaR = constrain((RWD - (THRES_ACC<<8))/(MAX_ACC-THRES_ACC), 0, 255);
-      int eyeR = MINeye + (((MAXeye-MINeye) * alphaR) >>8);
+      int alphaR = constrain((RWD - (Cfg.THRES_ACC<<8))/(Cfg.MAX_ACC - Cfg.THRES_ACC), 0, 255);
+      int eyeR = Cfg.MINeye + (((Cfg.MAXeye - Cfg.MINeye) * alphaR) >>8);
 
       if (Cfg.ledR) { 
         RunR.setSpeed(runSpeed);
@@ -263,7 +276,7 @@ void loop()
     #endif
   }
 
-  #ifdef DEBG_SERIAL
+  #ifdef DEBG_LEDINFO
     EVERY_N_MILLISECONDS(1000)
       AllLeds.getInfo();
   #endif
