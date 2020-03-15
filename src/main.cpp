@@ -1,6 +1,6 @@
 
-#define USE_OTA
-#define USE_TELNET //needs USE_OTA to work
+// #define USE_OTA
+// #define USE_TELNET //needs USE_OTA to work
 #define USE_BT // see platformio & use "board_build.partitions = huge_app.csv"
 // #define DEBUG_LED
 // #define DEBG_SERIAL
@@ -108,11 +108,12 @@ void setup()
   #endif
 
   #ifdef USE_BT
-    #define REGISTER_OBJ(obj) registerObj(obj, #obj)
-    BT.init();
-    BT.REGISTER_OBJ(Fire);
-    BT.REGISTER_OBJ(Aqua);
-    BT.REGISTER_OBJ(Plasma);
+    #define BT_REGISTER_3OBJ(o1, o2, o3) BT.registerObj(o1, #o1); BT.registerObj(o2, #o2); BT.registerObj(o3, #o3);
+    #define BT_REGISTER_5OBJ(o1, o2, o3, o4, o5) BT_REGISTER_3OBJ(o1, o2, o3); BT.registerObj(o4, #o4); BT.registerObj(o5, #o5);
+    BT.init(true);
+    BT_REGISTER_5OBJ(Fire,      FireTwk,    Aqua,   AquaTwk,    Plasma);
+    BT_REGISTER_3OBJ(TwinkleR,  CylonR,     RunR);
+    BT_REGISTER_3OBJ(TwinkleF,  CylonF,     RunF);
   #else    
     // switch off blue led
     pinMode(LIGHT_PIN, OUTPUT);
