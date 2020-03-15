@@ -210,7 +210,6 @@ void loop()
 
       if (Button.pressed()) {
           Serial << "button pressed " << endl;
-          // digitalWrite(LIGHT_PIN, !digitalRead(LIGHT_PIN));
           BT.toggle();
       }
 
