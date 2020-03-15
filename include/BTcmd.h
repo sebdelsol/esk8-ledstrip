@@ -43,7 +43,7 @@ public:
 
   BTcmd(Stream &stream);
   bool registerObj(const OBJCmd& obj, char* name);
-  OBJCmd* getObjCmdFromName(char* name);
+  OBJCmd* getObjFromName(char* name);
 
   void readStream();
 };

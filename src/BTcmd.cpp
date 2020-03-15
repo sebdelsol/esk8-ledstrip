@@ -7,7 +7,7 @@ BTcmd::BTcmd(Stream &stream) : mStream(&stream), mLast(NULL)
 }
 
 
-OBJCmd* BTcmd::getObjCmdFromName(char* name)
+OBJCmd* BTcmd::getObjFromName(char* name)
 {
   for (byte i = 0; i < mNOBJ; i++) //look for the obj
     if (strcmp(name, mOBJ[i].name)==0)
@@ -52,7 +52,7 @@ void BTcmd::handleCmd()
     char *objName = next();
     if (objName!=NULL) {
 
-      OBJCmd* objCmd = getObjCmdFromName(objName);
+      OBJCmd* objCmd = getObjFromName(objName);
       if(objCmd!=NULL) {
 
         char *what = next();
@@ -68,14 +68,14 @@ void BTcmd::handleCmd()
             args[nbArg] = atoi(a);
           }
 
-          if (strcmp(cmd, "SET")==0) {
+          if (strcmp(cmd, "set")==0) {
             if (nbArg)
               objCmd->set(what, args, nbArg);
           }
-          else if (strcmp(cmd, "GET")==0) {
+          else if (strcmp(cmd, "get")==0) {
             nbArg = objCmd->get(what, args);
             if (nbArg) { // answer
-              *mStream << *objName << " " << *what;
+              *mStream << objName << " " << what;
               for (byte i=0; i < nbArg; i++)
                 *mStream << " " << args[i];
               *mStream << endl;
