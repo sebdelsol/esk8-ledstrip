@@ -156,10 +156,10 @@ void BTcmd::load(bool isdefault)
     const char *fname = isdefault ? def_fname : cfg_fname;
     File f = SPIFFS.open(fname, "r");
     if (f) {
-      // while (f.available()){
-      //   char *buf = (char *)f.readStringUntil('\n').c_str();
-      //   handleCmd(buf, true); // autoset
-      // }
+      while (f.available()){ // !!!!!!!!!!! readStringUntil uses String !!!!!!!!!
+        char *buf = (char *)f.readStringUntil('\n').c_str(); 
+        handleCmd(buf, true); // autoset
+      }
       f.close();
       Serial << "loaded " << fname << endl;
     }
