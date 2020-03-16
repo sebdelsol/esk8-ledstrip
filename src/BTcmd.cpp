@@ -81,7 +81,7 @@ void BTcmd::handleCmd(Stream* stream,BUFbase &buf)
             nbArg = objCmd->get(what, args);
             
             if (nbArg) { // answer
-              *stream << objName << " " << what;
+              *stream << mSetKeyword << " " << objName << " " << what;
               for (byte i=0; i < nbArg; i++)
                 *stream << " " << args[i];
               *stream << endl;
@@ -100,7 +100,7 @@ void BTcmd::readStream(Stream* stream, BUFbase &buf)
     char c = stream->read();
 
     if (c == BTCMD_TERM) {
-      handleCmd(stream, buf.getBuf());
+      handleCmd(stream, buf);
       buf.clearBuffer();
     }
     else if (isprint(c)){
@@ -111,16 +111,19 @@ void BTcmd::readStream(Stream* stream, BUFbase &buf)
 }
 
 //--------------------------------------
+File BTcmd::getFile(bool isdefault, const char *mode)
+{
+ if (spiffsOK) {
+    const char *fname = isdefault ? def_fname : cfg_fname;
+    return SPIFFS.open(fname, mode);
+ }
+ return File();
+}
+
 void BTcmd::save(bool isdefault)
 {
-  if (spiffsOK) {
-    const char *fname = isdefault ? def_fname : cfg_fname;
-    File f = SPIFFS.open(fname, "w");
+    File f = getFile(isdefault, "w");
     if (f) {
-
-      int args[BTCMD_MAXARGS];
-      byte nbArg;
-
       for (byte i = 0; i < mNOBJ; i++) {
 
         char* objName = mOBJ[i].name;
@@ -130,45 +133,23 @@ void BTcmd::save(bool isdefault)
         for (byte j = 0; j < nbCmd; j++) {
 
           char* varName = obj->getCmdName(j);
-// f << mSetKeyword << " " << readstream(f);
-          nbArg = obj->get(varName, args);
-          if (nbArg) {
-            f.print(mSetKeyword);
-            f.print(" ");
-            f.print(objName); 
-            f.print(" "); 
-            f.print(varName);
-            
-            for (byte k=0; k < nbArg; k++) {
-              f.print(" "); 
-              f.print(args[k]);
-            }
-            f.println();
-          }
+         
+          snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mSetKeyword, objName, varName);
+          handleCmd(f, mFilebuf);
         }
       } 
       f.close();
       Serial << "saved to " << fname << endl;
     }
-  }
 }
 
 void BTcmd::load(bool isdefault)
 {
-  if (spiffsOK) {
-    const char *fname = isdefault ? def_fname : cfg_fname;
-    File f = SPIFFS.open(fname, "r");
+    File f = getFile(isdefault, "r");
     if (f) {
       mFilebuf.clearBuffer(); // might not be cleared by readStream
       readStream(f, mFilebuf);
-       
-      /*
-      while (f.available()) {
-        char *buf = (char *)f.readStringUntil('\n').c_str(); 
-        handleCmd(buf, true); // NO IT USES STRTOK that changes the string and c_str is const char* !
-      }*/
       f.close();
       Serial << "loaded " << fname << endl;
     }
-  }
 }
