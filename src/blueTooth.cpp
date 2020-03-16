@@ -37,6 +37,8 @@ void BlueTooth::init(bool on)
   BTSerial.register_callback(BTcallback);
   pinMode(LIGHT_PIN, OUTPUT);
   start(on);
+
+  mBTcmd->initSPIFFS();  
 }
 
 // Power management

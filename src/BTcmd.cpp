@@ -4,8 +4,15 @@ BTcmd::BTcmd(Stream &stream) : mStream(&stream), mLast(NULL)
 {
   strcpy(mDelim, BTCMD_DELIM);
   clearBuffer();
-}
+}  
 
+void BTcmd::initSPIFFS()
+{
+  Serial << "SPIFFS begin" << endl;
+  spiffsOK = SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED);
+  if (!spiffsOK)
+    Serial << "SPIFFS Mount Failed" << endl;
+}
 
 OBJCmd* BTcmd::getObjFromName(char* name)
 {
@@ -15,7 +22,6 @@ OBJCmd* BTcmd::getObjFromName(char* name)
   
   return NULL;
 }
-
 
 bool BTcmd::registerObj(const OBJCmd& obj, char* name)
 {
@@ -44,12 +50,12 @@ void BTcmd::appendToBuffer(char c)
   }
 }
 
-void BTcmd::handleCmd()
+void BTcmd::handleCmd(char* buf, bool autoSet)
 {
-  char *cmd = first();
+  const char *cmd = autoSet ? "set" : first(buf);
   if (cmd!=NULL) {
     
-    char *objName = next();
+    char *objName = autoSet ? first(buf): next();
     if (objName!=NULL) {
 
       OBJCmd* objCmd = getObjFromName(objName);
@@ -58,7 +64,6 @@ void BTcmd::handleCmd()
         char *what = next();
         if (what!=NULL){ 
 
-          #define BTCMD_MAXARGS 3
           int args[BTCMD_MAXARGS];
           byte nbArg;
 
@@ -94,12 +99,69 @@ void BTcmd::readStream()
     char c = mStream->read();
 
     if (c == BTCMD_TERM) {
-      handleCmd();
+      handleCmd(mBuf);
       clearBuffer();
     }
     else if (isprint(c)){
       appendToBuffer(c);
       //Serial << mBuf << endl;
+    }
+  }
+}
+
+//--------------------------------------
+void BTcmd::save(bool isdefault)
+{
+  if (spiffsOK) {
+    const char *fname = isdefault ? def_fname : cfg_fname;
+    File f = SPIFFS.open(fname, "w");
+    if (f) {
+
+      int args[BTCMD_MAXARGS];
+      byte nbArg;
+
+      for (byte i = 0; i < mNOBJ; i++) {
+
+        char* objName = mOBJ[i].name;
+        OBJCmd* obj = mOBJ[i].obj;
+
+        byte nbCmd = obj->getNbCmd();
+        for (byte j = 0; j < nbCmd; j++) {
+
+          char* varName = obj->getCmdName(j);
+
+          nbArg = obj->get(varName, args);
+          if (nbArg) {
+            f.print(objName); 
+            f.print(" "); 
+            f.print(varName);
+            
+            for (byte k=0; k < nbArg; k++) {
+              f.print(" "); 
+              f.print(args[k]);
+            }
+            f.println();
+          }
+        }
+      } 
+      f.close();
+      Serial << "saved to " << fname << endl;
+    }
+  }
+}
+
+void BTcmd::load(bool isdefault)
+{
+  if (spiffsOK) {
+    const char *fname = isdefault ? def_fname : cfg_fname;
+    File f = SPIFFS.open(fname, "r");
+    if (f) {
+      // while (f.available()){
+      //   char *buf = (char *)f.readStringUntil('\n').c_str();
+      //   handleCmd(buf, true); // autoset
+      // }
+      f.close();
+      Serial << "loaded " << fname << endl;
     }
   }
 }

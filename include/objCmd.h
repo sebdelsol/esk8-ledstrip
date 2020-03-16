@@ -1,7 +1,8 @@
 #pragma once
 #include <Arduino.h.>
+#include <Streaming.h>
 
-#define MAX_CMD 15
+#define MAX_CMD 17
 
 class OBJCmd
 {
@@ -22,9 +23,12 @@ public:
   bool registerCmd(void *obj, char *name, setFunc set, getFunc get);
   void set(char* name, int* toSet, byte n);
   byte get(char* name, int* toGet);
+
+  byte getNbCmd() { return mNCMD;};
+  char* getCmdName(byte i) { return mCmd[i].name;};
 };
 
-#define REGISTER_CMD0(class, name, doCode) \
+#define REGISTER_CMD_PURE(class, name, doCode) \
     registerCmd(this, name, \
       [](void* obj, int* toSet, byte n) { \
         if (n==0) { \

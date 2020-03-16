@@ -18,8 +18,16 @@ bool OBJCmd::registerCmd(void *obj, char *name, setFunc set, getFunc get)
 void OBJCmd::set(char* name, int* toSet, byte n)
 {
   for (byte i = 0; i < mNCMD; i++) //look for the cmd
-    if (strcmp(name, mCmd[i].name)==0)
+    if (strcmp(name, mCmd[i].name)==0) {
+
+      // debug
+      // Serial << "set " << name;
+      // for (byte k=0; k < n; k++)
+      //   Serial << " " << toSet[k];
+      // Serial << endl;
+
       (*mCmd[i].set)(mCmd[i].obj, toSet, n);
+    }
 }
 
 byte OBJCmd::get(char* name, int* toGet)

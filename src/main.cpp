@@ -1,5 +1,5 @@
 
-#define USE_BT // see p latformio & use "board_build.partitions = huge_app.csv"
+// #define USE_BT // see p latformio & use "board_build.partitions = huge_app.csv"
 
 // #define USE_OTA // not compatible with BT since it uses "board_build.partitions = huge_app.csv"
 // #define USE_TELNET //needs USE_OTA to work
@@ -8,7 +8,6 @@
 // #define DEBUG_LED
 // #define DEBG_SERIAL
 // #define USE_LIGHTPROBE
-#define USE_CFG
 
 // ----------------------------------------------------
 #include <ledstrip.h>
@@ -17,10 +16,6 @@
 #include <Button.h>
 #include <Streaming.h>
 #include <soc/rtc.h> // get cpu freq
-
-#ifdef USE_CFG
-  #include <config.h>
-#endif
 
 #ifdef USE_BT
   #include <bluetooth.h>
@@ -50,7 +45,7 @@ void handleOta()
 }
 
 // ----------------------------------------------------
-#define   LED_MAX_MA  1000 // mA
+#define   LED_MAX_MA  800 // mA
 #define   LED_TICK    15  // ms
 #define   BT_TICK     15  // ms
 #define   SERIAL_BAUD 115200 
@@ -87,9 +82,9 @@ TwinkleFX   TwinkleF(HUE_AQUA_BLUE);
 RunningFX   RunF(CRGB::Gold);
 
 // ----------------------------------------------------
-// Config to be saved & loaded
-typedef struct 
+class CFG : public OBJCmd
 {
+public:
   // update ?
   bool ledR       = true;
   bool ledF       = true;
@@ -109,48 +104,35 @@ typedef struct
   // Cylons
   byte minEye     = 5;
   byte maxEye     = 10;
-} CFG;
 
-CFG Cfg;
+  #ifdef USE_BT
+    CFG() {
+      #define REGISTER_CMD_CFG(var) REGISTER_CMD_SIMPLE(CFG, #var, self->var)
 
-#ifdef USE_CFG
-  AllConfig AllCFG;
-  Config<CFG, 1> SavedCfg("SavedCfg", &Cfg);
-#endif
+      REGISTER_CMD_CFG(ledR);
+      REGISTER_CMD_CFG(ledF);
+      REGISTER_CMD_CFG(led);
 
-// For Blutooth cmd 
-class CFGclass : public OBJCmd
-{
-public:
-  CFG *cfg;  
-  CFGclass(CFG *cfg) : cfg(cfg)
-  {
-    #define REGISTER_CMD_CFG(var) REGISTER_CMD_SIMPLE(CFGclass, #var, self->cfg->var)
+      REGISTER_CMD_CFG(runSpeed);
+      REGISTER_CMD_CFG(neutralWZ);
+      REGISTER_CMD_CFG(maxWZ);
 
-    REGISTER_CMD_CFG(ledR);
-    REGISTER_CMD_CFG(ledF);
-    REGISTER_CMD_CFG(led);
+      REGISTER_CMD_CFG(divAcc);
+      REGISTER_CMD_CFG(smoothAcc);
+      REGISTER_CMD_CFG(thresAcc);
+      REGISTER_CMD_CFG(maxAcc);
 
-    REGISTER_CMD_CFG(runSpeed);
-    REGISTER_CMD_CFG(neutralWZ);
-    REGISTER_CMD_CFG(maxWZ);
+      REGISTER_CMD_CFG(minEye);
+      REGISTER_CMD_CFG(maxEye);
 
-    REGISTER_CMD_CFG(divAcc);
-    REGISTER_CMD_CFG(smoothAcc);
-    REGISTER_CMD_CFG(thresAcc);
-    REGISTER_CMD_CFG(maxAcc);
-
-    REGISTER_CMD_CFG(minEye);
-    REGISTER_CMD_CFG(maxEye);
-
-    #ifdef USE_CFG
-      REGISTER_CMD0(CFGclass, "save",     {AllCFG.save();}) 
-      REGISTER_CMD0(CFGclass, "default",  {AllCFG.getDefault();}) 
-    #endif
-  };
+      REGISTER_CMD_PURE(CFG, "save",     {BT.save(false);}) // save not default
+      REGISTER_CMD_PURE(CFG, "load",     {BT.load(false);}) // load not default
+      REGISTER_CMD_PURE(CFG, "default",  {BT.load(true);})  // load default
+    };
+  #endif
 };
 
-CFGclass MainCfg(&Cfg);
+CFG Cfg;
 
 // ----------------------------------------------------
 void setup()
@@ -161,14 +143,6 @@ void setup()
   rtc_clk_cpu_freq_set(RTC_CPU_FREQ_240M);
   Serial << "Esp32 core " << esp_get_idf_version() << endl;
   Serial << "CPU freq " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
-
-  #ifdef USE_CFG
-    AllCFG.init();
-    AllCFG.RegisterCfg(SavedCfg);
-    AllCFG.load();
-    // AllCFG.save();
-    // AllCFG.cleanUnRegistered();
-  #endif
 
   #define Register3FX(l, f1, f2, f3)          AllLeds.registerStrip(l);   l.registerFX(f1); l.registerFX(f2); l.registerFX(f3);
   #define Register5FX(l, f1, f2, f3, f4, f5)  Register3FX(l, f1, f2, f3); l.registerFX(f4); l.registerFX(f5);
@@ -197,7 +171,10 @@ void setup()
     BT_REGISTER_5OBJ(Fire,      FireTwk,    Aqua,   AquaTwk,    Plasma);
     BT_REGISTER_3OBJ(TwinkleR,  CylonR,     RunR);
     BT_REGISTER_3OBJ(TwinkleF,  CylonF,     RunF);
-    BT.registerObj(MainCfg, "Cfg");
+    BT_REGISTER_OBJ(Cfg);
+
+    BT.save(true); // save default
+    BT.load(false); // load not default
   #else    
     // switch off blue led
     pinMode(LIGHT_PIN, OUTPUT);
