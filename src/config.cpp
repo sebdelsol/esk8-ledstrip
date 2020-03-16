@@ -31,8 +31,6 @@ void AllConfig::cleanUnRegistered()
         Serial << name << "...removed" << endl;
         SPIFFS.remove(name);
       }
-      else 
-        f.close();
     }
     root.close();
   }
