@@ -134,7 +134,7 @@ void BTcmd::save(bool isdefault)
 
           char* varName = obj->getCmdName(j);
          
-          snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mSetKeyword, objName, varName);
+          snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mGetKeyword, objName, varName);
           handleCmd(f, mFilebuf);
         }
       } 
