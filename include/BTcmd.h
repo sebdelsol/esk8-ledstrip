@@ -20,6 +20,7 @@
 class BUFbase
 {
   virtual char* getBuf();
+  virtual int getLen();
   virtual void clearBuffer();
   virtual void appendToBuffer(char c);
 }
@@ -31,7 +32,8 @@ class BUF: BUFbase
  int  mBufPos;         // Current position in the buffer
   
 public:
- char* getBuf() {return mBuf;};
+ char* getBuf() { return mBuf; };
+ int getLen() { return SIZE; };
   
  void clearBuffer()
  {
@@ -75,13 +77,12 @@ class BTcmd
   const char* mSetKeyword = BTCMD_SET;
   const char* mGetKeyword = BTCMD_GET;
 
-  //void clearBuffer();
-  //void appendToBuffer(char c);
   void handleCmd(Stream* stream,BUFbase &buf);
 
   char* first(char* buf) { return strtok_r(buf, mDelim, &mLast); };
   char* next() { return strtok_r(NULL, mDelim, &mLast); };
   void readStream(Stream* stream,BUFbase &buf);
+  File getFile(bool isdefault, const char *mode);
   
 public:
 
