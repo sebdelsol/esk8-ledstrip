@@ -1,12 +1,12 @@
 
-// #define USE_BT // see p latformio & use "board_build.partitions = huge_app.csv"
+#define USE_BT // see p latformio & use "board_build.partitions = huge_app.csv"
 
 // #define USE_OTA // not compatible with BT since it uses "board_build.partitions = huge_app.csv"
 // #define USE_TELNET //needs USE_OTA to work
 
-// #define DEBG_LEDINFO
-// #define DEBUG_LED
-// #define DEBG_SERIAL
+// #define DEBUG_LED_INFO
+// #define DEBUG_LED_TOWIFI
+// #define DEBUG_ACC
 // #define USE_LIGHTPROBE
 
 // ----------------------------------------------------
@@ -154,7 +154,7 @@ void setup()
   #ifdef USE_OTA
     Ota.begin();
   #else
-    #ifdef DEBUG_LED
+    #ifdef DEBUG_LED_TOWIFI
       MyWifi.on();
       MyWifi.addLeds(LedsF);
     #else
@@ -278,7 +278,7 @@ void loop()
         Plasma.setAlpha(alphaP);
       }
 
-      #ifdef DEBG_SERIAL
+      #ifdef DEBUG_ACC
         Serial << "[areal  " << x << "\t" << y << "\t" << z << "]\t";
         Serial << "[fwd " << fwd << "\trwd " << rwd << "\tACC " << acc << "]\t";
         Serial << "[alpha " << alpha << "\tinv " << invAlpha << "]\t";
@@ -288,12 +288,12 @@ void loop()
 
     AllLeds.update();
 
-    #ifdef DEBUG_LED
+    #ifdef DEBUG_LED_TOWIFI
       MyWifi.update();
     #endif
   }
 
-  #ifdef DEBG_LEDINFO
+  #ifdef DEBUG_LED_INFO
     EVERY_N_MILLISECONDS(1000)
       AllLeds.getInfo();
   #endif
