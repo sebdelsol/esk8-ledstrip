@@ -85,6 +85,8 @@ RunningFX   RunF(CRGB::Gold);
 class CFG : public OBJVar
 {
 public:
+  byte bright     = 32;
+  
   // update ?
   bool ledR       = true;
   bool ledF       = true;
@@ -108,7 +110,9 @@ public:
     CFG()
     {
       #define REGISTER_CFG_VAR(var, min, max) REGISTER_VAR_SIMPLE(CFG, #var, self->var, min, max)
-
+      
+      REGISTER_CFG_VAR(bright, 1, 255);
+      
       REGISTER_CFG_VAR(ledR, 0, 1);
       REGISTER_CFG_VAR(ledF, 0, 1);
       REGISTER_CFG_VAR(led, 0, 1);
@@ -224,6 +228,8 @@ void loop()
       byte bright = map(light, MIN_LIGHT, MAX_LIGHT, 255, 0); // to darker the light, the brighter the leds
       Serial << light << " " << bright << endl;
       AllLeds.setBrightness(bright);
+    #else
+      AllLeds.setBrightness(Cfg.bright);
     #endif
 
     if (gotAccel)
