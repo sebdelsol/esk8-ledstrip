@@ -109,7 +109,6 @@ void BTcmd::save(bool isdefault)
 {
   File f = getFile(isdefault, "w");
   if (f) {
-    
     for (byte i = 0; i < mNOBJ; i++) {
 
       char* objName = mOBJ[i].name;
@@ -132,11 +131,10 @@ void BTcmd::load(bool isdefault)
 {
   File f = getFile(isdefault, "r");
   if (f) {
-  
     mFilebuf.clearBuffer(); // might not be cleared by readStream
     readStream((Stream*)&f, mFilebuf); // should be a succession of set cmd
 
-    Serial << "loaded " << f.name() << endl;
+    Serial << "loaded from " << f.name() << endl;
     f.close();
   }
 }

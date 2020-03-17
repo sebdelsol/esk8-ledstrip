@@ -14,6 +14,9 @@
 #define BTCMD_SET     "set"
 #define BTCMD_GET     "get"
 
+#define FNAME_CURRENT "/config.cfg"
+#define FNAME_DEFAULT "/config.def"
+
 #define BTCMD_MAXARGS 3
 
 //----------------
@@ -60,8 +63,8 @@ class BTcmd
   Stream* mBTStream;
   
   bool spiffsOK = false;
-  const char* cfg_fname = "/config.cfg";
-  const char* def_fname = "/config.def";
+  const char* cfg_fname = FNAME_CURRENT;
+  const char* def_fname = FNAME_DEFAULT;
 
   BUF mBTbuf;
   BUF mFilebuf;
