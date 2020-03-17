@@ -118,7 +118,7 @@ void BTcmd::save(bool isdefault)
       for (byte j = 0; j < nbCmd; j++) {
         char* varName = obj->getCmdName(j);
         snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mGetKeyword, objName, varName); // emulate a get cmd
-        handleCmd((Stream*)&f, mFilebuf); // store it in the file 
+        handleCmd((Stream*)&f, mFilebuf); // set cmd stored in the file 
       }
     } 
 
