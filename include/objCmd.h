@@ -4,25 +4,31 @@
 
 #define MAX_CMD 17
 
+typedef void (*setCmdFunc)(void *obj, int* toSet, byte n);
+typedef byte (*getCmdFunc)(void *obj, int* toGet);
+
+struct MyCmd {
+  char*       name;
+  void*       obj;
+  setCmdFunc  set;
+  getCmdFunc  get;
+  int         min;
+  int         max;
+};
+
 class OBJCmd
 {
-  typedef void (*setFunc)(void *obj, int* toSet, byte n);
-  typedef byte (*getFunc)(void *obj, int* toGet);
 
-  struct Cmd {
-    char*   name;
-    void*   obj;
-    setFunc set;
-    getFunc get;
-  };
-
-  Cmd mCmd[MAX_CMD];
+  MyCmd mCmd[MAX_CMD];
   byte mNCMD = 0;
 
 public:  
-  bool registerCmd(void *obj, char *name, setFunc set, getFunc get);
-  void set(const char* name, int* toSet, byte n);
-  byte get(const char* name, int* toGet);
+  bool registerCmd(void *obj, const char *name, setCmdFunc set, getCmdFunc get, int min=0, int max=0);
+  MyCmd* getCmd(const char* name);
+
+  void set(MyCmd* cmd, int* toSet, byte n);
+  byte get(MyCmd* cmd, int* toGet);
+  void getMinMax(MyCmd* cmd, int* min, int* max);
 
   byte getNbCmd() { return mNCMD;};
   char* getCmdName(byte i) { return mCmd[i].name;};
@@ -41,7 +47,7 @@ public:
       } \
     );
 
-#define REGISTER_CMD(class, name, setCode, toGet0) \
+#define REGISTER_CMD(class, name, setCode, toGet0, min, max) \
     registerCmd(this, name, \
       [](void* obj, int* toSet, byte n) { \
         if (n==1) { \
@@ -54,13 +60,14 @@ public:
         class* self = (class *)obj; \
         toGet[0] = toGet0; \
         return 1; \
-      } \
+      }, \
+      min, max \
     );
 
-#define REGISTER_CMD_SIMPLE(class, name, var) REGISTER_CMD(class, name, { var = arg0; }, var) 
+#define REGISTER_CMD_SIMPLE(class, name, var, min, max) REGISTER_CMD(class, name, { var = arg0; }, var, min, max) 
 //#define REGISTER_CMD_SIMPLE(class, var) REGISTER_CMD(class, #var, { var = arg0; }, var) 
 
-#define REGISTER_CMD3(class, name, setCode, toGet0, toGet1, toGet2) \
+#define REGISTER_CMD3(class, name, setCode, toGet0, toGet1, toGet2, min, max) \
     registerCmd(this, name, \
       [](void* obj, int* toSet, byte n) { \
         if (n==3) { \
@@ -77,6 +84,7 @@ public:
         toGet[1] = toGet1; \
         toGet[2] = toGet2; \
         return 3; \
-      } \
+      }, \
+      min, max \
     );
 

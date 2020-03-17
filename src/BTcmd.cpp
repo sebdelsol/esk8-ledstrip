@@ -37,6 +37,14 @@ bool BTcmd::registerObj(const OBJCmd& obj, const char* name)
 }
 
 //--------------------------------------
+bool BTcmd::isNumber(const char* txt) 
+{ 
+  for (int i = 0; i < strlen(txt); i++) 
+      if (!isdigit(txt[i])) 
+          return false; 
+  return true; 
+} 
+
 void BTcmd::handleCmd(Stream* stream, BUF& buf)
 {
   const char *cmd = buf.first();
@@ -45,32 +53,41 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf)
     const char *objName = buf.next();
     if (objName!=NULL) {
 
-      OBJCmd* objCmd = getObjFromName(objName);
-      if(objCmd!=NULL) {
+      OBJCmd* obj = getObjFromName(objName);
+      if(obj!=NULL) {
 
         const char *what = buf.next();
         if (what!=NULL){ 
 
-          int args[BTCMD_MAXARGS];
-          byte nbArg;
+          MyCmd* whatCmd = obj->getCmd(what);
+          if (whatCmd) {
 
-          for (nbArg = 0; nbArg < BTCMD_MAXARGS; nbArg++) {
-            const char *a = buf.next();
-            if (a==NULL) break;
-            args[nbArg] = atoi(a);
-          }
+            int min=0, max=0;
+            obj->getMinMax(whatCmd, &min, &max);
 
-          if (strcmp(cmd, mSetKeyword)==0)
-              objCmd->set(what, args, nbArg); //set the value from args
+            int args[BTCMD_MAXARGS];
+            byte nbArg;
 
-          else if (strcmp(cmd, mGetKeyword)==0) {
-            nbArg = objCmd->get(what, args); //get the value in args
+            for (nbArg = 0; nbArg < BTCMD_MAXARGS; nbArg++) {
+              const char *a = buf.next();
+              if (a!=NULL && isNumber(a))
+                args[nbArg] = constrain(atoi(a), min, max);
+              else 
+                break;
+            }
 
-            if (nbArg) { // and answer on stream
-              *stream << mSetKeyword << " " << objName << " " << what;
-              for (byte i=0; i < nbArg; i++)
-                *stream << " " << args[i];
-              *stream << endl;
+            if (strcmp(cmd, mSetKeyword)==0)
+                obj->set(whatCmd, args, nbArg); //set the value from args
+
+            else if (strcmp(cmd, mGetKeyword)==0) {
+              nbArg = obj->get(whatCmd, args); //get the value in args
+
+              if (nbArg) { // and answer on stream
+                *stream << mSetKeyword << " " << objName << " " << what;
+                for (byte i=0; i < nbArg; i++)
+                  *stream << " " << args[i];
+                *stream << endl;
+              }
             }
           }
         }

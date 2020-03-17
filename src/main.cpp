@@ -92,14 +92,13 @@ public:
 
   // for rotation
   byte runSpeed   = 3;
-  int neutralWZ   = 3000;
-  int maxWZ       = 7000; 
+  int  neutralWZ   = 3000;
+  int  maxWZ       = 7000; 
 
   // for acc
   byte divAcc     = 2;
-  int smoothAcc   = 1600;
+  int  smoothAcc   = 1600;
   byte thresAcc   = 30;
-  int maxAcc      = 256;
   
   // Cylons
   byte minEye     = 5;
@@ -107,23 +106,22 @@ public:
 
   #ifdef USE_BT
     CFG() {
-      #define REGISTER_CMD_CFG(var) REGISTER_CMD_SIMPLE(CFG, #var, self->var)
+      #define REGISTER_CMD_CFG(var, min, max) REGISTER_CMD_SIMPLE(CFG, #var, self->var, min, max)
 
-      REGISTER_CMD_CFG(ledR);
-      REGISTER_CMD_CFG(ledF);
-      REGISTER_CMD_CFG(led);
+      REGISTER_CMD_CFG(ledR, 0, 1);
+      REGISTER_CMD_CFG(ledF, 0, 1);
+      REGISTER_CMD_CFG(led, 0, 1);
 
-      REGISTER_CMD_CFG(runSpeed);
-      REGISTER_CMD_CFG(neutralWZ);
-      REGISTER_CMD_CFG(maxWZ);
+      REGISTER_CMD_CFG(runSpeed, 0, 10);
+      REGISTER_CMD_CFG(neutralWZ, 0, 32768);
+      REGISTER_CMD_CFG(maxWZ, 0, 32768);
 
-      REGISTER_CMD_CFG(divAcc);
-      REGISTER_CMD_CFG(smoothAcc);
-      REGISTER_CMD_CFG(thresAcc);
-      REGISTER_CMD_CFG(maxAcc);
+      REGISTER_CMD_CFG(divAcc, 1, 10);
+      REGISTER_CMD_CFG(smoothAcc, 1, 32768);
+      REGISTER_CMD_CFG(thresAcc, 0, 255);
 
-      REGISTER_CMD_CFG(minEye);
-      REGISTER_CMD_CFG(maxEye);
+      REGISTER_CMD_CFG(minEye, 1, NBLEDS_TIPS>>1);
+      REGISTER_CMD_CFG(maxEye, 1, NBLEDS_TIPS>>1);
 
       REGISTER_CMD_PURE(CFG, "save",     {BT.save(false);}) // save not default
       REGISTER_CMD_PURE(CFG, "load",     {BT.load(false);}) // load not default
@@ -234,14 +232,15 @@ void loop()
       byte invAlpha = 255 - alpha;
 
       //----------------------
-      int acc = constrain(y / Cfg.divAcc, -Cfg.maxAcc, Cfg.maxAcc) << 8;
+      #define MAXACC 256
+      int acc = constrain(y / Cfg.divAcc, -MAXACC,MAXACC) << 8;
 
       //------
       static int FWD = 0;
       int fwd = constrain(acc, 0, 65535);
       FWD = fwd > FWD ? fwd : lerp16by16(FWD, fwd, Cfg.smoothAcc);
 
-      int alphaF = constrain((FWD - (Cfg.thresAcc<<8))/(Cfg.maxAcc - Cfg.thresAcc), 0, 255);
+      int alphaF = constrain((FWD - (Cfg.thresAcc<<8))/(MAXACC - Cfg.thresAcc), 0, 255);
       int eyeF = Cfg.minEye + (((Cfg.maxEye - Cfg.minEye) * alphaF) >>8);
 
       if (Cfg.ledF) { 
@@ -257,7 +256,7 @@ void loop()
       int rwd = constrain(-acc, 0, 65535);
       RWD = rwd > RWD ? rwd : lerp16by16(RWD, rwd, Cfg.smoothAcc);
 
-      int alphaR = constrain((RWD - (Cfg.thresAcc<<8))/(Cfg.maxAcc - Cfg.thresAcc), 0, 255);
+      int alphaR = constrain((RWD - (Cfg.thresAcc<<8))/(MAXACC - Cfg.thresAcc), 0, 255);
       int eyeR = Cfg.minEye + (((Cfg.maxEye - Cfg.minEye) * alphaR) >>8);
 
       if (Cfg.ledR) { 

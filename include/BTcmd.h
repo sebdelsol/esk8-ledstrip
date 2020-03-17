@@ -72,6 +72,7 @@ class BTcmd
   const char* mSetKeyword = BTCMD_SET;
   const char* mGetKeyword = BTCMD_GET;
 
+  bool isNumber(const char* txt);
   void handleCmd(Stream* stream, BUF& buf);
   void readStream(Stream* stream, BUF& buf);
   File getFile(bool isdefault, const char *mode);
