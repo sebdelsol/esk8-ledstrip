@@ -3,11 +3,11 @@
 
 // #define USE_OTA // not compatible with BT since it uses "board_build.partitions = huge_app.csv"
 // #define USE_TELNET //needs USE_OTA to work
+// #define USE_LIGHTPROBE
 
 // #define DEBUG_LED_INFO
 // #define DEBUG_LED_TOWIFI
 // #define DEBUG_ACC
-// #define USE_LIGHTPROBE
 
 // ----------------------------------------------------
 #include <ledstrip.h>
