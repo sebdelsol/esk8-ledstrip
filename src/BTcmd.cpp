@@ -1,9 +1,8 @@
 #include <BTcmd.h>
 
-BTcmd::BTcmd(Stream &btStream) : mBTStream(&btStream), mLast(NULL)
+BTcmd::BTcmd(Stream &btStream) : mBTStream(&btStream)
 {
   mBTbuf.clearBuffer();
-  
 }  
 
 void BTcmd::initSPIFFS()
@@ -14,7 +13,7 @@ void BTcmd::initSPIFFS()
     Serial << "SPIFFS Mount Failed" << endl;
 }
 
-OBJCmd* BTcmd::getObjFromName(char* name)
+OBJCmd* BTcmd::getObjFromName(const char* name)
 {
   for (byte i = 0; i < mNOBJ; i++) //look for the obj
     if (strcmp(name, mOBJ[i].name)==0)
@@ -23,7 +22,7 @@ OBJCmd* BTcmd::getObjFromName(char* name)
   return NULL;
 }
 
-bool BTcmd::registerObj(const OBJCmd& obj, char* name)
+bool BTcmd::registerObj(const OBJCmd& obj, const char* name)
 {
   bool ok = mNOBJ < BTCMD_MAXOBJ-1;
   if (ok) {
@@ -35,41 +34,26 @@ bool BTcmd::registerObj(const OBJCmd& obj, char* name)
   }
   return ok;
 }
-/*
-void BTcmd::clearBuffer()
-{
-  mBuf[0] = '\0';
-  mBufPos = 0;
-}
 
-void BTcmd::appendToBuffer(char c)
+void BTcmd::handleCmd(Stream* stream, BUF& buf)
 {
-  if (mBufPos < BTCMD_BUFF_SIZE) {
-    mBuf[mBufPos++] = c;  // Put character into buffer
-    mBuf[mBufPos] = '\0';      // Null terminate
-  }
-}
-*/
-
-void BTcmd::handleCmd(Stream* stream,BUFbase &buf)
-{
-  const char *cmd = first(buf.getBuf());
+  const char *cmd = buf.first();
   if (cmd!=NULL) {
     
-    char *objName = next();
+    const char *objName = buf.next();
     if (objName!=NULL) {
 
       OBJCmd* objCmd = getObjFromName(objName);
       if(objCmd!=NULL) {
 
-        char *what = next();
+        const char *what = buf.next();
         if (what!=NULL){ 
 
           int args[BTCMD_MAXARGS];
           byte nbArg;
 
           for (nbArg = 0; nbArg < BTCMD_MAXARGS; nbArg++) {
-            char *a = next();
+            const char *a = buf.next();
             if (a==NULL) break;
             args[nbArg] = atoi(a);
           }
@@ -93,7 +77,7 @@ void BTcmd::handleCmd(Stream* stream,BUFbase &buf)
   }
 }
 
-void BTcmd::readStream(Stream* stream, BUFbase &buf)
+void BTcmd::readStream(Stream* stream, BUF& buf)
 {
   while (stream->available() > 0) {
 
@@ -111,45 +95,45 @@ void BTcmd::readStream(Stream* stream, BUFbase &buf)
 }
 
 //--------------------------------------
-File BTcmd::getFile(bool isdefault, const char *mode)
+const char* BTcmd::getFileName(bool isdefault)
 {
- if (spiffsOK) {
-    const char *fname = isdefault ? def_fname : cfg_fname;
-    return SPIFFS.open(fname, mode);
- }
- return File();
+  return spiffsOK ? (isdefault ? def_fname : cfg_fname) : NULL;
 }
 
 void BTcmd::save(bool isdefault)
 {
-    File f = getFile(isdefault, "w");
+  const char *fname = getFileName(isdefault);
+  if (fname!=NULL) {
+    File f = SPIFFS.open(fname, "w");
     if (f) {
       for (byte i = 0; i < mNOBJ; i++) {
 
         char* objName = mOBJ[i].name;
         OBJCmd* obj = mOBJ[i].obj;
-
         byte nbCmd = obj->getNbCmd();
-        for (byte j = 0; j < nbCmd; j++) {
 
+        for (byte j = 0; j < nbCmd; j++) {
           char* varName = obj->getCmdName(j);
-         
-          snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mGetKeyword, objName, varName);
-          handleCmd(f, mFilebuf);
+          snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s\n", mGetKeyword, objName, varName); // emulate a get cmd
+          handleCmd((Stream*)&f, mFilebuf); // store it in the file 
         }
       } 
       f.close();
       Serial << "saved to " << fname << endl;
     }
+  }
 }
 
 void BTcmd::load(bool isdefault)
 {
-    File f = getFile(isdefault, "r");
+  const char *fname = getFileName(isdefault);
+  if (fname!=NULL) {
+    File f = SPIFFS.open(fname, "r");
     if (f) {
       mFilebuf.clearBuffer(); // might not be cleared by readStream
-      readStream(f, mFilebuf);
+      readStream((Stream*)&f, mFilebuf); // should be a succession of set cmd
       f.close();
       Serial << "loaded " << fname << endl;
     }
+  }
 }

@@ -21,8 +21,8 @@ class OBJCmd
 
 public:  
   bool registerCmd(void *obj, char *name, setFunc set, getFunc get);
-  void set(char* name, int* toSet, byte n);
-  byte get(char* name, int* toGet);
+  void set(const char* name, int* toSet, byte n);
+  byte get(const char* name, int* toGet);
 
   byte getNbCmd() { return mNCMD;};
   char* getCmdName(byte i) { return mCmd[i].name;};

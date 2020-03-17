@@ -15,7 +15,7 @@ bool OBJCmd::registerCmd(void *obj, char *name, setFunc set, getFunc get)
   return ok;
 }
 
-void OBJCmd::set(char* name, int* toSet, byte n)
+void OBJCmd::set(const char* name, int* toSet, byte n)
 {
   for (byte i = 0; i < mNCMD; i++) //look for the cmd
     if (strcmp(name, mCmd[i].name)==0) {
@@ -30,7 +30,7 @@ void OBJCmd::set(char* name, int* toSet, byte n)
     }
 }
 
-byte OBJCmd::get(char* name, int* toGet)
+byte OBJCmd::get(const char* name, int* toGet)
 {
   for (byte i = 0; i < mNCMD; i++) //look for the cmd
     if (strcmp(name, mCmd[i].name)==0)
