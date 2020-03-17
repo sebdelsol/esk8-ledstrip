@@ -13,6 +13,7 @@ void BTcmd::initSPIFFS()
     Serial << "SPIFFS Mount Failed" << endl;
 }
 
+//--------------------------------------
 OBJCmd* BTcmd::getObjFromName(const char* name)
 {
   for (byte i = 0; i < mNOBJ; i++) //look for the obj
@@ -35,11 +36,12 @@ bool BTcmd::registerObj(const OBJCmd& obj, const char* name)
   return ok;
 }
 
+//--------------------------------------
 void BTcmd::handleCmd(Stream* stream, BUF& buf)
 {
   const char *cmd = buf.first();
   if (cmd!=NULL) {
-    
+
     const char *objName = buf.next();
     if (objName!=NULL) {
 
@@ -63,7 +65,7 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf)
 
           else if (strcmp(cmd, mGetKeyword)==0) {
             nbArg = objCmd->get(what, args);
-            
+
             if (nbArg) { // answer
               *stream << mSetKeyword << " " << objName << " " << what;
               for (byte i=0; i < nbArg; i++)
@@ -89,7 +91,6 @@ void BTcmd::readStream(Stream* stream, BUF& buf)
     }
     else if (isprint(c)){
       buf.appendToBuffer(c);
-      //Serial << mBuf << endl;
     }
   }
 }
@@ -114,7 +115,7 @@ void BTcmd::save(bool isdefault)
 
         for (byte j = 0; j < nbCmd; j++) {
           char* varName = obj->getCmdName(j);
-          snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s\n", mGetKeyword, objName, varName); // emulate a get cmd
+          snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mGetKeyword, objName, varName); // emulate a get cmd
           handleCmd((Stream*)&f, mFilebuf); // store it in the file 
         }
       } 

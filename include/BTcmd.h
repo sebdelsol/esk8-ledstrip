@@ -6,28 +6,27 @@
 
 #define FORMAT_SPIFFS_IF_FAILED true
 
-#define BTCMD_BUFF_SIZE 127
-#define BTCMD_MAXOBJ    15
+#define BTCMD_BUFF_SIZE    127
+#define BTCMD_MAXOBJ  15
 
-#define BTCMD_TERM  '\n' 
-#define BTCMD_DELIM " " // strtok_r needs a null-terminated string
-#define BTCMD_SET   "set"
-#define BTCMD_GET   "get"
+#define BTCMD_TERM    '\n' 
+#define BTCMD_DELIM   " " // strtok_r needs a null-terminated string
+#define BTCMD_SET     "set"
+#define BTCMD_GET     "get"
 
 #define BTCMD_MAXARGS 3
 
 //----------------
 class BUF
 {
-  char  mBuf[BTCMD_BUFF_SIZE + 1]; // Buffer of stored characters while waiting for terminator character
-  int   mBufPos;        // Current position in the buffer
-
-  char* mLast;          // for strtok_r
+  char mBuf[BTCMD_BUFF_SIZE + 1];  // Buffer of stored characters while waiting for terminator character
+  int mBufPos;                // Current position in the buffer
+  char* mLast;                // for strtok_r
   const char* mDelim = BTCMD_DELIM; // strtok_r needs a /0 terminated string
   
 public:
   char* getBuf() { return mBuf; };
-  int   getLen() { return BTCMD_BUFF_SIZE; };
+  int getLen() { return BTCMD_BUFF_SIZE; };
 
   const char* first() { return strtok_r(mBuf, mDelim, &mLast); };
   const char* next() { return strtok_r(NULL, mDelim, &mLast); };
@@ -51,7 +50,7 @@ public:
 class BTcmd
 {
   struct mRegisteredOBJ {
-    char*   name;
+    char* name;
     OBJCmd* obj;
   };
 
@@ -60,7 +59,7 @@ class BTcmd
 
   Stream* mBTStream;
   
-  bool    spiffsOK = false;
+  bool spiffsOK = false;
   const char* cfg_fname = "/config.cfg";
   const char* def_fname = "/config.def";
 
