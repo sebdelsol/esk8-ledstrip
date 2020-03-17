@@ -37,7 +37,7 @@ public:
 };
 
 //---------------------------------
-#define REGISTER_CMD_PURE(class, name, doCode) \
+#define REGISTER_CMD(class, name, doCode) \
     registerVar(this, name, \
       [](void* obj, int* toSet, byte n) \
       { \
@@ -52,7 +52,7 @@ public:
       } \
     );
 
-#define REGISTER_CMD(class, name, setCode, toGet0, min, max) \
+#define REGISTER_VAR(class, name, setCode, toGet0, min, max) \
     registerVar(this, name, \
       [](void* obj, int* toSet, byte n) \
       { \
@@ -72,9 +72,9 @@ public:
       min, max \
     );
 
-#define REGISTER_CMD_SIMPLE(class, name, var, min, max) REGISTER_CMD(class, name, { var = arg0; }, var, min, max) 
+#define REGISTER_VAR_SIMPLE(class, name, var, min, max) REGISTER_VAR(class, name, { var = arg0; }, var, min, max) 
 
-#define REGISTER_CMD3(class, name, setCode, toGet0, toGet1, toGet2, min, max) \
+#define REGISTER_VAR3(class, name, setCode, toGet0, toGet1, toGet2, min, max) \
     registerVar(this, name, \
       [](void* obj, int* toSet, byte n) \
       { \
