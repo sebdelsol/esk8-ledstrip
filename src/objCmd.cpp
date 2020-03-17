@@ -3,7 +3,8 @@
 bool OBJCmd::registerCmd(void *obj, const char *name, setCmdFunc set, getCmdFunc get, int min, int max)
 {
   bool ok = mNCMD < MAX_CMD-1;
-  if (ok) {
+  if (ok)
+  {
     mCmd[mNCMD].obj = obj;
     mCmd[mNCMD].set = set;
     mCmd[mNCMD].get = get;

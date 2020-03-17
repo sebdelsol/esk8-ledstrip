@@ -13,7 +13,8 @@ void OTA::begin()
   WiFi.begin(WIFINAME, WIFIPASS);
 
   Serial << "OTA Connecting";
-  while(WiFi.status() != WL_CONNECTED && count-- > 0) {
+  while(WiFi.status() != WL_CONNECTED && count-- > 0)
+  {
     delay(500);
     Serial << ".";
   }
@@ -21,7 +22,8 @@ void OTA::begin()
   if(WiFi.status() != WL_CONNECTED)
     WiFi.mode(WIFI_OFF);
 
-  else {
+  else
+  {
     mOn = true;
     Serial << endl << "OTA Connected, IP address: " << WiFi.localIP() << endl;
 

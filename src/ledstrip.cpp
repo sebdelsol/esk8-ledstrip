@@ -55,7 +55,8 @@ void PlasmaFX::update()
   int16_t x = -5215;
   int16_t step = 10430 / mNLEDS;            // 10430 = 65536 / (2 pi) => x (-.5 to .5)
 
-  for (byte i=0; i < mNLEDS; i++, x += step) {
+  for (byte i=0; i < mNLEDS; i++, x += step)
+  {
     //  cx = x + .5 cos(time/mP1); cy = .5 sin(time/mP2);
     int16_t cx = x + cos_tp1;
     int16_t sqrxy = sqrt16((cx*cx + sin_tp2) >> 16) << 8;
@@ -121,7 +122,8 @@ void RunningFX::update()
   u_long t = millis() * 66 * mSpeed; // 65536/1000 => 2pi * time 
   u_long x = 0; 
   u_long dx = 32768 / mWidth;
-  for (byte i=0; i < mNLEDS; i++, x += dx) {
+  for (byte i=0; i < mNLEDS; i++, x += dx)
+  {
     int _sin = sin16(x + t);
     mLeds[i].nscale8(_sin > 0 ? _sin>>8 : 0);
   }
@@ -151,7 +153,8 @@ void TwinkleFX::update()
   random16_set_seed(535);  // The randomizer needs to be re-set each time through the loop in order for the 'random' numbers to be the same each time through.
 
   int t = millis();
-  for (int i = 0; i<mNLEDS; i++) {
+  for (int i = 0; i<mNLEDS; i++)
+  {
     byte fader = sin8(t/random8(mDiv, mDiv<<1));       // The random number for each 'i' will be the same every time.
     byte hue = sin8(t/random8(mDiv, mDiv)) >> mHueDiv; // ditto
     mLeds[i] = CHSV(mHSV.h + hue, mHSV.s , fader);
@@ -171,7 +174,8 @@ AllLedStrips::AllLedStrips(const int maxmA, Stream &serial) : mSerial(&serial)
 bool AllLedStrips::registerStrip(BaseLedStrip &strip)
 {
   bool ok = mNStrips < MAXSTRIP;
-  if (ok){
+  if (ok)
+  {
     mStrips[mNStrips++] = &strip;
     strip.setSerial(mSerial);
   }

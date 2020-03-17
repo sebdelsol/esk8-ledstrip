@@ -17,7 +17,8 @@ void myWifi::on()
   WiFi.begin(WIFINAME, WIFIPASS);
 
   Serial << "Connecting";
-  while(WiFi.status() != WL_CONNECTED) {
+  while(WiFi.status() != WL_CONNECTED)
+  {
     delay(500);
     // digitalWrite(BUILTIN_LED, !digitalRead(BUILTIN_LED));
     Serial << ".";
@@ -35,10 +36,12 @@ void myWifi::addLeds(const BaseLedStrip &leds)
 
 void myWifi::update()
 {
-  if (mON) {
+  if (mON)
+  {
     webSocket.loop();
 
-    if (mLeds) {
+    if (mLeds)
+    {
       int length;
       byte *data = mLeds->getData(length);
       webSocket.sendBIN(data, length);

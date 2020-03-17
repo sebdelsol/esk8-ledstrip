@@ -105,7 +105,8 @@ public:
   byte maxEye     = 10;
 
   #ifdef USE_BT
-    CFG() {
+    CFG()
+    {
       #define REGISTER_CMD_CFG(var, min, max) REGISTER_CMD_SIMPLE(CFG, #var, self->var, min, max)
 
       REGISTER_CMD_CFG(ledR, 0, 1);
@@ -195,15 +196,18 @@ void loop()
 
   #ifdef USE_BT
 
-    EVERY_N_MILLISECONDS(BT_TICK) {
-
-      if (Button.pressed()) {
+    EVERY_N_MILLISECONDS(BT_TICK)
+    {
+      if (Button.pressed())
+      {
           Serial << "button pressed " << endl;
           BT.toggle();
       }
 
-      if (BT.update()) {
-        if (gotAccel) {
+      if (BT.update())
+      {
+        if (gotAccel)
+        {
           // int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
           // *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
         }
@@ -211,8 +215,8 @@ void loop()
     }
   #endif
 
-  EVERY_N_MILLISECONDS(LED_TICK) {
-
+  EVERY_N_MILLISECONDS(LED_TICK)
+  {
     #ifdef USE_LIGHTPROBE
       #define MIN_LIGHT 400
       #define MAX_LIGHT 4095
@@ -222,8 +226,8 @@ void loop()
       AllLeds.setBrightness(bright);
     #endif
 
-    if (gotAccel) {
-
+    if (gotAccel)
+    {
       int runSpeed =  ((wz>0) - (wz<0)) * Cfg.runSpeed;
 
       //------
@@ -243,7 +247,8 @@ void loop()
       int alphaF = constrain((FWD - (Cfg.thresAcc<<8))/(MAXACC - Cfg.thresAcc), 0, 255);
       int eyeF = Cfg.minEye + (((Cfg.maxEye - Cfg.minEye) * alphaF) >>8);
 
-      if (Cfg.ledF) { 
+      if (Cfg.ledF)
+      { 
         RunF.setSpeed(runSpeed);
         RunF.setAlpha(alpha);
         CylonF.setEyeSize(eyeF);
@@ -259,7 +264,8 @@ void loop()
       int alphaR = constrain((RWD - (Cfg.thresAcc<<8))/(MAXACC - Cfg.thresAcc), 0, 255);
       int eyeR = Cfg.minEye + (((Cfg.maxEye - Cfg.minEye) * alphaR) >>8);
 
-      if (Cfg.ledR) { 
+      if (Cfg.ledR)
+      { 
         RunR.setSpeed(runSpeed);
         RunR.setAlpha(alpha);
         CylonR.setEyeSize(eyeR);
@@ -269,7 +275,8 @@ void loop()
 
       //----------------------
       int alphaP = max(0, 255 - max(alphaR, alphaF));
-      if (Cfg.led) {
+      if (Cfg.led)
+      {
         Aqua.setAlpha(alphaF);
         AquaTwk.setAlpha(alphaF);
         Fire.setAlpha(alphaR);

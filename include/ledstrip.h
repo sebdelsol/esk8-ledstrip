@@ -163,7 +163,8 @@ public:
   bool registerFX(FX& fx)
   {
     bool ok = mNFX < MAXFX;
-    if (ok) {
+    if (ok)
+    {
       mFX[mNFX++] = &fx;
       fx.init(NLEDS);
     }
@@ -173,7 +174,8 @@ public:
   void getInfo()
   {
     *mSerial << mName;
-    for (byte i=0; i < mNFX; i++) {
+    for (byte i=0; i < mNFX; i++)
+    {
       FX *fx = mFX[i];
       *mSerial << " - " << fx->getName() << "(" << fx->getAlpha() << ")";
     }
@@ -197,8 +199,8 @@ public:
         break; // now we've to blend
 
     // some fx left to draw ?
-    if (++i <= mNFX) { 
-      // draw on mBuffer & blend with mDisplay
+    if (++i <= mNFX)
+    { // draw on mBuffer & blend with mDisplay
       for (; i < mNFX; i++) 
         if (mFX[i]->drawOn(mBuffer)) 
             mDisplay |= mBuffer; // get the max of each RGB component

@@ -24,7 +24,8 @@ void myMPU6050::begin(Stream &serial, void (*handleOta)())
   mpu.setXGyroOffset(XGyroOffset);    mpu.setYGyroOffset(YGyroOffset);    mpu.setZGyroOffset(ZGyroOffset);
   mpu.setXAccelOffset(XAccelOffset);  mpu.setYAccelOffset(YAccelOffset);  mpu.setZAccelOffset(ZAccelOffset); 
 
-  if (devStatus == 0) { // did it work ?
+  if (devStatus == 0)
+  { // did it work ?
     mpu.CalibrateAccel(6);
     mpu.CalibrateGyro(6);
     mpu.PrintActiveOffsets();
@@ -41,7 +42,8 @@ void myMPU6050::begin(Stream &serial, void (*handleOta)())
 // ================================================================
 bool myMPU6050::readAccel()
 {
-  if (mDmpReady && mpu.dmpGetCurrentFIFOPacket(mFifoBuffer)) {
+  if (mDmpReady && mpu.dmpGetCurrentFIFOPacket(mFifoBuffer))
+  {
     // angles
     mpu.dmpGetQuaternion(&mQuat, mFifoBuffer);
     mpu.dmpGetGravity(&mGrav, &mQuat);
@@ -60,8 +62,8 @@ bool myMPU6050::readAccel()
 
 bool myMPU6050::getXYZ(float **YPR, int &wz, int &x, int &y, int &z, int &oneG) 
 {
-  if (readAccel()) {
-
+  if (readAccel())
+  {
     ulong t = micros();
     long dt = t - mT;
     mT = t;

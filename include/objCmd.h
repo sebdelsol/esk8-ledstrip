@@ -39,27 +39,32 @@ public:
 //---------------------------------
 #define REGISTER_CMD_PURE(class, name, doCode) \
     registerCmd(this, name, \
-      [](void* obj, int* toSet, byte n) { \
-        if (n==0) { \
+      [](void* obj, int* toSet, byte n) \
+      { \
+        if (n==0) \
+        { \
           class* self = (class *)obj; \
           doCode; \
         } \
       }, \
-      [](void* obj, int* toGet) -> byte  { \
+      [](void* obj, int* toGet) -> byte { \
         return 0; \
       } \
     );
 
 #define REGISTER_CMD(class, name, setCode, toGet0, min, max) \
     registerCmd(this, name, \
-      [](void* obj, int* toSet, byte n) { \
-        if (n==1) { \
+      [](void* obj, int* toSet, byte n) \
+      { \
+        if (n==1) \
+        { \
           class* self = (class *)obj; \
           int arg0 = toSet[0]; \
           setCode; \
         } \
       }, \
-      [](void* obj, int* toGet) -> byte  { \
+      [](void* obj, int* toGet) -> byte \
+      { \
         class* self = (class *)obj; \
         toGet[0] = toGet0; \
         return 1; \
@@ -71,8 +76,10 @@ public:
 
 #define REGISTER_CMD3(class, name, setCode, toGet0, toGet1, toGet2, min, max) \
     registerCmd(this, name, \
-      [](void* obj, int* toSet, byte n) { \
-        if (n==3) { \
+      [](void* obj, int* toSet, byte n) \
+      { \
+        if (n==3) \
+        { \
           class* self = (class *)obj; \
           int arg0 = toSet[0]; \
           int arg1 = toSet[1]; \
@@ -80,7 +87,8 @@ public:
           setCode; \
         } \
       }, \
-      [](void* obj, int* toGet) -> byte  { \
+      [](void* obj, int* toGet) -> byte  \
+      { \
         class* self = (class *)obj; \
         toGet[0] = toGet0; \
         toGet[1] = toGet1; \
