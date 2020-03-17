@@ -40,8 +40,9 @@ bool BTcmd::registerObj(const OBJCmd& obj, const char* name)
 bool BTcmd::isNumber(const char* txt) 
 { 
   for (int i = 0; i < strlen(txt); i++) 
-      if (!isdigit(txt[i])) 
-          return false; 
+    if (!isdigit(txt[i])) 
+      return false; 
+      
   return true; 
 } 
 
