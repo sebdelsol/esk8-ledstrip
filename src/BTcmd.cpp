@@ -87,10 +87,10 @@ void BTcmd::readStream(Stream* stream, BUF& buf)
 
     if (c == BTCMD_TERM) {
       handleCmd(stream, buf);
-      buf.clearBuffer();
+      buf.clear();
     }
     else if (isprint(c)) {
-      buf.appendToBuffer(c);
+      buf.append(c);
     }
   }
 }
