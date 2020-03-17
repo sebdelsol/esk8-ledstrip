@@ -91,13 +91,13 @@ public:
   bool led        = true;
 
   // for rotation
-  byte runSpeed   = 3;
+  byte runSpeed    = 3;
   int  neutralWZ   = 3000;
   int  maxWZ       = 7000; 
 
   // for acc
   byte divAcc     = 2;
-  int  smoothAcc   = 1600;
+  int  smoothAcc  = 1600;
   byte thresAcc   = 30;
   
   // Cylons

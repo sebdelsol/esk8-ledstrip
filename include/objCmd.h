@@ -4,6 +4,7 @@
 
 #define MAX_CMD 17
 
+//---------------------------------
 typedef void (*setCmdFunc)(void *obj, int* toSet, byte n);
 typedef byte (*getCmdFunc)(void *obj, int* toGet);
 
@@ -16,6 +17,7 @@ struct MyCmd {
   int         max;
 };
 
+//---------------------------------
 class OBJCmd
 {
 
@@ -34,6 +36,7 @@ public:
   char* getCmdName(byte i) { return mCmd[i].name;};
 };
 
+//---------------------------------
 #define REGISTER_CMD_PURE(class, name, doCode) \
     registerCmd(this, name, \
       [](void* obj, int* toSet, byte n) { \
@@ -65,7 +68,6 @@ public:
     );
 
 #define REGISTER_CMD_SIMPLE(class, name, var, min, max) REGISTER_CMD(class, name, { var = arg0; }, var, min, max) 
-//#define REGISTER_CMD_SIMPLE(class, var) REGISTER_CMD(class, #var, { var = arg0; }, var) 
 
 #define REGISTER_CMD3(class, name, setCode, toGet0, toGet1, toGet2, min, max) \
     registerCmd(this, name, \

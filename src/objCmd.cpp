@@ -17,7 +17,6 @@ bool OBJCmd::registerCmd(void *obj, const char *name, setCmdFunc set, getCmdFunc
   return ok;
 }
 
-
 MyCmd* OBJCmd::getCmd(const char* name)
 {
   for (byte i = 0; i < mNCMD; i++) //look for the cmd
@@ -27,7 +26,6 @@ MyCmd* OBJCmd::getCmd(const char* name)
   return NULL;
 }
 
-
 void OBJCmd::getMinMax(MyCmd* cmd, int* min, int* max)
 {
   *min = cmd->min;
@@ -36,12 +34,12 @@ void OBJCmd::getMinMax(MyCmd* cmd, int* min, int* max)
 
 void OBJCmd::set(MyCmd* cmd, int* toSet, byte n)
 {
-    // debug
-    // Serial << "set " << name;
-    // for (byte k=0; k < n; k++)
-    //   Serial << " " << toSet[k];
-    // Serial << endl;
-    (*cmd->set)(cmd->obj, toSet, n);
+  // debug
+  // Serial << "set " << name;
+  // for (byte k=0; k < n; k++)
+  //   Serial << " " << toSet[k];
+  // Serial << endl;
+  (*cmd->set)(cmd->obj, toSet, n);
 }
 
 byte OBJCmd::get(MyCmd* cmd, int* toGet)
