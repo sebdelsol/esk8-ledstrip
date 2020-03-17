@@ -2,7 +2,7 @@
 
 BTcmd::BTcmd(Stream &btStream) : mBTStream(&btStream)
 {
-  mBTbuf.clearBuffer();
+  mBTbuf.clear();
 }  
 
 void BTcmd::initSPIFFS()
@@ -131,7 +131,7 @@ void BTcmd::load(bool isdefault)
 {
   File f = getFile(isdefault, "r");
   if (f) {
-    mFilebuf.clearBuffer(); // might not be cleared by readStream
+    mFilebuf.clear(); // might not be cleared by readStream
     readStream((Stream*)&f, mFilebuf); // should be a succession of set cmd
 
     Serial << "loaded from " << f.name() << endl;
