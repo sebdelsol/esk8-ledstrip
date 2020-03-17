@@ -107,22 +107,22 @@ public:
   #ifdef USE_BT
     CFG()
     {
-      #define REGISTER_VAR_CFG(var, min, max) REGISTER_VAR_SIMPLE(CFG, #var, self->var, min, max)
+      #define REGISTER_CFG_VAR(var, min, max) REGISTER_VAR_SIMPLE(CFG, #var, self->var, min, max)
 
-      REGISTER_VAR_CFG(ledR, 0, 1);
-      REGISTER_VAR_CFG(ledF, 0, 1);
-      REGISTER_VAR_CFG(led, 0, 1);
+      REGISTER_CFG_VAR(ledR, 0, 1);
+      REGISTER_CFG_VAR(ledF, 0, 1);
+      REGISTER_CFG_VAR(led, 0, 1);
 
-      REGISTER_VAR_CFG(runSpeed, 0, 10);
-      REGISTER_VAR_CFG(neutralWZ, 0, 32768);
-      REGISTER_VAR_CFG(maxWZ, 0, 32768);
+      REGISTER_CFG_VAR(runSpeed, 0, 10);
+      REGISTER_CFG_VAR(neutralWZ, 0, 32768);
+      REGISTER_CFG_VAR(maxWZ, 0, 32768);
 
-      REGISTER_VAR_CFG(divAcc, 1, 10);
-      REGISTER_VAR_CFG(smoothAcc, 1, 32768);
-      REGISTER_VAR_CFG(thresAcc, 0, 255);
+      REGISTER_CFG_VAR(divAcc, 1, 10);
+      REGISTER_CFG_VAR(smoothAcc, 1, 32768);
+      REGISTER_CFG_VAR(thresAcc, 0, 255);
 
-      REGISTER_VAR_CFG(minEye, 1, NBLEDS_TIPS>>1);
-      REGISTER_VAR_CFG(maxEye, 1, NBLEDS_TIPS>>1);
+      REGISTER_CFG_VAR(minEye, 1, NBLEDS_TIPS>>1);
+      REGISTER_CFG_VAR(maxEye, 1, NBLEDS_TIPS>>1);
 
       REGISTER_CMD(CFG, "save",     {BT.save(false);}) // save not default
       REGISTER_CMD(CFG, "load",     {BT.load(false);}) // load not default
