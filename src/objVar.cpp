@@ -35,11 +35,6 @@ void OBJVar::getMinMax(MyVar* cmd, int* min, int* max)
 
 void OBJVar::set(MyVar* cmd, int* toSet, byte n)
 {
-  // debug
-  // Serial << "set " << name;
-  // for (byte k=0; k < n; k++)
-  //   Serial << " " << toSet[k];
-  // Serial << endl;
   (*cmd->set)(cmd->obj, toSet, n);
 }
 
