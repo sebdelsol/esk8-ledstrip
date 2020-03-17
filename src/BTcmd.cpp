@@ -89,52 +89,54 @@ void BTcmd::readStream(Stream* stream, BUF& buf)
       handleCmd(stream, buf);
       buf.clearBuffer();
     }
-    else if (isprint(c)){
+    else if (isprint(c)) {
       buf.appendToBuffer(c);
     }
   }
 }
 
 //--------------------------------------
-const char* BTcmd::getFileName(bool isdefault)
-{
-  return spiffsOK ? (isdefault ? def_fname : cfg_fname) : NULL;
+File BTcmd::getFile(bool isdefault, const char *mode)
+{	
+  if (spiffsOK) {
+    const char *fname = isdefault ? def_fname : cfg_fname;
+    return SPIFFS.open(fname, mode);
+  }
+  return File();
 }
 
 void BTcmd::save(bool isdefault)
 {
-  const char *fname = getFileName(isdefault);
-  if (fname!=NULL) {
-    File f = SPIFFS.open(fname, "w");
-    if (f) {
-      for (byte i = 0; i < mNOBJ; i++) {
+  File f = getFile(isdefault, "w");
+  if (f) {
+    
+    for (byte i = 0; i < mNOBJ; i++) {
 
-        char* objName = mOBJ[i].name;
-        OBJCmd* obj = mOBJ[i].obj;
-        byte nbCmd = obj->getNbCmd();
+      char* objName = mOBJ[i].name;
+      OBJCmd* obj = mOBJ[i].obj;
+      byte nbCmd = obj->getNbCmd();
 
-        for (byte j = 0; j < nbCmd; j++) {
-          char* varName = obj->getCmdName(j);
-          snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mGetKeyword, objName, varName); // emulate a get cmd
-          handleCmd((Stream*)&f, mFilebuf); // store it in the file 
-        }
-      } 
-      f.close();
-      Serial << "saved to " << fname << endl;
-    }
+      for (byte j = 0; j < nbCmd; j++) {
+        char* varName = obj->getCmdName(j);
+        snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mGetKeyword, objName, varName); // emulate a get cmd
+        handleCmd((Stream*)&f, mFilebuf); // store it in the file 
+      }
+    } 
+
+    Serial << "saved to " << f.name() << endl;
+    f.close();
   }
 }
 
 void BTcmd::load(bool isdefault)
 {
-  const char *fname = getFileName(isdefault);
-  if (fname!=NULL) {
-    File f = SPIFFS.open(fname, "r");
-    if (f) {
-      mFilebuf.clearBuffer(); // might not be cleared by readStream
-      readStream((Stream*)&f, mFilebuf); // should be a succession of set cmd
-      f.close();
-      Serial << "loaded " << fname << endl;
-    }
+  File f = getFile(isdefault, "r");
+  if (f) {
+  
+    mFilebuf.clearBuffer(); // might not be cleared by readStream
+    readStream((Stream*)&f, mFilebuf); // should be a succession of set cmd
+
+    Serial << "loaded " << f.name() << endl;
+    f.close();
   }
 }

@@ -71,7 +71,7 @@ class BTcmd
 
   void handleCmd(Stream* stream, BUF& buf);
   void readStream(Stream* stream, BUF& buf);
-  const char* getFileName(bool isdefault);
+  File getFile(bool isdefault, const char *mode);
   
 public:
 
