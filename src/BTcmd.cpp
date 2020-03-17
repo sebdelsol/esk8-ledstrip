@@ -61,12 +61,12 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf)
           }
 
           if (strcmp(cmd, mSetKeyword)==0)
-              objCmd->set(what, args, nbArg);
+              objCmd->set(what, args, nbArg); //set the value from args
 
           else if (strcmp(cmd, mGetKeyword)==0) {
-            nbArg = objCmd->get(what, args);
+            nbArg = objCmd->get(what, args); //get the value in args
 
-            if (nbArg) { // answer
+            if (nbArg) { // and answer on stream
               *stream << mSetKeyword << " " << objName << " " << what;
               for (byte i=0; i < nbArg; i++)
                 *stream << " " << args[i];
