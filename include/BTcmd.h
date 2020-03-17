@@ -34,13 +34,13 @@ public:
   const char* first() { return strtok_r(mBuf, mDelim, &mLast); };
   const char* next() { return strtok_r(NULL, mDelim, &mLast); };
 
-  void clearBuffer()
+  void clear()
   {
     mBuf[0] = '\0';
     mBufPos = 0;
   };
 
-  void appendToBuffer(char c)
+  void append(char c)
   {
     if (mBufPos < BTCMD_BUFF_SIZE) {
       mBuf[mBufPos++] = c;  // Put character into buffer
