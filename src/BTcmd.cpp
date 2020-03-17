@@ -14,7 +14,7 @@ void BTcmd::initSPIFFS()
 }
 
 //--------------------------------------
-OBJCmd* BTcmd::getObjFromName(const char* name)
+OBJVar* BTcmd::getObjFromName(const char* name)
 {
   for (byte i = 0; i < mNOBJ; i++) //look for the obj
     if (strcmp(name, mOBJ[i].name)==0)
@@ -23,12 +23,12 @@ OBJCmd* BTcmd::getObjFromName(const char* name)
   return NULL;
 }
 
-bool BTcmd::registerObj(const OBJCmd& obj, const char* name)
+bool BTcmd::registerObj(const OBJVar& obj, const char* name)
 {
   bool ok = mNOBJ < BTCMD_MAXOBJ-1;
   if (ok)
   {
-    mOBJ[mNOBJ].obj = (OBJCmd*)&obj;
+    mOBJ[mNOBJ].obj = (OBJVar*)&obj;
     
     char* str = (char *)malloc(strlen(name) + 1);
     strcpy(str, name);
@@ -55,17 +55,18 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf)
     const char *objName = buf.next();
     if (objName!=NULL)
     {
-      OBJCmd* obj = getObjFromName(objName);
+      OBJVar* obj = getObjFromName(objName);
       if(obj!=NULL)
       {
-        const char *what = buf.next();
-        if (what!=NULL)
+        const char *varName = buf.next();
+        if (varName!=NULL)
         { 
-          MyCmd* whatCmd = obj->getCmd(what);
-          if (whatCmd)
+          MyVar* var = obj->getVarFromName(varName);
+          if (var)
           {
+            // get thse args
             int min=0, max=0;
-            obj->getMinMax(whatCmd, &min, &max);
+            obj->getMinMax(var, &min, &max);
 
             int args[BTCMD_MAXARGS];
             byte nbArg;
@@ -79,18 +80,24 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf)
                 break;
             }
 
+            // now handle the cmd
             if (strcmp(cmd, mSetKeyword)==0)
-                obj->set(whatCmd, args, nbArg); //set the value from args
-
+            {
+              obj->set(var, args, nbArg); //set the value from args
+            }
+            else if (strcmp(cmd, mLimKeyword)==0)
+            {
+              obj->getMinMax(var, &min, &max);
+              *stream << mLimKeyword << " " << objName << " " << varName << " " << min << " " << max << endl;
+            }
             else if (strcmp(cmd, mGetKeyword)==0)
             {
-              nbArg = obj->get(whatCmd, args); //get the value in args
+              nbArg = obj->get(var, args); //get the value in args
 
               if (nbArg) // and answer on stream
               { 
-                *stream << mSetKeyword << " " << objName << " " << what;
-                for (byte i=0; i < nbArg; i++)
-                  *stream << " " << args[i];
+                *stream << mSetKeyword << " " << objName << " " << varName;
+                for (byte i=0; i < nbArg; i++) *stream << " " << args[i];
                 *stream << endl;
               }
             }
@@ -135,12 +142,12 @@ void BTcmd::save(bool isdefault)
     for (byte i = 0; i < mNOBJ; i++)
     {
       char* objName = mOBJ[i].name;
-      OBJCmd* obj = mOBJ[i].obj;
-      byte nbCmd = obj->getNbCmd();
+      OBJVar* obj = mOBJ[i].obj;
+      byte nbVar = obj->getNbVar();
 
-      for (byte j = 0; j < nbCmd; j++)
+      for (byte j = 0; j < nbVar; j++)
       {
-        char* varName = obj->getCmdName(j);
+        char* varName = obj->getVarName(j);
         snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mGetKeyword, objName, varName); // emulate a get cmd
         handleCmd((Stream*)&f, mFilebuf); // set cmd stored in the file 
       }

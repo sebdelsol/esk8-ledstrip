@@ -2,43 +2,43 @@
 #include <Arduino.h.>
 #include <Streaming.h>
 
-#define MAX_CMD 17
+#define MAX_VAR 17
 
 //---------------------------------
-typedef void (*setCmdFunc)(void *obj, int* toSet, byte n);
-typedef byte (*getCmdFunc)(void *obj, int* toGet);
+typedef void (*setVarFunc)(void *obj, int* toSet, byte n);
+typedef byte (*getVarFunc)(void *obj, int* toGet);
 
-struct MyCmd {
+struct MyVar {
   char*       name;
   void*       obj;
-  setCmdFunc  set;
-  getCmdFunc  get;
+  setVarFunc  set;
+  getVarFunc  get;
   int         min;
   int         max;
 };
 
 //---------------------------------
-class OBJCmd
+class OBJVar
 {
 
-  MyCmd mCmd[MAX_CMD];
-  byte mNCMD = 0;
+  MyVar mVar[MAX_VAR];
+  byte mNVAR = 0;
 
 public:  
-  bool registerCmd(void *obj, const char *name, setCmdFunc set, getCmdFunc get, int min=0, int max=0);
-  MyCmd* getCmd(const char* name);
+  bool registerVar(void *obj, const char *name, setVarFunc set, getVarFunc get, int min=0, int max=0);
+  MyVar* getVarFromName(const char* name);
 
-  void set(MyCmd* cmd, int* toSet, byte n);
-  byte get(MyCmd* cmd, int* toGet);
-  void getMinMax(MyCmd* cmd, int* min, int* max);
+  void set(MyVar* cmd, int* toSet, byte n);
+  byte get(MyVar* cmd, int* toGet);
+  void getMinMax(MyVar* cmd, int* min, int* max);
 
-  byte getNbCmd() { return mNCMD;};
-  char* getCmdName(byte i) { return mCmd[i].name;};
+  byte getNbVar() { return mNVAR;};
+  char* getVarName(byte i) { return mVar[i].name;};
 };
 
 //---------------------------------
 #define REGISTER_CMD_PURE(class, name, doCode) \
-    registerCmd(this, name, \
+    registerVar(this, name, \
       [](void* obj, int* toSet, byte n) \
       { \
         if (n==0) \
@@ -53,7 +53,7 @@ public:
     );
 
 #define REGISTER_CMD(class, name, setCode, toGet0, min, max) \
-    registerCmd(this, name, \
+    registerVar(this, name, \
       [](void* obj, int* toSet, byte n) \
       { \
         if (n==1) \
@@ -75,7 +75,7 @@ public:
 #define REGISTER_CMD_SIMPLE(class, name, var, min, max) REGISTER_CMD(class, name, { var = arg0; }, var, min, max) 
 
 #define REGISTER_CMD3(class, name, setCode, toGet0, toGet1, toGet2, min, max) \
-    registerCmd(this, name, \
+    registerVar(this, name, \
       [](void* obj, int* toSet, byte n) \
       { \
         if (n==3) \

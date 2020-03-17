@@ -22,7 +22,7 @@ public:
   BluetoothSerial *getBtSerial() { return mBTserial; };
   // void answer(const char *txt) { mBTserial->println(txt); };
   bool update();
-  bool registerObj(const OBJCmd& obj, char* name) { return mBTcmd->registerObj(obj, name); };
+  bool registerObj(const OBJVar& obj, char* name) { return mBTcmd->registerObj(obj, name); };
   void save(bool isdefault) { mBTcmd->save(isdefault); };
   void load(bool isdefault) { mBTcmd->load(isdefault); };
 

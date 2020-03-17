@@ -3,7 +3,7 @@
 #include <FastLED.h>
 #include <myPins.h>
 #include <Streaming.h>
-#include <objCmd.h>
+#include <objVar.h>
 
 #define COLOR_ORDER     GRB
 #define CHIPSET         WS2812B
@@ -13,7 +13,7 @@
 #define CLEAR_LED(l, n) memset8(l, 0, n * sizeof(CRGB)); 
 
 //--------------------------------------
-class FX : public OBJCmd
+class FX : public OBJVar
 {
   byte mAlpha = 255; // visible
   byte mLinearAlpha = 255; // for getAlpha

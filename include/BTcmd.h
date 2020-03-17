@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Streaming.h>
-#include <objCmd.h>
+#include <objVar.h>
 #include <SPIFFS.h>
 
 #define FORMAT_SPIFFS_IF_FAILED true
@@ -13,6 +13,7 @@
 #define BTCMD_DELIM   " " // strtok_r needs a null-terminated string
 #define BTCMD_SET     "set"
 #define BTCMD_GET     "get"
+#define BTCMD_LIM     "lim"
 
 #define FNAME_CURRENT "/config.cfg"
 #define FNAME_DEFAULT "/config.def"
@@ -54,7 +55,7 @@ class BTcmd
 {
   struct mRegisteredOBJ {
     char* name;
-    OBJCmd* obj;
+    OBJVar* obj;
   };
 
   mRegisteredOBJ mOBJ[BTCMD_MAXOBJ];
@@ -71,7 +72,8 @@ class BTcmd
   
   const char* mSetKeyword = BTCMD_SET;
   const char* mGetKeyword = BTCMD_GET;
-
+  const char* mLimKeyword = BTCMD_LIM;
+  
   bool isNumber(const char* txt);
   void handleCmd(Stream* stream, BUF& buf);
   void readStream(Stream* stream, BUF& buf);
@@ -81,8 +83,8 @@ public:
 
   BTcmd(Stream &btStream);
   
-  bool registerObj(const OBJCmd& obj, const char* name);
-  OBJCmd* getObjFromName(const char* name); 
+  bool registerObj(const OBJVar& obj, const char* name);
+  OBJVar* getObjFromName(const char* name); 
 
   void initSPIFFS();
   void save(bool isdefault);

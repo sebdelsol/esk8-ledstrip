@@ -82,7 +82,7 @@ TwinkleFX   TwinkleF(HUE_AQUA_BLUE);
 RunningFX   RunF(CRGB::Gold);
 
 // ----------------------------------------------------
-class CFG : public OBJCmd
+class CFG : public OBJVar
 {
 public:
   // update ?
