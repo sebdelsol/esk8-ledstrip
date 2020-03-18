@@ -30,8 +30,25 @@ public:
   byte getAlpha();
 
   virtual const char* getName();
-  virtual void update();
-  bool drawOn(CRGBSet dst);
+  virtual void update(ulong time, ulong dt);
+  bool drawOn(CRGBSet dst, ulong time, ulong dt);
+};
+
+//--------------------------------------
+class FireFX : public FX
+{
+  byte mSpeed, mCentre;
+  byte *mHeat, *mNoise;
+
+protected:
+  CRGBPalette16 mPal;
+
+public:
+  FireFX(const byte speed = 27);
+  void specialInit(int nLeds);
+  void update(ulong time, ulong dt);
+
+  const char* getName() {return "Fire";};
 };
 
 //--------------------------------------
@@ -41,7 +58,7 @@ class PlasmaFX : public FX
 
 public:
   PlasmaFX(const byte wavelenght = 5, const byte period1 = 3, const byte period2 = 5);
-  void update();
+  void update(ulong time, ulong dt);
 
   const char* getName() {return "Plasma";};
 };
@@ -54,12 +71,12 @@ protected:
   CRGB mColor;
 
   void showEye(int p); 
-  int  getPos();
+  int  getPos(ulong time);
 
 public:
   CylonFX(const CRGB color=0x0000FF, const int eyeSize = 3, const int speed = 3<<3);
   void setEyeSize(const int eyeSize) {mEyeSize = eyeSize;};
-  void update();
+  void update(ulong time, ulong dt);
 
   const char* getName() {return "Cylon";};
 };
@@ -69,7 +86,7 @@ class DblCylonFX : public CylonFX
 {
 public:
   using CylonFX::CylonFX;
-  void update();
+  void update(ulong time, ulong dt);
 
   const char* getName() {return "DblCylon";};
 };
@@ -84,7 +101,7 @@ protected:
 public:
   RunningFX(const CRGB color=0x0000FF, const int width = 5, const int speed = 2);
   void setSpeed(const int speed) {mSpeed = speed;};
-  void update();
+  void update(ulong time, ulong dt);
 
   const char* getName() {return "Running";};
 };
@@ -100,7 +117,7 @@ public:
   TwinkleFX(const byte hue=0, const byte hueDiv=5, const byte div=5);
   TwinkleFX(const CRGB color=0xff0000, const byte hueDiv=5, const byte div=5);
   void registerAllCmd();
-  void update();
+  void update(ulong time, ulong dt);
 
   const char* getName() {return "Twinkle";};
 };
@@ -112,7 +129,7 @@ protected:
   Stream* mSerial;
 public:
   virtual void getInfo(); // for AllLedStrips
-  virtual void update();  // for AllLedStrips
+  virtual void update(ulong time, ulong dt);  // for AllLedStrips
   virtual byte* getData(int& n); // for myWifi
   void setSerial(Stream *serial) {mSerial = serial;};
 };
@@ -122,6 +139,7 @@ class AllLedStrips
 {
   BaseLedStrip *mStrips[MAXSTRIP];
   byte mNStrips = 0;
+  ulong  mLastT = 0;
   Stream* mSerial;
 
 public:
@@ -189,20 +207,20 @@ public:
     return (byte *) mDisplay.leds;
   };
 
-  void update()
+  void update(ulong time, ulong dt)
   {
     byte i = 0; // fx count
 
     // 1st fx is drawn on mDisplay
     for (; i < mNFX; i++) 
-      if (mFX[i]->drawOn(mDisplay))
+      if (mFX[i]->drawOn(mDisplay, time, dt))
         break; // now we've to blend
 
     // some fx left to draw ?
     if (++i <= mNFX)
     { // draw on mBuffer & blend with mDisplay
       for (; i < mNFX; i++) 
-        if (mFX[i]->drawOn(mBuffer)) 
+        if (mFX[i]->drawOn(mBuffer, time, dt)) 
             mDisplay |= mBuffer; // get the max of each RGB component
     }
     // if no fx drawn, clear the ledstrip

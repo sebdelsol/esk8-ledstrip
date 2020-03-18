@@ -22,10 +22,10 @@ byte FX::getAlpha()
   return mLinearAlpha; 
 }
 
-bool FX::drawOn(CRGBSet dst)
+bool FX::drawOn(CRGBSet dst, ulong time, ulong dt)
 {
   if (mAlpha > 0) { // 0 is invisible
-    update();
+    update(time, dt);
     memcpy8(dst.leds, mLeds, mNLEDS * sizeof(CRGB));
     
     if (mAlpha < 255) // 255 = no fade
@@ -36,6 +36,91 @@ bool FX::drawOn(CRGBSet dst)
   return false;
 }
 
+
+// ----------------------------------------------------
+FireFX::FireFX(const byte speed) : mSpeed(speed) 
+{
+  REGISTER_VAR_SIMPLE(FireFX,  "speed", self->mSpeed, 1, 255)
+  mPal = HeatColors_p;
+}
+
+void FireFX::specialInit(int nLeds)
+{
+  mHeat = (byte*)malloc(nLeds*sizeof(byte));
+  mNoise = (byte*)malloc(nLeds*sizeof(byte));
+  mCentre = (nLeds / 2) - 1;
+}
+
+void FireFX::update(ulong time, ulong dt)
+{
+  // get one noise value out of a moving noise space
+  uint16_t ctrl1 = inoise16(11 * time, 0, 0);
+  uint16_t ctrl2 = inoise16(13 * time, 100000, 100000);
+  uint16_t  ctrl = ((ctrl1 + ctrl2) / 2); // average of both to get a more unpredictable curve
+
+  // here we define the impact of the wind, high factor = a lot of movement to the sides
+  uint32_t x = 3 * ctrl * mSpeed;
+
+  // this is the speed of the upstream itself, high factor = fast movement
+  uint32_t y = 15 * time * mSpeed;
+
+  // just for ever changing patterns we move through z as well
+  uint32_t z = 3 * time * mSpeed;
+
+  // ...and dynamically scale the complete heatmap for some changes in the size of the heatspots.
+  // The speed of change is influenced by the factors in the calculation of ctrl1 & 2 above.
+  // The divisor sets the impact of the size-scaling.
+  uint32_t scale_x = ctrl1 / 2;
+  uint32_t scale_y = ctrl2 / 2;
+
+  // Calculate the noise array based on the control parameters.
+	for (uint8_t j = 0; j < mNLEDS; j++) 
+  {
+    uint32_t joffset = scale_y * (j - mCentre);
+    uint16_t data = ((inoise16(x, y + joffset, z)) + 1);
+    mNoise[j] = data >> 8;
+	}
+
+  // Draw the first (lowest) line - seed the fire.
+  // It could be random pixels or anything else as well.
+  mLeds[mNLEDS-1] = ColorFromPalette( mPal, mNoise[0]);
+  // and fill the lowest line of the heatmap, too
+  mHeat[mNLEDS-1] = mNoise[0];
+
+  // Copy the heatmap one line up for the scrolling.
+  for (uint8_t y = 0; y < mNLEDS - 1; y++)
+  {
+    mHeat[y] = mHeat[y + 1];
+  }
+
+	float ratio = pow(1.4, dt/10.);
+  
+  // Scale the heatmap values down based on the independent scrolling noise array.
+  for (uint8_t y = 0; y < mNLEDS - 1; y++)
+  {
+      // get data from the calculated noise field
+      uint8_t dim = mNoise[y];
+
+      // This number is critical
+      // If it´s to low (like 1.1) the fire dosn´t go up far enough.
+      // If it´s to high (like 3) the fire goes up too high.
+      // It depends on the framerate which number is best.
+      // If the number is not right you loose the uplifting fire clouds
+      // which seperate themself while rising up.
+      dim = dim / ratio;
+      dim = 255 - dim;
+
+      // here happens the scaling of the heatmap
+      mHeat[y] = scale8(mHeat[y] , dim);
+  }
+
+  // Now just map the colors based on the heatmap.
+  for (uint8_t y = 0; y < mNLEDS - 1; y++)
+  {
+      mLeds[y] = ColorFromPalette( mPal, mHeat[y]);
+  }
+}
+
 // ----------------------------------------------------
 PlasmaFX::PlasmaFX(const byte wavelenght, const byte period1, const byte period2) : mK(wavelenght), mP1(period1), mP2(period2) 
 {
@@ -44,10 +129,10 @@ PlasmaFX::PlasmaFX(const byte wavelenght, const byte period1, const byte period2
   REGISTER_VAR_SIMPLE(PlasmaFX,  "freq",  self->mK, 1, 255)
 }
 
-void PlasmaFX::update()
+void PlasmaFX::update(ulong time, ulong dt)
 {
   // cos16 & sin16(0 to 65535) => results in -32767 to 32767
-  u_long t = (millis() * 66) >> 2;          // 65536/1000 => 2pi * time / 4
+  u_long t = (time * 66) >> 2;          // 65536/1000 => 2pi * time / 4
   int16_t cos_tp1 = cos16(t/mP1) >> 1;      // .5 cos(time/mP1)
   int16_t sin_tp2 = sq(sin16(t/mP2)) >> 2;  // (.5 sin(time/mP2))^2
   int16_t sin_t = sin16(t);
@@ -75,9 +160,9 @@ CylonFX::CylonFX(const CRGB color, const int eyeSize, const int speed) : mEyeSiz
   REGISTER_VAR(CylonFX,  "speed",   { self->mSpeed = arg0<<3; },                       self->mSpeed>>3, 0, 255)
 }
 
-int CylonFX::getPos() 
+int CylonFX::getPos(ulong time) 
 {
-  return   triwave8(millis() * mSpeed * 38 / 10000) << 8; // speed = 1<<3, 1.5 second period 
+  return   triwave8(time * mSpeed * 38 / 10000) << 8; // speed = 1<<3, 1.5 second period 
 }
 
 void CylonFX::showEye(int p)
@@ -94,17 +179,17 @@ void CylonFX::showEye(int p)
     mLeds[++pos] = mColor % frac;
 }
 
-void CylonFX::update()
+void CylonFX::update(ulong time, ulong dt)
 {
   CLEAR_LED(mLeds, mNLEDS)
-  showEye(getPos());
+  showEye(getPos(time));
 }
 
 // ----------------------------------------------------
-void DblCylonFX::update()
+void DblCylonFX::update(ulong time, ulong dt)
 {
   CLEAR_LED(mLeds, mNLEDS)
-  int pos = getPos();
+  int pos = getPos(time);
   showEye(pos);
   showEye(65535 - pos);
 }
@@ -115,11 +200,11 @@ RunningFX::RunningFX(const CRGB color, const int width, const int speed) : mWidt
   REGISTER_VAR_SIMPLE(RunningFX,  "speed", self->mSpeed, 0, 255)
 }
 
-void RunningFX::update()
+void RunningFX::update(ulong time, ulong dt)
 {
   fill_solid(mLeds, mNLEDS, mColor);
 
-  u_long t = millis() * 66 * mSpeed; // 65536/1000 => 2pi * time 
+  u_long t = time * 66 * mSpeed; // 65536/1000 => 2pi * time 
   u_long x = 0; 
   u_long dx = 32768 / mWidth;
   for (byte i=0; i < mNLEDS; i++, x += dx)
@@ -148,19 +233,18 @@ void TwinkleFX::registerAllCmd()
   REGISTER_VAR_SIMPLE(TwinkleFX,  "div", self->mDiv, 1, 255)
 }
 
-void TwinkleFX::update()
+void TwinkleFX::update(ulong time, ulong dt)
 {
   random16_set_seed(535);  // The randomizer needs to be re-set each time through the loop in order for the 'random' numbers to be the same each time through.
 
-  int t = millis();
   for (int i = 0; i<mNLEDS; i++)
   {
-    byte fader = sin8(t/random8(mDiv, mDiv<<1));       // The random number for each 'i' will be the same every time.
-    byte hue = sin8(t/random8(mDiv, mDiv)) >> mHueDiv; // ditto
+    byte fader = sin8(time/random8(mDiv, mDiv<<1));       // The random number for each 'i' will be the same every time.
+    byte hue = sin8(time/random8(mDiv, mDiv)) >> mHueDiv; // ditto
     mLeds[i] = CHSV(mHSV.h + hue, mHSV.s , fader);
   }
 
-  random16_set_seed(millis()); // "restart" random for other FX
+  random16_set_seed(time); // "restart" random for other FX
 }
 
 // ----------------------------------------------------
@@ -168,7 +252,7 @@ AllLedStrips::AllLedStrips(const int maxmA, Stream &serial) : mSerial(&serial)
 {
   FastLED.setMaxPowerInVoltsAndMilliamps(5, maxmA);
   FastLED.countFPS();
-  FastLED.setDither(BINARY_DITHER);
+  FastLED.setDither(BINARY_DITHER); //DISABLE_DITHER
 }
 
 bool AllLedStrips::registerStrip(BaseLedStrip &strip)
@@ -184,8 +268,12 @@ bool AllLedStrips::registerStrip(BaseLedStrip &strip)
 
 void AllLedStrips::update()
 {
+  ulong t = millis();
+  ulong dt = mLastT ? t - mLastT : 1; // to prevent possible /0
+  mLastT = t;
+
   for (byte i=0; i < mNStrips; i++)
-    mStrips[i]->update();
+    mStrips[i]->update(t, dt);
 }
 
 void AllLedStrips::getInfo()
