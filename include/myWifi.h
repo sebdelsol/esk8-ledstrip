@@ -8,6 +8,7 @@
 #include <WebSocketsClient.h>
 
 #include <wificonfig.h>
+// wificonfig.h needs thos defines :
 // #define WIFINAME "******"
 // #define WIFIPASS "****"
 // #define SOCK_ADDR "**.**.**.**"
@@ -16,11 +17,12 @@
 class myWifi
 {
   bool mON = true;
+  bool mSocketBegun = false;
   BaseLedStrip* mLeds;
   WebSocketsClient webSocket;
 
 public:
-  void on();
+  void on(int count=15);
   void off();
   void toggle() { mON ? off() : on(); };
   void addLeds(const BaseLedStrip &leds);

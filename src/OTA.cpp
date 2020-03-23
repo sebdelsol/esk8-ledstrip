@@ -8,24 +8,10 @@
 
 void OTA::begin()
 {
-  int count = 15;
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(WIFINAME, WIFIPASS);
-
-  Serial << "OTA Connecting";
-  while(WiFi.status() != WL_CONNECTED && count-- > 0)
-  {
-    delay(500);
-    Serial << ".";
-  }
-
-  if(WiFi.status() != WL_CONNECTED)
-    WiFi.mode(WIFI_OFF);
-
-  else
+  if(WiFi.status() == WL_CONNECTED)
   {
     mOn = true;
-    Serial << endl << "OTA Connected, IP address: " << WiFi.localIP() << endl;
+    Serial << "OTA Connected, IP address: " << WiFi.localIP() << endl;
 
     // ArduinoOTA.setPort(3232); // already default port
     ArduinoOTA.setHostname("esk8");

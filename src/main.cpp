@@ -1,12 +1,11 @@
 
 #define USE_BT // see p latformio & use "board_build.partitions = huge_app.csv"
-
-// #define USE_OTA // not compatible with BT since it uses "board_build.partitions = huge_app.csv"
-// #define USE_TELNET //needs USE_OTA to work
+#define USE_OTA // not compatible with BT since it uses "board_build.partitions = huge_app.csv"
+#define USE_TELNET //needs USE_OTA to work
 // #define USE_LIGHTPROBE
 
 // #define DEBUG_LED_INFO
-// #define DEBUG_LED_TOWIFI
+// #define DEBUG_LED_TOWIFI // use wifi
 // #define DEBUG_ACC
 
 // ----------------------------------------------------
@@ -65,7 +64,8 @@ AllLedStrips  AllLeds(LED_MAX_MA, Serial);
 #define     HUE_AQUA_BLUE 140
 
 LedStrip    <NBLEDS_MIDDLE, LED_PIN>  Leds("Led");
-RunningFX   Fire(LUSH_LAVA, 10, 3);     
+// RunningFX   Fire(LUSH_LAVA, 10, 3);     
+// FireFX   Fire;     
 RunningFX   Aqua(AQUA_MENTHE, 10, -3);  
 TwinkleFX   FireTwk(HUE_RED); 
 TwinkleFX   AquaTwk(HUE_AQUA_BLUE);
@@ -153,16 +153,17 @@ void setup()
   Register5FX(Leds,   Fire,       FireTwk,    Aqua,   AquaTwk,    Plasma);
   Register3FX(LedsR,  TwinkleR,   CylonR,     RunR);
   Register3FX(LedsF,  TwinkleF,   CylonF,     RunF);
-
-  #ifdef USE_OTA
-    Ota.begin();
-  #else
+  
+  #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA)
+    MyWifi.on();
     #ifdef DEBUG_LED_TOWIFI
-      MyWifi.on();
-      MyWifi.addLeds(LedsF);
-    #else
-      MyWifi.off();
+      MyWifi.addLeds(Leds);
     #endif
+    #ifdef USE_OTA
+      Ota.begin();
+    #endif
+  #else
+    MyWifi.off();
   #endif
 
   #ifdef USE_BT
@@ -288,6 +289,9 @@ void loop()
         Fire.setAlpha(alphaR);
         FireTwk.setAlpha(alphaR);
         Plasma.setAlpha(alphaP);
+
+        // Fire.setAlpha(255);
+        // Plasma.setAlpha(0);
       }
 
       #ifdef DEBUG_ACC
