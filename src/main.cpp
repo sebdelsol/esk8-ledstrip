@@ -64,7 +64,7 @@ AllLedStrips  AllLeds(LED_MAX_MA, Serial);
 #define     HUE_AQUA_BLUE 140
 
 LedStrip    <NBLEDS_MIDDLE, LED_PIN>  Leds("Led");
-// RunningFX   Fire(LUSH_LAVA, 10, 3);     
+RunningFX   Fire(LUSH_LAVA, 10, 3);     
 // FireFX   Fire;     
 RunningFX   Aqua(AQUA_MENTHE, 10, -3);  
 TwinkleFX   FireTwk(HUE_RED); 
