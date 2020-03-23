@@ -42,7 +42,9 @@ void myWifi::addLeds(const BaseLedStrip &leds)
       webSocket.begin(SOCK_ADDR, SOCK_PORT);
       mSocketBegun = true;
     }
-    mLeds = (BaseLedStrip*)&leds;
+
+    if (mNStrips < MAXSTRIPS)
+      mLeds[mNStrips++] = (BaseLedStrip*)&leds;
   }
 }
 
@@ -52,10 +54,16 @@ void myWifi::update()
   {
     webSocket.loop();
 
-    if (mLeds)
+    for (byte i=0; i < mNStrips; i++)
     {
       int length;
-      byte *data = mLeds->getData(length);
+      byte *data = mLeds[i]->getData(length);
+
+      #define INFO_LEN 15
+      char info[INFO_LEN];
+      snprintf(info, INFO_LEN, "STRIP %d %d", i, length/3); 
+      webSocket.sendTXT(info, strlen(info));
+
       webSocket.sendBIN(data, length);
     }
   }

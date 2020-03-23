@@ -14,12 +14,17 @@
 // #define SOCK_ADDR "**.**.**.**"
 // #define SOCK_PORT **
 
+#define MAXSTRIPS 3
+
 class myWifi
 {
   bool mON = true;
   bool mSocketBegun = false;
-  BaseLedStrip* mLeds;
   WebSocketsClient webSocket;
+
+  // BaseLedStrip* mLeds;
+  BaseLedStrip* mLeds[MAXSTRIPS];
+  byte mNStrips = 0;
 
 public:
   void on(int count=15);
