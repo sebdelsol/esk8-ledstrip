@@ -22,7 +22,6 @@ class myWifi
   bool mSocketBegun = false;
   WebSocketsClient webSocket;
 
-  // BaseLedStrip* mLeds;
   BaseLedStrip* mLeds[MAXSTRIPS];
   byte mNStrips = 0;
 
