@@ -11,7 +11,7 @@ NOMOVE = 2
 
 #----------------------------------------------------------------
 
-with f=open("./include/wificonfig.h"):
+with f=open("./include/wificonfig.h", "r"):
     for l in f.readlines():
         w = l.split(" ")
         if len(w)>2:
