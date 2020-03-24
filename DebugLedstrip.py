@@ -1,6 +1,4 @@
 import pygame
-#import random
-#import time
 import math
 import os
 import traceback
@@ -10,6 +8,10 @@ SetWindowPos = windll.user32.SetWindowPos
 TOPMOST = -1
 NOSIZE = 1
 NOMOVE = 2
+
+#----------------------------------------------------------------
+SRV_IP = '192.168.0.10'
+SRV_PORT = 81
 
 #----------------------------------------------------------------
 wPixel = 20 #50
@@ -153,7 +155,7 @@ class Showled(WebSocket):
 
 def main():
     
-    server = SimpleWebSocketServer('192.168.0.10', 81, Showled)
+    server = SimpleWebSocketServer(SRV_IP, SRV_PORT, Showled)
     print 'server started'
     server.serveforever()
 
