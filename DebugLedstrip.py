@@ -10,23 +10,19 @@ NOSIZE = 1
 NOMOVE = 2
 
 #----------------------------------------------------------------
-
-with f=open("./include/wificonfig.h", "r"):
+with open("./include/wificonfig.h", "r") as f:
     for l in f.readlines():
         w = l.split(" ")
         if len(w)>2:
             if w[1] == "SOCK_ADDR":
-                SOCK_ADDR = w[2]
+                SOCK_ADDR = w[2].replace('\n', '').replace('"', '')
             elif w[1] == "SOCK_PORT":
-                SOCK_PORT = w[2]
-print SOCK_ADDR, SOCK_PORT
-#SRV_IP = '192.168.0.10'
-#SRV_PORT = 81
+                SOCK_PORT = int(w[2])
 
 #----------------------------------------------------------------
 wPixel = 20 #50
 cPixel = wPixel * .25 
-minPixel = wPixel * .9
+minPixel = wPixel * .5
 maxPixel = int(round(wPixel * 1.5))
 REM = 0.5
 
@@ -35,18 +31,18 @@ class Pixel:
     def __init__(self, i, j):
         self.x = int(round(wPixel * (i + .5)))
         self.y = int(round(maxPixel * ( j + .5)))
-        self.cpos = (int(round(wPixel * .5)), int(round(maxPixel * .5)))
-        self.blitpos = (wPixel * i, maxPixel * j)
+        self.cpos = (self.x, self.y)
         self.rect = (self.x-cPixel * .5, self.y - cPixel * .5, cPixel, cPixel)
         self.color = (0,0,0)
 
     def remanence(self, c, cd):
+        #c = ((c/255) **(1/4.1))*255
         if cd >= c:
             return cd
         else:
             return c * REM + cd * (1 - REM)
 
-    def draw(self, color, screen, srfbuf):
+    def draw(self, color, screen):
         self.color = (self.remanence(self.color[0], color[0]),
                       self.remanence(self.color[1], color[1]),
                       self.remanence(self.color[2], color[2]))
@@ -54,25 +50,22 @@ class Pixel:
         lum = math.sqrt( 0.299*r**2 + 0.587*g**2 + 0.114*b**2 )
 
         r = int(round(.5 * (minPixel + (maxPixel-minPixel) * lum)))
+        pygame.draw.circle(screen, self.color, self.cpos, r)
 
-        srfbuf.fill((0,0,0))
-        #srfbuf.set_alpha(lum * 150)
-        pygame.draw.circle(srfbuf, self.color, self.cpos, r)
-        screen.blit(srfbuf, self.blitpos) #, special_flags=pygame.BLEND_RGB_ADD )
-        color2 = [min(c*2, 255) for c in self.color]
+        color2 = [min(c*1.5, 255) for c in self.color]
         pygame.draw.rect(screen, color2, self.rect)
 
 #----------------------------------------------------------------
 class NeoPixel:
     def __init__(self):
         self.running = False
-        self.nb = {} #0
+        self.nb = {} 
         self.pixels = {}
         self.W = 0
         self.H = 0
 
     def initPixels(self, nb, row):
-        print 'INIT', nb, row
+        print 'Row %d has %d pixels' %(row, nb)
         self.nb[row] = nb
 
         self.pixels[row] = []
@@ -91,13 +84,9 @@ class NeoPixel:
         os.environ['SDL_VIDEO_WINDOW_POS'] = '%i,%i' % (posx,posy)
 
         self.screen = pygame.display.set_mode((self.W,self.H),pygame.NOFRAME|pygame.RESIZABLE)
-        self.srfbuf = pygame.Surface((wPixel, maxPixel))
-        self.srfbuf.set_colorkey((0,0,0))
-
         hwnd = pygame.display.get_wm_info()['window'] # handle to the window
         SetWindowPos(hwnd, TOPMOST, 0, 0, 0, 0, NOMOVE|NOSIZE)
 
-        self.clock = pygame.time.Clock()
         self.running = True
 
     def write(self, buf, nb, row):
@@ -110,21 +99,13 @@ class NeoPixel:
 
                 if row == 0:
                     self.screen.fill((0,0,0))
-
-                '''
-                DATA = (hex(int((buf[i*3] + buf[i*3+1] + buf[i*3+2])/3)) for i, p in enumerate(self.pixels[row]))
-                if row == 2:
-                    print nb, row, ' '.join(DATA)
-                '''
                     
                 for i, p in enumerate(self.pixels[row]):
                     pos = i * 3
-                    p.draw((buf[pos], buf[pos+1], buf[pos+2]), self.screen, self.srfbuf)
+                    p.draw((buf[pos], buf[pos+1], buf[pos+2]), self.screen)
 
                 if row == len(self.nb)-1:
                     pygame.display.flip()
-                #self.clock.tick(60)
-                #sys.stdout.write('%02f\r'%self.clock.get_fps())
 
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -158,15 +139,16 @@ class Showled(WebSocket):
             sys.stdout.write(traceback.format_exc())
 
     def handleConnected(self):
-        print(self.address, 'connected')
+        print 'Connected @%s:%s' %self.address
 
     def handleClose(self):
-        print(self.address, 'closed')
+        print 'Closed @%s:%s' %self.address
 
 def main():
     
+    print "Starting server @%s:%d" % (SOCK_ADDR, SOCK_PORT)
     server = SimpleWebSocketServer(SOCK_ADDR, SOCK_PORT, Showled)
-    print 'server started'
+    print 'Server started'
     server.serveforever()
 
 main()
