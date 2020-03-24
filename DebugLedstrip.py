@@ -10,8 +10,18 @@ NOSIZE = 1
 NOMOVE = 2
 
 #----------------------------------------------------------------
-SRV_IP = '192.168.0.10'
-SRV_PORT = 81
+
+with f=open("./include/wificonfig.h"):
+    for l in f.readlines():
+        w = l.split(" ")
+        if len(w)>2:
+            if w[1] == "SOCK_ADDR":
+                SOCK_ADDR = w[2]
+            elif w[1] == "SOCK_PORT":
+                SOCK_PORT = w[2]
+print SOCK_ADDR, SOCK_PORT
+#SRV_IP = '192.168.0.10'
+#SRV_PORT = 81
 
 #----------------------------------------------------------------
 wPixel = 20 #50
@@ -155,7 +165,7 @@ class Showled(WebSocket):
 
 def main():
     
-    server = SimpleWebSocketServer(SRV_IP, SRV_PORT, Showled)
+    server = SimpleWebSocketServer(SOCK_ADDR, SOCK_PORT, Showled)
     print 'server started'
     server.serveforever()
 
