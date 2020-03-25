@@ -1,5 +1,10 @@
 #include <myWifi.h>
 
+void myWifi::init(Stream &serial)
+{
+  mSerial = &serial;
+}
+
 void myWifi::off()
 {
   WiFi.mode(WIFI_OFF);
@@ -7,7 +12,7 @@ void myWifi::off()
   digitalWrite(BUILTIN_LED, HIGH); // led off
 
   mON = false;
-  Serial << "Wifi off" << endl;
+  *mSerial << "Wifi off" << endl;
 }
 
 void myWifi::on(int count)
@@ -16,17 +21,17 @@ void myWifi::on(int count)
   // WiFi.forceSleepWake();
   WiFi.begin(WIFINAME, WIFIPASS);
 
-  Serial << "Wifi Connecting";
+  *mSerial << "Wifi Connecting";
   while(WiFi.status() != WL_CONNECTED && count-- > 0)
   {
     delay(500);
     digitalWrite(BUILTIN_LED, !digitalRead(BUILTIN_LED));
-    Serial << ".";
+    *mSerial << ".";
   }
 
   if(WiFi.status() == WL_CONNECTED)
   {
-    Serial << "Connected, IP address: " << WiFi.localIP() << endl;
+    *mSerial << "Connected, IP address: " << WiFi.localIP() << endl;
     digitalWrite(BUILTIN_LED, LOW); // led on
     mON = true;
   }
@@ -39,6 +44,7 @@ void myWifi::addLeds(const BaseLedStrip &leds)
   {
     if (!mSocketBegun)
     {
+      *mSerial << "Socket client started" << endl;
       webSocket.begin(SOCK_ADDR, SOCK_PORT);
       mSocketBegun = true;
     }
@@ -50,7 +56,7 @@ void myWifi::addLeds(const BaseLedStrip &leds)
 
 void myWifi::update()
 {
-  if (mON)
+  if (mON && mSocketBegun)
   {
     webSocket.loop();
 
@@ -58,12 +64,9 @@ void myWifi::update()
     {
       int length;
       byte *data = mLeds[i]->getData(length);
+      snprintf(mInfo, INFO_LEN, "STRIP %d %d", i, length/3); 
 
-      #define INFO_LEN 15
-      char info[INFO_LEN];
-      snprintf(info, INFO_LEN, "STRIP %d %d", i, length/3); 
-      webSocket.sendTXT(info, strlen(info));
-
+      webSocket.sendTXT(mInfo, strlen(mInfo));
       webSocket.sendBIN(data, length);
     }
   }

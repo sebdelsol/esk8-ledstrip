@@ -25,7 +25,13 @@ class myWifi
   BaseLedStrip* mLeds[MAXSTRIPS];
   byte mNStrips = 0;
 
+  #define INFO_LEN 15
+  char mInfo[INFO_LEN];
+
+  Stream* mSerial;
+
 public:
+  void init(Stream &serial);
   void on(int count=15);
   void off();
   void toggle() { mON ? off() : on(); };

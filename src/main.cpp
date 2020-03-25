@@ -1,11 +1,11 @@
 
 // #define USE_BT // see p latformio & use "board_build.partitions = huge_app.csv"
 #define USE_OTA // not compatible with BT since it uses "board_build.partitions = huge_app.csv"
-// #define USE_TELNET //needs USE_OTA to work
+#define USE_TELNET //needs USE_OTA to work
 // #define USE_LIGHTPROBE
 
 // #define DEBUG_LED_INFO
-// #define DEBUG_LED_TOWIFI // use wifi
+#define DEBUG_LED_TOWIFI // use wifi
 // #define DEBUG_ACC
 
 // ----------------------------------------------------
@@ -154,6 +154,7 @@ void setup()
   Register3FX(LedsR,  TwinkleR,   CylonR,     RunR);
   Register3FX(LedsF,  TwinkleF,   CylonF,     RunF);
   
+  MyWifi.init(Serial);
   #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA)
     MyWifi.on();
     #ifdef DEBUG_LED_TOWIFI
