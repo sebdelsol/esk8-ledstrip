@@ -16,7 +16,6 @@
 class FX : public OBJVar
 {
   byte mAlpha = 255; // visible
-  byte mLinearAlpha = 255; // for getAlpha
 
 protected:
   int mNLEDS = 0;
@@ -26,8 +25,8 @@ public:
   void init(int nLeds);
   virtual void specialInit(int nLeds) {};
 
-  void setAlpha(const byte alpha);
-  byte getAlpha();
+  void setAlpha(const byte alpha) { mAlpha = alpha; };
+  byte getAlpha() { return mAlpha; };
 
   virtual const char* getName();
   virtual void update(ulong time, ulong dt);
@@ -38,13 +37,14 @@ public:
 class FireFX : public FX
 {
   byte mSpeed, mCentre;
-  byte *mHeat, *mNoise;
+  float mDimRatio;
+  ushort *mHeat; 
 
 protected:
   CRGBPalette16 mPal;
 
 public:
-  FireFX(const byte speed = 27);
+  FireFX(const byte speed = 27, const float dimRatio = 10.);
   void specialInit(int nLeds);
   void update(ulong time, ulong dt);
 
@@ -207,6 +207,16 @@ public:
     return (byte *) mDisplay.leds;
   };
 
+  void applyGamma(CRGB* leds) // fast gamma = 2
+  {
+    for (byte i = 0; i < NLEDS; i++)
+    {
+      leds[i].r = dim8_video(leds[i].r);
+      leds[i].g = dim8_video(leds[i].g);
+      leds[i].b = dim8_video(leds[i].b);
+    }
+  };
+
   void update(ulong time, ulong dt)
   {
     byte i = 0; // fx count
@@ -222,6 +232,8 @@ public:
       for (; i < mNFX; i++) 
         if (mFX[i]->drawOn(mBuffer, time, dt)) 
             mDisplay |= mBuffer; // get the max of each RGB component
+      
+      applyGamma(mDisplay.leds);
     }
     // if no fx drawn, clear the ledstrip
     else 
@@ -229,3 +241,4 @@ public:
   };
 
 };
+

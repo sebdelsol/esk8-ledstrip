@@ -8,18 +8,7 @@ void FX::init(int nLeds)
   CLEAR_LED(mLeds, nLeds);
   specialInit(nLeds);
 
-  REGISTER_VAR(FX,  "alpha", { self->setAlpha(arg0); },  self->getAlpha(), 0, 255)
-}
-
-void FX::setAlpha(const byte alpha) 
-{ 
-  mAlpha = (alpha*alpha)>>8; 
-  mLinearAlpha = alpha; 
-}
-
-byte FX::getAlpha() 
-{ 
-  return mLinearAlpha; 
+  REGISTER_VAR_SIMPLE(FX,  "alpha", self->mAlpha, 0, 255)
 }
 
 bool FX::drawOn(CRGBSet dst, ulong time, ulong dt)
@@ -36,9 +25,8 @@ bool FX::drawOn(CRGBSet dst, ulong time, ulong dt)
   return false;
 }
 
-
 // ----------------------------------------------------
-FireFX::FireFX(const byte speed) : mSpeed(speed) 
+FireFX::FireFX(const byte speed, const float dimRatio) : mSpeed(speed), mDimRatio(dimRatio) 
 {
   REGISTER_VAR_SIMPLE(FireFX,  "speed", self->mSpeed, 1, 255)
   mPal = HeatColors_p;
@@ -46,78 +34,58 @@ FireFX::FireFX(const byte speed) : mSpeed(speed)
 
 void FireFX::specialInit(int nLeds)
 {
-  mHeat = (byte*)malloc(nLeds*sizeof(byte));
-  mNoise = (byte*)malloc(nLeds*sizeof(byte));
+  mHeat = (ushort*)malloc(nLeds*sizeof(ushort));
+  // mNoise = (byte*)malloc(nLeds*sizeof(byte));
   mCentre = (nLeds / 2) - 1;
 }
 
 void FireFX::update(ulong time, ulong dt)
 {
-  // get one noise value out of a moving noise space
-  uint16_t ctrl1 = inoise16(11 * time, 0, 0);
-  uint16_t ctrl2 = inoise16(13 * time, 100000, 100000);
-  uint16_t  ctrl = ((ctrl1 + ctrl2) / 2); // average of both to get a more unpredictable curve
+  mSpeed = 10;
+  mDimRatio = 10.;
 
-  // here we define the impact of the wind, high factor = a lot of movement to the sides
-  uint32_t x = 3 * ctrl * mSpeed;
+  // upstream and move through z as well for changing patterns
+  uint32_t Y = 15 * time * mSpeed;
+  uint32_t Z = 3 * time * mSpeed;
+  uint32_t scale_y = inoise16(17 * time, 100000, 100000) >> 1;
 
-  // this is the speed of the upstream itself, high factor = fast movement
-  uint32_t y = 15 * time * mSpeed;
+  #define NOISE(y) ((inoise16(Y + scale_y * (y - mCentre), Z)) + 1)
 
-  // just for ever changing patterns we move through z as well
-  uint32_t z = 3 * time * mSpeed;
+  // seed the fire.
+  // mHeat[mNLEDS-1] = NOISE(0);
+  mHeat[mNLEDS-1] = random16();//inoise16(170 * time, 100000, 100000);
 
-  // ...and dynamically scale the complete heatmap for some changes in the size of the heatspots.
-  // The speed of change is influenced by the factors in the calculation of ctrl1 & 2 above.
-  // The divisor sets the impact of the size-scaling.
-  uint32_t scale_x = ctrl1 / 2;
-  uint32_t scale_y = ctrl2 / 2;
-
-  // Calculate the noise array based on the control parameters.
-	for (uint8_t j = 0; j < mNLEDS; j++) 
-  {
-    uint32_t joffset = scale_y * (j - mCentre);
-    uint16_t data = ((inoise16(x, y + joffset, z)) + 1);
-    mNoise[j] = data >> 8;
-	}
-
-  // Draw the first (lowest) line - seed the fire.
-  // It could be random pixels or anything else as well.
-  mLeds[mNLEDS-1] = ColorFromPalette( mPal, mNoise[0]);
-  // and fill the lowest line of the heatmap, too
-  mHeat[mNLEDS-1] = mNoise[0];
-
-  // Copy the heatmap one line up for the scrolling.
+  // upstream
   for (uint8_t y = 0; y < mNLEDS - 1; y++)
+    // mHeat[y] = mHeat[y + 1];
   {
-    mHeat[y] = mHeat[y + 1];
-  }
+    ushort noise = NOISE(y+1)>>8;
 
-	float ratio = pow(1.4, dt/10.);
+    // mHeat[y] = (mHeat[y] * noise + mHeat[y+1] * (255-noise))>>8;
+    mHeat[y] = (mHeat[y] * 128 + mHeat[y+1] * (255-128))>>8;
+
+    uint8_t dim = 255 - (noise / mDimRatio);
+    mHeat[y] = (mHeat[y] * dim)>>8; 
+
+    // long sub = mHeat[y] - (3<<8);
+    // mHeat[y] =  sub < 0 ? 0 : sub;
+
+    // ulong add = mHeat[y+1] + (1<<8);
+    // mHeat[y+1] =  add > 65535? 65535 : add;
+
+    // Serial << (mHeat[y]>>8) << "-" << transfer << " ";
+  }
+  // Serial << endl;
+	// // float ratio = pow(mDimRatio, dt/14.); // mDimRatio (too low => it doesn´t go up far enough --- too high => the fire goes up too high.
+	// float ratio = 10.5; // mDimRatio (too low => it doesn´t go up far enough --- too high => the fire goes up too high.
+  // // Serial << "pow " << ratio << " dt " << dt << endl;
   
-  // Scale the heatmap values down based on the independent scrolling noise array.
-  for (uint8_t y = 0; y < mNLEDS - 1; y++)
-  {
-      // get data from the calculated noise field
-      uint8_t dim = mNoise[y];
-
-      // This number is critical
-      // If it´s to low (like 1.1) the fire dosn´t go up far enough.
-      // If it´s to high (like 3) the fire goes up too high.
-      // It depends on the framerate which number is best.
-      // If the number is not right you loose the uplifting fire clouds
-      // which seperate themself while rising up.
-      dim = dim / ratio;
-      dim = 255 - dim;
-
-      // here happens the scaling of the heatmap
-      mHeat[y] = scale8(mHeat[y] , dim);
-  }
-
   // Now just map the colors based on the heatmap.
-  for (uint8_t y = 0; y < mNLEDS - 1; y++)
+  for (uint8_t y = 0; y < mNLEDS; y++)
   {
-      mLeds[y] = ColorFromPalette( mPal, mHeat[y]);
+    byte colorindex = scale8( mHeat[y]>>8, 240); // scale down to 0-240 for best results with color palettes.
+    // byte colorindex = scale8( mNoise[y], 240); // scale down to 0-240 for best results with color palettes.
+    mLeds[y] = ColorFromPalette(mPal, colorindex);
   }
 }
 
