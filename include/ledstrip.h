@@ -33,6 +33,8 @@ public:
   bool drawOn(CRGBSet dst, ulong time, ulong dt);
 };
 
+#define SetFxNAME(name) const char* getName() {return name;};
+
 //--------------------------------------
 class FireFX : public FX
 {
@@ -47,8 +49,15 @@ public:
   FireFX(const byte speed = 27, const float dimRatio = 10.);
   void specialInit(int nLeds);
   void update(ulong time, ulong dt);
+  SetFxNAME("Fire");
+};
 
-  const char* getName() {return "Fire";};
+//---------
+class AquaFX : public FireFX
+{
+public:
+  AquaFX(const byte speed = 27, const float dimRatio = 10.);
+  SetFxNAME("Aqua");
 };
 
 //--------------------------------------
@@ -59,8 +68,7 @@ class PlasmaFX : public FX
 public:
   PlasmaFX(const byte wavelenght = 5, const byte period1 = 3, const byte period2 = 5);
   void update(ulong time, ulong dt);
-
-  const char* getName() {return "Plasma";};
+  SetFxNAME("Plasma");
 };
 
 //---------
@@ -77,8 +85,7 @@ public:
   CylonFX(const CRGB color=0x0000FF, const int eyeSize = 3, const int speed = 3<<3);
   void setEyeSize(const int eyeSize) {mEyeSize = eyeSize;};
   void update(ulong time, ulong dt);
-
-  const char* getName() {return "Cylon";};
+  SetFxNAME("Cylon");
 };
 
 //---------
@@ -87,8 +94,7 @@ class DblCylonFX : public CylonFX
 public:
   using CylonFX::CylonFX;
   void update(ulong time, ulong dt);
-
-  const char* getName() {return "DblCylon";};
+  SetFxNAME("DbldCylon");
 };
 
 //---------
@@ -102,8 +108,7 @@ public:
   RunningFX(const CRGB color=0x0000FF, const int width = 5, const int speed = 2);
   void setSpeed(const int speed) {mSpeed = speed;};
   void update(ulong time, ulong dt);
-
-  const char* getName() {return "Running";};
+  SetFxNAME("Running");
 };
 
 //---------
@@ -118,8 +123,7 @@ public:
   TwinkleFX(const CRGB color=0xff0000, const byte hueDiv=5, const byte div=5);
   void registerAllCmd();
   void update(ulong time, ulong dt);
-
-  const char* getName() {return "Twinkle";};
+  SetFxNAME("Twinkle");
 };
 
 //--------------------------------------

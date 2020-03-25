@@ -35,7 +35,6 @@ FireFX::FireFX(const byte speed, const float dimRatio) : mSpeed(speed), mDimRati
 void FireFX::specialInit(int nLeds)
 {
   mHeat = (ushort*)malloc(nLeds*sizeof(ushort));
-  // mNoise = (byte*)malloc(nLeds*sizeof(byte));
   mCentre = (nLeds / 2) - 1;
 }
 
@@ -87,6 +86,12 @@ void FireFX::update(ulong time, ulong dt)
     // byte colorindex = scale8( mNoise[y], 240); // scale down to 0-240 for best results with color palettes.
     mLeds[y] = ColorFromPalette(mPal, colorindex);
   }
+}
+
+// ----------------------------------------------------
+AquaFX::AquaFX(const byte speed, const float dimRatio) : FireFX(speed, dimRatio)
+{
+  mPal = CRGBPalette16(CRGB::Black, CRGB::Blue, CRGB::Aqua, CRGB::White);
 }
 
 // ----------------------------------------------------
