@@ -26,7 +26,7 @@ bool FX::drawOn(CRGBSet dst, ulong time, ulong dt)
 }
 
 // ----------------------------------------------------
-FireFX::FireFX(const byte speed, const float dimRatio) : mSpeed(speed), mDimRatio(dimRatio) 
+FireFX::FireFX(const bool reverse, const byte speed, const float dimRatio) : mReverse(reverse),  mSpeed(speed), mDimRatio(dimRatio) 
 {
   REGISTER_VAR_SIMPLE(FireFX,  "speed", self->mSpeed, 1, 255)
   mPal = HeatColors_p;
@@ -51,8 +51,8 @@ void FireFX::update(ulong time, ulong dt)
   #define NOISE(y) ((inoise16(Y + scale_y * (y - mCentre), Z)) + 1)
 
   // seed the fire.
-  // mHeat[mNLEDS-1] = NOISE(0);
-  mHeat[mNLEDS-1] = random16();//inoise16(170 * time, 100000, 100000);
+  mHeat[mNLEDS-1] = NOISE(0);
+  // mHeat[mNLEDS-1] = random16();//inoise16(170 * time, 100000, 100000);
 
   // upstream
   for (uint8_t y = 0; y < mNLEDS - 1; y++)
@@ -84,12 +84,13 @@ void FireFX::update(ulong time, ulong dt)
   {
     byte colorindex = scale8( mHeat[y]>>8, 240); // scale down to 0-240 for best results with color palettes.
     // byte colorindex = scale8( mNoise[y], 240); // scale down to 0-240 for best results with color palettes.
-    mLeds[y] = ColorFromPalette(mPal, colorindex);
+    byte i = mReverse ?  y : mNLEDS - 1 - y;
+    mLeds[i] = ColorFromPalette(mPal, colorindex);
   }
 }
 
 // ----------------------------------------------------
-AquaFX::AquaFX(const byte speed, const float dimRatio) : FireFX(speed, dimRatio)
+AquaFX::AquaFX(const bool reverse, const byte speed, const float dimRatio) : FireFX(reverse, speed, dimRatio)
 {
   mPal = CRGBPalette16(CRGB::Black, CRGB::Blue, CRGB::Aqua, CRGB::White);
 }

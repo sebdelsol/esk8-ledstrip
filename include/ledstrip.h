@@ -39,6 +39,7 @@ public:
 class FireFX : public FX
 {
   byte mSpeed, mCentre;
+  bool mReverse;
   float mDimRatio;
   ushort *mHeat; 
 
@@ -46,7 +47,7 @@ protected:
   CRGBPalette16 mPal;
 
 public:
-  FireFX(const byte speed = 27, const float dimRatio = 10.);
+  FireFX(const bool reverse = false, const byte speed = 27, const float dimRatio = 10.);
   void specialInit(int nLeds);
   void update(ulong time, ulong dt);
   SetFxNAME("Fire");
@@ -56,7 +57,7 @@ public:
 class AquaFX : public FireFX
 {
 public:
-  AquaFX(const byte speed = 27, const float dimRatio = 10.);
+  AquaFX(const bool reverse = false, const byte speed = 27, const float dimRatio = 10.);
   SetFxNAME("Aqua");
 };
 
