@@ -28,35 +28,32 @@ bool FX::drawOn(CRGBSet dst, ulong time, ulong dt)
 // ----------------------------------------------------
 FireFX::FireFX(const bool reverse, const byte speed, const float dimRatio) : mReverse(reverse),  mSpeed(speed), mDimRatio(dimRatio) 
 {
-  REGISTER_VAR_SIMPLE(FireFX,  "speed", self->mSpeed, 1, 255)
+  REGISTER_VAR_SIMPLE(FireFX, "speed", self->mSpeed, 1, 255)
   mPal = HeatColors_p;
 }
 
 void FireFX::specialInit(int nLeds)
 {
   mHeat = (ushort*)malloc(nLeds*sizeof(ushort));
-  mCentre = (nLeds / 2) - 1;
 }
 
 void FireFX::update(ulong time, ulong dt)
 {
-  mSpeed = 10;
-  mDimRatio = 10.;
+  // mSpeed = 10;
+  // mDimRatio = 10.;
 
   // upstream and move through z as well for changing patterns
   uint32_t Y = 15 * time * mSpeed;
   uint32_t Z = 3 * time * mSpeed;
-  uint32_t scale_y = inoise16(17 * time, 100000, 100000) >> 1;
-
-  #define NOISE(y) ((inoise16(Y + scale_y * (y - mCentre), Z)) + 1)
+  uint32_t scale = inoise16(17 * time) >> 1;
+  uint32_t centre = (mNLEDS / 2) - 1;
+  #define NOISE(y) (inoise16(Y + scale * (y - centre), Z) + 1)
 
   // seed the fire.
   mHeat[mNLEDS-1] = NOISE(0);
-  // mHeat[mNLEDS-1] = random16();//inoise16(170 * time, 100000, 100000);
 
-  // upstream
+  // move upstream
   for (uint8_t y = 0; y < mNLEDS - 1; y++)
-    // mHeat[y] = mHeat[y + 1];
   {
     ushort noise = NOISE(y+1)>>8;
 
@@ -79,7 +76,7 @@ void FireFX::update(ulong time, ulong dt)
 	// float ratio = 10.5; // mDimRatio (too low => it doesn´t go up far enough --- too high => the fire goes up too high.
   // // Serial << "pow " << ratio << " dt " << dt << endl;
   
-  // Now just map the colors based on the heatmap.
+  // map the colors based on the heatmap.
   for (uint8_t y = 0; y < mNLEDS; y++)
   {
     byte colorindex = scale8( mHeat[y]>>8, 240); // scale down to 0-240 for best results with color palettes.

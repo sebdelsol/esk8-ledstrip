@@ -38,7 +38,7 @@ public:
 //--------------------------------------
 class FireFX : public FX
 {
-  byte mSpeed, mCentre;
+  byte mSpeed;
   bool mReverse;
   float mDimRatio;
   ushort *mHeat; 
