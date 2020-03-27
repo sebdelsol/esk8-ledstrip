@@ -44,7 +44,7 @@ void handleOta()
 }
 
 // ----------------------------------------------------
-#define   LED_MAX_MA  800 // mA
+#define   LED_MAX_MA  800 // mA, please check OBJVar.bright to avoid reaching this value
 #define   LED_TICK    15  // ms
 #define   BT_TICK     15  // ms
 #define   SERIAL_BAUD 115200 
@@ -84,7 +84,7 @@ RunningFX   RunF(CRGB::Gold);
 class CFG : public OBJVar
 {
 public:
-  byte bright     = 32;
+  byte bright     = 64; // 1/4 brightness is enough to avoid reaching LED_MAX_MA
   
   // update ?
   bool ledR       = true;
@@ -152,6 +152,7 @@ void setup()
   Register5FX(Leds,   Fire,       FireTwk,    Aqua,   AquaTwk,    Plasma);
   Register3FX(LedsR,  TwinkleR,   CylonR,     RunR);
   Register3FX(LedsF,  TwinkleF,   CylonF,     RunF);
+  AllLeds.forceClear();
   
   MyWifi.init(Serial);
   #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA)

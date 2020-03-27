@@ -133,8 +133,8 @@ class BaseLedStrip
 protected:
   Stream* mSerial;
 public:
-  virtual void getInfo(); // for AllLedStrips
-  virtual void update(ulong time, ulong dt);  // for AllLedStrips
+  virtual void getInfo(); 
+  virtual void update(ulong time, ulong dt);  
   virtual byte* getData(int& n); // for myWifi
   void setSerial(Stream *serial) {mSerial = serial;};
 };
@@ -152,6 +152,7 @@ public:
   void setBrightness(const byte scale) { FastLED.setBrightness(scale); };
   byte getBrightness() { return FastLED.getBrightness(); };
   void show() { FastLED.show(); };
+  void forceClear();
 
   bool registerStrip(BaseLedStrip &strip);
   void getInfo();

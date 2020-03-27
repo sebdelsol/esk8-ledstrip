@@ -220,6 +220,12 @@ bool AllLedStrips::registerStrip(BaseLedStrip &strip)
   return ok;
 }
 
+void AllLedStrips::forceClear() 
+{ 
+  FastLED.clear(); 
+  for(byte i=0; i<5; i++) show();
+}
+
 void AllLedStrips::update()
 {
   ulong t = millis();
