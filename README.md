@@ -8,7 +8,8 @@
 [<img src="https://image.easyeda.com/histories/aaf838e4a54c468f9502dc529522ac38.png" height="225">](https://easyeda.com/seb.morin/esk8) [<img src="https://i.imgur.com/bn5Pk2N.jpg" height="225">](https://easyeda.com/seb.morin/esk8) [<img src="https://i.imgur.com/fsrZ5Zs.jpg" height="225">](https://easyeda.com/seb.morin/esk8)
 
 # OTA
-If you need OTA update, please uncomment ```#define USE_OTA ``` in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)
+If you need OTA update
+in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp), please uncomment ```#define USE_OTA ``` 
 And uncomment in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini)
 ```Python
 upload_protocol = espota
