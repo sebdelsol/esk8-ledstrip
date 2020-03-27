@@ -26,9 +26,7 @@ Qty | Components | *20€*
 1|12x12 switch | *1c*
 
 # OTA
-If you need OTA update:
-
-Please uncomment *USE_OTA* in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)
+If you need OTA update, please uncomment *USE_OTA* in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)
 ```C++
 #define USE_OTA 
 ```
