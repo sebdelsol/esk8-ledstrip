@@ -24,3 +24,17 @@ Qty | Components | *20€*
 1|220Ω resistor | *1c*
 1|blue LED | *1c*
 1|12x12 switch | *1c*
+
+# OTA
+If you need OTA update:
+
+Please uncomment *USE_OTA* in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)
+```C++
+#define USE_OTA 
+```
+And uncomment *those lines* in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini)
+```Python
+upload_protocol = espota
+upload_port = "esk8.local"
+```
+
