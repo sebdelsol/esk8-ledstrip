@@ -4,11 +4,11 @@
 <img src="https://media.giphy.com/media/IhCHKo42Hx7WFkRmzQ/giphy.gif" height="300"> <img src="https://media.giphy.com/media/fY5xLxGayUptPZuTfG/giphy.gif" height="300"> <img src="https://media.giphy.com/media/RfYtkG17dUJyVmbPet/giphy.gif" height="300"> 
 
 # OTA
-If you need OTA update, please uncomment *USE_OTA* in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)
+If you need OTA update, please uncomment **USE_OTA** in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)
 ```C++
 #define USE_OTA 
 ```
-And uncomment *those lines* in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini)
+And uncomment **upload_protocol** & **upload_port** in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini)
 ```Python
 upload_protocol = espota
 upload_port = "esk8.local"
