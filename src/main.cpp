@@ -1,11 +1,11 @@
 
-// #define USE_BT // see p latformio & use "board_build.partitions = huge_app.csv"
-#define USE_OTA // not compatible with BT since it uses "board_build.partitions = huge_app.csv"
-#define USE_TELNET //needs USE_OTA to work
+#define USE_BT // see p latformio & use "board_build.partitions = huge_app.csv"
+#define USE_OTA 
+//#define USE_TELNET //needs USE_OTA to work
 // #define USE_LIGHTPROBE
 
 // #define DEBUG_LED_INFO
-#define DEBUG_LED_TOWIFI // use wifi
+// #define DEBUG_LED_TOWIFI // use wifi
 // #define DEBUG_ACC
 
 // ----------------------------------------------------
@@ -64,8 +64,7 @@ AllLedStrips  AllLeds(LED_MAX_MA, Serial);
 #define     HUE_AQUA_BLUE 140
 
 LedStrip    <NBLEDS_MIDDLE, LED_PIN>  Leds("Led");
-RunningFX   Fire(LUSH_LAVA, 10, 3);     
-// FireFX   Fire;     
+RunningFX   Fire(LUSH_LAVA, 10, 3);     // FireFX   Fire;     // AquaFX   Fire(true);     
 RunningFX   Aqua(AQUA_MENTHE, 10, -3);  
 TwinkleFX   FireTwk(HUE_RED); 
 TwinkleFX   AquaTwk(HUE_AQUA_BLUE);
@@ -212,11 +211,11 @@ void loop()
 
       if (BT.update())
       {
-        if (gotAccel)
-        {
-          // int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
-          // *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
-        }
+        // if (gotAccel)
+        // {
+        //   int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
+        //   *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
+        // }
       } 
     }
   #endif
@@ -290,9 +289,6 @@ void loop()
         Fire.setAlpha(alphaR);
         FireTwk.setAlpha(alphaR);
         Plasma.setAlpha(alphaP);
-
-        // Fire.setAlpha(255);
-        // Plasma.setAlpha(0);
       }
 
       #ifdef DEBUG_ACC
