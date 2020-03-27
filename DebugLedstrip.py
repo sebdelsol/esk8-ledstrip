@@ -9,7 +9,7 @@ TOPMOST = -1
 NOSIZE = 1
 NOMOVE = 2
 
-#----------------------------------------------------------------
+#---------------------------------------------------------------
 with open("./include/wificonfig.h", "r") as f:
     for l in f.readlines():
         w = l.split(" ")
@@ -114,6 +114,7 @@ class NeoPixel:
 #----------------------------------------------------------------
 import sys
 from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
+
 TEXT = 0x1
 BINARY = 0x2
 
@@ -125,7 +126,6 @@ class Showled(WebSocket):
 
     def handleMessage(self):
         try:
-            #print self.data
             if self.opcode==BINARY:
                 self.np.write(self.data, self.currentNb, self.currentNo)
 
