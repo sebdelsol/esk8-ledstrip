@@ -3,6 +3,17 @@
 
 <img src="https://media.giphy.com/media/IhCHKo42Hx7WFkRmzQ/giphy.gif" height="300"> <img src="https://media.giphy.com/media/fY5xLxGayUptPZuTfG/giphy.gif" height="300"> <img src="https://media.giphy.com/media/RfYtkG17dUJyVmbPet/giphy.gif" height="300"> 
 
+# OTA
+If you need OTA update, please uncomment *USE_OTA* in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)
+```C++
+#define USE_OTA 
+```
+And uncomment *those lines* in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini)
+```Python
+upload_protocol = espota
+upload_port = "esk8.local"
+```
+
 # Please check the [PCB & Schematic](https://easyeda.com/seb.morin/esk8) 
 
 [<img src="https://image.easyeda.com/histories/aaf838e4a54c468f9502dc529522ac38.png" height="225">](https://easyeda.com/seb.morin/esk8) [<img src="https://i.imgur.com/bn5Pk2N.jpg" height="225">](https://easyeda.com/seb.morin/esk8) [<img src="https://i.imgur.com/fsrZ5Zs.jpg" height="225">](https://easyeda.com/seb.morin/esk8)
@@ -24,15 +35,3 @@ Qty | Components | *20€*
 1|220Ω resistor | *1c*
 1|blue LED | *1c*
 1|12x12 switch | *1c*
-
-# OTA
-If you need OTA update, please uncomment *USE_OTA* in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)
-```C++
-#define USE_OTA 
-```
-And uncomment *those lines* in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini)
-```Python
-upload_protocol = espota
-upload_port = "esk8.local"
-```
-
