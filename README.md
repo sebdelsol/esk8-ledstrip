@@ -9,12 +9,11 @@
 
 # OTA
 If you need OTA update
-in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp), please uncomment ```#define USE_OTA ``` 
-And uncomment in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini)
-```Python
-upload_protocol = espota
-upload_port = "esk8.local"
-```
+
+in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp), uncomment ```#define USE_OTA ``` 
+
+And in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini), uncomment
+```Python upload_protocol = espota ```  & ```upload_port = "esk8.local"```
 
 #  Debug LedStrip
 If you need to check what's happening with your ledstrip, please uncomment ```#define DEBUG_LED_TOWIFI``` in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)
@@ -40,3 +39,4 @@ Qty | Components | *20€*
 1|220Ω resistor | *1c*
 1|blue LED | *1c*
 1|12x12 switch | *1c*
+ ```
