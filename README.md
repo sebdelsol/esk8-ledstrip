@@ -3,6 +3,10 @@
 
 <img src="https://media.giphy.com/media/IhCHKo42Hx7WFkRmzQ/giphy.gif" height="300"> <img src="https://media.giphy.com/media/fY5xLxGayUptPZuTfG/giphy.gif" height="300"> <img src="https://media.giphy.com/media/RfYtkG17dUJyVmbPet/giphy.gif" height="300"> 
 
+# Please check the [PCB & Schematic](https://easyeda.com/seb.morin/esk8) 
+
+[<img src="https://image.easyeda.com/histories/aaf838e4a54c468f9502dc529522ac38.png" height="225">](https://easyeda.com/seb.morin/esk8) [<img src="https://i.imgur.com/bn5Pk2N.jpg" height="225">](https://easyeda.com/seb.morin/esk8) [<img src="https://i.imgur.com/fsrZ5Zs.jpg" height="225">](https://easyeda.com/seb.morin/esk8)
+
 # OTA
 If you need OTA update, please uncomment **USE_OTA** in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)
 ```C++
@@ -14,9 +18,12 @@ upload_protocol = espota
 upload_port = "esk8.local"
 ```
 
-# Please check the [PCB & Schematic](https://easyeda.com/seb.morin/esk8) 
-
-[<img src="https://image.easyeda.com/histories/aaf838e4a54c468f9502dc529522ac38.png" height="225">](https://easyeda.com/seb.morin/esk8) [<img src="https://i.imgur.com/bn5Pk2N.jpg" height="225">](https://easyeda.com/seb.morin/esk8) [<img src="https://i.imgur.com/fsrZ5Zs.jpg" height="225">](https://easyeda.com/seb.morin/esk8)
+#  Debug virtual LedStrip
+If you need to check what's happening with your ledstrip, please uncomment **DEBUG_LED_TOWIFI** in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)
+```C++
+#define DEBUG_LED_TOWIFI 
+```
+And launch [DebugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py)
 
 # BOM
 
