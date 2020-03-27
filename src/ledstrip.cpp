@@ -39,9 +39,6 @@ void FireFX::specialInit(int nLeds)
 
 void FireFX::update(ulong time, ulong dt)
 {
-  // mSpeed = 10;
-  // mDimRatio = 10.;
-
   // upstream and move through z as well for changing patterns
   uint32_t Y = 15 * time * mSpeed;
   uint32_t Z = 3 * time * mSpeed;
@@ -52,35 +49,21 @@ void FireFX::update(ulong time, ulong dt)
   // seed the fire.
   mHeat[mNLEDS-1] = NOISE(0);
 
-  // move upstream
+  // move upstream & dim
+  ushort ratio = 256 / pow(mDimRatio, dt/14.); 
+	
   for (uint8_t y = 0; y < mNLEDS - 1; y++)
   {
-    ushort noise = NOISE(y+1)>>8;
-
-    // mHeat[y] = (mHeat[y] * noise + mHeat[y+1] * (255-noise))>>8;
     mHeat[y] = (mHeat[y] * 128 + mHeat[y+1] * (255-128))>>8;
 
-    uint8_t dim = 255 - (noise / mDimRatio);
+    uint8_t dim = 255 - (( (NOISE(y+1)>>8) * ratio )>>8);
     mHeat[y] = (mHeat[y] * dim)>>8; 
-
-    // long sub = mHeat[y] - (3<<8);
-    // mHeat[y] =  sub < 0 ? 0 : sub;
-
-    // ulong add = mHeat[y+1] + (1<<8);
-    // mHeat[y+1] =  add > 65535? 65535 : add;
-
-    // Serial << (mHeat[y]>>8) << "-" << transfer << " ";
   }
-  // Serial << endl;
-	// // float ratio = pow(mDimRatio, dt/14.); // mDimRatio (too low => it doesn´t go up far enough --- too high => the fire goes up too high.
-	// float ratio = 10.5; // mDimRatio (too low => it doesn´t go up far enough --- too high => the fire goes up too high.
-  // // Serial << "pow " << ratio << " dt " << dt << endl;
-  
+ 
   // map the colors based on the heatmap.
   for (uint8_t y = 0; y < mNLEDS; y++)
   {
     byte colorindex = scale8( mHeat[y]>>8, 240); // scale down to 0-240 for best results with color palettes.
-    // byte colorindex = scale8( mNoise[y], 240); // scale down to 0-240 for best results with color palettes.
     byte i = mReverse ?  y : mNLEDS - 1 - y;
     mLeds[i] = ColorFromPalette(mPal, colorindex);
   }
