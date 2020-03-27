@@ -1,7 +1,7 @@
 
 #define USE_BT // see p latformio & use "board_build.partitions = huge_app.csv"
 #define USE_OTA 
-//#define USE_TELNET //needs USE_OTA to work
+// #define USE_TELNET //needs USE_OTA to work
 // #define USE_LIGHTPROBE
 
 // #define DEBUG_LED_INFO
