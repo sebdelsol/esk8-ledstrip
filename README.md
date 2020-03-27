@@ -18,12 +18,14 @@ upload_protocol = espota
 upload_port = "esk8.local"
 ```
 
-#  Debug virtual LedStrip
+#  Debug LedStrip
 If you need to check what's happening with your ledstrip, please uncomment **DEBUG_LED_TOWIFI** in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)
 ```C++
 #define DEBUG_LED_TOWIFI 
 ```
 And launch [DebugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py)
+
+<img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="300">
 
 # BOM
 
