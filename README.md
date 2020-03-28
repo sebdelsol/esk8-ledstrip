@@ -11,7 +11,7 @@
 If you need OTA update : 
 * in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment ```#define USE_OTA```
 * in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini) uncomment ```upload_protocol = espota``` & ```upload_port = "esk8.local"```
-#  Debug LED Strips
+#  Debug LED strips
 If you need to check what's happening with your LED strips : 
 * in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment ```#define DEBUG_LED_TOWIFI``` 
 * launch [DebugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py) (you'll need to download [PyGame](https://www.pygame.org)).
