@@ -7,16 +7,17 @@
 
 [<img src="https://image.easyeda.com/histories/aaf838e4a54c468f9502dc529522ac38.png" height="225">](https://easyeda.com/seb.morin/esk8) [<img src="https://i.imgur.com/bn5Pk2N.jpg" height="225">](https://easyeda.com/seb.morin/esk8) [<img src="https://i.imgur.com/fsrZ5Zs.jpg" height="225">](https://easyeda.com/seb.morin/esk8)
 
-# OTA update
-If you want OTA update : 
-* in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment ```#define USE_OTA```
-* in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini) uncomment ```upload_protocol = espota``` & ```upload_port = "esk8.local"```
 # LED strips debug
 If you want to check what's happening with your LED strips : 
 * in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment ```#define DEBUG_LED_TOWIFI``` 
 * launch [DebugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py) (please install [PyGame](https://www.pygame.org) & [SimpleWebsocketServer](https://pypi.org/project/simple-websocket-server)).
 
 <img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="300">
+
+# OTA update
+If you want OTA update : 
+* in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment ```#define USE_OTA```
+* in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini) uncomment ```upload_protocol = espota``` & ```upload_port = "esk8.local"```
 
 # BOM
 
