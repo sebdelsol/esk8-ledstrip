@@ -10,11 +10,7 @@
 # OTA
 If you need OTA update : 
 * in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment ```#define USE_OTA```
-* in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini) uncomment
-```Python 
-upload_protocol = espota
-upload_port = "esk8.local"
-```
+* in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini) uncomment ```upload_protocol = espota``` & ```upload_port = "esk8.local"```
 #  Debug LED Strips
 If you need to check what's shown on your LED strips : 
 * in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment ```#define DEBUG_LED_TOWIFI``` 
