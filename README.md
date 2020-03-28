@@ -19,10 +19,10 @@ If you want OTA update :
 * in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment ```#define USE_OTA```
 * in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini) uncomment ```upload_protocol = espota``` & ```upload_port = "esk8.local"```
 
-# TELNET
+# Telnet
 If you want a TELNET log when using OTA : 
 * in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment ```#define USE_TELNET```
-* launch a cmd & type "telnet", then "open esk8.local"
+* launch a cmd & type ```telnet```, then ```open esk8.local```.
 # BOM
 
 Qty | Components | *20€*
