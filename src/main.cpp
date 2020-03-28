@@ -152,7 +152,7 @@ void setup()
   Register5FX(Leds,   Fire,       FireTwk,    Aqua,   AquaTwk,    Plasma);
   Register3FX(LedsR,  TwinkleR,   CylonR,     RunR);
   Register3FX(LedsF,  TwinkleF,   CylonF,     RunF);
-  AllLeds.forceClear();
+  AllLeds.clearAndShow();
   
   MyWifi.init(Serial);
   #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA)

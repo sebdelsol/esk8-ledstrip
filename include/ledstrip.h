@@ -152,7 +152,7 @@ public:
   void setBrightness(const byte scale) { FastLED.setBrightness(scale); };
   byte getBrightness() { return FastLED.getBrightness(); };
   void show() { FastLED.show(); };
-  void forceClear();
+  void clearAndShow();
 
   bool registerStrip(BaseLedStrip &strip);
   void getInfo();

@@ -220,7 +220,7 @@ bool AllLedStrips::registerStrip(BaseLedStrip &strip)
   return ok;
 }
 
-void AllLedStrips::forceClear() 
+void AllLedStrips::clearAndShow() 
 { 
   FastLED.clear(); 
   for(byte i=0; i<5; i++) show();
