@@ -16,7 +16,7 @@ upload_protocol = espota
 upload_port = "esk8.local"
 ```
 #  Debug LED Strips
-If you want to check your LED strips : 
+If you need to check what's shown on your LED strips : 
 * in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment ```#define DEBUG_LED_TOWIFI``` 
 * launch [DebugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py)
 * [PyGame](https://www.pygame.org) is needed.
