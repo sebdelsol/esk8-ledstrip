@@ -14,7 +14,7 @@ If you need OTA update :
 #  Debug LED Strips
 If you need to check what's shown on your LED strips : 
 * in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment ```#define DEBUG_LED_TOWIFI``` 
-* launch [DebugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py) ([PyGame](https://www.pygame.org) is needed).
+* launch [DebugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py) (you'll need to download [PyGame](https://www.pygame.org)).
 
 <img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="300">
 
