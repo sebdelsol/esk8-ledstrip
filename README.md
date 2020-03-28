@@ -9,8 +9,7 @@
 
 # OTA
 If you need OTA update, in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment ```#define USE_OTA ```
-
-& in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini), uncomment
+& in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini) uncomment
 ```Python 
 upload_protocol = espota
 upload_port = "esk8.local"
