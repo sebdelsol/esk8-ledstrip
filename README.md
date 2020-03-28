@@ -35,4 +35,3 @@ Qty | Components | *20€*
 1|220Ω resistor | *1c*
 1|blue LED | *1c*
 1|12x12 switch | *1c*
- ```
