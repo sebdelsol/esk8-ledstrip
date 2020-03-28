@@ -22,7 +22,7 @@ If you want OTA update :
 # Telnet
 If you want Telnet logs when using OTA : 
 * in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment ```#define USE_TELNET```
-* launch a cmd & type ```telnet```, then ```open esk8.local```.
+* launch a cmd line & type ```telnet```, then ```open esk8.local```.
 # BOM
 
 Qty | Components | *20€*
