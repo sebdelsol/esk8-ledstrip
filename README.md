@@ -14,7 +14,7 @@ If you need OTA update :
 #  Debug LED strips
 If you need to check what's happening with your LED strips : 
 * in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment ```#define DEBUG_LED_TOWIFI``` 
-* launch [DebugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py) (you'll need to get [PyGame](https://www.pygame.org) & [simpleWebsocketServer](https://pypi.org/project/simple-websocket-server)).
+* launch [DebugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py) (you'll need to get [PyGame](https://www.pygame.org) & [SimpleWebsocketServer](https://pypi.org/project/simple-websocket-server)).
 
 <img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="300">
 
