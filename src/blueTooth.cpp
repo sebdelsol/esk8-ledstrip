@@ -7,14 +7,18 @@ BluetoothSerial BTSerial;
 BTcmd BTcmd(BTSerial);
 
 bool Connected = false;
+Stream* DbgSerialForCB;
 
-void BTcallback(esp_spp_cb_event_t event, esp_spp_cb_param_t *param){
-  if(event == ESP_SPP_SRV_OPEN_EVT){
-    Serial << "Client Connected" << endl;
+void BTcallback(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
+{
+  if(event == ESP_SPP_SRV_OPEN_EVT)
+  {
+    *DbgSerialForCB << "Client Connected" << endl;
     Connected = true;
   }
-  else if(event == ESP_SPP_CLOSE_EVT){
-    Serial << "Client DisConnected" << endl;
+  else if(event == ESP_SPP_CLOSE_EVT)
+  {
+    *DbgSerialForCB << "Client DisConnected" << endl;
     Connected = false;
   }
 }
@@ -28,37 +32,46 @@ BlueTooth::BlueTooth()
 
 static __NOINIT_ATTR bool WasOn; // HACK
 
-void BlueTooth::init(bool on)
+void BlueTooth::init(Stream &serial)
 {
-  if (rtc_get_reset_reason(0) == 12) on = WasOn; // HACK, SW reset is proly crash
-  // Serial << "reset " << rtc_get_reset_reason(0) << endl;
+  mDbgSerial = &serial;
+  DbgSerialForCB = &serial;
 
-  Serial << "Init BT" << endl;
-  BTSerial.register_callback(BTcallback);
+  *mDbgSerial << "Init BT" << endl;
   pinMode(LIGHT_PIN, OUTPUT);
-  start(on);
-
+  BTSerial.register_callback(BTcallback);
   mBTcmd->initSPIFFS();  
+
+  if (rtc_get_reset_reason(0) == 12 && WasOn) // HACK, SW reset is proly crash, so auto restart BT if it was on
+  {
+    *mDbgSerial << "Reset detected, relaunch BT " << rtc_get_reset_reason(0) << endl;
+    start(true);
+  }
 }
 
 // Power management
 void BlueTooth::start(const bool on)
 {
-  WasOn = on; //HACK
-  Serial << (on ? "Start" : "Stop") << " BT" << endl;
-  if (on){
-    mON = BTSerial.begin(BT_TERMINAL_NAME);
-  }
-  else{
-    mON = false;
-    BTSerial.end();
-  }
-  Serial << (mON ? "Started" : "Stopped") << " BT" << endl;
-  digitalWrite(LIGHT_PIN, mON ? HIGH : LOW);
-  Connected = false;
+  if (mON != on)
+  {
+    *mDbgSerial << (on ? "Start" : "Stop") << " BT" << endl;
+    Connected = false;
+  
+    if (on)
+    {
+      mON = BTSerial.begin(BT_TERMINAL_NAME);
+      if (mON) mStartTime = millis();
+    }
+    else 
+    {
+      mON = false;
+      BTSerial.end();
+    }
 
-  if (mON)
-    mStartTime = millis();
+    WasOn = mON; //HACK
+    *mDbgSerial << (mON ? "Started" : "Stopped") << " BT" << endl;
+    digitalWrite(LIGHT_PIN, mON ? HIGH : LOW);
+  }
 }
 
 void BlueTooth::toggle()
@@ -68,7 +81,8 @@ void BlueTooth::toggle()
 
 bool BlueTooth::update()
 {
-  if (mON) {
+  if (mON)
+  {
     if (Connected) 
       mBTcmd->readBTStream();
     else if(millis() - mStartTime > AUTO_STOP_IF_NOTCONNECTED)

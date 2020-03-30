@@ -15,8 +15,7 @@ class BlueTooth
   bool mON = false;
   BTcmd *mBTcmd;
   BluetoothSerial *mBTserial;
-
-  void start(const bool on);
+  Stream* mDbgSerial;
 
 public:
   BluetoothSerial *getBtSerial() { return mBTserial; };
@@ -26,6 +25,7 @@ public:
   void load(bool isdefault) { mBTcmd->load(isdefault); };
 
   BlueTooth();
-  void init(bool on=false);
+  void init(Stream &serial);
+  void start(const bool on=true);
   void toggle();
 };

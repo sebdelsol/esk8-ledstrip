@@ -172,7 +172,7 @@ void setup()
     #define BT_REGISTER_3OBJ(o1, o2, o3) BT_REGISTER_OBJ(o1); BT_REGISTER_OBJ(o2); BT_REGISTER_OBJ(o3);
     #define BT_REGISTER_5OBJ(o1, o2, o3, o4, o5) BT_REGISTER_3OBJ(o1, o2, o3); BT_REGISTER_OBJ(o4); BT_REGISTER_OBJ(o5);
     
-    BT.init(true);
+    BT.init(Serial);
     BT_REGISTER_5OBJ(Fire,      FireTwk,    Aqua,   AquaTwk,    Plasma);
     BT_REGISTER_3OBJ(TwinkleR,  CylonR,     RunR);
     BT_REGISTER_3OBJ(TwinkleF,  CylonF,     RunF);
@@ -180,6 +180,7 @@ void setup()
 
     BT.save(true); // save default
     BT.load(false); // load not default
+    BT.start();
   #else    
     // switch off blue led
     pinMode(LIGHT_PIN, OUTPUT);
