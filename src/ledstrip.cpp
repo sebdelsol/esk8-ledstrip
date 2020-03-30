@@ -230,7 +230,7 @@ void AllLedStrips::update()
 {
   ulong t = millis();
   ulong dt = mLastT ? t - mLastT : 1; // to prevent possible /0
-  mLastT = t;
+  mLastT += dt;
 
   for (byte i=0; i < mNStrips; i++)
     mStrips[i]->update(t, dt);

@@ -66,7 +66,7 @@ bool myMPU6050::getXYZ(float **YPR, int &wz, int &x, int &y, int &z, int &oneG)
   {
     ulong t = micros();
     long dt = t - mT;
-    mT = t;
+    mT += dt;
 
     uint16_t smooth = - int(pow(1. - ACCEL_AVG, dt * ACCEL_BASE_FREQ * .000001) * 65536.); // 1 - (1-accel_avg) ^ (dt * 60 / 1000 000) using fract16
     mX = lerp15by16(mX, mAccReal.x, smooth);
