@@ -144,7 +144,6 @@ void BTcmd::save(bool isdefault)
       char* objName = mOBJ[i].name;
       OBJVar* obj = mOBJ[i].obj;
       byte nbVar = obj->getNbVar();
-
       for (byte j = 0; j < nbVar; j++)
       {
         char* varName = obj->getVarName(j);
