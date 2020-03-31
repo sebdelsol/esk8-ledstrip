@@ -38,7 +38,6 @@ void BlueTooth::init(Stream &serial)
   DbgSerialForCB = &serial;
 
   *mDbgSerial << "Init BT" << endl;
-  pinMode(LIGHT_PIN, OUTPUT);
   BTSerial.register_callback(BTcallback);
   mBTcmd->initSPIFFS();  
 

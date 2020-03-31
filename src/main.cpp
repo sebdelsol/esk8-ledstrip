@@ -141,11 +141,11 @@ void setup()
 {
   Serial.begin(SERIAL_BAUD);
   Serial << endl << "-------- START --------" << endl;
-
   rtc_clk_cpu_freq_set(RTC_CPU_FREQ_240M);
   Serial << "Esp32 core " << esp_get_idf_version() << endl;
   Serial << "CPU freq " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
 
+  // LEDS -----------------------------
   #define Register3FX(l, f1, f2, f3)          AllLeds.registerStrip(l);   l.registerFX(f1); l.registerFX(f2); l.registerFX(f3);
   #define Register5FX(l, f1, f2, f3, f4, f5)  Register3FX(l, f1, f2, f3); l.registerFX(f4); l.registerFX(f5);
   
@@ -154,6 +154,7 @@ void setup()
   Register3FX(LedsF,  TwinkleF,   CylonF,     RunF);
   AllLeds.clearAndShow();
   
+  // Wifi -----------------------------
   MyWifi.init(Serial);
   #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA)
     MyWifi.on();
@@ -167,6 +168,8 @@ void setup()
     MyWifi.off();
   #endif
 
+  // BlueTooth -----------------------------
+  pinMode(LIGHT_PIN, OUTPUT); //blue led
   #ifdef USE_BT
     #define BT_REGISTER_OBJ(o) BT.registerObj(o, #o);
     #define BT_REGISTER_3OBJ(o1, o2, o3) BT_REGISTER_OBJ(o1); BT_REGISTER_OBJ(o2); BT_REGISTER_OBJ(o3);
@@ -182,12 +185,11 @@ void setup()
     BT.load(false); // load not default
     BT.start();
   #else    
-    // switch off blue led
-    pinMode(LIGHT_PIN, OUTPUT);
-    digitalWrite(LIGHT_PIN, LOW);
+    digitalWrite(LIGHT_PIN, LOW); // switch off blue led
     btStop(); // turnoff bt 
   #endif
 
+  // Button & accel -----------------------------
   Button.begin();
   Accel.begin(Serial, &handleOta);
 }
