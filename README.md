@@ -25,9 +25,9 @@ If you want **Telnet** logs when using OTA :
 
 # Android App 
 If you want to tweak values in real time :
-* login on [thunkable classic](http://app.thunkable.com/login/)
-* import [esk8.aia](https://github.com/sebdelsol/Esk8/blob/master/Esk8.aia)
-* use **REGISTER_VAR** & **REGISTER_CMD** macro to add new vars and cmds
+* login on [thunkable classic](http://app.thunkable.com/login/) & import [esk8.aia](https://github.com/sebdelsol/Esk8/blob/master/Esk8.aia)
+* pair your android's phone with **Esk8** *within 5s after power on*
+* use **REGISTER_VAR** & **REGISTER_CMD** macros to automatically create app's widgets
 
 # BOM
 
