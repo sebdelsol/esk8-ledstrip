@@ -78,9 +78,9 @@ AquaFX::AquaFX(const bool reverse, const byte speed, const float dimRatio) : Fir
 // ----------------------------------------------------
 PlasmaFX::PlasmaFX(const byte wavelenght, const byte period1, const byte period2) : mK(wavelenght), mP1(period1), mP2(period2) 
 {
-  REGISTER_VAR_SIMPLE(PlasmaFX,  "p1",    self->mP1, 1, 255)
-  REGISTER_VAR_SIMPLE(PlasmaFX,  "p2",    self->mP2, 1, 255)
-  REGISTER_VAR_SIMPLE(PlasmaFX,  "freq",  self->mK, 1, 255)
+  REGISTER_VAR_SIMPLE(PlasmaFX,  "p1",    self->mP1, 1, 20)
+  REGISTER_VAR_SIMPLE(PlasmaFX,  "p2",    self->mP2, 1, 20)
+  REGISTER_VAR_SIMPLE(PlasmaFX,  "freq",  self->mK, 1, 20)
 }
 
 void PlasmaFX::update(ulong time, ulong dt)
@@ -111,7 +111,7 @@ CylonFX::CylonFX(const CRGB color, const int eyeSize, const int speed) : mEyeSiz
 {
   REGISTER_VAR3(CylonFX, "color",   { self->mColor = CRGB(arg0, arg1, arg2); },        self->mColor.r,   self->mColor.g,   self->mColor.b, 0, 255)
   REGISTER_VAR(CylonFX,  "eyeSize", { self->setEyeSize(arg0*(self->mNLEDS-1)/255); },  self->mEyeSize*255/(self->mNLEDS-1), 1, 255)
-  REGISTER_VAR(CylonFX,  "speed",   { self->mSpeed = arg0<<3; },                       self->mSpeed>>3, 0, 255)
+  REGISTER_VAR(CylonFX,  "speed",   { self->mSpeed = arg0<<3; },                       self->mSpeed>>3, 0, 10)
 }
 
 int CylonFX::getPos(ulong time) 
@@ -151,7 +151,8 @@ void DblCylonFX::update(ulong time, ulong dt)
 // ----------------------------------------------------
 RunningFX::RunningFX(const CRGB color, const int width, const int speed) : mWidth(width), mSpeed(speed), mColor(color) 
 {
-  REGISTER_VAR_SIMPLE(RunningFX,  "speed", self->mSpeed, 0, 255)
+  REGISTER_VAR_SIMPLE(RunningFX,  "speed", self->mSpeed, -10, 10)
+  REGISTER_VAR_SIMPLE(RunningFX,  "width", self->mWidth, 1, 30)
 }
 
 void RunningFX::update(ulong time, ulong dt)
@@ -184,7 +185,7 @@ TwinkleFX::TwinkleFX(const CRGB color, const byte hueDiv, const byte div) : mHue
 void TwinkleFX::registerAllCmd()
 {
   REGISTER_VAR_SIMPLE(TwinkleFX,  "hue", self->mHSV.h, 0, 255)
-  REGISTER_VAR_SIMPLE(TwinkleFX,  "div", self->mDiv, 1, 255)
+  REGISTER_VAR_SIMPLE(TwinkleFX,  "div", self->mDiv, 1, 20)
 }
 
 void TwinkleFX::update(ulong time, ulong dt)

@@ -110,11 +110,16 @@ public:
     {
       #define REGISTER_CFG_VAR(var, min, max) REGISTER_VAR_SIMPLE(CFG, #var, self->var, min, max)
       
-      REGISTER_CFG_VAR(bright, 1, 255);
-      
+      REGISTER_CMD(CFG, "save",     {BT.save(false);}) // save not default
+      REGISTER_CMD(CFG, "load",     {BT.load(false);}) // load not default
+      REGISTER_CMD(CFG, "default",  {BT.load(true);})  // load default
+      REGISTER_CMD(CFG, "getAll",   {BT.getAll();}) // answer with all vars min max and values
+
       REGISTER_CFG_VAR(ledR, 0, 1);
       REGISTER_CFG_VAR(ledF, 0, 1);
       REGISTER_CFG_VAR(led, 0, 1);
+
+      REGISTER_CFG_VAR(bright, 1, 255);
 
       REGISTER_CFG_VAR(runSpeed, 0, 10);
       REGISTER_CFG_VAR(neutralWZ, 0, 32768);
@@ -126,11 +131,6 @@ public:
 
       REGISTER_CFG_VAR(minEye, 1, NBLEDS_TIPS>>1);
       REGISTER_CFG_VAR(maxEye, 1, NBLEDS_TIPS>>1);
-
-      REGISTER_CMD(CFG, "save",     {BT.save(false);}) // save not default
-      REGISTER_CMD(CFG, "load",     {BT.load(false);}) // load not default
-      REGISTER_CMD(CFG, "default",  {BT.load(true);})  // load default
-      REGISTER_CMD(CFG, "getAll",   {BT.getAll();}) // answer with all vars min max and values
     };
   #endif
 };
@@ -177,10 +177,10 @@ void setup()
     #define BT_REGISTER_5OBJ(o1, o2, o3, o4, o5) BT_REGISTER_3OBJ(o1, o2, o3); BT_REGISTER_OBJ(o4); BT_REGISTER_OBJ(o5);
     
     BT.init(Serial);
-    BT_REGISTER_5OBJ(Fire,      FireTwk,    Aqua,   AquaTwk,    Plasma);
+    BT_REGISTER_OBJ(Cfg);
     BT_REGISTER_3OBJ(TwinkleR,  CylonR,     RunR);
     BT_REGISTER_3OBJ(TwinkleF,  CylonF,     RunF);
-    BT_REGISTER_OBJ(Cfg);
+    BT_REGISTER_5OBJ(Fire,      FireTwk,    Aqua,   AquaTwk,    Plasma);
 
     BT.save(true); // save default
     BT.load(false); // load not default
