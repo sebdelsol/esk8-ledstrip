@@ -185,9 +185,6 @@ void BTcmd::getAll()
       char* varName = obj->getVarName(j);
       snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mLimKeyword, objName, varName); // emulate a lim cmd
       handleCmd(mBTStream, mFilebuf); // answer on BT 
-
-      snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mGetKeyword, objName, varName); // emulate a get cmd
-      handleCmd(mBTStream, mFilebuf); // answer on BT 
     }
   } 
 }
