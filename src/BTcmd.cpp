@@ -88,7 +88,10 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf)
             else if (strcmp(cmd, mLimKeyword)==0)
             {
               obj->getMinMax(var, &min, &max);
-              *stream << mLimKeyword << " " << objName << " " << varName << " " << min << " " << max << endl;
+              *stream << mLimKeyword << " " << objName << " " << varName << " " << min << " " << max;
+              nbArg = obj->get(var, args); 
+              for (byte i=0; i < nbArg; i++) *stream << " " << args[i];
+              *stream << endl;
             }
             else if (strcmp(cmd, mGetKeyword)==0)
             {
@@ -168,4 +171,23 @@ void BTcmd::load(bool isdefault)
     Serial << "loaded from " << f.name() << endl;
     f.close();
   }
+}
+
+void BTcmd::getAll()
+{
+  for (byte i = 0; i < mNOBJ; i++)
+  {
+    char* objName = mOBJ[i].name;
+    OBJVar* obj = mOBJ[i].obj;
+    byte nbVar = obj->getNbVar();
+    for (byte j = 0; j < nbVar; j++)
+    {
+      char* varName = obj->getVarName(j);
+      snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mLimKeyword, objName, varName); // emulate a lim cmd
+      handleCmd(mBTStream, mFilebuf); // answer on BT 
+
+      snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mGetKeyword, objName, varName); // emulate a get cmd
+      handleCmd(mBTStream, mFilebuf); // answer on BT 
+    }
+  } 
 }

@@ -89,6 +89,6 @@ public:
   void initSPIFFS();
   void save(bool isdefault);
   void load(bool isdefault);
-
+  void getAll();
   void readBTStream() { readStream(mBTStream, mBTbuf); };
 };
