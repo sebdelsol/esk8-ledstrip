@@ -22,6 +22,13 @@ If you want **OTA** update :
 If you want **Telnet** logs when using OTA : 
 * in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment `#define USE_TELNET`
 * launch a cmd line & type `telnet`, then `open esk8.local`
+
+# Android App 
+If you want to tweak values in real time :
+* login on [thunkable classic](http://app.thunkable.com/login/)
+* import [esk8.aia](https://github.com/sebdelsol/Esk8/blob/master/Esk8.aia)
+* use **REGISTER_VAR** & **REGISTER_CMD** macro to add new vars and cmds
+
 # BOM
 
 Qty | Components | *20€*
