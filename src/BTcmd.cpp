@@ -173,7 +173,7 @@ void BTcmd::load(bool isdefault)
   }
 }
 
-void BTcmd::getAll()
+void BTcmd::sendValuesOverBT()
 {
   for (byte i = 0; i < mNOBJ; i++)
   {
@@ -182,11 +182,27 @@ void BTcmd::getAll()
     byte nbVar = obj->getNbVar();
     for (byte j = 0; j < nbVar; j++)
     {
-      if(obj->getVarShown(i))
+      char* varName = obj->getVarName(j);
+      snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mGetKeyword, objName, varName); // emulate a Get cmd
+      handleCmd(mBTStream, mFilebuf); // answer with a Set cmd on BT 
+    }
+  } 
+}
+
+void BTcmd::sendLimsOverBT()
+{
+  for (byte i = 0; i < mNOBJ; i++)
+  {
+    char* objName = mOBJ[i].name;
+    OBJVar* obj = mOBJ[i].obj;
+    byte nbVar = obj->getNbVar();
+    for (byte j = 0; j < nbVar; j++)
+    {
+      if(obj->getVarShown(j))
       {
         char* varName = obj->getVarName(j);
-        snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mLimKeyword, objName, varName); // emulate a lim cmd
-        handleCmd(mBTStream, mFilebuf); // answer on BT 
+        snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mLimKeyword, objName, varName); // emulate a Lim cmd
+        handleCmd(mBTStream, mFilebuf); // answer with a Lim cmd on BT
       }
     }
   } 
