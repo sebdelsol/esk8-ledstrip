@@ -23,7 +23,8 @@ public:
   bool registerObj(const OBJVar& obj, char* name) { return mBTcmd->registerObj(obj, name); };
   void save(bool isdefault) { mBTcmd->save(isdefault); };
   void load(bool isdefault) { mBTcmd->load(isdefault); };
-  void getAll() { mBTcmd->getAll(); };
+  void sendLimsOverBT() { mBTcmd->sendLimsOverBT(); };
+  void sendValuesOverBT() { mBTcmd->sendValuesOverBT(); };
 
   BlueTooth();
   void init(Stream &serial);
