@@ -182,9 +182,12 @@ void BTcmd::getAll()
     byte nbVar = obj->getNbVar();
     for (byte j = 0; j < nbVar; j++)
     {
-      char* varName = obj->getVarName(j);
-      snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mLimKeyword, objName, varName); // emulate a lim cmd
-      handleCmd(mBTStream, mFilebuf); // answer on BT 
+      if(obj->getVarShown(i))
+      {
+        char* varName = obj->getVarName(j);
+        snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mLimKeyword, objName, varName); // emulate a lim cmd
+        handleCmd(mBTStream, mFilebuf); // answer on BT 
+      }
     }
   } 
 }
