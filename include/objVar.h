@@ -15,6 +15,7 @@ struct MyVar {
   getVarFunc  get;
   int         min;
   int         max;
+  bool        show;
 };
 
 //---------------------------------
@@ -25,7 +26,7 @@ class OBJVar
   byte mNVAR = 0;
 
 public:  
-  bool registerVar(void *obj, const char *name, setVarFunc set, getVarFunc get, int min=0, int max=0);
+  bool registerVar(void *obj, const char *name, setVarFunc set, getVarFunc get, int min=0, int max=0, bool show=true);
   MyVar* getVarFromName(const char* name);
 
   void set(MyVar* cmd, int* toSet, byte n);
@@ -34,10 +35,11 @@ public:
 
   byte getNbVar() { return mNVAR;};
   char* getVarName(byte i) { return mVar[i].name;};
+  bool isVarShown(byte i) { return mVar[i].show;};
 };
 
 //---------------------------------
-#define REGISTER_CMD(class, name, doCode) \
+#define _REGISTER_CMD(class, name, doCode, show) \
     registerVar(this, name, \
       [](void* obj, int* toSet, byte n) \
       { \
@@ -49,8 +51,12 @@ public:
       }, \
       [](void* obj, int* toGet) -> byte { \
         return 0; \
-      } \
+      }, \
+      0, 0, show \
     );
+
+#define REGISTER_CMD(class, name, doCode) _REGISTER_CMD(class, name, doCode, true)
+#define REGISTER_CMD_NOSHOW(class, name, doCode) _REGISTER_CMD(class, name, doCode, false)
 
 #define REGISTER_VAR(class, name, setCode, toGet0, min, max) \
     registerVar(this, name, \
