@@ -1,6 +1,6 @@
 #include <objVar.h>
 
-bool OBJVar::registerVar(void *obj, const char *name, setVarFunc set, getVarFunc get, int min, int max)
+bool OBJVar::registerVar(void *obj, const char *name, setVarFunc set, getVarFunc get, int min, int max, bool show)
 {
   bool ok = mNVAR < MAX_VAR-1;
   if (ok)
@@ -10,6 +10,7 @@ bool OBJVar::registerVar(void *obj, const char *name, setVarFunc set, getVarFunc
     mVar[mNVAR].get = get;
     mVar[mNVAR].min = min;
     mVar[mNVAR].max = max;
+    mVar[mNVAR].show = show;
     
     char* str = (char *)malloc(strlen(name) + 1);
     strcpy(str, name);
