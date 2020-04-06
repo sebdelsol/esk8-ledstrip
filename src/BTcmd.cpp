@@ -198,7 +198,7 @@ void BTcmd::sendLimsOverBT()
     byte nbVar = obj->getNbVar();
     for (byte j = 0; j < nbVar; j++)
     {
-      if(obj->getVarShown(j))
+      if(obj->isVarShown(j))
       {
         char* varName = obj->getVarName(j);
         snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mLimKeyword, objName, varName); // emulate a Lim cmd
