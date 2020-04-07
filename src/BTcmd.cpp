@@ -89,7 +89,7 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change)
             {
               const char *a = buf.next();
               if (a!=NULL && isNumber(a))
-                args[nbArg] = constrain(atoi(a), min, max);
+                args[nbArg] = constrain(strtol(a, NULL, 10), min, max);
               else 
                 break;
             }
