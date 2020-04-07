@@ -16,6 +16,7 @@ struct MyVar {
   int         min;
   int         max;
   bool        show;
+  int         last[3]; // check BTCMD_MAXARGS
 };
 
 //---------------------------------
@@ -29,13 +30,14 @@ public:
   bool registerVar(void *obj, const char *name, setVarFunc set, getVarFunc get, int min=0, int max=0, bool show=true);
   MyVar* getVarFromName(const char* name);
 
-  void set(MyVar* cmd, int* toSet, byte n);
-  byte get(MyVar* cmd, int* toGet);
-  void getMinMax(MyVar* cmd, int* min, int* max);
+  void set(MyVar* var, int* toSet, byte n, bool change = false);
+  byte get(MyVar* var, int* toGet);
+  void getMinMax(MyVar* var, int* min, int* max);
 
   byte getNbVar() { return mNVAR;};
   char* getVarName(byte i) { return mVar[i].name;};
   bool isVarShown(byte i) { return mVar[i].show;};
+  bool hasVarChanged(byte i);
 };
 
 //---------------------------------

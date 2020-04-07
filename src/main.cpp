@@ -44,10 +44,11 @@ void handleOta()
 }
 
 // ----------------------------------------------------
-#define   LED_MAX_MA  800 // mA, please check OBJVar.bright to avoid reaching this value
-#define   LED_TICK    15  // ms
-#define   BT_TICK     15  // ms
-#define   SERIAL_BAUD 115200 
+#define   LED_MAX_MA    800 // mA, please check OBJVar.bright to avoid reaching this value
+#define   LED_TICK      15  // ms
+#define   BT_TICK       15  // ms
+#define   BT_TICK_SEND  100 // ms
+#define   SERIAL_BAUD   115200 // ms
 
 // ----------------------------------------------------
 myWifi        MyWifi;
@@ -110,10 +111,10 @@ public:
     {
       #define REGISTER_CFG_VAR(var, min, max) REGISTER_VAR_SIMPLE(CFG, #var, self->var, min, max)
       
-      REGISTER_CMD(CFG, "save",           {BT.save(false);})                        // save not default
-      REGISTER_CMD(CFG, "load",           {BT.load(false); BT.sendValuesOverBT();}) // load not default
-      REGISTER_CMD(CFG, "default",        {BT.load(true); BT.sendValuesOverBT();})  // load default
-      REGISTER_CMD_NOSHOW(CFG, "getAll",  {BT.sendLimsOverBT();})                   // answer with all vars min max and values
+      REGISTER_CMD(CFG, "save",           {BT.save(false);})      // save not default
+      REGISTER_CMD(CFG, "load",           {BT.load(false);})      // load not default
+      REGISTER_CMD(CFG, "default",        {BT.load(true);})       // load default
+      REGISTER_CMD_NOSHOW(CFG, "getAll",  {BT.sendLimsOverBT();}) // answer with all vars min max and values
 
       REGISTER_CFG_VAR(ledR, 0, 1);
       REGISTER_CFG_VAR(ledF, 0, 1);
@@ -183,7 +184,7 @@ void setup()
     BT_REGISTER_5OBJ(Fire,      FireTwk,    Aqua,   AquaTwk,    Plasma);
 
     BT.save(true); // save default
-    BT.load(false); // load not default
+    BT.load(false, false); // load not default, do not send change to BT
     BT.start();
   #else    
     digitalWrite(LIGHT_PIN, LOW); // switch off blue led
@@ -223,6 +224,12 @@ void loop()
         // }
       } 
     }
+
+    EVERY_N_MILLISECONDS(BT_TICK_SEND)
+    {
+      BT.sendUpdate();
+    }
+
   #endif
 
   EVERY_N_MILLISECONDS(LED_TICK)

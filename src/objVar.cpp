@@ -28,18 +28,37 @@ MyVar* OBJVar::getVarFromName(const char* name)
   return NULL;
 }
 
-void OBJVar::getMinMax(MyVar* cmd, int* min, int* max)
+void OBJVar::getMinMax(MyVar* var, int* min, int* max)
 {
-  *min = cmd->min;
-  *max = cmd->max;
+  *min = var->min;
+  *max = var->max;
 }
 
-void OBJVar::set(MyVar* cmd, int* toSet, byte n)
+void OBJVar::set(MyVar* var, int* toSet, byte n, bool change)
 {
-  (*cmd->set)(cmd->obj, toSet, n);
+  (*var->set)(var->obj, toSet, n);
+
+  if (!change) // handled as nothing as changed... so
+    get(var, var->last); //update value in var->last
 }
 
-byte OBJVar::get(MyVar* cmd, int* toGet)
+byte OBJVar::get(MyVar* var, int* toGet)
 {
-  return (*cmd->get)(cmd->obj, toGet);
+  return (*var->get)(var->obj, toGet);
+}
+
+bool OBJVar::hasVarChanged(byte i)
+{
+  MyVar *var = &mVar[i]; 
+
+  int cur[3]; // check BTCMD_MAXARGS
+  byte n = get(var, cur); //update value in cur
+
+  for (byte k=0; k < n; k++)
+    if (cur[k] != var->last[k])
+    {
+      get(var, var->last); //update value in var->last
+      return true;
+    } 
+  return false;
 }

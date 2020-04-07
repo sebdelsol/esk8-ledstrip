@@ -5,12 +5,19 @@ BTcmd::BTcmd(Stream &btStream) : mBTStream(&btStream)
   mBTbuf.clear();
 }  
 
+
+void BTcmd::init(Stream &dbgSerial)
+{
+  mDbgSerial = &dbgSerial;
+  initSPIFFS();
+}
+
 void BTcmd::initSPIFFS()
 {
-  Serial << "SPIFFS begin" << endl;
+  *mDbgSerial << "SPIFFS begin" << endl;
   spiffsOK = SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED);
   if (!spiffsOK)
-    Serial << "SPIFFS Mount Failed" << endl;
+    *mDbgSerial << "SPIFFS Mount Failed" << endl;
 }
 
 //--------------------------------------
@@ -47,7 +54,14 @@ bool BTcmd::isNumber(const char* txt)
   return true; 
 } 
 
-void BTcmd::handleCmd(Stream* stream, BUF& buf)
+void BTcmd::dbgCmd(const char *cmd, const char *objName, const char *varName, int nbArg, int *args)
+{
+  *mDbgSerial << cmd << " " << objName << " " << varName;
+  for (byte i=0; i < nbArg; i++) *mDbgSerial << " " << args[i];
+  *mDbgSerial << endl;
+}
+
+void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change)
 {
   const char *cmd = buf.first();
   if (cmd!=NULL)
@@ -83,7 +97,8 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf)
             // now handle the cmd
             if (strcmp(cmd, mSetKeyword)==0)
             {
-              obj->set(var, args, nbArg); //set the value from args
+              obj->set(var, args, nbArg, change); //set the value from args
+              // dbgCmd(mSetKeyword, objName, varName, nbArg, args);
             }
             else if (strcmp(cmd, mLimKeyword)==0)
             {
@@ -102,6 +117,7 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf)
                 *stream << mSetKeyword << " " << objName << " " << varName;
                 for (byte i=0; i < nbArg; i++) *stream << " " << args[i];
                 *stream << endl;
+                // dbgCmd(mGetKeyword, objName, varName, nbArg, args);
               }
             }
           }
@@ -111,18 +127,27 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf)
   }
 }
 
-void BTcmd::readStream(Stream* stream, BUF& buf)
+void BTcmd::readStream(Stream* stream, BUF& buf, bool change)
 {
   while (stream->available() > 0) 
   {
     char c = stream->read();
-    if (c == BTCMD_TERM)
+    if (c != BTCMD_ALIVE)
     {
-      handleCmd(stream, buf);
-      buf.clear();
+      if (c == BTCMD_TERM)
+      {
+        // if (stream==mBTStream)
+        //   *mDbgSerial << "CMD " << buf.getBuf() << endl;
+
+        handleCmd(stream, buf, change);
+        buf.clear();
+      }
+      else if (isprint(c))
+        buf.append(c);
+
+        // if (stream==mBTStream)
+        //   *mDbgSerial << buf.getBuf() << endl;
     }
-    else if (isprint(c))
-      buf.append(c);
   }
 }
 
@@ -155,25 +180,30 @@ void BTcmd::save(bool isdefault)
       }
     } 
 
-    Serial << "saved to " << f.name() << endl;
+    *mDbgSerial << "saved to " << f.name() << endl;
     f.close();
   }
+  else    
+    *mDbgSerial << "FAIL save" << endl;
 }
 
-void BTcmd::load(bool isdefault)
+void BTcmd::load(bool isdefault, bool change)
 {
   File f = getFile(isdefault, "r");
   if (f)
   {
     mFilebuf.clear(); // might not be cleared by readStream
-    readStream((Stream*)&f, mFilebuf); // should be a succession of set cmd
+    readStream((Stream*)&f, mFilebuf, change); // should be a succession of set cmd
 
-    Serial << "loaded from " << f.name() << endl;
+    *mDbgSerial << "loaded from " << f.name() << endl;
     f.close();
   }
+  else    
+    *mDbgSerial << "FAIL load" << endl;
+
 }
 
-void BTcmd::sendValuesOverBT()
+void BTcmd::sendUpdateOverBT()
 {
   for (byte i = 0; i < mNOBJ; i++)
   {
@@ -182,9 +212,13 @@ void BTcmd::sendValuesOverBT()
     byte nbVar = obj->getNbVar();
     for (byte j = 0; j < nbVar; j++)
     {
-      char* varName = obj->getVarName(j);
-      snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mGetKeyword, objName, varName); // emulate a Get cmd
-      handleCmd(mBTStream, mFilebuf); // answer with a Set cmd on BT 
+
+      if (obj->hasVarChanged(j))
+      {
+        char* varName = obj->getVarName(j);
+        snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mGetKeyword, objName, varName); // emulate a Get cmd
+        handleCmd(mBTStream, mFilebuf); // answer with a Set cmd on BT 
+      }
     }
   } 
 }

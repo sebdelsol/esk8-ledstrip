@@ -32,14 +32,14 @@ BlueTooth::BlueTooth()
 
 static __NOINIT_ATTR bool WasOn; // HACK
 
-void BlueTooth::init(Stream &serial)
+void BlueTooth::init(Stream &dbgSerial)
 {
-  mDbgSerial = &serial;
-  DbgSerialForCB = &serial;
+  mDbgSerial = &dbgSerial;
+  DbgSerialForCB = &dbgSerial;
 
   *mDbgSerial << "Init BT" << endl;
   BTSerial.register_callback(BTcallback);
-  mBTcmd->initSPIFFS();  
+  mBTcmd->init(dbgSerial);  
 
   if (rtc_get_reset_reason(0) == 12 && WasOn) // HACK, SW reset is proly crash, so auto restart BT if it was on
   {
@@ -82,10 +82,16 @@ bool BlueTooth::update()
 {
   if (mON)
   {
-    if (Connected) 
+    if (Connected)
       mBTcmd->readBTStream();
     else if(millis() - mStartTime > AUTO_STOP_IF_NOTCONNECTED)
       start(false);
   }
   return mON;
+}
+
+void BlueTooth::sendUpdate()
+{
+  if (mON && Connected)
+      mBTcmd->sendUpdateOverBT();
 }

@@ -10,6 +10,7 @@
 #define BTCMD_MAXOBJ  15
 
 #define BTCMD_TERM    '\n' 
+#define BTCMD_ALIVE    '~' 
 #define BTCMD_DELIM   " " // strtok_r needs a null-terminated string
 #define BTCMD_SET     "set"
 #define BTCMD_GET     "get"
@@ -62,6 +63,7 @@ class BTcmd
   byte mNOBJ = 0;
 
   Stream* mBTStream;
+  Stream* mDbgSerial;
   
   bool spiffsOK = false;
   const char* cfg_fname = FNAME_CURRENT;
@@ -74,11 +76,13 @@ class BTcmd
   const char* mGetKeyword = BTCMD_GET;
   const char* mLimKeyword = BTCMD_LIM;
   
+  void initSPIFFS();
   bool isNumber(const char* txt);
-  void handleCmd(Stream* stream, BUF& buf);
-  void readStream(Stream* stream, BUF& buf);
+  void handleCmd(Stream* stream, BUF& buf, bool change=true);
+  void readStream(Stream* stream, BUF& buf, bool change=true);
   File getFile(bool isdefault, const char *mode);
-  
+  void dbgCmd(const char *cmd, const char *objName, const char *varName, int nbArg, int *args);
+
 public:
 
   BTcmd(Stream &btStream);
@@ -86,10 +90,10 @@ public:
   bool registerObj(const OBJVar& obj, const char* name);
   OBJVar* getObjFromName(const char* name); 
 
-  void initSPIFFS();
+  void init(Stream &dbgSerial);
   void save(bool isdefault);
-  void load(bool isdefault);
+  void load(bool isdefault, bool change);
   void sendLimsOverBT();
-  void sendValuesOverBT();
-  void readBTStream() { readStream(mBTStream, mBTbuf); };
+  void sendUpdateOverBT();
+  void readBTStream() { readStream(mBTStream, mBTbuf, false); };
 };
