@@ -100,10 +100,10 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change)
               obj->set(var, args, nbArg, change); //set the value from args
               // dbgCmd(mSetKeyword, objName, varName, nbArg, args);
             }
-            else if (strcmp(cmd, mLimKeyword)==0)
+            else if (strcmp(cmd, mInitKeyword)==0)
             {
               obj->getMinMax(var, &min, &max);
-              *stream << mLimKeyword << " " << objName << " " << varName << " " << min << " " << max;
+              *stream << mInitKeyword << " " << objName << " " << varName << " " << min << " " << max;
               nbArg = obj->get(var, args); 
               for (byte i=0; i < nbArg; i++) *stream << " " << args[i];
               *stream << endl;
@@ -223,7 +223,7 @@ void BTcmd::sendUpdateOverBT()
   } 
 }
 
-void BTcmd::sendLimsOverBT()
+void BTcmd::sendInitsOverBT()
 {
   for (byte i = 0; i < mNOBJ; i++)
   {
@@ -235,8 +235,8 @@ void BTcmd::sendLimsOverBT()
       if(obj->isVarShown(j))
       {
         char* varName = obj->getVarName(j);
-        snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mLimKeyword, objName, varName); // emulate a Lim cmd
-        handleCmd(mBTStream, mFilebuf); // answer with a Lim cmd on BT
+        snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mInitKeyword, objName, varName); // emulate a Init cmd
+        handleCmd(mBTStream, mFilebuf); // answer with a Init cmd on BT
       }
     }
   } 
