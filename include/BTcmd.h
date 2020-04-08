@@ -93,7 +93,7 @@ public:
   void init(Stream &dbgSerial);
   void save(bool isdefault);
   void load(bool isdefault, bool change);
-  void sendLimsOverBT();
+  void sendInitsOverBT();
   void sendUpdateOverBT();
   void readBTStream() { readStream(mBTStream, mBTbuf, false); };
 };
