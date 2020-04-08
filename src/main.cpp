@@ -114,7 +114,7 @@ public:
       REGISTER_CMD(CFG, "save",           {BT.save(false);})      // save not default
       REGISTER_CMD(CFG, "load",           {BT.load(false);})      // load not default
       REGISTER_CMD(CFG, "default",        {BT.load(true);})       // load default
-      REGISTER_CMD_NOSHOW(CFG, "getAll",  {BT.sendLimsOverBT();}) // answer with all vars min max and values
+      REGISTER_CMD_NOSHOW(CFG, "getAll",  {BT.sendInitsOverBT();}) // answer with all vars min max and values
 
       REGISTER_CFG_VAR(ledR, 0, 1);
       REGISTER_CFG_VAR(ledF, 0, 1);
