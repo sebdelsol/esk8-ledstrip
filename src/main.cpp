@@ -202,8 +202,10 @@ void loop()
   handleOta();
 
   int wz, x, y, z, oneG;
-  float *ypr;
-  bool gotAccel = Accel.getXYZ(&ypr, wz, x, y, z, oneG);
+  // float *ypr;
+  // bool gotAccel = Accel.getXYZ(&ypr, wz, x, y, z, oneG);
+  int16_t *up;
+  bool gotAccel = Accel.getMotion(&up, wz, x, y, z, oneG);
 
   #ifdef USE_BT
 
@@ -227,7 +229,9 @@ void loop()
 
     EVERY_N_MILLISECONDS(BT_TICK_SEND)
     {
-      BT.sendUpdate();
+      if(BT.sendUpdate())
+        if (gotAccel)
+          *(BT.getBtSerial()) << "UP " << up.x << " " << up.y << " " << up.z << endl;
     }
 
   #endif
