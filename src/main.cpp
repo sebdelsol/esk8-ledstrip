@@ -231,7 +231,7 @@ void loop()
     {
       if(BT.sendUpdate())
         if (gotAccel)
-          *(BT.getBtSerial()) << "UP " << up.x << " " << up.y << " " << up.z << endl;
+          *(BT.getBtSerial()) << "up " << up.x << " " << up.y << " " << up.z << endl;
     }
 
   #endif
