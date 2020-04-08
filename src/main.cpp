@@ -201,11 +201,10 @@ void loop()
 {
   handleOta();
 
-  int wz, x, y, z, oneG;
-  // float *ypr;
-  // bool gotAccel = Accel.getXYZ(&ypr, wz, x, y, z, oneG);
-  int16_t *up;
-  bool gotAccel = Accel.getMotion(&up, wz, x, y, z, oneG);
+  float *ypr;
+  int wz, oneG;
+  VectorInt16 dir, up, vacc;
+  bool gotAccel = Accel.getMotion(&ypr, dir, up, vacc, wz, oneG);
 
   #ifdef USE_BT
 
@@ -217,21 +216,15 @@ void loop()
           BT.toggle();
       }
 
-      if (BT.update())
-      {
-        // if (gotAccel)
-        // {
-        //   int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
-        //   *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
-        // }
-      } 
+      BT.update();
     }
 
     EVERY_N_MILLISECONDS(BT_TICK_SEND)
     {
-      if(BT.sendUpdate())
-        if (gotAccel)
-          *(BT.getBtSerial()) << "up " << up.x << " " << up.y << " " << up.z << endl;
+      if(BT.sendUpdate() && gotAccel)
+        // *(BT.getBtSerial()) << "updir " << dir.x << " " << dir.y << " " << dir.z << " " << up.x << " " << up.y << " " << up.z << endl;
+        // int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
+        // *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
     }
 
   #endif
@@ -260,7 +253,7 @@ void loop()
 
       //----------------------
       #define MAXACC 256
-      int acc = constrain(y / Cfg.divAcc, -MAXACC,MAXACC) << 8;
+      int acc = constrain(vacc.y / Cfg.divAcc, -MAXACC,MAXACC) << 8;
 
       //------
       static int FWD = 0;

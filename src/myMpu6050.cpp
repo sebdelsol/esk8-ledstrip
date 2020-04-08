@@ -49,6 +49,8 @@ bool myMPU6050::readAccel()
     mpu.dmpGetGravity(&mGrav, &mQuat);
     mpu.dmpGetYawPitchRoll(mYPR, &mQuat, &mGrav);
 
+    mDir.x = 0; mDir.y = 16384; mDir.z = 0;
+    mDir.rotate(&mQuat);
     mUp.x = 0; mUp.y = 0; mUp.z = 16384;
     mUp.rotate(&mQuat);
     
@@ -63,8 +65,7 @@ bool myMPU6050::readAccel()
   return false;
 }
 
-//bool myMPU6050::getXYZ(float **YPR, int &wz, int &x, int &y, int &z, int &oneG) 
-bool myMPU6050::getMotion(int16_t **up, int &wz, int &x, int &y, int &z, int &oneG) 
+bool myMPU6050::getMotion(float **YPR, VectorInt16 &dir, VectorInt16 &up, VectorInt16 &acc, int &wz, int &oneG)
 {
   if (readAccel())
   {
@@ -91,9 +92,12 @@ bool myMPU6050::getMotion(int16_t **up, int &wz, int &x, int &y, int &z, int &on
     #endif
   }
 
-  wz = mWz;  x = mX;  y = mY;  z = mZ; 
-  //*YPR = mYPR;  oneG = ONEG;
-  *Up = mUp;  oneG = ONEG;
+  wz = mWz;  
+  acc.x = mX;  acc.y = mY;  acc.z = mZ; 
+  dir.x = mDir.x; dir.y = mDir.y; dir.z = mDir.z;  
+  up.x = mUp.x; up.y = mUp.y; up.z = mUp.z;  
+  *YPR = mYPR;  
+  oneG = ONEG;
 
   return mDmpReady;
 }

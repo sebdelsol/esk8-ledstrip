@@ -85,7 +85,7 @@ bool BlueTooth::update()
     if (Connected)
     {
       mBTcmd->readBTStream();
-      return true
+      return true;
     }
     else if(millis() - mStartTime > AUTO_STOP_IF_NOTCONNECTED)
       start(false);
