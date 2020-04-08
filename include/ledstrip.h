@@ -31,8 +31,6 @@ public:
   virtual const char* getName();
   virtual void update(ulong time, ulong dt);
   bool drawOn(CRGBSet dst, ulong time, ulong dt);
-
-  CRGB hsv2rgb(CHSV &hsv);
 };
 
 #define SetFxNAME(name) const char* getName() {return name;};
@@ -117,9 +115,12 @@ public:
 //---------
 class TwinkleFX : public FX
 {
-  CHSV mHSV;
+  CHSV mHSV; CRGB mColor;
   byte mDiv;
   byte mHueDiv;
+
+  void setHue(const CRGB color);
+  void setHue(const byte hue);
 
 public: 
   TwinkleFX(const byte hue=0, const byte hueDiv=5, const byte div=5);
