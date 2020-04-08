@@ -25,6 +25,13 @@ bool FX::drawOn(CRGBSet dst, ulong time, ulong dt)
   return false;
 }
 
+CRGB FX::hsv2rgb(CHSV &hsv) 
+{
+  CRGB rgb; 
+  hsv2rgb_rainbow(hsv, rgb); 
+  return rgb;
+}
+
 // ----------------------------------------------------
 FireFX::FireFX(const bool reverse, const byte speed, const float dimRatio) : mReverse(reverse),  mSpeed(speed), mDimRatio(dimRatio) 
 {
@@ -151,6 +158,7 @@ void DblCylonFX::update(ulong time, ulong dt)
 // ----------------------------------------------------
 RunningFX::RunningFX(const CRGB color, const int width, const int speed) : mWidth(width), mSpeed(speed), mColor(color) 
 {
+  REGISTER_VAR3(RunningFX, "color", { self->mColor = CRGB(arg0, arg1, arg2); }, self->mColor.r, self->mColor.g, self->mColor.b, 0, 255)
   REGISTER_VAR_SIMPLE(RunningFX,  "speed", self->mSpeed, -10, 10)
   REGISTER_VAR_SIMPLE(RunningFX,  "width", self->mWidth, 1, 30)
 }
@@ -184,6 +192,7 @@ TwinkleFX::TwinkleFX(const CRGB color, const byte hueDiv, const byte div) : mHue
 
 void TwinkleFX::registerAllCmd()
 {
+  REGISTER_VAR3(TwinkleFX, "color", { self->mHSV = rgb2hsv_approximate(CRGB(arg0, arg1, arg2)); }, self->hsv2rgb(self->mHSV).r, self->hsv2rgb(self->mHSV).g, self->hsv2rgb(self->mHSV).b, 0, 255)
   REGISTER_VAR_SIMPLE(TwinkleFX,  "hue", self->mHSV.h, 0, 255)
   REGISTER_VAR_SIMPLE(TwinkleFX,  "div", self->mDiv, 1, 20)
 }
