@@ -14,7 +14,7 @@
 #define BTCMD_DELIM   " " // strtok_r needs a null-terminated string
 #define BTCMD_SET     "set"
 #define BTCMD_GET     "get"
-#define BTCMD_LIM     "lim"
+#define BTCMD_INIT    "init"
 
 #define FNAME_CURRENT "/config.cfg"
 #define FNAME_DEFAULT "/config.def"
@@ -74,7 +74,7 @@ class BTcmd
   
   const char* mSetKeyword = BTCMD_SET;
   const char* mGetKeyword = BTCMD_GET;
-  const char* mLimKeyword = BTCMD_LIM;
+  const char* mInitKeyword = BTCMD_INIT;
   
   void initSPIFFS();
   bool isNumber(const char* txt);
