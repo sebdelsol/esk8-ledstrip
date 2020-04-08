@@ -20,7 +20,7 @@ class BlueTooth
 public:
   BluetoothSerial *getBtSerial() { return mBTserial; };
   bool update();
-  void sendUpdate();
+  bool sendUpdate();
   bool registerObj(const OBJVar& obj, char* name) { return mBTcmd->registerObj(obj, name); };
   void save(bool isdefault) { mBTcmd->save(isdefault); };
   void load(bool isdefault, bool change = true) { mBTcmd->load(isdefault, change); };
