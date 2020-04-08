@@ -83,15 +83,20 @@ bool BlueTooth::update()
   if (mON)
   {
     if (Connected)
+    {
       mBTcmd->readBTStream();
+      return true
+    }
     else if(millis() - mStartTime > AUTO_STOP_IF_NOTCONNECTED)
       start(false);
   }
-  return mON;
+  return false;
 }
 
-void BlueTooth::sendUpdate()
+bool BlueTooth::sendUpdate()
 {
-  if (mON && Connected)
+  bool ok = mON && Connected;
+  if (ok)
       mBTcmd->sendUpdateOverBT();
+  return ok;
 }
