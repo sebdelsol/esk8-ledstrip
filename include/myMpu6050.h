@@ -40,6 +40,7 @@ class myMPU6050
   uint8_t mFifoBuffer[64];          // FIFO storage buffer
 
   Quaternion mQuat;                 // [w, x, y, z]         quaternion container
+  VectorInt16 mUp;                  // [x, y, z]            up vector
   VectorInt16 mGy;                  // [x, y, z]            gyro sensor measurements
   VectorInt16 mAcc;                 // [x, y, z]            accel sensor measurements
   VectorInt16 mAccReal;             // [x, y, z]            gravity-free accel sensor measurements
@@ -51,5 +52,6 @@ class myMPU6050
 public:
 
   void begin(Stream &serial, void (*handleOta)());
-  bool getXYZ(float **YPR, int &wz, int &x, int &y, int &z, int &oneG);
+  bool getMotion(int16_t **up, int &wz, int &x, int &y, int &z, int &oneG) 
+  // bool getXYZ(float **YPR, int &wz, int &x, int &y, int &z, int &oneG);
 };
