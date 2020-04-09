@@ -223,7 +223,7 @@ void loop()
     {
       if(BT.sendUpdate() && gotAccel)
       {
-        // *(BT.getBtSerial()) << "updir " << dir.x << " " << dir.y << " " << dir.z << " " << up.x << " " << up.y << " " << up.z << endl;
+        *(BT.getBtSerial()) << "updir " << dir.x << " " << dir.y << " " << dir.z << " " << up.x << " " << up.y << " " << up.z << endl;
         // int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
         // *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
       }
