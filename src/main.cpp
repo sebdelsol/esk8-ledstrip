@@ -93,10 +93,8 @@ int           WZ;
   void sendUpdate()
   {
     if(BT.sendUpdate() && GotAccel)
-    {
       *(BT.getBtSerial()) << "updir " << DIR.x << " " << DIR.y << " " << DIR.z << " " << UP.x << " " << UP.y << " " << UP.z << endl;
       // *(BT.getBtSerial()) << "acc " << DIR.x << " " << DIR.y << " " << DIR.z << " " << UP.x << " " << UP.y << " " << UP.z << " " << acc.x << " " << acc.y << " " << acc.z << endl;
-    }
   }
 #endif
 
@@ -142,7 +140,9 @@ public:
       REGISTER_CFG_VAR(ledF,  0, 1);
       REGISTER_CFG_VAR(led,   0, 1);
 
-      REGISTER_CFG_VAR(bright, 1, 255);
+      #ifndef USE_LIGHTPROBE
+        REGISTER_CFG_VAR(bright, 1, 255);
+      #endif
 
       REGISTER_CFG_VAR(runSpeed,  0, 10);
       REGISTER_CFG_VAR(neutralWZ, 0, 32768);
