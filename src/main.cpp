@@ -104,7 +104,9 @@ int           WZ;
 class CFG : public OBJVar
 {
 public:
-  byte bright     = 64; // 1/4 brightness is enough to avoid reaching LED_MAX_MA
+  #ifndef USE_LIGHTPROBE
+    byte bright     = 64; // 1/4 brightness is enough to avoid reaching LED_MAX_MA
+  #endif
   
   // update ?
   bool ledR       = true;
@@ -226,15 +228,10 @@ void loop()
 
   #ifdef USE_BT
     if (Button.pressed())
-    {
-        Serial << "button pressed " << endl;
-        BT.toggle();
-    }
+      BT.toggle();
     
     EVERY_N_MILLISECONDS(BT_TICK)
-    {
       BT.update();
-    }
   #endif
 
   EVERY_N_MILLISECONDS(LED_TICK)
