@@ -12,13 +12,15 @@
 #include <ledstrip.h>
 #include <myMpu6050.h>
 #include <myWifi.h>
-#include <Button.h>
 #include <Streaming.h>
 #include <soc/rtc.h> // get cpu freq
 
 #ifdef USE_BT
   #include <bluetooth.h>
+  #include <Button.h>
+
   BlueTooth BT;
+  Button    Button(BUTTON_PIN);
 #endif
 
 // ----------------------------------------------------
@@ -47,12 +49,10 @@ void handleOta()
 #define   LED_MAX_MA    800 // mA, please check OBJVar.bright to avoid reaching this value
 #define   LED_TICK      15  // ms
 #define   BT_TICK       25  // ms
-#define   BT_TICK_SEND  25 // ms
 #define   SERIAL_BAUD   115200 // ms
 
 // ----------------------------------------------------
 myWifi        MyWifi;
-Button        Button(BUTTON_PIN);
 myMPU6050     Accel;
 AllLedStrips  AllLeds(LED_MAX_MA, Serial);
 
@@ -173,6 +173,8 @@ void setup()
   // BlueTooth -----------------------------
   pinMode(LIGHT_PIN, OUTPUT); //blue led
   #ifdef USE_BT
+    Button.begin();
+
     #define BT_REGISTER_OBJ(o) BT.registerObj(o, #o);
     #define BT_REGISTER_3OBJ(o1, o2, o3) BT_REGISTER_OBJ(o1); BT_REGISTER_OBJ(o2); BT_REGISTER_OBJ(o3);
     #define BT_REGISTER_5OBJ(o1, o2, o3, o4, o5) BT_REGISTER_3OBJ(o1, o2, o3); BT_REGISTER_OBJ(o4); BT_REGISTER_OBJ(o5);
@@ -191,8 +193,7 @@ void setup()
     btStop(); // turnoff bt 
   #endif
 
-  // Button & accel -----------------------------
-  Button.begin();
+  // accel -----------------------------
   Accel.begin(Serial, &handleOta);
 }
 
@@ -207,20 +208,15 @@ void loop()
   bool gotAccel = Accel.getMotion(&ypr, dir, up, vacc, wz, oneG);
 
   #ifdef USE_BT
-
+    if (Button.pressed())
+    {
+        Serial << "button pressed " << endl;
+        BT.toggle();
+    }
+    
     EVERY_N_MILLISECONDS(BT_TICK)
     {
-      if (Button.pressed())
-      {
-          Serial << "button pressed " << endl;
-          BT.toggle();
-      }
-
       BT.update();
-    }
-
-    EVERY_N_MILLISECONDS(BT_TICK_SEND)
-    {
       if(BT.sendUpdate() && gotAccel)
       {
         *(BT.getBtSerial()) << "updir " << dir.x << " " << dir.y << " " << dir.z << " " << up.x << " " << up.y << " " << up.z << endl;
@@ -228,7 +224,6 @@ void loop()
         // *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
       }
     }
-
   #endif
 
   EVERY_N_MILLISECONDS(LED_TICK)
