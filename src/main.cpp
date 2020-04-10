@@ -128,32 +128,31 @@ public:
   #ifdef USE_BT
     CFG()
     {
-      #define REGISTER_CFG_VAR(var, min, max) REGISTER_VAR_SIMPLE(CFG, #var, self->var, min, max)
-      
-      REGISTER_CMD(CFG,         "save",      {BT.save(false);})       // save not default
-      REGISTER_CMD(CFG,         "load",      {BT.load(false);})       // load not default
-      REGISTER_CMD(CFG,         "default",   {BT.load(true);})        // load default
-      REGISTER_CMD_NOSHOW(CFG,  "getInits",  {BT.sendInitsOverBT();}) // answer with all vars init (min, max, value)
-      REGISTER_CMD_NOSHOW(CFG,  "getUpdate", {sendUpdate();})         // answer with all updates
+      #define REGISTER_CFG(var, min, max) REGISTER_VAR_SIMPLE(CFG, #var, self->var, min, max)
 
-      REGISTER_CFG_VAR(ledR,      0, 1);
-      REGISTER_CFG_VAR(ledF,      0, 1);
-      REGISTER_CFG_VAR(led,       0, 1);
+      REGISTER_CMD(CFG,        "load",      {BT.load(false);} )        // load not default
+      REGISTER_CMD(CFG,        "default",   {BT.load(true);}  )        // load default
+      REGISTER_CMD_NOSHOW(CFG, "getInits",  {BT.sendInitsOverBT();} )  // answer with all vars init (min, max, value)
+      REGISTER_CMD_NOSHOW(CFG, "getUpdate", {sendUpdate();}  )         // answer with all updates
+
+      REGISTER_CFG(ledR,       0, 1);
+      REGISTER_CFG(ledF,       0, 1);
+      REGISTER_CFG(led,        0, 1);
 
       #ifndef USE_LIGHTPROBE
-        REGISTER_CFG_VAR(bright,  1, 255);
+        REGISTER_CFG(bright,   1, 255);
       #endif
 
-      REGISTER_CFG_VAR(runSpeed,  0, 10);
-      REGISTER_CFG_VAR(neutralWZ, 0, 32768);
-      REGISTER_CFG_VAR(maxWZ,     0, 32768);
+      REGISTER_CFG(runSpeed,   0, 10);
+      REGISTER_CFG(neutralWZ,  0, 32768);
+      REGISTER_CFG(maxWZ,      0, 32768);
 
-      REGISTER_CFG_VAR(divAcc,    1, 10);
-      REGISTER_CFG_VAR(smoothAcc, 1, 32768);
-      REGISTER_CFG_VAR(thresAcc,  0, 255);
+      REGISTER_CFG(divAcc,     1, 10);
+      REGISTER_CFG(smoothAcc,  1, 32768);
+      REGISTER_CFG(thresAcc,   0, 255);
 
-      REGISTER_CFG_VAR(minEye,    1, (NBLEDS_TIPS>>1));
-      REGISTER_CFG_VAR(maxEye,    1, (NBLEDS_TIPS>>1));
+      REGISTER_CFG(minEye,     1, (NBLEDS_TIPS>>1));
+      REGISTER_CFG(maxEye,     1, (NBLEDS_TIPS>>1));
     };
   #endif
 };
