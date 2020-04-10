@@ -74,10 +74,10 @@ bool myMPU6050::getMotion(float **YPR, VectorInt16 &dir, VectorInt16 &up, Vector
     mT += dt;
 
     uint16_t smooth = - int(pow(1. - ACCEL_AVG, dt * ACCEL_BASE_FREQ * .000001) * 65536.); // 1 - (1-accel_avg) ^ (dt * 60 / 1000 000) using fract16
-    mX = lerp15by16(mX, mAccReal.x, smooth);
-    mY = lerp15by16(mY, mAccReal.y, smooth);
-    mZ = lerp15by16(mZ, mAccReal.z, smooth);
-    mWz = lerp15by16(mWz, STAYS_SHORT(mGy.z * -655), smooth);
+    mX =  lerp15by16(mX,  STAYS_SHORT(mAccReal.x),  smooth);
+    mY =  lerp15by16(mY,  STAYS_SHORT(mAccReal.y),  smooth);
+    mZ =  lerp15by16(mZ,  STAYS_SHORT(mAccReal.z),  smooth);
+    mWz = lerp15by16(mWz, STAYS_SHORT(mGy.z * -655),smooth);
 
     // #define MPU_DBG
     #ifdef MPU_DBG

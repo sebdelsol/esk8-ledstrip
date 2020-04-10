@@ -9,10 +9,11 @@
 //----------------------------- smooth accel & gyro
 #define ACCEL_AVG       .05 // use 5% of the new measure in the avg
 #define ACCEL_BASE_FREQ 60. // based on a 60fps measure
-#define VEC16_UNIT  16384
+#define VEC16_UNIT      16384
 
 //----------------------------- OFFSETS
 // if you need to compute the offset
+
 // #define MPU_ZERO 
 #ifdef MPU_ZERO
   void MPUzero(Stream &serial, void (*handleOta)());
