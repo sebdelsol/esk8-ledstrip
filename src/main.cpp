@@ -52,17 +52,17 @@ void handleOta()
 #define   SERIAL_BAUD   115200 // ms
 
 // ----------------------------------------------------
-myWifi        MyWifi;
+myWifi    MyWifi;
 
 // ----------------------------------------------------
 AllLedStrips  AllLeds(LED_MAX_MA, Serial);
 
-#define     NBLEDS_MIDDLE 30
-#define     NBLEDS_TIPS   36
+#define   AQUA_MENTHE   CRGB(0x7FFFD4)
+#define   LUSH_LAVA     CRGB(0xFF4500)
+#define   HUE_AQUA_BLUE 140
 
-#define     AQUA_MENTHE   CRGB(0x7FFFD4)
-#define     LUSH_LAVA     CRGB(0xFF4500)
-#define     HUE_AQUA_BLUE 140
+#define   NBLEDS_MIDDLE 30
+#define   NBLEDS_TIPS   36
 
 LedStrip    <NBLEDS_MIDDLE, LED_PIN>  Leds("Led");
 RunningFX   Fire(LUSH_LAVA, 10, 3);     // FireFX   Fire;     // AquaFX   Fire(true);     
@@ -83,10 +83,10 @@ RunningFX   RunF(CRGB::Gold);
 
 // ----------------------------------------------------
 myMPU6050     Accel;
+bool          GotAccel = false;
+VectorInt16   DIR, UP, VACC;
 float         *YPR;
 int           WZ;
-VectorInt16   DIR, UP, VACC;
-bool          GotAccel = false;
 
 // ----------------------------------------------------
 #ifdef USE_BT
@@ -130,25 +130,25 @@ public:
     {
       #define REGISTER_CFG_VAR(var, min, max) REGISTER_VAR_SIMPLE(CFG, #var, self->var, min, max)
       
-      REGISTER_CMD(CFG, "save",           {BT.save(false);})      // save not default
-      REGISTER_CMD(CFG, "load",           {BT.load(false);})      // load not default
-      REGISTER_CMD(CFG, "default",        {BT.load(true);})       // load default
-      REGISTER_CMD_NOSHOW(CFG, "getInits",{BT.sendInitsOverBT();}) // answer with all vars min max and values
-      REGISTER_CMD_NOSHOW(CFG, "getUpdate",{sendUpdate();}) // answer with all vars min max and values
+      REGISTER_CMD(CFG,         "save",      {BT.save(false);})       // save not default
+      REGISTER_CMD(CFG,         "load",      {BT.load(false);})       // load not default
+      REGISTER_CMD(CFG,         "default",   {BT.load(true);})        // load default
+      REGISTER_CMD_NOSHOW(CFG,  "getInits",  {BT.sendInitsOverBT();}) // answer with all vars init (min, max, value)
+      REGISTER_CMD_NOSHOW(CFG,  "getUpdate", {sendUpdate();})         // answer with all updates
 
-      REGISTER_CFG_VAR(ledR, 0, 1);
-      REGISTER_CFG_VAR(ledF, 0, 1);
-      REGISTER_CFG_VAR(led, 0, 1);
+      REGISTER_CFG_VAR(ledR,  0, 1);
+      REGISTER_CFG_VAR(ledF,  0, 1);
+      REGISTER_CFG_VAR(led,   0, 1);
 
       REGISTER_CFG_VAR(bright, 1, 255);
 
-      REGISTER_CFG_VAR(runSpeed, 0, 10);
+      REGISTER_CFG_VAR(runSpeed,  0, 10);
       REGISTER_CFG_VAR(neutralWZ, 0, 32768);
-      REGISTER_CFG_VAR(maxWZ, 0, 32768);
+      REGISTER_CFG_VAR(maxWZ,     0, 32768);
 
-      REGISTER_CFG_VAR(divAcc, 1, 10);
+      REGISTER_CFG_VAR(divAcc,    1, 10);
       REGISTER_CFG_VAR(smoothAcc, 1, 32768);
-      REGISTER_CFG_VAR(thresAcc, 0, 255);
+      REGISTER_CFG_VAR(thresAcc,  0, 255);
 
       REGISTER_CFG_VAR(minEye, 1, NBLEDS_TIPS>>1);
       REGISTER_CFG_VAR(maxEye, 1, NBLEDS_TIPS>>1);
