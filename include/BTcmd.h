@@ -10,7 +10,6 @@
 #define BTCMD_MAXOBJ  15
 
 #define BTCMD_TERM    '\n' 
-#define BTCMD_ALIVE    '~' 
 #define BTCMD_DELIM   " " // strtok_r needs a null-terminated string
 #define BTCMD_SET     "set"
 #define BTCMD_GET     "get"

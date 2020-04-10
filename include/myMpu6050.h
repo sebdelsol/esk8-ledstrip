@@ -25,7 +25,6 @@
 #define ZAccelOffset  1297 // 1270
 
 //-----------------------------
-#define ONEG 8192
 #define STAYS_SHORT(x) constrain(x, -32768, 32767)
 #define TOdeg(x) (x * 180/M_PI)
 
@@ -54,5 +53,5 @@ class myMPU6050
 public:
 
   void begin(Stream &serial, void (*handleOta)());
-  bool getMotion(float **YPR, VectorInt16 &dir, VectorInt16 &up, VectorInt16 &acc, int &wz, int &oneG);
+  bool getMotion(float **YPR, VectorInt16 &dir, VectorInt16 &up, VectorInt16 &acc, int &wz);
 };

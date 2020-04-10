@@ -132,22 +132,19 @@ void BTcmd::readStream(Stream* stream, BUF& buf, bool change)
   while (stream->available() > 0) 
   {
     char c = stream->read();
-    if (c != BTCMD_ALIVE)
+    if (c == BTCMD_TERM)
     {
-      if (c == BTCMD_TERM)
-      {
-        // if (stream==mBTStream)
-        //   *mDbgSerial << "CMD " << buf.getBuf() << endl;
+      // if (stream==mBTStream)
+      //   *mDbgSerial << "CMD " << buf.getBuf() << endl;
 
-        handleCmd(stream, buf, change);
-        buf.clear();
-      }
-      else if (isprint(c))
-        buf.append(c);
-
-        // if (stream==mBTStream)
-        //   *mDbgSerial << buf.getBuf() << endl;
+      handleCmd(stream, buf, change);
+      buf.clear();
     }
+    else if (isprint(c))
+      buf.append(c);
+
+      // if (stream==mBTStream)
+      //   *mDbgSerial << buf.getBuf() << endl;
   }
 }
 

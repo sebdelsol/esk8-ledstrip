@@ -65,7 +65,7 @@ bool myMPU6050::readAccel()
   return false;
 }
 
-bool myMPU6050::getMotion(float **YPR, VectorInt16 &dir, VectorInt16 &up, VectorInt16 &acc, int &wz, int &oneG)
+bool myMPU6050::getMotion(float **YPR, VectorInt16 &dir, VectorInt16 &up, VectorInt16 &acc, int &wz)
 {
   if (readAccel())
   {
@@ -97,7 +97,6 @@ bool myMPU6050::getMotion(float **YPR, VectorInt16 &dir, VectorInt16 &up, Vector
   dir.x = mDir.x; dir.y = mDir.y; dir.z = mDir.z;  
   up.x = mUp.x; up.y = mUp.y; up.z = mUp.z;  
   *YPR = mYPR;  
-  oneG = ONEG;
 
   return mDmpReady;
 }

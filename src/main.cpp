@@ -48,15 +48,15 @@ void handleOta()
 // ----------------------------------------------------
 #define   LED_MAX_MA    800 // mA, please check OBJVar.bright to avoid reaching this value
 #define   LED_TICK      15  // ms
-#define   BT_TICK       25  // ms
+#define   BT_TICK       15  // ms
 #define   SERIAL_BAUD   115200 // ms
 
 // ----------------------------------------------------
 myWifi        MyWifi;
-myMPU6050     Accel;
-AllLedStrips  AllLeds(LED_MAX_MA, Serial);
 
 // ----------------------------------------------------
+AllLedStrips  AllLeds(LED_MAX_MA, Serial);
+
 #define     NBLEDS_MIDDLE 30
 #define     NBLEDS_TIPS   36
 
@@ -80,6 +80,25 @@ LedStrip    <NBLEDS_TIPS, LEDF_PIN>   LedsF("LedF");
 DblCylonFX  CylonF(AQUA_MENTHE);
 TwinkleFX   TwinkleF(HUE_AQUA_BLUE); 
 RunningFX   RunF(CRGB::Gold);
+
+// ----------------------------------------------------
+myMPU6050     Accel;
+float         *YPR;
+int           WZ;
+VectorInt16   DIR, UP, VACC;
+bool          GotAccel = false;
+
+// ----------------------------------------------------
+#ifdef USE_BT
+  void sendUpdate()
+  {
+    if(BT.sendUpdate() && GotAccel)
+    {
+      *(BT.getBtSerial()) << "updir " << DIR.x << " " << DIR.y << " " << DIR.z << " " << UP.x << " " << UP.y << " " << UP.z << endl;
+      // *(BT.getBtSerial()) << "acc " << DIR.x << " " << DIR.y << " " << DIR.z << " " << UP.x << " " << UP.y << " " << UP.z << " " << acc.x << " " << acc.y << " " << acc.z << endl;
+    }
+  }
+#endif
 
 // ----------------------------------------------------
 class CFG : public OBJVar
@@ -115,6 +134,7 @@ public:
       REGISTER_CMD(CFG, "load",           {BT.load(false);})      // load not default
       REGISTER_CMD(CFG, "default",        {BT.load(true);})       // load default
       REGISTER_CMD_NOSHOW(CFG, "getInits",{BT.sendInitsOverBT();}) // answer with all vars min max and values
+      REGISTER_CMD_NOSHOW(CFG, "getUpdate",{sendUpdate();}) // answer with all vars min max and values
 
       REGISTER_CFG_VAR(ledR, 0, 1);
       REGISTER_CFG_VAR(ledF, 0, 1);
@@ -202,10 +222,7 @@ void loop()
 {
   handleOta();
 
-  float *ypr;
-  int wz, oneG;
-  VectorInt16 dir, up, vacc;
-  bool gotAccel = Accel.getMotion(&ypr, dir, up, vacc, wz, oneG);
+  GotAccel = Accel.getMotion(&YPR, DIR, UP, VACC, WZ);
 
   #ifdef USE_BT
     if (Button.pressed())
@@ -217,12 +234,6 @@ void loop()
     EVERY_N_MILLISECONDS(BT_TICK)
     {
       BT.update();
-      if(BT.sendUpdate() && gotAccel)
-      {
-        *(BT.getBtSerial()) << "updir " << dir.x << " " << dir.y << " " << dir.z << " " << up.x << " " << up.y << " " << up.z << endl;
-        // int rx = int(ypr[0]*180/M_PI), ry = int(ypr[1]* 180/M_PI), rz = int(ypr[2]* 180/M_PI);
-        // *(BT.getBtSerial()) << "ANG A " << rx << " " << ry << " " << rz << endl;
-      }
     }
   #endif
 
@@ -239,18 +250,18 @@ void loop()
       AllLeds.setBrightness(Cfg.bright);
     #endif
 
-    if (gotAccel)
+    if (GotAccel)
     {
-      int runSpeed =  ((wz>0) - (wz<0)) * Cfg.runSpeed;
+      int runSpeed =  ((WZ>0) - (WZ<0)) * Cfg.runSpeed;
 
       //------
-      wz = abs(wz);
-      byte alpha = wz > Cfg.neutralWZ ? min((wz-Cfg.neutralWZ) * 255 / Cfg.maxWZ, 255) : 0;
+      int _WZ = abs(WZ);
+      byte alpha = _WZ > Cfg.neutralWZ ? min((_WZ-Cfg.neutralWZ) * 255 / Cfg.maxWZ, 255) : 0;
       byte invAlpha = 255 - alpha;
 
       //----------------------
       #define MAXACC 256
-      int acc = constrain(vacc.y / Cfg.divAcc, -MAXACC,MAXACC) << 8;
+      int acc = constrain(VACC.y / Cfg.divAcc, -MAXACC,MAXACC) << 8;
 
       //------
       static int FWD = 0;
