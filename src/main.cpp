@@ -46,8 +46,8 @@ void handleOta()
 // ----------------------------------------------------
 #define   LED_MAX_MA    800 // mA, please check OBJVar.bright to avoid reaching this value
 #define   LED_TICK      15  // ms
-#define   BT_TICK       50  // ms
-#define   BT_TICK_SEND  200 // ms
+#define   BT_TICK       25  // ms
+#define   BT_TICK_SEND  25 // ms
 #define   SERIAL_BAUD   115200 // ms
 
 // ----------------------------------------------------

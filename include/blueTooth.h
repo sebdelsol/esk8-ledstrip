@@ -2,6 +2,12 @@
 
 #include <Streaming.h>
 #include <BluetoothSerial.h>
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// in BluetoothSerial.cpp
+// #define TX_QUEUE_SIZE 512
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 #include <BTcmd.h>
 #include <myPins.h>
 
