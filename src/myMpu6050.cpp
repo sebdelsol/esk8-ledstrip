@@ -49,9 +49,9 @@ bool myMPU6050::readAccel()
     mpu.dmpGetGravity(&mGrav, &mQuat);
     mpu.dmpGetYawPitchRoll(mYPR, &mQuat, &mGrav);
 
-    mDir.x = 0; mDir.y = 16384; mDir.z = 0;
+    setVecInt16(mDir, 0,  VEC16_UNIT, 0);
+    setVecInt16(mUp,  0,  0,          VEC16_UNIT);
     mDir.rotate(&mQuat);
-    mUp.x = 0; mUp.y = 0; mUp.z = 16384;
     mUp.rotate(&mQuat);
     
     // angular speed

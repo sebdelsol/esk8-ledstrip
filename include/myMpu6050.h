@@ -9,6 +9,7 @@
 //----------------------------- smooth accel & gyro
 #define ACCEL_AVG       .05 // use 5% of the new measure in the avg
 #define ACCEL_BASE_FREQ 60. // based on a 60fps measure
+#define VEC16_UNIT  16384
 
 //----------------------------- OFFSETS
 // if you need to compute the offset
@@ -52,6 +53,7 @@ class myMPU6050
   
 public:
 
+  void setVecInt16(VectorInt16 &v, int16_t x, int16_t y, int16_t z) { v.x = x; v.y = y; v.z = z;};
   void begin(Stream &serial, void (*handleOta)());
   bool getMotion(float **YPR, VectorInt16 &dir, VectorInt16 &up, VectorInt16 &acc, int &wz);
 };
