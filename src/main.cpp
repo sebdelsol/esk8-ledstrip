@@ -136,12 +136,12 @@ public:
       REGISTER_CMD_NOSHOW(CFG,  "getInits",  {BT.sendInitsOverBT();}) // answer with all vars init (min, max, value)
       REGISTER_CMD_NOSHOW(CFG,  "getUpdate", {sendUpdate();})         // answer with all updates
 
-      REGISTER_CFG_VAR(ledR,  0, 1);
-      REGISTER_CFG_VAR(ledF,  0, 1);
-      REGISTER_CFG_VAR(led,   0, 1);
+      REGISTER_CFG_VAR(ledR,      0, 1);
+      REGISTER_CFG_VAR(ledF,      0, 1);
+      REGISTER_CFG_VAR(led,       0, 1);
 
       #ifndef USE_LIGHTPROBE
-        REGISTER_CFG_VAR(bright, 1, 255);
+        REGISTER_CFG_VAR(bright,  1, 255);
       #endif
 
       REGISTER_CFG_VAR(runSpeed,  0, 10);
@@ -152,8 +152,8 @@ public:
       REGISTER_CFG_VAR(smoothAcc, 1, 32768);
       REGISTER_CFG_VAR(thresAcc,  0, 255);
 
-      REGISTER_CFG_VAR(minEye, 1, NBLEDS_TIPS>>1);
-      REGISTER_CFG_VAR(maxEye, 1, NBLEDS_TIPS>>1);
+      REGISTER_CFG_VAR(minEye,    1, (NBLEDS_TIPS>>1));
+      REGISTER_CFG_VAR(maxEye,    1, (NBLEDS_TIPS>>1));
     };
   #endif
 };
