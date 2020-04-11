@@ -85,7 +85,6 @@ RunningFX   RunF(CRGB::Gold);
 myMPU6050     Accel;
 bool          GotAccel = false;
 VectorInt16   DIR, UP, VACC;
-float         *YPR;
 int           WZ;
 
 // ----------------------------------------------------
@@ -224,7 +223,7 @@ void loop()
 {
   handleOta();
 
-  GotAccel = Accel.getMotion(&YPR, DIR, UP, VACC, WZ);
+  GotAccel = Accel.getMotion(DIR, UP, VACC, WZ);
 
   #ifdef USE_BT
     if (Button.pressed())

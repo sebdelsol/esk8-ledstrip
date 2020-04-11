@@ -47,7 +47,6 @@ bool myMPU6050::readAccel()
     // angles
     mpu.dmpGetQuaternion(&mQuat, mFifoBuffer);
     mpu.dmpGetGravity(&mGrav, &mQuat);
-    mpu.dmpGetYawPitchRoll(mYPR, &mQuat, &mGrav);
 
     setVecInt16(mDir, 0,  VEC16_UNIT, 0);
     setVecInt16(mUp,  0,  0,          VEC16_UNIT);
@@ -65,7 +64,7 @@ bool myMPU6050::readAccel()
   return false;
 }
 
-bool myMPU6050::getMotion(float **YPR, VectorInt16 &dir, VectorInt16 &up, VectorInt16 &acc, int &wz)
+bool myMPU6050::getMotion(VectorInt16 &dir, VectorInt16 &up, VectorInt16 &acc, int &wz)
 {
   if (readAccel())
   {
@@ -96,7 +95,6 @@ bool myMPU6050::getMotion(float **YPR, VectorInt16 &dir, VectorInt16 &up, Vector
   acc.x = mX;  acc.y = mY;  acc.z = mZ; 
   dir.x = mDir.x; dir.y = mDir.y; dir.z = mDir.z;  
   up.x = mUp.x; up.y = mUp.y; up.z = mUp.z;  
-  *YPR = mYPR;  
 
   return mDmpReady;
 }

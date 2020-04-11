@@ -45,8 +45,6 @@ class myMPU6050
   VectorInt16 mAcc;                 // [x, y, z]            accel sensor measurements
   VectorInt16 mAccReal;             // [x, y, z]            gravity-free accel sensor measurements
   VectorFloat mGrav;                // [x, y, z]            gravity vector
-  float mYPR[3] = {.0f, .0f, .0f};  // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
-
   VectorInt16 mUp;                  // [x, y, z]            up vector
   VectorInt16 mDir;                 // [x, y, z]            dir vector
 
@@ -56,5 +54,5 @@ public:
 
   void setVecInt16(VectorInt16 &v, int16_t x, int16_t y, int16_t z) { v.x = x; v.y = y; v.z = z;};
   void begin(Stream &serial, void (*handleOta)());
-  bool getMotion(float **YPR, VectorInt16 &dir, VectorInt16 &up, VectorInt16 &acc, int &wz);
+  bool getMotion(VectorInt16 &dir, VectorInt16 &up, VectorInt16 &acc, int &wz);
 };
