@@ -46,10 +46,10 @@ void handleOta()
 }
 
 // ----------------------------------------------------
-#define   LED_MAX_MA    800 // mA, please check OBJVar.bright to avoid reaching this value
-#define   LED_TICK      15  // ms
-#define   BT_TICK       15  // ms
-#define   SERIAL_BAUD   115200 // ms
+#define   SERIAL_BAUD   115200  // ms
+#define   LED_MAX_MA    800     // mA, please check OBJVar.bright to avoid reaching this value
+#define   LED_TICK      15      // ms
+#define   BT_TICK       15      // ms
 
 // ----------------------------------------------------
 myWifi    MyWifi;
@@ -64,19 +64,19 @@ AllLedStrips  AllLeds(LED_MAX_MA, Serial);
 #define   NBLEDS_MIDDLE 30
 #define   NBLEDS_TIPS   36
 
-LedStrip    <NBLEDS_MIDDLE, LED_PIN>  Leds("Led");
+LedStrip    <NBLEDS_MIDDLE, LED_PIN> Leds("Led");
 RunningFX   Fire(LUSH_LAVA, 10, 3);     // FireFX   Fire;     // AquaFX   Fire(true);     
 RunningFX   Aqua(AQUA_MENTHE, 10, -3);  
 TwinkleFX   FireTwk(HUE_RED); 
 TwinkleFX   AquaTwk(HUE_AQUA_BLUE);
 PlasmaFX    Plasma;
 
-LedStrip    <NBLEDS_TIPS, LEDR_PIN>   LedsR("LedR");
+LedStrip    <NBLEDS_TIPS, LEDR_PIN>  LedsR("LedR");
 DblCylonFX  CylonR(LUSH_LAVA); 
 TwinkleFX   TwinkleR(LUSH_LAVA);
 RunningFX   RunR(CRGB::Gold); 
 
-LedStrip    <NBLEDS_TIPS, LEDF_PIN>   LedsF("LedF");
+LedStrip    <NBLEDS_TIPS, LEDF_PIN>  LedsF("LedF");
 DblCylonFX  CylonF(AQUA_MENTHE);
 TwinkleFX   TwinkleF(HUE_AQUA_BLUE); 
 RunningFX   RunF(CRGB::Gold);
@@ -163,6 +163,7 @@ CFG Cfg;
 void setup()
 {
   Serial.begin(SERIAL_BAUD);
+  
   Serial << endl << "-------- START --------" << endl;
   rtc_clk_cpu_freq_set(RTC_CPU_FREQ_240M);
   Serial << "Esp32 core " << esp_get_idf_version() << endl;
