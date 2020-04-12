@@ -37,8 +37,7 @@
 
 ◦ in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini) uncomment `upload_protocol = espota` & `upload_port = "esk8.local"`
 
-<p>&nbsp;</p>
-
+# Telnet debug
 **If you want *Telnet* logs when using OTA :**
 
 ◦ in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment `#define USE_TELNET`
