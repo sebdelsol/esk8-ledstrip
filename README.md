@@ -1,5 +1,5 @@
 # eSK8 LED strips
-<img src="https://media.giphy.com/media/IhCHKo42Hx7WFkRmzQ/giphy.gif" height="215" align="left"><img src="https://media.giphy.com/media/fY5xLxGayUptPZuTfG/giphy.gif" height="215" align="left"><img src="https://media.giphy.com/media/RfYtkG17dUJyVmbPet/giphy.gif" height="215" align="left">
+<img src="https://media.giphy.com/media/IhCHKo42Hx7WFkRmzQ/giphy.gif" height="215" align="right"><img src="https://media.giphy.com/media/fY5xLxGayUptPZuTfG/giphy.gif" height="215" align="right"><img src="https://media.giphy.com/media/RfYtkG17dUJyVmbPet/giphy.gif" height="215" align="right">
 
 ***LED strips controlled by an accelerometer*** 
 
@@ -7,49 +7,39 @@
 <p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>  <p>&nbsp;</p>  
 
 # [PCB & Schematic](https://easyeda.com/seb.morin/esk8) 
-[<img src="https://image.easyeda.com/histories/aaf838e4a54c468f9502dc529522ac38.png" height="200" align="left">](https://easyeda.com/seb.morin/esk8)[<img src="https://i.imgur.com/bn5Pk2N.jpg" height="200" align="left">](https://easyeda.com/seb.morin/esk8)[<img src="https://i.imgur.com/fsrZ5Zs.jpg" height="200" align="left">](https://easyeda.com/seb.morin/esk8)
+[<img src="https://image.easyeda.com/histories/aaf838e4a54c468f9502dc529522ac38.png" height="200" align="right">](https://easyeda.com/seb.morin/esk8)[<img src="https://i.imgur.com/bn5Pk2N.jpg" height="200" align="right">](https://easyeda.com/seb.morin/esk8)[<img src="https://i.imgur.com/fsrZ5Zs.jpg" height="200" align="right">](https://easyeda.com/seb.morin/esk8)
 
 **project done on *EasyEDA***
-
-◦ click on PCB or schematic to check it
+* click on PCB or schematic to check it
 <p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>  <p>&nbsp;</p>  
 
 # Android App 
-<img src="https://i.imgur.com/sUIXf7x.jpg" height="225" align="left">
+<img src="https://i.imgur.com/sUIXf7x.jpg" height="225" align="right">
 
 **If you want to tweak values in real time :**
-
-◦ login on **[app inventor](http://ai2.appinventor.mit.edu/)** & import [esk8.aia](https://github.com/sebdelsol/Esk8/blob/master/esk8.aia)
-
-◦ pair your android's phone with the **Esk8** device *within 5s after power on*
-
-◦ use `REGISTER_VAR` & `REGISTER_CMD` macros to automatically create app's widgets
+* login on **[app inventor](http://ai2.appinventor.mit.edu/)** & import [esk8.aia](https://github.com/sebdelsol/Esk8/blob/master/esk8.aia)
+* pair your android's phone with the **Esk8** device *within 5s after power on*
+* use `REGISTER_VAR` & `REGISTER_CMD` macros to automatically create app's widgets
 <p>&nbsp;</p>  <p>&nbsp;</p>  
 
 # LED strips debug
-<img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="225" align="left">
+<img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="225" align="right">
 
 **If you want to check what's happening with your LED strips :**
-
-◦ in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment `#define DEBUG_LED_TOWIFI`
- 
-◦ please install [PyGame](https://www.pygame.org) & [SimpleWebsocketServer](https://pypi.org/project/simple-websocket-server) then launch [debugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py)
+* in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment `#define DEBUG_LED_TOWIFI`
+* please install [PyGame](https://www.pygame.org) & [SimpleWebsocketServer](https://pypi.org/project/simple-websocket-server) then launch [debugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py)
 
 <p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>  
 
 # OTA update
 **If you want *OTA* update :**
-
-◦ in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment `#define USE_OTA`
-
-◦ in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini) uncomment `upload_protocol = espota` & `upload_port = "esk8.local"`
+* in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment `#define USE_OTA`
+* in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini) uncomment `upload_protocol = espota` & `upload_port = "esk8.local"`
 
 # Telnet debug
 **If you want *Telnet* logs when using OTA :**
-
-◦ in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment `#define USE_TELNET`
-
-◦ launch a  `telnet` cmd line & `open esk8.local`
+* in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment `#define USE_TELNET`
+* launch a  `telnet` cmd line & `open esk8.local`
 
 # BOM
 
