@@ -17,7 +17,7 @@
 ◦ pair your android's phone with the **Esk8** device *within 5s after power on*
 
 ◦ use `REGISTER_VAR` & `REGISTER_CMD` macros to automatically create app's widgets
-<p>&nbsp;</p>  <p>&nbsp;</p>  <p>&nbsp;</p>  
+<p>&nbsp;</p>  <p>&nbsp;</p>  
 
 # LED strips debug
 <img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="250" align="left">
