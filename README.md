@@ -24,11 +24,12 @@ If you want **Telnet** logs when using OTA :
 * launch a cmd line & type `telnet`, then `open esk8.local`
 
 # Android App 
+<img src="https://i.imgur.com/sUIXf7x.jpg" height="300" align="left">
+
 If you want to tweak values in real time :
 * login on **[app inventor](http://ai2.appinventor.mit.edu/)** & import [esk8.aia](https://github.com/sebdelsol/Esk8/blob/master/esk8.aia)
 * pair your android's phone with the **Esk8** device *within 5s after power on*
 * use *REGISTER_VAR* & *REGISTER_CMD* macros to automatically create app's widgets
-<img src="https://i.imgur.com/sUIXf7x.jpg" height="300">
 
 # BOM
 
