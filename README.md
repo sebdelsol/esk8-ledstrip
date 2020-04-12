@@ -7,7 +7,7 @@
 # [PCB & Schematic](https://easyeda.com/seb.morin/esk8) 
 [<img src="https://image.easyeda.com/histories/aaf838e4a54c468f9502dc529522ac38.png" height="225" align="right">](https://easyeda.com/seb.morin/esk8)[<img src="https://i.imgur.com/bn5Pk2N.jpg" height="225" align="right">](https://easyeda.com/seb.morin/esk8)[<img src="https://i.imgur.com/fsrZ5Zs.jpg" height="225" align="right">](https://easyeda.com/seb.morin/esk8)
 
-**project done on *EasyEDA***, click on the PCB or schematic to check it
+click to check the **EasyEDA** project
 <p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>
 
 # Android App 
@@ -17,7 +17,7 @@
 * login on **[app inventor](http://ai2.appinventor.mit.edu/)** & import [esk8.aia](https://github.com/sebdelsol/Esk8/blob/master/esk8.aia)
 * pair your android's phone with the **Esk8** device *within 5s after power on*
 * use `REGISTER_VAR` & `REGISTER_CMD` macros to automatically create app's widgets
-<p>&nbsp;</p>  
+<p>&nbsp;</p>  <p>&nbsp;</p>  
 
 # LED strips debug
 <img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="225" align="right">
