@@ -129,10 +129,11 @@ public:
     {
       #define REGISTER_CFG(var, min, max) REGISTER_VAR_SIMPLE(CFG, #var, self->var, min, max)
 
-      REGISTER_CMD(CFG,        "load",      {BT.load(false);} )        // load not default
-      REGISTER_CMD(CFG,        "default",   {BT.load(true);}  )        // load default
-      REGISTER_CMD_NOSHOW(CFG, "getInits",  {BT.sendInitsOverBT();} )  // answer with all vars init (min, max, value)
-      REGISTER_CMD_NOSHOW(CFG, "getUpdate", {sendUpdate();}  )         // answer with all updates
+      REGISTER_CMD(CFG,        "save",      {BT.save(false);} )       // save not default
+      REGISTER_CMD(CFG,        "load",      {BT.load(false);} )       // load not default
+      REGISTER_CMD(CFG,        "default",   {BT.load(true);}  )       // load default
+      REGISTER_CMD_NOSHOW(CFG, "getInits",  {BT.sendInitsOverBT();} ) // answer with all vars init (min, max, value)
+      REGISTER_CMD_NOSHOW(CFG, "getUpdate", {sendUpdate();} )         // answer with all updates
 
       REGISTER_CFG(ledR,       0, 1);
       REGISTER_CFG(ledF,       0, 1);
