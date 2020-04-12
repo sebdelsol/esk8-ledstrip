@@ -15,7 +15,7 @@
 <img src="https://i.imgur.com/sUIXf7x.jpg" height="250" align="right">
 
 **If you want to tweak values in real time :**
-* login on **[app inventor](http://ai2.appinventor.mit.edu/)** & import [esk8.aia](https://github.com/sebdelsol/Esk8/blob/master/esk8.aia)
+* login on [app inventor](http://ai2.appinventor.mit.edu/) & import [esk8.aia](https://github.com/sebdelsol/Esk8/blob/master/esk8.aia)
 * pair your android's phone with the **Esk8** device *within 5s after power on*
 * use `REGISTER_VAR` & `REGISTER_CMD` macros to automatically create app's widgets
 <p>&nbsp;</p>  <p>&nbsp;</p>  
@@ -24,18 +24,18 @@
 <img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="215" align="right">
 
 **If you want to check what's happening with your LED strips :**
-* in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment `#define DEBUG_LED_TOWIFI`
+* uncomment `#define DEBUG_LED_TOWIFI` in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) 
 * please install [PyGame](https://www.pygame.org) & [SimpleWebsocketServer](https://pypi.org/project/simple-websocket-server) then launch [debugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py)
 
 <p>&nbsp;</p>  <p>&nbsp;</p>
 
 # OTA update & Telnet log
 **If you want *OTA* update :**
-* in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment `#define USE_OTA`
-* in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini) uncomment `upload_protocol = espota` & `upload_port = "esk8.local"`
+* uncomment `#define USE_OTA` in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) 
+* uncomment `upload_protocol = espota` & `upload_port = "esk8.local"` in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini) 
 
 **If you want *Telnet* logs when using OTA :**
-* in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment `#define USE_TELNET`
+* uncomment `#define USE_TELNET` in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) 
 * launch a  `telnet` cmd line & `open esk8.local`
 
 # BOM
