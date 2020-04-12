@@ -82,7 +82,7 @@ bool myMPU6050::getMotion(VectorInt16 &dir, VectorInt16 &up, VectorInt16 &acc, i
     #ifdef MPU_DBG
       *mSerial << "[ gyr " << mWz << "\t " << mGy.x << "\t " << mGy.y << "\t " << mGy.z << "]\t ";
       *mSerial << "[ dt " << dt*.001 << "ms\t smooth" << smooth/65536. << "\t Wz " << mWz  << "]\t ";
-      *mSerial << "[ ypr " << TOdeg(mYPR[0]) << "\t " << TOdeg(mYPR[1]) << "\t " << TOdeg(mYPR[2]) << "]\t ";
+      // *mSerial << "[ ypr " << TOdeg(mYPR[0]) << "\t " << TOdeg(mYPR[1]) << "\t " << TOdeg(mYPR[2]) << "]\t ";
       *mSerial << "[ grav " << mGrav.x << "\t " << mGrav.y << "\t " << mGrav.z << "]\t ";
       *mSerial << "[ avg " << mX << "\t " << mY << "\t " << mZ << "]\t ";
       *mSerial << "[ acc " << mAcc.x << "\t " << mAcc.y << "\t " << mAcc.z << "]\t ";
