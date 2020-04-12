@@ -30,7 +30,7 @@
 
 <p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>  
 
-# OTA update & Telnet debug
+# OTA update
 **If you want *OTA* update :**
 
 ◦ in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment `#define USE_OTA`
