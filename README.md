@@ -2,7 +2,7 @@
 <img src="https://media.giphy.com/media/IhCHKo42Hx7WFkRmzQ/giphy.gif" height="215" align="right"><img src="https://media.giphy.com/media/fY5xLxGayUptPZuTfG/giphy.gif" height="215" align="right"><img src="https://media.giphy.com/media/RfYtkG17dUJyVmbPet/giphy.gif" height="215" align="right">
 
 ***LED strips controlled by an accelerometer for an eSK8 with a basic companion app***
-<p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>  <p>&nbsp;</p>  
+<p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>  
 
 # [PCB & Schematic](https://easyeda.com/seb.morin/esk8) 
 [<img src="https://image.easyeda.com/histories/aaf838e4a54c468f9502dc529522ac38.png" height="200" align="right">](https://easyeda.com/seb.morin/esk8)[<img src="https://i.imgur.com/bn5Pk2N.jpg" height="200" align="right">](https://easyeda.com/seb.morin/esk8)[<img src="https://i.imgur.com/fsrZ5Zs.jpg" height="200" align="right">](https://easyeda.com/seb.morin/esk8)
