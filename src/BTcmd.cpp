@@ -234,4 +234,5 @@ void BTcmd::sendInitsOverBT()
       }
     }
   } 
+  *mBTStream << "initdone" << endl;
 }
