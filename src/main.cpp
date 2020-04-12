@@ -92,8 +92,7 @@ int           WZ;
   void sendUpdate()
   {
     if(BT.sendUpdate() && GotAccel)
-      *(BT.getBtSerial()) << "updir " << DIR.x << " " << DIR.y << " " << DIR.z << " " << UP.x << " " << UP.y << " " << UP.z << endl;
-      // *(BT.getBtSerial()) << "acc " << DIR.x << " " << DIR.y << " " << DIR.z << " " << UP.x << " " << UP.y << " " << UP.z << " " << acc.x << " " << acc.y << " " << acc.z << endl;
+      *(BT.getBtSerial()) << "acc " << DIR.x << " " << DIR.y << " " << DIR.z << " " << UP.x << " " << UP.y << " " << UP.z << " " << VACC.x << " " << VACC.y << " " << VACC.z << endl;
   }
 #endif
 
