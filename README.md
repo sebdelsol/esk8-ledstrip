@@ -16,7 +16,7 @@
 
 ◦ pair your android's phone with the **Esk8** device *within 5s after power on*
 
-◦ use *REGISTER_VAR* & *REGISTER_CMD* macros to automatically create app's widgets
+◦ use `REGISTER_VAR` & `REGISTER_CMD` macros to automatically create app's widgets
 <p>&nbsp;</p>  <p>&nbsp;</p>  <p>&nbsp;</p>  
 
 # LED strips debug
@@ -42,7 +42,7 @@
 
 ◦ in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment `#define USE_TELNET`
 
-◦ launch a cmd line & type `telnet`, then `open esk8.local`
+◦ launch a  `telnet` cmd line & `open esk8.local`
 
 # BOM
 
