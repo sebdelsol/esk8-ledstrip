@@ -11,7 +11,7 @@ click to check the **EasyEDA** project
 <p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>
 
 # Android App 
-<img src="https://i.imgur.com/sUIXf7x.jpg" height="225" align="right">
+<img src="https://i.imgur.com/sUIXf7x.jpg" height="250" align="right">
 
 **If you want to tweak values in real time :**
 * login on **[app inventor](http://ai2.appinventor.mit.edu/)** & import [esk8.aia](https://github.com/sebdelsol/Esk8/blob/master/esk8.aia)
