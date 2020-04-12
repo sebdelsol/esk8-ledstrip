@@ -21,7 +21,7 @@ click to check the **EasyEDA** project
 <p>&nbsp;</p>  <p>&nbsp;</p>  
 
 # LED strips debug
-<img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="225" align="right">
+<img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="200" align="right">
 
 **If you want to check what's happening with your LED strips :**
 * in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment `#define DEBUG_LED_TOWIFI`
