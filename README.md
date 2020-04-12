@@ -2,11 +2,13 @@
 <img src="https://media.giphy.com/media/IhCHKo42Hx7WFkRmzQ/giphy.gif" height="225" align="left"> <img src="https://media.giphy.com/media/fY5xLxGayUptPZuTfG/giphy.gif" height="225" align="left"> <img src="https://media.giphy.com/media/RfYtkG17dUJyVmbPet/giphy.gif" height="225" align="left">
 
 ***LED strips controlled by an accelerometer for an eSK8 with a basic companion app***
+<p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>  <p>&nbsp;</p>  
 
 # [PCB & Schematic](https://easyeda.com/seb.morin/esk8) 
-**done on *EasyEDA***
+[<img src="https://image.easyeda.com/histories/aaf838e4a54c468f9502dc529522ac38.png" height="225" align="left">](https://easyeda.com/seb.morin/esk8) [<img src="https://i.imgur.com/bn5Pk2N.jpg" height="225" align="left">](https://easyeda.com/seb.morin/esk8) [<img src="https://i.imgur.com/fsrZ5Zs.jpg" height="225" align="left">](https://easyeda.com/seb.morin/esk8)
 
-[<img src="https://image.easyeda.com/histories/aaf838e4a54c468f9502dc529522ac38.png" height="225">](https://easyeda.com/seb.morin/esk8) [<img src="https://i.imgur.com/bn5Pk2N.jpg" height="225">](https://easyeda.com/seb.morin/esk8) [<img src="https://i.imgur.com/fsrZ5Zs.jpg" height="225">](https://easyeda.com/seb.morin/esk8)
+**done on *EasyEDA***
+<p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>  <p>&nbsp;</p>  
 
 # Android App 
 <img src="https://i.imgur.com/sUIXf7x.jpg" height="225" align="left">
