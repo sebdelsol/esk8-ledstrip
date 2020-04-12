@@ -48,7 +48,7 @@
 
 Qty | Components | *20€*
 ---:| :---| ---:
-1| PCB| *2€*
+1|[PCB](https://easyeda.com/seb.morin/esk8)| *2€*
 1|[Lolin32](https://wiki.wemos.cc/products:lolin32:lolin32)| *4€*
 1|[SN74AHCT125](https://www.ti.com/product/SN74AHCT125) | *50c*
 1|[MPU 6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/) | *1€*
