@@ -1,4 +1,4 @@
-# eSK8 LED strips
+# eSK8 LEDstrips
 <img src="https://media.giphy.com/media/IhCHKo42Hx7WFkRmzQ/giphy.gif" height="215" align="right"><img src="https://media.giphy.com/media/fY5xLxGayUptPZuTfG/giphy.gif" height="215" align="right"><img src="https://media.giphy.com/media/RfYtkG17dUJyVmbPet/giphy.gif" height="215" align="right">
 
 ***LED strips controlled by an accelerometer for an eSK8 with a basic companion app***
