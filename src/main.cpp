@@ -26,7 +26,7 @@
 // ----------------------------------------------------
 #ifdef USE_OTA
   #include <OTA.h>
-  OTA Ota; ets
+  OTA Ota;
 
   #ifdef USE_TELNET
     #include <TelnetSpy.h>
