@@ -46,14 +46,16 @@
 
 # BOM
 
-Qty | Components | *20€*
----:| :---| ---:
-1| PCB| *2€*
-1|[Lolin32](https://wiki.wemos.cc/products:lolin32:lolin32)| *4€*
-1|[SN74AHCT125](https://www.ti.com/product/SN74AHCT125) | *50c*
-1|[MPU 6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/) | *1€*
-50cm|WS2812B IP67, 144Leds/m | *8€*
-1m|WS2812B IP67, 60Leds/m | *4€*
+*Qty* | *Components* | *20€* |                                                              | Qty | Spare
+---:  | :---         | ---:  | ---                                                          |---: | :---
+1| PCB| *2€* |                                                                              | 3|470Ω resistors 
+1|[Lolin32](https://wiki.wemos.cc/products:lolin32:lolin32)| *4€* |                         | 1|1000μF capacitor
+1|[SN74AHCT125](https://www.ti.com/product/SN74AHCT125) | *50c* |                           | 1|10kΩ resistor
+1|[MPU 6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/) | *1€* | | 1|LDR
+50cm|WS2812B IP67, 144Leds/m | *8€* |                                                       | 1|220Ω resistor
+1m|WS2812B IP67, 60Leds/m | *4€* |                                                          | 1|blue LED
+ | | | |                                                                                     | 1|2x12 switch
+
 3|470Ω resistors | *1c*
 1|1000μF capacitor | *1c*
 1|10kΩ resistor | *1c*
