@@ -8,7 +8,7 @@
 [<img src="https://image.easyeda.com/histories/aaf838e4a54c468f9502dc529522ac38.png" height="200" align="right">](https://easyeda.com/seb.morin/esk8)[<img src="https://i.imgur.com/bn5Pk2N.jpg" height="200" align="right">](https://easyeda.com/seb.morin/esk8)[<img src="https://i.imgur.com/fsrZ5Zs.jpg" height="200" align="right">](https://easyeda.com/seb.morin/esk8)
 
 **project done on *EasyEDA***, click on the PCB or schematic to check it
-<p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>  <p>&nbsp;</p>  
+<p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>
 
 # Android App 
 <img src="https://i.imgur.com/sUIXf7x.jpg" height="225" align="right">
@@ -26,7 +26,7 @@
 * in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment `#define DEBUG_LED_TOWIFI`
 * please install [PyGame](https://www.pygame.org) & [SimpleWebsocketServer](https://pypi.org/project/simple-websocket-server) then launch [debugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py)
 
-<p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>  
+<p>&nbsp;</p>  <p>&nbsp;</p>
 
 # OTA update & Telnet log
 **If you want *OTA* update :**
