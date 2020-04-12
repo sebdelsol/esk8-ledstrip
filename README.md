@@ -8,26 +8,27 @@
 [<img src="https://image.easyeda.com/histories/aaf838e4a54c468f9502dc529522ac38.png" height="225">](https://easyeda.com/seb.morin/esk8) [<img src="https://i.imgur.com/bn5Pk2N.jpg" height="225">](https://easyeda.com/seb.morin/esk8) [<img src="https://i.imgur.com/fsrZ5Zs.jpg" height="225">](https://easyeda.com/seb.morin/esk8)
 
 # Android App 
-<img src="https://i.imgur.com/sUIXf7x.jpg" height="300" align="left">
+<img src="https://i.imgur.com/sUIXf7x.jpg" height="250" align="left">
 
-**If you want to tweak values in real time :**<p>&nbsp;</p>  
+**If you want to tweak values in real time :**
 
 ◦ login on **[app inventor](http://ai2.appinventor.mit.edu/)** & import [esk8.aia](https://github.com/sebdelsol/Esk8/blob/master/esk8.aia)
 
 ◦ pair your android's phone with the **Esk8** device *within 5s after power on*
 
 ◦ use `REGISTER_VAR` & `REGISTER_CMD` macros to automatically create app's widgets
-<p>&nbsp;</p>  <p>&nbsp;</p>  <p>&nbsp;</p>  
+<p>&nbsp;</p>  <p>&nbsp;</p>  <p>&nbsp;</p>  <p>&nbsp;</p>  
 
 # LED strips debug
-<img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="300" align="left">
+<img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="250" align="left">
 
-**If you want to check what's happening with your LED strips :** <p>&nbsp;</p>
+**If you want to check what's happening with your LED strips :**
 
 ◦ in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) uncomment `#define DEBUG_LED_TOWIFI`
  
 ◦ please install [PyGame](https://www.pygame.org) & [SimpleWebsocketServer](https://pypi.org/project/simple-websocket-server) then launch [debugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py)
-<p>&nbsp;</p>  <p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>  
+
+<p>&nbsp;</p> <p>&nbsp;</p>  <p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>  
 
 # OTA update & Telnet debug
 **If you want *OTA* update :**
