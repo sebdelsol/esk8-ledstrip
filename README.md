@@ -14,7 +14,7 @@
 # Android App 
 <img src="https://media.giphy.com/media/dtBonRsITrgrtEBi5O/giphy.gif" height="250" align="right">
 
-**if you want to tweak valyour setup in real time on your *phone***
+**if you want to *tweak* your setup in real time on your *phone***
 * login on **[app inventor](http://ai2.appinventor.mit.edu/)** & import **[esk8.aia](https://github.com/sebdelsol/Esk8/blob/master/esk8.aia)**
 * pair your Android phone with the **Esk8** device *within 5s after power on*
 * use `REGISTER_VAR` & `REGISTER_CMD` macros to automatically create app's widgets
@@ -23,7 +23,7 @@
 # LEDstrips debug
 <img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="215" align="right">
 
-**if you want to check what's happening with your *LEDstrips* on your computer**
+**if you want to *check* what's happening with your *LEDstrips* on your computer**
 * uncomment `#define DEBUG_LED_TOWIFI` in **[main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)** 
 * please install **[PyGame](https://www.pygame.org)** & **[SimpleWebsocketServer](https://pypi.org/project/simple-websocket-server)** then launch **[debugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py)**
 
