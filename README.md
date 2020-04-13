@@ -47,7 +47,7 @@ Qty | Components | *20€*
 <sub>1</sub>|**[SN74AHCT125](https://www.ti.com/product/SN74AHCT125)** | *50c*
 <sub>1</sub>|**[MPU-6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/)** | *1€*
 <sub>0.5 m</sub>|**[WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)** with **[IP67](https://en.wikipedia.org/wiki/IP_Code)**, 144Leds/m | *8€*
-<sub>1 m</sub>|**[WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)** with **[IP67](https://en.wikipedia.org/wiki/IP_Code)**, 60Leds/m | *4€*
+1 m|**[WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)** with **[IP67](https://en.wikipedia.org/wiki/IP_Code)**, 60Leds/m | *4€*
 <sub>3</sub>|470Ω resistors | -
 <sub>1</sub>|1000μF capacitor | -
 <sub>1</sub>|10kΩ resistor | -
