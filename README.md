@@ -32,7 +32,6 @@
 # OTA update & Telnet log
 **if you want *OTA* update**
 * upload using a usb cable 1<sup>st</sup>
-
 * uncomment `#define USE_OTA` in **[main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)** 
 * uncomment `upload_protocol = espota` & `upload_port = "esk8.local"` in **[platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini)** 
 
