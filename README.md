@@ -40,7 +40,7 @@
 
 # BOM
 
-qty | Components | *20€*
+Qty | Components | *20€*
 ---:| :---| ---:
 <sub>1</sub>|**[custom PCB](https://easyeda.com/seb.morin/esk8)**| *2€*
 <sub>1</sub>|**[Lolin32](https://wiki.wemos.cc/products:lolin32:lolin32)**| *4€*
