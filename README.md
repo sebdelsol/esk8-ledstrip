@@ -48,8 +48,8 @@ Qty | Components | *20€*
 <sub>1</sub>| Wemos **[Lolin32](https://wiki.wemos.cc/products:lolin32:lolin32)**| *4€*
 <sub>1</sub>| Texas Instruments **[SN74AHCT125](https://www.ti.com/product/SN74AHCT125)** | *50c*
 <sub>1</sub>| InvenSense **[MPU-6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/)** | *1€*
-<sub>0.5m</sub>|Neopixel **[WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)** with **[IP67](https://en.wikipedia.org/wiki/IP_Code)** - 144 leds/m | *8€*
-<sub>1m</sub>|Neopixel **[WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)** with **[IP67](https://en.wikipedia.org/wiki/IP_Code)** - 60 leds/m | *4€*
+<sub>0.5m</sub>|Neopixel **[WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)** with **[IP67](https://en.wikipedia.org/wiki/IP_Code)**, 144 leds/m | *8€*
+<sub>1m</sub>|Neopixel **[WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)** with **[IP67](https://en.wikipedia.org/wiki/IP_Code)**, 60 leds/m | *4€*
 <sub>3</sub>|<sub>470Ω resistors</sub> | -
 <sub>1</sub>|<sub>1000μF capacitor</sub> | -
 <sub>1</sub>|<sub>10kΩ resistor</sub> | -
