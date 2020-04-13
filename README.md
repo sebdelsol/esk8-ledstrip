@@ -42,16 +42,16 @@
 
 Qty | Components | *20€*
 ---:| :---| ---:
-1|**[custom PCB](https://easyeda.com/seb.morin/esk8)**| *2€*
-1|**[Lolin32](https://wiki.wemos.cc/products:lolin32:lolin32)**| *4€*
-1|**[SN74AHCT125](https://www.ti.com/product/SN74AHCT125)** | *50c*
-1|**[MPU-6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/)** | *1€*
-50cm|**[WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)** with **[IP67](https://en.wikipedia.org/wiki/IP_Code)**, 144Leds/m | *8€*
-1m|**[WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)** with **[IP67](https://en.wikipedia.org/wiki/IP_Code)**, 60Leds/m | *4€*
-3|470Ω resistors | *1c*
-1|1000μF capacitor | *1c*
-1|10kΩ resistor | *1c*
-1|LDR | *1c*
-1|220Ω resistor | *1c*
-1|blue LED | *1c*
-1|12x12 switch | *1c*
+*1*|**[custom PCB](https://easyeda.com/seb.morin/esk8)**| 2€
+*1*|**[Lolin32](https://wiki.wemos.cc/products:lolin32:lolin32)**| 4€
+*1*|**[SN74AHCT125](https://www.ti.com/product/SN74AHCT125)** | 50c
+*1*|**[MPU-6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/)** | 1€
+*50cm*|**[WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)** with **[IP67](https://en.wikipedia.org/wiki/IP_Code)**, 144Leds/m | 8€
+*1m*|**[WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)** with **[IP67](https://en.wikipedia.org/wiki/IP_Code)**, 60Leds/m | 4€
+*3*|470Ω resistors | 1c
+*1*|1000μF capacitor | 1c
+*1*|10kΩ resistor | 1c
+*1*|LDR | 1c
+*1*|220Ω resistor | 1c
+*1*|blue LED | 1c
+*1*|12x12 switch | 1c
