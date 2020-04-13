@@ -60,4 +60,4 @@ Qty | Components | *20€*
 
 * in **BluetoothSerial.cpp** change #define TX_QUEUE_SIZE to 512, to avoid bluetooth congestion
 * in **I2Cdevlib-MPU6050** you'll need to comment some typedef to make it compile
-* get TelnetSpy from [github](https://github.com/yasheena/telnetspy/) instead of platformio 
+* get TelnetSpy from **[github](https://github.com/yasheena/telnetspy/)** instead of PlatformIO
