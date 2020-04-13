@@ -2,6 +2,7 @@
 <img src="https://media.giphy.com/media/IhCHKo42Hx7WFkRmzQ/giphy.gif" height="215" align="right"><img src="https://media.giphy.com/media/fY5xLxGayUptPZuTfG/giphy.gif" height="215" align="right"><img src="https://media.giphy.com/media/RfYtkG17dUJyVmbPet/giphy.gif" height="215" align="right">
 
 ***LEDstrips* controlled by an *accelerometer***
+
 **for an *eSK8* with a phone *companion app***
 <p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>  
 
