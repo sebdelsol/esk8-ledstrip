@@ -42,7 +42,7 @@
 
 # BOM
 
-Qty | Components | *20€* | where
+Qty | Components | *20€* | shop
 ---:| :---| ---: | :---
 <sub>x1</sub>| check the **[custom PCB](https://easyeda.com/seb.morin/esk8)**| *2€* | [find](https://easyeda.com/seb.morin/esk8)
 <sub>x1</sub>| Wemos **[Lolin32](https://wiki.wemos.cc/products:lolin32:lolin32)**| *4€* | [find](https://www.aliexpress.com/wholesale?catId=0&SearchText=lolin32)
