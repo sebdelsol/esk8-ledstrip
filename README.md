@@ -14,7 +14,7 @@
 # Android App 
 <img src="https://media.giphy.com/media/dtBonRsITrgrtEBi5O/giphy.gif" height="250" align="right">
 
-**if you want to tweak values in real time on your *phone***
+**if you want to tweak valyour setup in real time on your *phone***
 * login on **[app inventor](http://ai2.appinventor.mit.edu/)** & import **[esk8.aia](https://github.com/sebdelsol/Esk8/blob/master/esk8.aia)**
 * pair your Android phone with the **Esk8** device *within 5s after power on*
 * use `REGISTER_VAR` & `REGISTER_CMD` macros to automatically create app's widgets
