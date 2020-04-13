@@ -48,10 +48,10 @@ Qty | Components | 20€
 *1*|**[MPU-6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/)** | 1€
 *50cm*|**[WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)** with **[IP67](https://en.wikipedia.org/wiki/IP_Code)**, 144Leds/m | 8€
 *1m*|**[WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)** with **[IP67](https://en.wikipedia.org/wiki/IP_Code)**, 60Leds/m | 4€
-*3*|470Ω resistors | ~
-*1*|1000μF capacitor | 
-*1*|10kΩ resistor | 
-*1*|LDR | 
-*1*|220Ω resistor | 
+*3*|470Ω resistors | ε
+*1*|1000μF capacitor | ε 
+*1*|10kΩ resistor | ε
+*1*|LDR | ε
+*1*|220Ω resistor | ~
 *1*|blue LED | ~
-*1*|12x12 switch | 
+*1*|12x12 switch | ~
