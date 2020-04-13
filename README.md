@@ -54,4 +54,4 @@ Qty | Components | 20€
 *1*|LDR | -
 *1*|220Ω resistor | -
 *1*|blue LED | -
-*1*|12x12 switch | ~
+*1*|12x12 switch | -
