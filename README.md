@@ -56,7 +56,7 @@ Qty | Components | *20€*
 <sub>1</sub>|<sub>blue LED</sub> | -
 <sub>1</sub>|<sub>12x12 switch</sub> | -
 
-# Things to know about libraries
+# Dependencies
 
 * in **BluetoothSerial.cpp** change #define TX_QUEUE_SIZE to 512, to avoid bluetooth congestion
 * in **I2Cdevlib-MPU6050** you'll need to comment some typedef to make it compile
