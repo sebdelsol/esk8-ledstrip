@@ -84,15 +84,15 @@ RunningFX   RunF(CRGB::Gold);
 // ----------------------------------------------------
 myMPU6050     Accel;
 bool          GotAccel = false;
-VectorInt16   DIR, UP, VACC;
-int           WZ;
+VectorInt16   AXIS, VACC;
+int           ANGLE, WZ;
 
 // ----------------------------------------------------
 #ifdef USE_BT
   void sendUpdate()
   {
     if(BT.sendUpdate() && GotAccel)
-      *BT.getBtSerial() << "acc " << DIR.x << " " << DIR.y << " " << DIR.z << " " << UP.x << " " << UP.y << " " << UP.z << " " << VACC.x << " " << VACC.y << " " << VACC.z << endl;
+      *BT.getBtSerial() << "acc " << AXIS.x << " " << AXIS.y << " " << AXIS.z << " " << ANGLE << " " << VACC.y << " " << WZ << endl;
   }
 #endif
 
@@ -223,7 +223,7 @@ void loop()
 {
   handleOta();
 
-  GotAccel = Accel.getMotion(DIR, UP, VACC, WZ);
+  GotAccel = Accel.getMotion(AXIS, ANGLE, VACC, WZ);
 
   #ifdef USE_BT
     if (Button.pressed())
@@ -305,7 +305,7 @@ void loop()
       }
 
       #ifdef DEBUG_ACC
-        Serial << "[areal  " << x << "\t" << y << "\t" << z << "]\t";
+        Serial << "[areal  " << VACC.x << "\t" << VACC.y << "\t" << VACC.z << "]\t";
         Serial << "[fwd " << fwd << "\trwd " << rwd << "\tACC " << acc << "]\t";
         Serial << "[alpha " << alpha << "\tinv " << invAlpha << "]\t";
         Serial << "[eyeR " << eyeR << "\teyeF " << eyeF << "\talphaR " << alphaR << "\talphaF " << alphaF << "\talphaP " << alphaP << "]" << endl; //"       \r";//endl;

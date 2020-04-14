@@ -35,24 +35,26 @@ class myMPU6050
 {
   ulong mT = 0;
   int mX = 0, mY = 0, mZ = 0, mWz = 0;
+
   Stream* mSerial;
 
   bool mDmpReady = false;           // set true if DMP init was successful
   uint8_t mFifoBuffer[64];          // FIFO storage buffer
 
-  Quaternion mQuat;                 // [w, x, y, z]         quaternion container
+  Quaternion  mQuat;                 // [w, x, y, z]         quaternion container
   VectorInt16 mGy;                  // [x, y, z]            gyro sensor measurements
   VectorInt16 mAcc;                 // [x, y, z]            accel sensor measurements
   VectorInt16 mAccReal;             // [x, y, z]            gravity-free accel sensor measurements
   VectorFloat mGrav;                // [x, y, z]            gravity vector
-  VectorInt16 mUp;                  // [x, y, z]            up vector
-  VectorInt16 mDir;                 // [x, y, z]            dir vector
+  VectorInt16 mAxis;
+  int         mAngle;
 
   bool readAccel();
   
 public:
 
-  void setVecInt16(VectorInt16 &v, int16_t x, int16_t y, int16_t z) { v.x = x; v.y = y; v.z = z;};
+  void getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q);
+
   void begin(Stream &serial, void (*handleOta)());
-  bool getMotion(VectorInt16 &dir, VectorInt16 &up, VectorInt16 &acc, int &wz);
+  bool getMotion(VectorInt16 &axis, int &angle, VectorInt16 &acc, int &wz);
 };

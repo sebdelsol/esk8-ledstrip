@@ -206,7 +206,6 @@ void BTcmd::sendUpdateOverBT()
     byte nbVar = obj->getNbVar();
     for (byte j = 0; j < nbVar; j++)
     {
-
       if (obj->hasVarChanged(j))
       {
         char* varName = obj->getVarName(j);

@@ -40,6 +40,27 @@ void myMPU6050::begin(Stream &serial, void (*handleOta)())
 }
 
 // ================================================================
+void myMPU6050::getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q)
+{
+  if (q.w > 1) q.normalize(); // if w>1 acos and sqrt will produce errors, this cant happen if quaternion is normalised
+  angle = acos(q.w) * 2 * 10430.; // 32767 / PI
+  
+  float s = sqrt(1 - q.w * q.w); // assuming quaternion normalised then w is less than 1, so term always positive.
+  if (s < 0.001) // test to avoid divide by zero, s is always positive due to sqrt
+  {
+    v.x = 1;
+    v.y = v.z = 0;
+  }
+  else
+  {
+    float _s = 32767. * s; 
+    v.x = q.x * _s;
+    v.y = q.y * _s;
+    v.z = q.z * _s;
+  }
+}
+
+// ================================================================
 bool myMPU6050::readAccel()
 {
   if (mDmpReady && mpu.dmpGetCurrentFIFOPacket(mFifoBuffer))
@@ -48,11 +69,8 @@ bool myMPU6050::readAccel()
     mpu.dmpGetQuaternion(&mQuat, mFifoBuffer);
     mpu.dmpGetGravity(&mGrav, &mQuat);
 
-    setVecInt16(mDir, 0,  VEC16_UNIT, 0);
-    setVecInt16(mUp,  0,  0,          VEC16_UNIT);
-    mDir.rotate(&mQuat);
-    mUp.rotate(&mQuat);
-    
+    getAxiSAngle(mAxis, mAngle, mQuat);
+
     // angular speed
     mpu.dmpGetGyro(&mGy, mFifoBuffer);
 
@@ -64,7 +82,7 @@ bool myMPU6050::readAccel()
   return false;
 }
 
-bool myMPU6050::getMotion(VectorInt16 &dir, VectorInt16 &up, VectorInt16 &acc, int &wz)
+bool myMPU6050::getMotion(VectorInt16 &axis, int &angle, VectorInt16 &acc, int &wz)
 {
   if (readAccel())
   {
@@ -82,7 +100,6 @@ bool myMPU6050::getMotion(VectorInt16 &dir, VectorInt16 &up, VectorInt16 &acc, i
     #ifdef MPU_DBG
       *mSerial << "[ gyr " << mWz << "\t " << mGy.x << "\t " << mGy.y << "\t " << mGy.z << "]\t ";
       *mSerial << "[ dt " << dt*.001 << "ms\t smooth" << smooth/65536. << "\t Wz " << mWz  << "]\t ";
-      // *mSerial << "[ ypr " << TOdeg(mYPR[0]) << "\t " << TOdeg(mYPR[1]) << "\t " << TOdeg(mYPR[2]) << "]\t ";
       *mSerial << "[ grav " << mGrav.x << "\t " << mGrav.y << "\t " << mGrav.z << "]\t ";
       *mSerial << "[ avg " << mX << "\t " << mY << "\t " << mZ << "]\t ";
       *mSerial << "[ acc " << mAcc.x << "\t " << mAcc.y << "\t " << mAcc.z << "]\t ";
@@ -93,8 +110,8 @@ bool myMPU6050::getMotion(VectorInt16 &dir, VectorInt16 &up, VectorInt16 &acc, i
 
   wz = mWz;  
   acc.x = mX;  acc.y = mY;  acc.z = mZ; 
-  dir.x = mDir.x; dir.y = mDir.y; dir.z = mDir.z;  
-  up.x = mUp.x; up.y = mUp.y; up.z = mUp.z;  
+  axis.x = mAxis.x; axis.y = mAxis.y; axis.z = mAxis.z;  
+  angle = mAngle;
 
   return mDmpReady;
 }
