@@ -66,6 +66,12 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change)
   const char *cmd = buf.first();
   if (cmd!=NULL)
   {
+    if (strcmp(cmd, "U")==0) // shortcut
+    {
+      snprintf(buf.getBuf(), buf.getLen(), "%s Cfg getUpdate", mSetKeyword); // emulate a set cmd
+      cmd = buf.first();
+    }
+
     const char *objName = buf.next();
     if (objName!=NULL)
     {
