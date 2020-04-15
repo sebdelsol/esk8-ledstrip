@@ -92,7 +92,7 @@ int           ANGLE, WZ;
   void sendUpdate()
   {
     if(BT.sendUpdate() && GotAccel)
-      *BT.getBtSerial() << "acc " << AXIS.x << " " << AXIS.y << " " << AXIS.z << " " << ANGLE << " " << VACC.y << " " << WZ << endl;
+      *BT.getBtSerial() << "A " << AXIS.x << " " << AXIS.y << " " << AXIS.z << " " << ANGLE << " " << VACC.y << " " << WZ << endl;
   }
 #endif
 
