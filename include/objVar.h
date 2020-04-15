@@ -16,27 +16,31 @@ struct MyVar {
   int         min;
   int         max;
   bool        show;
+  byte        ID;
   int         last[3]; // check BTCMD_MAXARGS
 };
 
 //---------------------------------
 class OBJVar
 {
-
   MyVar mVar[MAX_VAR];
   byte mNVAR = 0;
 
 public:  
   bool registerVar(void *obj, const char *name, setVarFunc set, getVarFunc get, int min=0, int max=0, bool show=true);
   MyVar* getVarFromName(const char* name);
+  MyVar* getVar(byte i) { return &mVar[i]; };
 
   void set(MyVar* var, int* toSet, byte n, bool change = false);
   byte get(MyVar* var, int* toGet);
   void getMinMax(MyVar* var, int* min, int* max);
 
+  byte getID(MyVar* var) { return var->ID; };
+  void setID(MyVar* var, byte id) const { var->ID = id; };
+
   byte getNbVar() { return mNVAR;};
-  char* getVarName(byte i) { return mVar[i].name;};
-  bool isVarShown(byte i) { return mVar[i].show;};
+  char* getVarName(byte i) { return mVar[i].name; };
+  bool isVarShown(byte i) { return mVar[i].show; };
   bool hasVarChanged(byte i);
 };
 

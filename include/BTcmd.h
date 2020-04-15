@@ -78,8 +78,8 @@ class BTcmd
   
   void initSPIFFS();
   bool isNumber(const char* txt);
-  void handleCmd(Stream* stream, BUF& buf, bool change=true);
-  void readStream(Stream* stream, BUF& buf, bool change=true);
+  void handleCmd(Stream* stream, BUF& buf, bool change=true, bool useShortCut=false);
+  void readStream(Stream* stream, BUF& buf, bool change=true, bool useShortCut=false);
   File getFile(bool isdefault, const char *mode);
   void dbgCmd(const char *cmd, const char *objName, const char *varName, int nbArg, int *args);
 
@@ -95,5 +95,5 @@ public:
   void load(bool isdefault, bool change);
   void sendInitsOverBT();
   void sendUpdateOverBT();
-  void readBTStream() { readStream(mBTStream, mBTbuf, false); };
+  void readBTStream() { readStream(mBTStream, mBTbuf, false, true); };
 };

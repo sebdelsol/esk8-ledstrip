@@ -35,11 +35,20 @@ bool BTcmd::registerObj(const OBJVar& obj, const char* name)
   bool ok = mNOBJ < BTCMD_MAXOBJ-1;
   if (ok)
   {
-    mOBJ[mNOBJ].obj = (OBJVar*)&obj;
+    OBJVar* _obj = (OBJVar*)&obj;
+    mOBJ[mNOBJ].obj = _obj;
     
     char* str = (char *)malloc(strlen(name) + 1);
     strcpy(str, name);
     mOBJ[mNOBJ++].name = str;
+
+    // create IDs
+    byte nbVar = _obj->getNbVar();
+    for (byte i = 0; i < nbVar; i++)
+    {
+      MyVar* var = _obj->getVar(i);
+      _obj->setID(var, 'a'+ mNOBJ + i * BTCMD_MAXOBJ);
+    }
   }
   return ok;
 }
@@ -61,7 +70,7 @@ void BTcmd::dbgCmd(const char *cmd, const char *objName, const char *varName, in
   *mDbgSerial << endl;
 }
 
-void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change)
+void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool useShortCut)
 {
   const char *cmd = buf.first();
   if (cmd!=NULL)
@@ -108,8 +117,9 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change)
             }
             else if (strcmp(cmd, mInitKeyword)==0)
             {
+              byte id = obj->getID(var);
               obj->getMinMax(var, &min, &max);
-              *stream << mInitKeyword << " " << objName << " " << varName << " " << min << " " << max;
+              *stream << mInitKeyword << " " << objName << " " << varName << " " << id << " " << min << " " << max;
               nbArg = obj->get(var, args); 
               for (byte i=0; i < nbArg; i++) *stream << " " << args[i];
               *stream << endl;
@@ -120,7 +130,11 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change)
 
               if (nbArg) // and answer on stream
               { 
-                *stream << mSetKeyword << " " << objName << " " << varName;
+                if (useShortCut)
+                  *stream << obj->getID(var);
+                else
+                  *stream << mSetKeyword << " " << objName << " " << varName;
+
                 for (byte i=0; i < nbArg; i++) *stream << " " << args[i];
                 *stream << endl;
                 // dbgCmd(mGetKeyword, objName, varName, nbArg, args);
@@ -133,7 +147,7 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change)
   }
 }
 
-void BTcmd::readStream(Stream* stream, BUF& buf, bool change)
+void BTcmd::readStream(Stream* stream, BUF& buf, bool change, bool useShortCut)
 {
   while (stream->available() > 0) 
   {
@@ -142,7 +156,7 @@ void BTcmd::readStream(Stream* stream, BUF& buf, bool change)
     {
       if (c == BTCMD_TERM)
       {
-        handleCmd(stream, buf, change);
+        handleCmd(stream, buf, change, useShortCut);
         buf.clear();
       }
       else if (isprint(c))
@@ -216,7 +230,7 @@ void BTcmd::sendUpdateOverBT()
       {
         char* varName = obj->getVarName(j);
         snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mGetKeyword, objName, varName); // emulate a Get cmd
-        handleCmd(mBTStream, mFilebuf); // answer with a Set cmd on BT 
+        handleCmd(mBTStream, mFilebuf, true, true); // answer with a Set cmd on BT 
       }
     }
   } 
