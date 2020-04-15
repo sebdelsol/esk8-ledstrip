@@ -45,7 +45,7 @@ void myMPU6050::getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q)
   if (q.w > 1) q.normalize(); // needs q.w < 1 for acos and sqrt
   angle = acos(q.w) * 2 * 10430.; // 32767 / PI 
   float s = sqrt(1 - q.w * q.w);
-  if (s < 0.001) // test to avoid divide by zero, s is always positive due to sqrt
+  if (s < 0.001) // div 0
   {
     v.x = 1; v.y = v.z = 0;
   }
