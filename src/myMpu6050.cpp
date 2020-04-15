@@ -63,10 +63,9 @@ bool myMPU6050::readAccel()
 {
   if (mDmpReady && mpu.dmpGetCurrentFIFOPacket(mFifoBuffer))
   {
-    // angles
+    // axis angle
     mpu.dmpGetQuaternion(&mQuat, mFifoBuffer);
     mpu.dmpGetGravity(&mGrav, &mQuat);
-
     getAxiSAngle(mAxis, mAngle, mQuat);
 
     // angular speed
@@ -75,6 +74,7 @@ bool myMPU6050::readAccel()
     // real acceleration, adjusted to remove gravity
     mpu.dmpGetAccel(&mAcc, mFifoBuffer);
     mpu.dmpGetLinearAccel(&mAccReal, &mAcc, &mGrav);
+    
     return true;
   }
   return false;
