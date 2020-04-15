@@ -42,21 +42,19 @@ void myMPU6050::begin(Stream &serial, void (*handleOta)())
 // ================================================================
 void myMPU6050::getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q)
 {
-  if (q.w > 1) q.normalize(); // if w>1 acos and sqrt will produce errors, this cant happen if quaternion is normalised
-  angle = acos(q.w) * 2 * 10430.; // 32767 / PI
-  
-  float s = sqrt(1 - q.w * q.w); // assuming quaternion normalised then w is less than 1, so term always positive.
+  if (q.w > 1) q.normalize(); // needs q.w < 1 for acos and sqrt
+  angle = acos(q.w) * 2 * 10430.; // 32767 / PI 
+  float s = sqrt(1 - q.w * q.w);
   if (s < 0.001) // test to avoid divide by zero, s is always positive due to sqrt
   {
-    v.x = 1;
-    v.y = v.z = 0;
+    v.x = 1; v.y = v.z = 0;
   }
   else
   {
-    float _s = 32767. * s; 
-    v.x = q.x * _s;
-    v.y = q.y * _s;
-    v.z = q.z * _s;
+    float n = 32767. / s; 
+    v.x = q.x * n;
+    v.y = q.y * n;
+    v.z = q.z * n;
   }
 }
 
