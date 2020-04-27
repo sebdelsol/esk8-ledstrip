@@ -70,6 +70,7 @@ RunningFX   Aqua(AQUA_MENTHE, 10, -3);
 TwinkleFX   FireTwk(HUE_RED); 
 TwinkleFX   AquaTwk(HUE_AQUA_BLUE);
 PlasmaFX    Plasma;
+// PacificaFX  Pacifica;
 
 LedStrip    <NBLEDS_TIPS, LEDR_PIN>  LedsR("LedR");
 DblCylonFX  CylonR(LUSH_LAVA); 
@@ -109,6 +110,9 @@ public:
   bool ledF       = true;
   bool led        = true;
 
+  // pacifica ?
+  // byte pacifica = 0;
+
   // for rotation
   byte runSpeed    = 3;
   int  neutralWZ   = 3000;
@@ -141,6 +145,8 @@ public:
       #ifndef USE_LIGHTPROBE
         REGISTER_CFG(bright,   1, 255);
       #endif
+
+      // REGISTER_CFG(pacifica,   0, 255);
 
       REGISTER_CFG(runSpeed,   0, 10);
       REGISTER_CFG(neutralWZ,  0, 32768);
@@ -303,6 +309,9 @@ void loop()
         FireTwk.setAlpha(alphaR);
         Plasma.setAlpha(alphaP);
       }
+
+      // alphaP = (alphaP * (255 - Cfg.pacifica)) / 255;
+      // Pacifica.setAlpha(Cfg.pacifica);
 
       #ifdef DEBUG_ACC
         Serial << "[areal  " << VACC.x << "\t" << VACC.y << "\t" << VACC.z << "]\t";

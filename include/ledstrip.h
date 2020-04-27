@@ -7,7 +7,7 @@
 
 #define COLOR_ORDER     GRB
 #define CHIPSET         WS2812B
-#define MAXFX           5
+#define MAXFX           6
 #define MAXSTRIP        3
 #define SATURATION      0xff    // for HSV FX
 #define CLEAR_LED(l, n) memset8(l, 0, n * sizeof(CRGB)); 
@@ -128,6 +128,20 @@ public:
   void registerAllCmd();
   void update(ulong time, ulong dt);
   SetFxNAME("Twinkle");
+};
+
+//--------- // by Mark Kriegsman and Mary Corey March.
+class PacificaFX : public FX 
+{
+	CRGBPalette16 mPal1, mPal2, mPal3;
+  uint16_t mT1 = 0, mT2 = 0, mT3 = 0, mT4 = 0;
+
+	void oneLayer(CRGBPalette16& p, uint16_t cistart, uint16_t wavescale, uint8_t bri, uint16_t waveangle);
+
+public: 
+  PacificaFX();
+  void update(ulong time, ulong dt);
+  SetFxNAME("Pacifica");
 };
 
 //--------------------------------------
