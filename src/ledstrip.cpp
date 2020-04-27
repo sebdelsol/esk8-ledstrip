@@ -250,7 +250,7 @@ void PacificaFX::update(ulong time, ulong dt)
     }
   }
 
-	// Deepen the blues and greens
+  // Deepen the blues and greens
   for(byte i = 0; i < mNLEDS; i++)
   {
     mLeds[i].blue = scale8(mLeds[i].blue,  145); 
