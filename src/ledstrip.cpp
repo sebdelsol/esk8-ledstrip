@@ -254,8 +254,8 @@ void PacificaFX::update(ulong time, ulong dt)
   for(byte i = 0; i < mNLEDS; i++)
 	{
     mLeds[i].blue = scale8(mLeds[i].blue,  145); 
-    mLeds[i].green= scale8(mLeds[i].green, 200); 
-    mLeds[i] |= CRGB( 2, 5, 7);
+    mLeds[i].green = scale8(mLeds[i].green, 200); 
+    mLeds[i] |= CRGB(2, 5, 7);
   }
 }
 

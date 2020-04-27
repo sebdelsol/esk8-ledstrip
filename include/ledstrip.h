@@ -137,7 +137,7 @@ class PacificaFX : public FX
   uint16_t mT1 = 0, mT2 = 0, mT3 = 0, mT4 = 0;
 
 	void oneLayer(CRGBPalette16& p, uint16_t cistart, uint16_t wavescale, uint8_t bri, uint16_t waveangle);
-
+  
 public: 
   PacificaFX();
   void update(ulong time, ulong dt);
