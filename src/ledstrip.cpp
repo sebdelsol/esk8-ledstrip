@@ -209,9 +209,9 @@ void TwinkleFX::update(ulong time, ulong dt)
 // ----------------------------------------------------
 PacificaFX::PacificaFX()
 {
-	mPal1 = {0x000507, 0x000409, 0x00030B, 0x00030D, 0x000210, 0x000212, 0x000114, 0x000117, 0x000019, 0x00001C, 0x000026, 0x000031, 0x00003B, 0x000046, 0x14554B, 0x28AA50};
-	mPal2 = {0x000507, 0x000409, 0x00030B, 0x00030D, 0x000210, 0x000212, 0x000114, 0x000117, 0x000019, 0x00001C, 0x000026, 0x000031, 0x00003B, 0x000046, 0x0C5F52, 0x19BE5F};
-	mPal3 = {0x000208, 0x00030E, 0x000514, 0x00061A, 0x000820, 0x000927, 0x000B2D, 0x000C33, 0x000E39, 0x001040, 0x001450, 0x001860, 0x001C70, 0x002080, 0x1040BF, 0x2060FF};
+  mPal1 = {0x000507, 0x000409, 0x00030B, 0x00030D, 0x000210, 0x000212, 0x000114, 0x000117, 0x000019, 0x00001C, 0x000026, 0x000031, 0x00003B, 0x000046, 0x14554B, 0x28AA50};
+  mPal2 = {0x000507, 0x000409, 0x00030B, 0x00030D, 0x000210, 0x000212, 0x000114, 0x000117, 0x000019, 0x00001C, 0x000026, 0x000031, 0x00003B, 0x000046, 0x0C5F52, 0x19BE5F};
+  mPal3 = {0x000208, 0x00030E, 0x000514, 0x00061A, 0x000820, 0x000927, 0x000B2D, 0x000C33, 0x000E39, 0x001040, 0x001450, 0x001860, 0x001C70, 0x002080, 0x1040BF, 0x2060FF};
 }
 
 void PacificaFX::update(ulong time, ulong dt)
@@ -230,20 +230,20 @@ void PacificaFX::update(ulong time, ulong dt)
   // Render each of four layers, with different scales and speeds, that vary over time
   oneLayer(mPal1, mT1, beatsin16(3, 11 * 256, 14 * 256),	beatsin8(10, 70, 130), 	0-beat16(301));
   oneLayer(mPal2, mT2, beatsin16(4, 6 * 256, 9 * 256), 		beatsin8(17, 40,  80), 	beat16(401));
-  oneLayer(mPal3, mT3, 6 * 256, 													beatsin8(9, 10,38), 		0-beat16(503));
-  oneLayer(mPal3, mT4, 5 * 256, 													beatsin8(8, 10,28), 		beat16(601));
+  oneLayer(mPal3, mT3, 6 * 256,					beatsin8(9, 10,38),	0-beat16(503));
+  oneLayer(mPal3, mT4, 5 * 256,					beatsin8(8, 10,28),	beat16(601));
 
-	// Add extra 'white' to areas where the four layers of light have lined up brightly
+  // Add extra 'white' to areas where the four layers of light have lined up brightly
   uint8_t basethreshold = beatsin8(9, 55, 65);
   uint8_t wave = beat8(7);
   
   for(byte i = 0; i < mNLEDS; i++)
-	{
+  {
     uint8_t threshold = scale8(sin8(wave), 20) + basethreshold;
     wave += 7;
     uint8_t l = mLeds[i].getAverageLight();
     if(l > threshold)
-		{
+    {
       uint8_t overage = l - threshold;
       uint8_t overage2 = qadd8(overage, overage);
       mLeds[i] += CRGB(overage, overage2, qadd8(overage2, overage2));
@@ -252,7 +252,7 @@ void PacificaFX::update(ulong time, ulong dt)
 
 	// Deepen the blues and greens
   for(byte i = 0; i < mNLEDS; i++)
-	{
+  {
     mLeds[i].blue = scale8(mLeds[i].blue,  145); 
     mLeds[i].green = scale8(mLeds[i].green, 200); 
     mLeds[i] |= CRGB(2, 5, 7);
@@ -264,7 +264,7 @@ void PacificaFX::oneLayer(CRGBPalette16& p, uint16_t cistart, uint16_t wavescale
 {
   uint16_t wavescaleHalf = (wavescale / 2) + 20;
   for(byte i = 0; i < mNLEDS; i++) 
-	{
+  {
     waveangle += 250;
     uint16_t s16 = sin16(waveangle) + 32768;
     uint16_t cs = scale16(s16 , wavescaleHalf) + wavescaleHalf;
