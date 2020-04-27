@@ -87,7 +87,7 @@ public:
 
   BTcmd(Stream &btStream);
   
-  bool registerObj(const OBJVar& obj, const char* name);
+  bool registerObj(OBJVar& obj, const char* name);
   OBJVar* getObjFromName(const char* name); 
 
   void init(Stream &dbgSerial);

@@ -30,24 +30,23 @@ OBJVar* BTcmd::getObjFromName(const char* name)
   return NULL;
 }
 
-bool BTcmd::registerObj(const OBJVar& obj, const char* name)
+bool BTcmd::registerObj(OBJVar& obj, const char* name)
 {
   bool ok = mNOBJ < BTCMD_MAXOBJ-1;
   if (ok)
   {
-    OBJVar* _obj = (OBJVar*)&obj;
-    mOBJ[mNOBJ].obj = _obj;
+    mOBJ[mNOBJ].obj = (OBJVar*)&obj;
     
     char* str = (char *)malloc(strlen(name) + 1);
     strcpy(str, name);
     mOBJ[mNOBJ++].name = str;
 
     // create IDs
-    byte nbVar = _obj->getNbVar();
+    byte nbVar = obj.getNbVar();
     for (byte i = 0; i < nbVar; i++)
     {
-      MyVar* var = _obj->getVar(i);
-      _obj->setID(var, 'a'+ mNOBJ + i * BTCMD_MAXOBJ);
+      MyVar* var = obj.getVar(i);
+      obj.setID(var, 'a'+ mNOBJ + i * BTCMD_MAXOBJ);
     }
   }
   return ok;
