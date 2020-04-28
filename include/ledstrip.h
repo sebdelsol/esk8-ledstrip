@@ -134,7 +134,7 @@ public:
 class PacificaFX : public FX 
 {
   CRGBPalette16 mPal1, mPal2, mPal3;
-  uint16_t mT1 = 0, mT2 = 0, mT3 = 0, mT4 = 0;
+  uint16_t mT1, mT2, mT3, mT4;
 
   void oneLayer(CRGBPalette16& p, uint16_t cistart, uint16_t wavescale, uint8_t bri, uint16_t waveangle);
   
@@ -256,7 +256,7 @@ public:
         if (mFX[i]->drawOn(mBuffer, time, dt)) 
             mDisplay |= mBuffer; // get the max of each RGB component
       
-      applyGamma(mDisplay.leds);
+      // applyGamma(mDisplay.leds);
     }
     // if no fx drawn, clear the ledstrip
     else 

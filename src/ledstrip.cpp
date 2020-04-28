@@ -219,30 +219,30 @@ void PacificaFX::update(ulong time, ulong dt)
   uint32_t dt1 = (dt * beatsin16(3, 179, 269)) / 256;
   uint32_t dt2 = (dt * beatsin16(4, 179, 269)) / 256;
   uint32_t dt21 = (dt1 + dt2) / 2;
-  mT1 += dt1 * beatsin88(1011, 10, 13);
-  mT2 -= dt21 * beatsin88(777, 8, 11);
-  mT3 -= dt1 * beatsin88(501, 5, 7);
-  mT4 -= dt2 * beatsin88(257, 4, 6);
+  mT1 += dt1 * beatsin88(1011,10,13);
+  mT2 -= dt21 * beatsin88(777,8,11);
+  mT3 -= dt1 * beatsin88(501,5,7);
+  mT4 -= dt2 * beatsin88(257,4,6);
 
   // Clear out the LED array to a dim background blue-green
   fill_solid(mLeds, mNLEDS, CRGB(2, 6, 10));
 
   // Render each of four layers, with different scales and speeds, that vary over time
-  oneLayer(mPal1, mT1, beatsin16(3, 11*256, 14*256), beatsin8(10, 70, 130), 	0-beat16(301));
-  oneLayer(mPal2, mT2, beatsin16(4, 6*256, 9*256),   beatsin8(17, 40,  80), 	beat16(401));
-  oneLayer(mPal3, mT3, 6*256,			     beatsin8(9, 10,38),	0-beat16(503));
-  oneLayer(mPal3, mT4, 5*256,			     beatsin8(8, 10,28),	beat16(601));
+  oneLayer(mPal1, mT1, beatsin16(3, 11 * 256, 14 * 256), beatsin8(10, 70, 130), 0-beat16(301) );
+  oneLayer(mPal2, mT2, beatsin16(4, 6 * 256,  9 * 256), beatsin8(17, 40,  80), beat16(401) );
+  oneLayer(mPal3, mT3, 6 * 256, beatsin8(9, 10, 38), 0-beat16(503));
+  oneLayer(mPal3, mT4, 5 * 256, beatsin8(8, 10, 28), beat16(601));
 
-  // Add extra 'white' to areas where the four layers of light have lined up brightly
+  // Add brighter 'whitecaps' where the waves lines up more
   uint8_t basethreshold = beatsin8(9, 55, 65);
   uint8_t wave = beat8(7);
   
   for(byte i = 0; i < mNLEDS; i++)
   {
-    uint8_t threshold = scale8(sin8(wave), 20) + basethreshold;
+    uint8_t threshold = scale8(sin8( wave), 20) + basethreshold;
     wave += 7;
     uint8_t l = mLeds[i].getAverageLight();
-    if(l > threshold)
+    if( l > threshold)
     {
       uint8_t overage = l - threshold;
       uint8_t overage2 = qadd8(overage, overage);
@@ -250,7 +250,7 @@ void PacificaFX::update(ulong time, ulong dt)
     }
   }
 
-  // Deepen the blues and greens
+  // Deepen the blues and greens a bit
   for(byte i = 0; i < mNLEDS; i++)
   {
     mLeds[i].blue = scale8(mLeds[i].blue,  145); 
@@ -263,11 +263,11 @@ void PacificaFX::update(ulong time, ulong dt)
 void PacificaFX::oneLayer(CRGBPalette16& p, uint16_t cistart, uint16_t wavescale, uint8_t bri, uint16_t waveangle)
 {
   uint16_t wavescaleHalf = (wavescale / 2) + 20;
-  for(byte i = 0; i < mNLEDS; i++) 
+  for(byte i = 0; i < mNLEDS; i++)
   {
     waveangle += 250;
-    uint16_t s16 = sin16(waveangle) + 32768;
-    uint16_t cs = scale16(s16 , wavescaleHalf) + wavescaleHalf;
+    uint16_t s16 = sin16(waveangle ) + 32768;
+    uint16_t cs = scale16(s16 , wavescaleHalf ) + wavescaleHalf;
     cistart += cs;
     uint16_t sindex16 = sin16(cistart) + 32768;
     uint8_t sindex8 = scale16(sindex16, 240);
@@ -302,7 +302,7 @@ void AllLedStrips::clearAndShow()
 
 void AllLedStrips::update()
 {
-  ulong t = millis();
+  ulong t = GET_MILLIS();
   ulong dt = mLastT ? t - mLastT : 1; // to prevent possible /0
   mLastT += dt;
 

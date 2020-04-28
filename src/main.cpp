@@ -69,6 +69,7 @@ RunningFX   Aqua(AQUA_MENTHE, 10, -3);
 TwinkleFX   FireTwk(HUE_RED); 
 TwinkleFX   AquaTwk(HUE_AQUA_BLUE);
 PlasmaFX    Plasma;
+// PacificaFX  Plasma;
 
 LedStrip    <NBLEDS_TIPS, LEDR_PIN>  LedsR("LedR");
 DblCylonFX  CylonR(LUSH_LAVA); 
@@ -76,7 +77,7 @@ TwinkleFX   TwinkleR(LUSH_LAVA);
 RunningFX   RunR(CRGB::Gold); 
 
 LedStrip    <NBLEDS_TIPS, LEDF_PIN>  LedsF("LedF");
-DblCylonFX  CylonF(AQUA_MENTHE);   //PacificaFX  CylonF;
+DblCylonFX  CylonF(AQUA_MENTHE);   
 TwinkleFX   TwinkleF(HUE_AQUA_BLUE); 
 RunningFX   RunF(CRGB::Gold);
 
