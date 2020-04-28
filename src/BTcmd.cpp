@@ -5,7 +5,6 @@ BTcmd::BTcmd(Stream &btStream) : mBTStream(&btStream)
   mBTbuf.clear();
 }  
 
-
 void BTcmd::init(Stream &dbgSerial)
 {
   mDbgSerial = &dbgSerial;

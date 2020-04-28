@@ -85,8 +85,8 @@ bool myMPU6050::getMotion(VectorInt16 &axis, int &angle, VectorInt16 &acc, int &
   if (readAccel())
   {
     ulong t = micros();
-    long dt = t - mT;
-    mT += dt;
+    ulong dt = t - mT;
+    mT = t;
 
     uint16_t smooth = - int(pow(1. - ACCEL_AVG, dt * ACCEL_BASE_FREQ * .000001) * 65536.); // 1 - (1-accel_avg) ^ (dt * 60 / 1000 000) using fract16
     mX =  lerp15by16(mX,  STAYS_SHORT(mAccReal.x),  smooth);
@@ -94,7 +94,6 @@ bool myMPU6050::getMotion(VectorInt16 &axis, int &angle, VectorInt16 &acc, int &
     mZ =  lerp15by16(mZ,  STAYS_SHORT(mAccReal.z),  smooth);
     mWz = lerp15by16(mWz, STAYS_SHORT(mGy.z * -655),smooth);
 
-    // #define MPU_DBG
     #ifdef MPU_DBG
       *mSerial << "[ gyr " << mWz << "\t " << mGy.x << "\t " << mGy.y << "\t " << mGy.z << "]\t ";
       *mSerial << "[ dt " << dt*.001 << "ms\t smooth" << smooth/65536. << "\t Wz " << mWz  << "]\t ";

@@ -133,10 +133,10 @@ public:
 //--------- // by Mark Kriegsman and Mary Corey March.
 class PacificaFX : public FX 
 {
-	CRGBPalette16 mPal1, mPal2, mPal3;
+  CRGBPalette16 mPal1, mPal2, mPal3;
   uint16_t mT1 = 0, mT2 = 0, mT3 = 0, mT4 = 0;
 
-	void oneLayer(CRGBPalette16& p, uint16_t cistart, uint16_t wavescale, uint8_t bri, uint16_t waveangle);
+  void oneLayer(CRGBPalette16& p, uint16_t cistart, uint16_t wavescale, uint8_t bri, uint16_t waveangle);
   
 public: 
   PacificaFX();

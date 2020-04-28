@@ -42,21 +42,21 @@
 
 # BOM
 
-Qty | Components | *20€* | shop
----:| :---| ---: | :---
-<sub>x1</sub>| check the **[custom PCB](https://easyeda.com/seb.morin/esk8)**| *2€* | [...$](https://easyeda.com/seb.morin/esk8)
-<sub>x1</sub>| Wemos **[Lolin32](https://wiki.wemos.cc/products:lolin32:lolin32)**| *4€* | [...$](https://www.aliexpress.com/wholesale?catId=0&SearchText=lolin32)
-<sub>x1</sub>| Texas Instruments **[SN74AHCT125](https://www.ti.com/product/SN74AHCT125)** | *50c* | [...$](https://www.ebay.com/sch/i.html?_nkw=SN74AHCT125)
-<sub>x1</sub>| InvenSense **[MPU-6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/)** | *1€* | [...$](https://www.aliexpress.com/wholesale?catId=0&SearchText=mpu-6050)
-<sub>1m</sub>|Neopixel **[WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)** with **[IP67](https://en.wikipedia.org/wiki/IP_Code)**, 60 leds/m | *5€* | [...$](https://www.aliexpress.com/wholesale?catId=0&SearchText=ws2812b+ip67)
-<sub>0.5m</sub>|Neopixel **[WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)** with **[IP67](https://en.wikipedia.org/wiki/IP_Code)**, 144 leds/m | *7€* | [...$](https://www.aliexpress.com/wholesale?catId=0&SearchText=ws2812b+ip67)
-<sub>x3</sub>|<sub>470Ω resistors</sub> | -
-<sub>x1</sub>|<sub>1000μF capacitor</sub> | -
-<sub>x1</sub>|<sub>10kΩ resistor</sub> | -
-<sub>x1</sub>|<sub>LDR</sub> | -
-<sub>x1</sub>|<sub>220Ω resistor</sub> | -
-<sub>x1</sub>|<sub>blue LED</sub> | -
-<sub>x1</sub>|<sub>12x12 switch</sub> | -
+*Qty* | *Components* | *20€* | *Shop*
+---:| :---| ---: | :---:
+<sub>x1</sub>| Check the **[custom PCB](https://easyeda.com/seb.morin/esk8)**| 2€ | [ⓘ](https://easyeda.com/seb.morin/esk8)
+<sub>x1</sub>| Wemos **[Lolin32](https://wiki.wemos.cc/products:lolin32:lolin32)**| 4€ | [ⓘ](https://www.aliexpress.com/wholesale?catId=0&SearchText=lolin32)
+<sub>x1</sub>| Texas Instruments **[SN74AHCT125](https://www.ti.com/product/SN74AHCT125)** | 50c | [ⓘ](https://www.ebay.com/sch/i.html?_nkw=SN74AHCT125)
+<sub>x1</sub>| InvenSense **[MPU-6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/)** | 1€ | [ⓘ](https://www.aliexpress.com/wholesale?catId=0&SearchText=mpu-6050)
+<sub>1m</sub>|Neopixel **[WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)** with **[IP67](https://en.wikipedia.org/wiki/IP_Code)**, 60 leds/m | 5€ | [ⓘ](https://www.aliexpress.com/wholesale?catId=0&SearchText=ws2812b+ip67)
+<sub>0.5m</sub>|Neopixel **[WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)** with **[IP67](https://en.wikipedia.org/wiki/IP_Code)**, 144 leds/m | 7€ | [ⓘ](https://www.aliexpress.com/wholesale?catId=0&SearchText=ws2812b+ip67)
+<sub>x3</sub>|<sub>470Ω resistors</sub> | . | .
+<sub>x1</sub>|<sub>1000μF capacitor</sub> | . | .
+<sub>x1</sub>|<sub>10kΩ resistor</sub> | . | .
+<sub>x1</sub>|<sub>LDR</sub> | . | .
+<sub>x1</sub>|<sub>220Ω resistor</sub> | . | .
+<sub>x1</sub>|<sub>blue LED</sub> | . | .
+<sub>x1</sub>|<sub>12x12 switch</sub> | . | .
 
 # Dependencies
 
