@@ -8,7 +8,7 @@ void FX::init(int nLeds)
   CLEAR_LED(mLeds, nLeds);
   specialInit(nLeds);
 
-  REGISTER_VAR_SIMPLE(FX,  "alpha", self->mAlpha, 0, 255)
+  REGISTER_VAR_SIMPLE(FX, "alpha", self->mAlpha, 0, 255)
 }
 
 bool FX::drawOn(CRGBSet dst, ulong time, ulong dt)
