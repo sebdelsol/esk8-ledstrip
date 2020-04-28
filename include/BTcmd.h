@@ -19,8 +19,6 @@
 #define FNAME_CURRENT "/config.cfg"
 #define FNAME_DEFAULT "/config.def"
 
-#define BTCMD_MAXARGS 3
-
 //----------------
 class BUF
 {

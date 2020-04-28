@@ -51,7 +51,7 @@ bool OBJVar::hasVarChanged(byte i)
 {
   MyVar *var = &mVar[i]; 
 
-  int cur[3]; // check BTCMD_MAXARGS
+  int cur[MAX_ARGS]; 
   byte n = get(var, cur); //update value in cur
 
   for (byte k=0; k < n; k++)

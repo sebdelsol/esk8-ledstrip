@@ -3,6 +3,8 @@
 #include <Streaming.h>
 
 #define MAX_VAR 17
+#define MAX_ARGS 3
+
 
 //---------------------------------
 typedef void (*setVarFunc)(void *obj, int* toSet, byte n);
@@ -17,7 +19,7 @@ struct MyVar {
   int         max;
   bool        show;
   byte        ID;
-  int         last[3]; // check BTCMD_MAXARGS
+  int         last[MAX_ARGS];
 };
 
 //---------------------------------

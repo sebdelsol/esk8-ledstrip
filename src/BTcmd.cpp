@@ -96,10 +96,10 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool useShortCut)
             int min=0, max=0;
             obj->getMinMax(var, &min, &max);
 
-            int args[BTCMD_MAXARGS];
+            int args[MAX_ARGS];
             byte nbArg;
 
-            for (nbArg = 0; nbArg < BTCMD_MAXARGS; nbArg++)
+            for (nbArg = 0; nbArg < MAX_ARGS; nbArg++)
             {
               const char *a = buf.next();
               if (a!=NULL && isNumber(a))
