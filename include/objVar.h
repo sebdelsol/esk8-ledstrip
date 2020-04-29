@@ -2,7 +2,7 @@
 #include <Arduino.h.>
 #include <Streaming.h>
 
-#define MAX_VAR 25
+#define MAX_VAR 22
 #define MAX_ARGS 3
 
 

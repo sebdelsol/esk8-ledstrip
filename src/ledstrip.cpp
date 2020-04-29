@@ -1,15 +1,17 @@
 #include <ledstrip.h>
 
 // ----------------------------------------------------
+FX::FX()
+{
+  REGISTER_VAR(FX, "alpha", { self->setAlpha(arg0); },  self->getAlpha(), 0, 255)
+}
+
 void FX::init(int nLeds)
 {
   mNLEDS = nLeds;
   mLeds = (CRGB *)malloc(nLeds * sizeof(CRGB));
   CLEAR_LED(mLeds, nLeds);
   specialInit(nLeds);
-
-  mLinearAlpha = mAlpha;
-  REGISTER_VAR(FX, "alpha", { self->setAlpha(arg0); },  self->getAlpha(), 0, 255)
 }
 
 void FX::setAlpha(const byte alpha) 

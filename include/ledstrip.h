@@ -15,22 +15,23 @@
 //--------------------------------------
 class FX : public OBJVar
 {
-  byte mLinearAlpha; // no Gamma applied 
   byte mAlpha = 255; // visible
+  byte mLinearAlpha = 255; // no Gamma applied 
 
 protected:
   int mNLEDS = 0;
   CRGB *mLeds;
 
 public:
+  FX();
   void init(int nLeds);
   virtual void specialInit(int nLeds) {};
 
   void setAlpha(const byte alpha);
   byte getAlpha();
 
-  virtual const char* getName();
-  virtual void update(ulong time, ulong dt);
+  virtual const char* getName()=0;
+  virtual void update(ulong time, ulong dt)=0;
   bool drawOn(CRGBSet dst, ulong time, ulong dt);
 };
 
@@ -39,8 +40,8 @@ public:
 //--------------------------------------
 class FireFX : public FX
 {
-  byte mSpeed;
   bool mReverse;
+  byte mSpeed;
   float mDimRatio;
   ushort *mHeat; 
 
@@ -103,7 +104,7 @@ public:
 class RunningFX : public FX
 {
 protected:
-  int mSpeed, mWidth;  
+  int mWidth, mSpeed;  
   CRGB mColor;
 
 public:
@@ -117,8 +118,8 @@ public:
 class TwinkleFX : public FX
 {
   CHSV mHSV; CRGB mColor;
-  byte mDiv;
   byte mHueDiv;
+  byte mDiv;
 
   void setHue(const CRGB color);
   void setHue(const byte hue);
