@@ -8,7 +8,19 @@ void FX::init(int nLeds)
   CLEAR_LED(mLeds, nLeds);
   specialInit(nLeds);
 
-  REGISTER_VAR_SIMPLE(FX, "alpha", self->mAlpha, 0, 255)
+  mLinearAlpha = mAlpha;
+  REGISTER_VAR(FX, "alpha", { self->setAlpha(arg0); },  self->getAlpha(), 0, 255)
+}
+
+void FX::setAlpha(const byte alpha) 
+{ 
+  mAlpha = ((alpha + 1) * alpha)>>8; 
+  mLinearAlpha = alpha; 
+}
+
+byte FX::getAlpha() 
+{ 
+  return mLinearAlpha; 
 }
 
 bool FX::drawOn(CRGBSet dst, ulong time, ulong dt)
@@ -207,15 +219,18 @@ void TwinkleFX::update(ulong time, ulong dt)
 }
 
 // ----------------------------------------------------
-PacificaFX::PacificaFX()
+PacificaFX::PacificaFX(const byte speed) : mSpeed(speed)
 {
   mPal1 = {0x000507, 0x000409, 0x00030B, 0x00030D, 0x000210, 0x000212, 0x000114, 0x000117, 0x000019, 0x00001C, 0x000026, 0x000031, 0x00003B, 0x000046, 0x14554B, 0x28AA50};
   mPal2 = {0x000507, 0x000409, 0x00030B, 0x00030D, 0x000210, 0x000212, 0x000114, 0x000117, 0x000019, 0x00001C, 0x000026, 0x000031, 0x00003B, 0x000046, 0x0C5F52, 0x19BE5F};
   mPal3 = {0x000208, 0x00030E, 0x000514, 0x00061A, 0x000820, 0x000927, 0x000B2D, 0x000C33, 0x000E39, 0x001040, 0x001450, 0x001860, 0x001C70, 0x002080, 0x1040BF, 0x2060FF};
+
+  REGISTER_VAR_SIMPLE(PacificaFX, "speed", self->mSpeed, 1, 7)
 }
 
 void PacificaFX::update(ulong time, ulong dt)
 {
+  dt = dt * mSpeed;
   uint32_t dt1 = (dt * beatsin16(3, 179, 269)) / 256;
   uint32_t dt2 = (dt * beatsin16(4, 179, 269)) / 256;
   uint32_t dt21 = (dt1 + dt2) / 2;

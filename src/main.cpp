@@ -56,6 +56,7 @@ myWifi    MyWifi;
 // ----------------------------------------------------
 AllLedStrips  AllLeds(LED_MAX_MA, Serial);
 
+#define   AQUA          CRGB(0x00FFFF)
 #define   AQUA_MENTHE   CRGB(0x7FFFD4)
 #define   LUSH_LAVA     CRGB(0xFF4500)
 #define   HUE_AQUA_BLUE 140
@@ -69,7 +70,6 @@ RunningFX   Aqua(AQUA_MENTHE, 10, -3);
 TwinkleFX   FireTwk(HUE_RED); 
 TwinkleFX   AquaTwk(HUE_AQUA_BLUE);
 PlasmaFX    Plasma;
-// PacificaFX  Plasma;
 
 LedStrip    <NBLEDS_TIPS, LEDR_PIN>  LedsR("LedR");
 DblCylonFX  CylonR(LUSH_LAVA); 
@@ -77,7 +77,8 @@ TwinkleFX   TwinkleR(LUSH_LAVA);
 RunningFX   RunR(CRGB::Gold); 
 
 LedStrip    <NBLEDS_TIPS, LEDF_PIN>  LedsF("LedF");
-DblCylonFX  CylonF(AQUA_MENTHE);   
+PacificaFX  Pacifica;
+DblCylonFX  CylonF(AQUA);   
 TwinkleFX   TwinkleF(HUE_AQUA_BLUE); 
 RunningFX   RunF(CRGB::Gold);
 
@@ -109,6 +110,9 @@ public:
   bool ledF       = true;
   bool led        = true;
 
+  // pacifica ?
+  byte pacifica   = 255;
+
   // for rotation
   byte runSpeed    = 3;
   int  neutralWZ   = 3000;
@@ -122,6 +126,7 @@ public:
   // Cylons
   byte minEye     = 5;
   byte maxEye     = 10;
+  int minTwkR     = 20;
 
   #ifdef USE_BT
     CFG()
@@ -142,6 +147,8 @@ public:
         REGISTER_CFG(bright,   1, 255);
       #endif
 
+      REGISTER_CFG(pacifica,   0, 255);
+
       REGISTER_CFG(runSpeed,   0, 10);
       REGISTER_CFG(neutralWZ,  0, 32768);
       REGISTER_CFG(maxWZ,      0, 32768);
@@ -152,6 +159,7 @@ public:
 
       REGISTER_CFG(minEye,     1, (NBLEDS_TIPS>>1));
       REGISTER_CFG(maxEye,     1, (NBLEDS_TIPS>>1));
+      REGISTER_CFG(minTwkR,    0, 255);
     };
   #endif
 };
@@ -170,11 +178,12 @@ void setup()
 
   // LEDS -----------------------------
   #define Register3FX(l, f1, f2, f3)          AllLeds.registerStrip(l);   l.registerFX(f1); l.registerFX(f2); l.registerFX(f3);
-  #define Register5FX(l, f1, f2, f3, f4, f5)  Register3FX(l, f1, f2, f3); l.registerFX(f4); l.registerFX(f5);
+  #define Register4FX(l, f1, f2, f3, f4)      Register3FX(l, f1, f2, f3); l.registerFX(f4);
+  #define Register5FX(l, f1, f2, f3, f4, f5)  Register4FX(l, f1, f2, f3, f4); l.registerFX(f5);
   
   Register5FX(Leds,   Fire,       FireTwk,    Aqua,   AquaTwk,    Plasma);
+  Register4FX(LedsF,  TwinkleF,   CylonF,     RunF,   Pacifica);
   Register3FX(LedsR,  TwinkleR,   CylonR,     RunR);
-  Register3FX(LedsF,  TwinkleF,   CylonF,     RunF);
   AllLeds.clearAndShow();
   
   // Wifi -----------------------------
@@ -197,13 +206,14 @@ void setup()
     Button.begin();
 
     #define BT_REGISTER_OBJ(o) BT.registerObj(o, #o);
-    #define BT_REGISTER_3OBJ(o1, o2, o3) BT_REGISTER_OBJ(o1); BT_REGISTER_OBJ(o2); BT_REGISTER_OBJ(o3);
-    #define BT_REGISTER_5OBJ(o1, o2, o3, o4, o5) BT_REGISTER_3OBJ(o1, o2, o3); BT_REGISTER_OBJ(o4); BT_REGISTER_OBJ(o5);
+    #define BT_REGISTER_3OBJ(o1, o2, o3)          BT_REGISTER_OBJ(o1); BT_REGISTER_OBJ(o2); BT_REGISTER_OBJ(o3);
+    #define BT_REGISTER_4OBJ(o1, o2, o3, o4)      BT_REGISTER_3OBJ(o1, o2, o3); BT_REGISTER_OBJ(o4);
+    #define BT_REGISTER_5OBJ(o1, o2, o3, o4, o5)  BT_REGISTER_4OBJ(o1, o2, o3, o4); BT_REGISTER_OBJ(o5);
     
     BT.init(Serial);
     BT_REGISTER_OBJ(Cfg);
     BT_REGISTER_3OBJ(TwinkleR,  CylonR,     RunR);
-    BT_REGISTER_3OBJ(TwinkleF,  CylonF,     RunF);
+    BT_REGISTER_4OBJ(TwinkleF,  CylonF,     RunF,   Pacifica);
     BT_REGISTER_5OBJ(Fire,      FireTwk,    Aqua,   AquaTwk,    Plasma);
 
     BT.save(true); // save default
@@ -272,7 +282,8 @@ void loop()
         RunF.setSpeed(runSpeed);
         RunF.setAlpha(alpha);
         CylonF.setEyeSize(eyeF);
-        CylonF.setAlpha(invAlpha);
+        CylonF.setAlpha(((255-Cfg.pacifica) * (invAlpha+1))>>8);
+        Pacifica.setAlpha((Cfg.pacifica * (invAlpha+1))>>8);
         TwinkleF.setAlpha((alphaF * (invAlpha + 1))>>8);
       }
 
@@ -290,7 +301,7 @@ void loop()
         RunR.setAlpha(alpha);
         CylonR.setEyeSize(eyeR);
         CylonR.setAlpha(invAlpha);
-        TwinkleR.setAlpha((alphaR * (invAlpha + 1))>>8);
+        TwinkleR.setAlpha((max(Cfg.minTwkR, alphaR) * (invAlpha + 1))>>8);
       }
 
       //----------------------

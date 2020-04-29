@@ -15,6 +15,7 @@
 //--------------------------------------
 class FX : public OBJVar
 {
+  byte mLinearAlpha; // no Gamma applied 
   byte mAlpha = 255; // visible
 
 protected:
@@ -25,8 +26,8 @@ public:
   void init(int nLeds);
   virtual void specialInit(int nLeds) {};
 
-  void setAlpha(const byte alpha) { mAlpha = alpha; };
-  byte getAlpha() { return mAlpha; };
+  void setAlpha(const byte alpha);
+  byte getAlpha();
 
   virtual const char* getName();
   virtual void update(ulong time, ulong dt);
@@ -135,11 +136,12 @@ class PacificaFX : public FX
 {
   CRGBPalette16 mPal1, mPal2, mPal3;
   uint16_t mT1, mT2, mT3, mT4;
+  byte mSpeed;
 
   void oneLayer(CRGBPalette16& p, uint16_t cistart, uint16_t wavescale, uint8_t bri, uint16_t waveangle);
   
 public: 
-  PacificaFX();
+  PacificaFX(const byte speed = 4);
   void update(ulong time, ulong dt);
   SetFxNAME("Pacifica");
 };
@@ -230,15 +232,15 @@ public:
     return (byte *) mDisplay.leds;
   };
 
-  void applyGamma(CRGB* leds) // fast gamma = 2
-  {
-    for (byte i = 0; i < NLEDS; i++)
-    {
-      leds[i].r = dim8_video(leds[i].r);
-      leds[i].g = dim8_video(leds[i].g);
-      leds[i].b = dim8_video(leds[i].b);
-    }
-  };
+  // void applyGamma(CRGB* leds) // fast gamma = 2
+  // {
+  //   for (byte i = 0; i < NLEDS; i++)
+  //   {
+  //     leds[i].r = dim8_video(leds[i].r);
+  //     leds[i].g = dim8_video(leds[i].g);
+  //     leds[i].b = dim8_video(leds[i].b);
+  //   }
+  // };
 
   void update(ulong time, ulong dt)
   {
