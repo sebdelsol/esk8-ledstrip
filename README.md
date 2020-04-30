@@ -55,7 +55,7 @@
 <sub>1x</sub>|<sub>10kΩ resistor</sub> | . | .
 <sub>1x</sub>|<sub>LDR</sub> | . | .
 <sub>1x</sub>|<sub>220Ω resistor</sub> | . | .
-<sub>1x</sub>|<sub>blue LED</sub> | . | .
+<sub>1x</sub>|<sub>Blue LED</sub> | . | .
 <sub>1x</sub>|<sub>12x12 switch</sub> | . | .
 
 # Dependencies
