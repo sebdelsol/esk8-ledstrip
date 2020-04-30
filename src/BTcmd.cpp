@@ -148,8 +148,8 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool useShortCut)
               
               *stream << endl;
             }
+
           }
-          
         }
       }
     }
