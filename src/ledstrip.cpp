@@ -27,7 +27,8 @@ byte FX::getAlpha()
 
 bool FX::drawOn(CRGBSet dst, ulong time, ulong dt)
 {
-  if (mAlpha > 0) { // 0 is invisible
+  if (mAlpha > 0) // 0 is invisible
+  { 
     update(time, dt);
     memcpy8(dst.leds, mLeds, mNLEDS * sizeof(CRGB));
     
