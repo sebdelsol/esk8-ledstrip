@@ -25,14 +25,13 @@ protected:
 public:
   FX();
   void init(int nLeds);
-  virtual void specialInit(int nLeds) {};
-
   void setAlpha(const byte alpha);
   byte getAlpha();
-
+  bool drawOn(CRGBSet dst, ulong time, ulong dt);
+  
+  virtual void specialInit(int nLeds) {};
   virtual const char* getName()=0;
   virtual void update(ulong time, ulong dt)=0;
-  bool drawOn(CRGBSet dst, ulong time, ulong dt);
 };
 
 #define SetFxNAME(name) const char* getName() {return name;};
