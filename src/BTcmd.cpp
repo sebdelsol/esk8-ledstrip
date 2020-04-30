@@ -112,6 +112,7 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool useShortCut)
               obj->set(var, args, nbArg, change); //set the value from args
               // dbgCmd(mSetKeyword, objName, varName, nbArg, args);
             }
+            
             // GET cmd ?
             else if (strcmp(cmd, mGetKeyword)==0)
             {
@@ -131,6 +132,7 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool useShortCut)
                 // dbgCmd(mGetKeyword, objName, varName, nbArg, args);
               }
             }
+            
             // INIT cmd ?
             else if (strcmp(cmd, mInitKeyword)==0)
             {
@@ -147,6 +149,7 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool useShortCut)
               *stream << endl;
             }
           }
+          
         }
       }
     }
