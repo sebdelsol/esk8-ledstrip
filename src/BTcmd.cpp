@@ -91,52 +91,60 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool useShortCut)
           MyVar* var = obj->getVarFromName(varName);
           if (var)
           {
-            // get thse args
             int min=0, max=0;
-            obj->getMinMax(var, &min, &max);
-
             int args[MAX_ARGS];
             byte nbArg;
 
-            for (nbArg = 0; nbArg < MAX_ARGS; nbArg++)
-            {
-              const char *a = buf.next();
-              if (a!=NULL && isNumber(a))
-                args[nbArg] = constrain(strtol(a, NULL, 10), min, max);
-              else 
-                break;
-            }
-
-            // now handle the cmd
+            // SET cmd ?
             if (strcmp(cmd, mSetKeyword)==0)
             {
+              obj->getMinMax(var, &min, &max);
+
+              for (nbArg = 0; nbArg < MAX_ARGS; nbArg++) // get the args
+              {
+                const char *a = buf.next();
+                if (a!=NULL && isNumber(a))
+                  args[nbArg] = constrain(strtol(a, NULL, 10), min, max);
+                else 
+                  break;
+              }
+
               obj->set(var, args, nbArg, change); //set the value from args
               // dbgCmd(mSetKeyword, objName, varName, nbArg, args);
             }
-            else if (strcmp(cmd, mInitKeyword)==0)
-            {
-              byte id = obj->getID(var);
-              obj->getMinMax(var, &min, &max);
-              *stream << mInitKeyword << " " << objName << " " << varName << " " << id << " " << min << " " << max;
-              nbArg = obj->get(var, args); 
-              for (byte i=0; i < nbArg; i++) *stream << " " << args[i];
-              *stream << endl;
-            }
+            // GET cmd ?
             else if (strcmp(cmd, mGetKeyword)==0)
             {
+              // answer on stream
               nbArg = obj->get(var, args); //get the value in args
-
-              if (nbArg) // and answer on stream
+              if (nbArg) 
               { 
                 if (useShortCut)
                   *stream << obj->getID(var);
                 else
                   *stream << mSetKeyword << " " << objName << " " << varName;
 
-                for (byte i=0; i < nbArg; i++) *stream << " " << args[i];
+                for (byte i=0; i < nbArg; i++)
+                  *stream << " " << args[i];
+              
                 *stream << endl;
                 // dbgCmd(mGetKeyword, objName, varName, nbArg, args);
               }
+            }
+            // INIT cmd ?
+            else if (strcmp(cmd, mInitKeyword)==0)
+            {
+              // answer on stream
+              *stream << mInitKeyword << " " << objName << " " << varName << " " << obj->getID(var); 
+
+              obj->getMinMax(var, &min, &max);
+              *stream << " " << min << " " << max;
+
+              nbArg = obj->get(var, args); 
+              for (byte i=0; i < nbArg; i++)
+                *stream << " " << args[i];
+              
+              *stream << endl;
             }
           }
         }
