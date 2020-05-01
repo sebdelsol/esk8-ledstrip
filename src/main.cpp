@@ -55,25 +55,26 @@ myWifi    MyWifi;
 
 // ----------------------------------------------------
 AllLedStrips  AllLeds(LED_MAX_MA, Serial);
+#define   NBLEDS_MIDDLE 30
+#define   NBLEDS_TIPS   36
 
 #define   AQUA          CRGB(0x00FFFF)
 #define   AQUA_MENTHE   CRGB(0x7FFFD4)
 #define   LUSH_LAVA     CRGB(0xFF4500)
 #define   HUE_AQUA_BLUE 140
 
-#define   NBLEDS_MIDDLE 30
-#define   NBLEDS_TIPS   36
-
 LedStrip    <NBLEDS_MIDDLE, LED_PIN> Leds("Led");
-RunningFX   Fire(LUSH_LAVA, 10, 3);     // FireFX   Fire;     // AquaFX   Fire(true);     
-RunningFX   Aqua(AQUA_MENTHE, 10, -3);  
+RunningFX   FireRun(LUSH_LAVA, 10, 3);     
+RunningFX   AquaRun(AQUA_MENTHE, 10, -3);  
 TwinkleFX   FireTwk(HUE_RED); 
 TwinkleFX   AquaTwk(HUE_AQUA_BLUE);
 PlasmaFX    Plasma;
 
 LedStrip    <NBLEDS_TIPS, LEDR_PIN>  LedsR("LedR");
 DblCylonFX  CylonR(LUSH_LAVA); 
-TwinkleFX   TwinkleR(LUSH_LAVA);
+// FireFX      FireRL;
+// FireFX      FireRR(true);
+TwinkleFX   TwinkleR(CRGB::Red);
 RunningFX   RunR(CRGB::Gold); 
 
 LedStrip    <NBLEDS_TIPS, LEDF_PIN>  LedsF("LedF");
@@ -181,8 +182,9 @@ void setup()
   #define Register4FX(l, f1, f2, f3, f4)      Register3FX(l, f1, f2, f3); l.registerFX(f4);
   #define Register5FX(l, f1, f2, f3, f4, f5)  Register4FX(l, f1, f2, f3, f4); l.registerFX(f5);
   
-  Register5FX(Leds,   Fire,       FireTwk,    Aqua,   AquaTwk,    Plasma);
-  Register4FX(LedsF,  TwinkleF,   CylonF,     RunF,   Pacifica);
+  Register5FX(Leds,   FireRun,    FireTwk,    AquaRun,  AquaTwk,    Plasma);
+  Register4FX(LedsF,  TwinkleF,   CylonF,     RunF,     Pacifica);
+  // Register4FX(LedsR,  TwinkleR,   FireRR,     FireRL,   RunR);
   Register3FX(LedsR,  TwinkleR,   CylonR,     RunR);
   AllLeds.clearAndShow();
   
@@ -213,8 +215,9 @@ void setup()
     BT.init(Serial);
     BT_REGISTER_OBJ(Cfg);
     BT_REGISTER_3OBJ(TwinkleR,  CylonR,     RunR);
-    BT_REGISTER_4OBJ(TwinkleF,  CylonF,     RunF,   Pacifica);
-    BT_REGISTER_5OBJ(Fire,      FireTwk,    Aqua,   AquaTwk,    Plasma);
+    // BT_REGISTER_4OBJ(TwinkleR,  FireRR,     FireRL,   RunR);
+    BT_REGISTER_4OBJ(TwinkleF,  CylonF,     RunF,     Pacifica);
+    BT_REGISTER_5OBJ(FireRun,   FireTwk,    AquaRun,  AquaTwk,    Plasma);
 
     BT.save(true); // save default
     BT.load(false, false); // load not default, do not send change to BT
@@ -301,6 +304,8 @@ void loop()
         RunR.setAlpha(alpha);
         CylonR.setEyeSize(eyeR);
         CylonR.setAlpha(invAlpha);
+        // FireRR.setAlpha(invAlpha);
+        // FireRL.setAlpha(invAlpha);
         TwinkleR.setAlpha((max(Cfg.minTwkR, alphaR) * (invAlpha + 1))>>8);
       }
 
@@ -308,9 +313,9 @@ void loop()
       int alphaP = max(0, 255 - max(alphaR, alphaF));
       if (Cfg.led)
       {
-        Aqua.setAlpha(alphaF);
+        AquaRun.setAlpha(alphaF);
         AquaTwk.setAlpha(alphaF);
-        Fire.setAlpha(alphaR);
+        FireRun.setAlpha(alphaR);
         FireTwk.setAlpha(alphaR);
         Plasma.setAlpha(alphaP);
       }
