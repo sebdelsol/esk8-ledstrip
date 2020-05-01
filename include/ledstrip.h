@@ -41,14 +41,14 @@ class FireFX : public FX
 {
   bool mReverse;
   byte mSpeed;
-  float mDimRatio;
+  int mDimRatio;
   ushort *mHeat; 
 
 protected:
   CRGBPalette16 mPal;
 
 public:
-  FireFX(const bool reverse = false, const byte speed = 27, const float dimRatio = 10.);
+  FireFX(const bool reverse = false, const byte speed = 27, const int dimRatio = 4);
   void specialInit(int nLeds);
   void update(ulong time, ulong dt);
   SetFxNAME("Fire");

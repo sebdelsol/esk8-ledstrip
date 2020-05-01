@@ -41,9 +41,10 @@ bool FX::drawOn(CRGBSet dst, ulong time, ulong dt)
 }
 
 // ----------------------------------------------------
-FireFX::FireFX(const bool reverse, const byte speed, const float dimRatio) : mReverse(reverse),  mSpeed(speed), mDimRatio(dimRatio) 
+FireFX::FireFX(const bool reverse, const byte speed, const int dimRatio) : mReverse(reverse),  mSpeed(speed), mDimRatio(dimRatio) 
 {
   REGISTER_VAR_SIMPLE(FireFX, "speed", self->mSpeed, 1, 255)
+  REGISTER_VAR_SIMPLE(FireFX, "dim", self->mDimRatio, 1, 10)
   mPal = HeatColors_p;
 }
 
