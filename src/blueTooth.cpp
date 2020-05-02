@@ -41,6 +41,8 @@ void BlueTooth::init(Stream &dbgSerial)
   BTSerial.register_callback(BTcallback);
   mBTcmd->init(dbgSerial);  
 
+  pinMode(LIGHT_PIN, OUTPUT); //blue led
+
   if (rtc_get_reset_reason(0) == 12 && WasOn) // HACK, SW reset is proly crash, so auto restart BT if it was on
   {
     *mDbgSerial << "Reset detected, relaunch BT " << rtc_get_reset_reason(0) << endl;
