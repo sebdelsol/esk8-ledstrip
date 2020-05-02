@@ -49,6 +49,7 @@ protected:
 
 public:
   FireFX(const bool reverse = false, const byte speed = 27, const int dimRatio = 4);
+  void setDimRatio(const int dimRatio) { mDimRatio = dimRatio; };
   void specialInit(int nLeds);
   void update(ulong time, ulong dt);
   SetFxNAME("Fire");
