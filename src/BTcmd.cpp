@@ -31,7 +31,7 @@ OBJVar* BTcmd::getObjFromName(const char* name)
 
 bool BTcmd::registerObj(OBJVar& obj, const char* name)
 {
-  bool ok = mNOBJ < BTCMD_MAXOBJ-1;
+  bool ok = mNOBJ < BTCMD_MAXOBJ;
   if (ok)
   {
     mOBJ[mNOBJ].obj = (OBJVar*)&obj;
@@ -45,7 +45,14 @@ bool BTcmd::registerObj(OBJVar& obj, const char* name)
     for (byte i = 0; i < nbVar; i++)
     {
       MyVar* var = obj.getVar(i);
-      obj.setID(var, 'a'+ mNOBJ + i * BTCMD_MAXOBJ);
+      
+      // do not use BTCMD_ALIVE as id set chararacter
+      #define FIRST_VAR 'a'
+      if ( FIRST_VAR + mID == BTCMD_ALIVE) mID += 1;
+
+      obj.setID(var, FIRST_VAR+ mID);
+      // *mDbgSerial << mID << " - " << (char)(FIRST_VAR+ mID) << endl;
+      mID += 1;
     }
   }
   return ok;
@@ -147,6 +154,7 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool useShortCut)
                 *stream << " " << args[i];
               
               *stream << endl;
+              // dbgCmd(mInitKeyword, objName, varName, nbArg, args);
             }
 
           }

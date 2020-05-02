@@ -6,8 +6,8 @@
 
 #define FORMAT_SPIFFS_IF_FAILED true
 
-#define BTCMD_BUFF_SIZE    127
-#define BTCMD_MAXOBJ  15
+#define BTCMD_BUFF_SIZE 127
+#define BTCMD_MAXOBJ    15
 
 #define BTCMD_TERM    '\n' 
 #define BTCMD_ALIVE    '~'
@@ -59,6 +59,7 @@ class BTcmd
 
   mRegisteredOBJ mOBJ[BTCMD_MAXOBJ];
   byte mNOBJ = 0;
+  byte mID = 0;
 
   Stream* mBTStream;
   Stream* mDbgSerial;
