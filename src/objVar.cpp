@@ -2,7 +2,7 @@
 
 bool OBJVar::registerVar(void *obj, const char *name, setVarFunc set, getVarFunc get, int min, int max, bool show)
 {
-  bool ok = mNVAR < MAX_VAR-1;
+  bool ok = mNVAR < MAX_VAR;
   if (ok)
   {
     mVar[mNVAR].obj = obj;
