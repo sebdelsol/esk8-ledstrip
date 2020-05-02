@@ -1,7 +1,6 @@
 #define USE_BT // see p latformio & use "board_build.partitions = huge_app.csv"
 #define USE_OTA 
 // #define USE_TELNET //needs USE_OTA to work
-// #define USE_LIGHTPROBE
 
 // #define DEBUG_LED_INFO
 // #define DEBUG_LED_TOWIFI // use wifi
@@ -14,6 +13,7 @@
 #include <Streaming.h>
 #include <soc/rtc.h> // get cpu freq
 
+// ----------------------------------------------------
 #ifdef USE_BT
   #include <bluetooth.h>
   #include <Button.h>
@@ -45,16 +45,14 @@ void handleOta()
 }
 
 // ----------------------------------------------------
+myWifi    MyWifi;
+
+// ----------------------------------------------------
 #define   SERIAL_BAUD   115200  // ms
 #define   LED_MAX_MA    800     // mA, please check OBJVar.bright to avoid reaching this value
 #define   LED_TICK      15      // ms
 #define   BT_TICK       15      // ms
 
-// ----------------------------------------------------
-myWifi    MyWifi;
-
-// ----------------------------------------------------
-AllLedStrips  AllLeds(LED_MAX_MA, Serial);
 #define   NBLEDS_MIDDLE 30
 #define   NBLEDS_TIPS   36
 
@@ -62,6 +60,9 @@ AllLedStrips  AllLeds(LED_MAX_MA, Serial);
 #define   AQUA_MENTHE   CRGB(0x7FFFD4)
 #define   LUSH_LAVA     CRGB(0xFF4500)
 #define   HUE_AQUA_BLUE 140
+
+// ----------------------------------------------------
+AllLedStrips  AllLeds(LED_MAX_MA, Serial);
 
 LedStrip    <NBLEDS_MIDDLE, LED_PIN> Leds("Led");
 RunningFX   FireRun(LUSH_LAVA, 10, 3);     
@@ -72,8 +73,8 @@ PlasmaFX    Plasma;
 
 LedStrip    <NBLEDS_TIPS, LEDR_PIN>  LedsR("LedR");
 DblCylonFX  CylonR(LUSH_LAVA); 
-// FireFX      FireRL;
-// FireFX      FireRR(true);
+FireFX      FireRL;
+FireFX      FireRR(true);
 TwinkleFX   TwinkleR(CRGB::Red);
 RunningFX   RunR(CRGB::Gold); 
 
@@ -102,17 +103,21 @@ int           ANGLE, WZ;
 class CFG : public OBJVar
 {
 public:
-  #ifndef USE_LIGHTPROBE
-    byte bright     = 64; // 1/4 brightness is enough to avoid reaching LED_MAX_MA
-  #endif
   
   // update ?
   bool ledR       = true;
   bool ledF       = true;
   bool led        = true;
 
+  // light probe ?
+  #define MaxProbe 4095
+  bool probe      = false;
+  byte bright     = 128; // half brightness is enough to avoid reaching LED_MAX_MA
+  int  minProbe   = 400;
+
   // pacifica ?
   byte pacifica   = 255;
+  byte fire       = 0;
 
   // for rotation
   byte runSpeed    = 3;
@@ -127,6 +132,12 @@ public:
   // Cylons
   byte minEye     = 5;
   byte maxEye     = 10;
+
+  // Fire
+  int  minDim     = 4;
+  int  maxDim     = 10;
+
+  //twinkleR
   int minTwkR     = 20;
 
   #ifdef USE_BT
@@ -144,11 +155,12 @@ public:
       REGISTER_CFG(ledF,       0, 1);
       REGISTER_CFG(led,        0, 1);
 
-      #ifndef USE_LIGHTPROBE
-        REGISTER_CFG(bright,   1, 255);
-      #endif
+      REGISTER_CFG(probe,      0, 1);
+      REGISTER_CFG(bright,     1, 255);
+      REGISTER_CFG(minProbe,   1, MaxProbe);
 
       REGISTER_CFG(pacifica,   0, 255);
+      REGISTER_CFG(fire,       0, 255);
 
       REGISTER_CFG(runSpeed,   0, 10);
       REGISTER_CFG(neutralWZ,  0, 32768);
@@ -160,6 +172,8 @@ public:
 
       REGISTER_CFG(minEye,     1, (NBLEDS_TIPS>>1));
       REGISTER_CFG(maxEye,     1, (NBLEDS_TIPS>>1));
+      REGISTER_CFG(minDim,     1, 10);
+      REGISTER_CFG(maxDim,     1, 10);
       REGISTER_CFG(minTwkR,    0, 255);
     };
   #endif
@@ -178,51 +192,57 @@ void setup()
   Serial << "CPU freq " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
 
   // LEDS -----------------------------
-  #define Register3FX(l, f1, f2, f3)          AllLeds.registerStrip(l);   l.registerFX(f1); l.registerFX(f2); l.registerFX(f3);
-  #define Register4FX(l, f1, f2, f3, f4)      Register3FX(l, f1, f2, f3); l.registerFX(f4);
-  #define Register5FX(l, f1, f2, f3, f4, f5)  Register4FX(l, f1, f2, f3, f4); l.registerFX(f5);
-  
-  Register5FX(Leds,   FireRun,    FireTwk,    AquaRun,  AquaTwk,    Plasma);
-  Register4FX(LedsF,  TwinkleF,   CylonF,     RunF,     Pacifica);
-  // Register4FX(LedsR,  TwinkleR,   FireRR,     FireRL,   RunR);
-  Register3FX(LedsR,  TwinkleR,   CylonR,     RunR);
+  #define AddFX(l, fx) l.registerFX(fx)
+
+  AllLeds.registerStrip(Leds); 
+  AllLeds.registerStrip(LedsR); 
+  AllLeds.registerStrip(LedsF); 
+
+  AddFX(Leds, FireRun);   AddFX(Leds, FireTwk); AddFX(Leds, AquaRun); AddFX(Leds, AquaTwk);   AddFX(Leds, Plasma);
+  AddFX(LedsR, TwinkleR); AddFX(LedsR, CylonR); AddFX(LedsR, FireRR); AddFX(LedsR, FireRL);   AddFX(LedsR, RunR);
+  AddFX(LedsF, TwinkleF); AddFX(LedsF, CylonF); AddFX(LedsF, RunF);   AddFX(LedsF, Pacifica);
+
   AllLeds.clearAndShow();
   
   // Wifi -----------------------------
   MyWifi.init(Serial);
+  
   #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA)
     MyWifi.on();
+  
     #ifdef DEBUG_LED_TOWIFI
-      MyWifi.addLeds(Leds);   MyWifi.addLeds(LedsR);  MyWifi.addLeds(LedsF);
+      MyWifi.addLeds(Leds);   
+      MyWifi.addLeds(LedsR);  
+      MyWifi.addLeds(LedsF);
     #endif
+  
     #ifdef USE_OTA
       Ota.begin();
     #endif
+  
   #else
     MyWifi.off();
   #endif
 
   // BlueTooth -----------------------------
-  pinMode(LIGHT_PIN, OUTPUT); //blue led
   #ifdef USE_BT
-    Button.begin();
-
-    #define BT_REGISTER_OBJ(o) BT.registerObj(o, #o);
-    #define BT_REGISTER_3OBJ(o1, o2, o3)          BT_REGISTER_OBJ(o1); BT_REGISTER_OBJ(o2); BT_REGISTER_OBJ(o3);
-    #define BT_REGISTER_4OBJ(o1, o2, o3, o4)      BT_REGISTER_3OBJ(o1, o2, o3); BT_REGISTER_OBJ(o4);
-    #define BT_REGISTER_5OBJ(o1, o2, o3, o4, o5)  BT_REGISTER_4OBJ(o1, o2, o3, o4); BT_REGISTER_OBJ(o5);
+    #define AddOBJ(o) BT.registerObj(o, #o);
     
     BT.init(Serial);
-    BT_REGISTER_OBJ(Cfg);
-    BT_REGISTER_3OBJ(TwinkleR,  CylonR,     RunR);
-    // BT_REGISTER_4OBJ(TwinkleR,  FireRR,     FireRL,   RunR);
-    BT_REGISTER_4OBJ(TwinkleF,  CylonF,     RunF,     Pacifica);
-    BT_REGISTER_5OBJ(FireRun,   FireTwk,    AquaRun,  AquaTwk,    Plasma);
+
+    AddOBJ(Cfg);
+    AddOBJ(TwinkleF);  AddOBJ(CylonF);  AddOBJ(RunF);    AddOBJ(Pacifica);
+    AddOBJ(TwinkleR);  AddOBJ(CylonR);  AddOBJ(FireRR);  AddOBJ(FireRL);    AddOBJ(RunR);
+    AddOBJ(FireRun);   AddOBJ(FireTwk); AddOBJ(AquaRun); AddOBJ(AquaTwk);   AddOBJ(Plasma);
 
     BT.save(true); // save default
     BT.load(false, false); // load not default, do not send change to BT
     BT.start();
+
+    Button.begin();
+
   #else    
+    pinMode(LIGHT_PIN, OUTPUT); //blue led
     digitalWrite(LIGHT_PIN, LOW); // switch off blue led
     btStop(); // turnoff bt 
   #endif
@@ -248,46 +268,47 @@ void loop()
 
   EVERY_N_MILLISECONDS(LED_TICK)
   {
-    #ifdef USE_LIGHTPROBE
-      #define MIN_LIGHT 400
-      #define MAX_LIGHT 4095
+    
+    // Master brightness
+    if(Cfg.probe)
+    {
       int light = analogRead(LDR_PIN);
-      byte bright = map(light, MIN_LIGHT, MAX_LIGHT, 255, 0); // to darker the light, the brighter the leds
-      Serial << light << " " << bright << endl;
-      AllLeds.setBrightness(bright);
-    #else
-      AllLeds.setBrightness(Cfg.bright);
-    #endif
+      Cfg.bright = map(light, Cfg.minProbe, MaxProbe, 255, 0); // to darker the light, the brighter the leds
+    }
+    AllLeds.setBrightness(Cfg.bright);
 
+    // handle motion
     if (GotAccel)
     {
+      #define MulAlpha(a, b) (((a) * ((b) + 1)) >> 8)
+
       int runSpeed =  ((WZ>0) - (WZ<0)) * Cfg.runSpeed;
 
       //------
       int _WZ = abs(WZ);
-      byte alpha = _WZ > Cfg.neutralWZ ? min((_WZ-Cfg.neutralWZ) * 255 / Cfg.maxWZ, 255) : 0;
+      byte alpha = _WZ > Cfg.neutralWZ ? min((_WZ - Cfg.neutralWZ) * 255 / Cfg.maxWZ, 255) : 0;
       byte invAlpha = 255 - alpha;
 
       //----------------------
       #define MAXACC 256
-      int acc = constrain(VACC.y / Cfg.divAcc, -MAXACC,MAXACC) << 8;
+      int acc = constrain(VACC.y / Cfg.divAcc, -MAXACC, MAXACC) << 8;
 
       //------
       static int FWD = 0;
       int fwd = constrain(acc, 0, 65535);
       FWD = fwd > FWD ? fwd : lerp16by16(FWD, fwd, Cfg.smoothAcc);
 
-      int alphaF = constrain((FWD - (Cfg.thresAcc<<8))/(MAXACC - Cfg.thresAcc), 0, 255);
-      int eyeF = Cfg.minEye + (((Cfg.maxEye - Cfg.minEye) * alphaF) >>8);
+      int alphaF = constrain((FWD - (Cfg.thresAcc << 8))/(MAXACC - Cfg.thresAcc), 0, 255);
+      int eyeF = Cfg.minEye + (((Cfg.maxEye - Cfg.minEye) * alphaF) >> 8);
 
       if (Cfg.ledF)
       { 
         RunF.setSpeed(runSpeed);
         RunF.setAlpha(alpha);
         CylonF.setEyeSize(eyeF);
-        CylonF.setAlpha(((255-Cfg.pacifica) * (invAlpha+1))>>8);
-        Pacifica.setAlpha((Cfg.pacifica * (invAlpha+1))>>8);
-        TwinkleF.setAlpha((alphaF * (invAlpha + 1))>>8);
+        CylonF.setAlpha(MulAlpha(255 - Cfg.pacifica, invAlpha)); 
+        Pacifica.setAlpha(MulAlpha(Cfg.pacifica, invAlpha)); 
+        TwinkleF.setAlpha(MulAlpha(alphaF, invAlpha)); 
       }
 
       //------
@@ -295,36 +316,38 @@ void loop()
       int rwd = constrain(-acc, 0, 65535);
       RWD = rwd > RWD ? rwd : lerp16by16(RWD, rwd, Cfg.smoothAcc);
 
-      int alphaR = constrain((RWD - (Cfg.thresAcc<<8))/(MAXACC - Cfg.thresAcc), 0, 255);
-      int eyeR = Cfg.minEye + (((Cfg.maxEye - Cfg.minEye) * alphaR) >>8);
+      int alphaR = constrain((RWD - (Cfg.thresAcc << 8))/(MAXACC - Cfg.thresAcc), 0, 255);
+      int eyeR = Cfg.minEye + (((Cfg.maxEye - Cfg.minEye) * alphaR) >> 8);
+      int dim = Cfg.minDim + (((Cfg.maxDim - Cfg.minDim) * alphaR) >> 8);
 
       if (Cfg.ledR)
       { 
         RunR.setSpeed(runSpeed);
         RunR.setAlpha(alpha);
         CylonR.setEyeSize(eyeR);
-        CylonR.setAlpha(invAlpha);
-        // FireRR.setAlpha(invAlpha);
-        // FireRL.setAlpha(invAlpha);
-        TwinkleR.setAlpha((max(Cfg.minTwkR, alphaR) * (invAlpha + 1))>>8);
+        CylonR.setAlpha(MulAlpha(255 - Cfg.fire, invAlpha)); 
+        FireRR.setAlpha(MulAlpha(Cfg.fire, invAlpha)); 
+        FireRL.setAlpha(MulAlpha(Cfg.fire, invAlpha));
+        FireRR.setDimRatio(dim); 
+        FireRL.setDimRatio(dim); 
+        TwinkleR.setAlpha(MulAlpha(max(Cfg.minTwkR, alphaR), invAlpha)); 
       }
 
       //----------------------
-      int alphaP = max(0, 255 - max(alphaR, alphaF));
       if (Cfg.led)
       {
         AquaRun.setAlpha(alphaF);
         AquaTwk.setAlpha(alphaF);
         FireRun.setAlpha(alphaR);
         FireTwk.setAlpha(alphaR);
-        Plasma.setAlpha(alphaP);
+        Plasma.setAlpha(max(0, 255 - max(alphaR, alphaF)));
       }
 
       #ifdef DEBUG_ACC
         Serial << "[areal  " << VACC.x << "\t" << VACC.y << "\t" << VACC.z << "]\t";
         Serial << "[fwd " << fwd << "\trwd " << rwd << "\tACC " << acc << "]\t";
         Serial << "[alpha " << alpha << "\tinv " << invAlpha << "]\t";
-        Serial << "[eyeR " << eyeR << "\teyeF " << eyeF << "\talphaR " << alphaR << "\talphaF " << alphaF << "\talphaP " << alphaP << "]" << endl; //"       \r";//endl;
+        Serial << "[eyeR " << eyeR << "\teyeF " << eyeF << "\talphaR " << alphaR << "\talphaF " << alphaF << "]" << endl; //"       \r";//endl;
       #endif
     }
 
