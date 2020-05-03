@@ -13,6 +13,8 @@
 #include <Streaming.h>
 #include <soc/rtc.h> // get cpu freq
 
+myWifi    MyWifi;
+
 // ----------------------------------------------------
 #ifdef USE_BT
   #include <bluetooth.h>
@@ -43,9 +45,6 @@ void handleOta()
     #endif
   #endif
 }
-
-// ----------------------------------------------------
-myWifi    MyWifi;
 
 // ----------------------------------------------------
 #define   SERIAL_BAUD   115200  // ms
