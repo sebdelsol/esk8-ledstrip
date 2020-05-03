@@ -14,7 +14,7 @@
 # Android App 
 <img src="https://media.giphy.com/media/TfFm0aNsc1LnWPsiab/giphy.gif" height="250" align="right">
 
-**if you want to *tweak* your setup in real time on your *phone***
+**to *tweak* your setup in real time on your *phone***
 * login on **[App Inventor](http://ai2.appinventor.mit.edu/)** & import **[esk8.aia](https://github.com/sebdelsol/Esk8/blob/master/esk8.aia)**
 * pair your Android phone with the **Esk8** device *within 5s after power on*
 * use `REGISTER_VAR` & `REGISTER_CMD` macros to automatically create new app's widgets
@@ -23,18 +23,18 @@
 # LEDstrips debug
 <img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="215" align="right">
 
-**if you want to *check* what's happening with your *LEDstrips***
+**to *check* what's happening with your *LEDstrips***
 * uncomment `#define DEBUG_LED_TOWIFI` in **[main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)** 
 * install **[PyGame](https://www.pygame.org)** & **[SimpleWebsocketServer](https://pypi.org/project/simple-websocket-server)** then launch **[debugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py)**
 
 <p>&nbsp;</p>  <p>&nbsp;</p>
 
 # OTA update & Telnet log
-**if you want *OTA* update**
+**to update *OTA***
 * uncomment `#define USE_OTA` in **[main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)** 
 * uncomment `upload_protocol = espota` & `upload_port = "esk8.local"` in **[platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini)** 
 
-**if you want *Telnet* logs**
+**to get *Telnet* logs**
 * uncomment `#define USE_TELNET` in **[main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)** 
 * launch a  `telnet` cmd line & `open esk8.local`
 
