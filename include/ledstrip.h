@@ -233,16 +233,6 @@ public:
     return (byte *) mDisplay.leds;
   };
 
-  // void applyGamma(CRGB* leds) // fast gamma = 2
-  // {
-  //   for (byte i = 0; i < NLEDS; i++)
-  //   {
-  //     leds[i].r = dim8_video(leds[i].r);
-  //     leds[i].g = dim8_video(leds[i].g);
-  //     leds[i].b = dim8_video(leds[i].b);
-  //   }
-  // };
-
   void update(ulong time, ulong dt)
   {
     byte i = 0; // fx count
@@ -252,14 +242,12 @@ public:
       if (mFX[i]->drawOn(mDisplay, time, dt))
         break; // now we've to blend
 
-    // some fx left to draw ?
+    // some fx left to draw ? draw on mBuffer & blend with mDisplay
     if (++i <= mNFX)
-    { // draw on mBuffer & blend with mDisplay
+    { 
       for (; i < mNFX; i++) 
         if (mFX[i]->drawOn(mBuffer, time, dt)) 
             mDisplay |= mBuffer; // get the max of each RGB component
-      
-      // applyGamma(mDisplay.leds);
     }
     // if no fx drawn, clear the ledstrip
     else 
