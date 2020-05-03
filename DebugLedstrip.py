@@ -20,7 +20,7 @@ with open("./include/wificonfig.h", "r") as f:
                 SOCK_PORT = int(w[2])
 
 #----------------------------------------------------------------
-wPixel = 20 #50
+wPixel = 20
 cPixel = wPixel * .25 
 minPixel = wPixel * .5
 maxPixel = int(round(wPixel * 1.5))
@@ -36,7 +36,6 @@ class Pixel:
         self.color = (0,0,0)
 
     def remanence(self, c, cd):
-        #c = ((c/255) **(1/4.1))*255
         if cd >= c:
             return cd
         else:
@@ -78,7 +77,6 @@ class NeoPixel:
     def initDisplay(self, n, row):
         self.W = max(self.W, n * wPixel)
         self.H = max(self.H, maxPixel * (row + 1))
-        #print self.W, self.H
 
         posx, posy = 1920 / 2 - self.W / 2, 1200 - self.H
         os.environ['SDL_VIDEO_WINDOW_POS'] = '%i,%i' % (posx,posy)
@@ -90,7 +88,7 @@ class NeoPixel:
         self.running = True
 
     def write(self, buf, nb, row):
-        if nb==len(buf)/3: #check
+        if nb==len(buf)/3:
             if self.nb.get(row, 0) != nb:
                 self.initPixels(nb, row)
                 
