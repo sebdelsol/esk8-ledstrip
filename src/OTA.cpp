@@ -34,7 +34,6 @@ void OTA::begin()
 
 void OTA::update() 
 {
-
   if (!mBegun)
     begin();
   else
