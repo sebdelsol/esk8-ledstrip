@@ -234,7 +234,6 @@ void BTcmd::load(bool isdefault, bool change)
   }
   else    
     *mDbgSerial << "FAIL load" << endl;
-
 }
 
 void BTcmd::sendUpdateOverBT()
