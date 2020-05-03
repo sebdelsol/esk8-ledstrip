@@ -5,7 +5,7 @@
 MPU6050 mpu;
 
 //--------------------------------------
-void myMPU6050::init()
+myMPU6050::myMPU6050()
 {
   #define REGISTER_MPU(var) REGISTER_VAR_SIMPLE_NOSHOW(myMPU6050, #var, self->var, -32768, 32767)
   REGISTER_MPU(mXGyroOffset);
