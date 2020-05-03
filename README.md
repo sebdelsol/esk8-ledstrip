@@ -56,6 +56,18 @@
 <sub>1x</sub>|<sub>blue LED</sub> | . | .
 <sub>1x</sub>|<sub>12x12 switch</sub> | . | .
 
+<sub>
+  
+* 3x 470Ω resistors
+* 1x 1000μF capacitor
+* 1x 10kΩ resistor
+* 1x LDR
+* 1x 220Ω resistor
+* 1x blue LED
+* 1x 12x12 switch
+
+</sub>
+
 # Dependencies
 
 * in **BluetoothSerial.cpp** modify `#define TX_QUEUE_SIZE 128` to avoid bluetooth congestion
