@@ -1,5 +1,5 @@
 #define USE_BT // see p latformio & use "board_build.partitions = huge_app.csv"
-#define USE_OTA 
+// #define USE_OTA 
 // #define USE_TELNET //needs USE_OTA to work
 
 // #define DEBUG_LED_INFO
@@ -51,7 +51,7 @@ myWifi    MyWifi;
 #define   SERIAL_BAUD   115200  // ms
 #define   LED_MAX_MA    800     // mA, please check OBJVar.bright to avoid reaching this value
 #define   LED_TICK      15      // ms
-#define   BT_TICK       15      // ms
+#define   BT_TICK       30      // ms
 
 #define   NBLEDS_MIDDLE 30
 #define   NBLEDS_TIPS   36
