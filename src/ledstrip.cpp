@@ -50,7 +50,7 @@ FireFX::FireFX(const bool reverse, const byte speed, const int dimRatio) : mReve
 
 void FireFX::specialInit(int nLeds)
 {
-  mHeat = (ushort*)malloc(nLeds*sizeof(ushort));
+  mHeat = (ushort*)malloc(nLeds * sizeof(ushort));
 }
 
 void FireFX::update(ulong time, ulong dt)
