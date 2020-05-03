@@ -60,10 +60,14 @@
   
 * <sub> 3x 470Ω resistors </sub>
 * <sub> 1x 1000μF capacitor </sub>
+
+<sub>
 * 1x 10kΩ resistor
 * 1x LDR
 * 1x 220Ω resistor
 * 1x blue LED
+</sub>
+
 * 1x 12x12 switch
 
 
