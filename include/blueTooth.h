@@ -5,7 +5,7 @@
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // in BluetoothSerial.cpp
-// #define TX_QUEUE_SIZE 512
+// #define TX_QUEUE_SIZE 128
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 #include <BTcmd.h>
