@@ -58,10 +58,11 @@
 
 
   
-* <sub> 3x 470Ω resistors </sub>
-* <sub> 1x 1000μF capacitor </sub>
+
 
 <sub>
+* 3x 470Ω resistors
+* 1x 1000μF capacitor
 * 1x 10kΩ resistor
 * 1x LDR
 * 1x 220Ω resistor
