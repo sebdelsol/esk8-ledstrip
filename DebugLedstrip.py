@@ -36,10 +36,7 @@ class Pixel:
         self.color = (0,0,0)
 
     def remanence(self, c, cd):
-        if cd >= c:
-            return cd
-        else:
-            return c * REM + cd * (1 - REM)
+        return cd if cd >= c else c * REM + cd * (1 - REM)
 
     def draw(self, color, screen):
         self.color = (self.remanence(self.color[0], color[0]),
