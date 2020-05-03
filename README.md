@@ -1,9 +1,7 @@
 # eSK8 LEDstrips
 <img src="https://media.giphy.com/media/IhCHKo42Hx7WFkRmzQ/giphy.gif" height="225" align="right"><img src="https://media.giphy.com/media/fY5xLxGayUptPZuTfG/giphy.gif" height="225" align="right"><img src="https://media.giphy.com/media/RfYtkG17dUJyVmbPet/giphy.gif" height="225" align="right">
 
-***LEDstrips* controlled by an *accelerometer***
-
-**for an *eSK8* with a phone *companion app***
+***LEDstrips* controlled by an *accelerometer* for an *eSK8* with a *companion app***
 <p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>  
 
 # PCB & Schematic
