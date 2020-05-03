@@ -46,12 +46,8 @@ bool BTcmd::registerObj(OBJVar& obj, const char* name)
     {
       MyVar* var = obj.getVar(i);
       
-      // do not use BTCMD_ALIVE as id set chararacter
-      #define FIRST_VAR '!'
-      if (FIRST_VAR + mID == BTCMD_ALIVE) mID += 1;
-
-      obj.setID(var, FIRST_VAR+ mID);
-      // *mDbgSerial << mID << " - " << (char)(FIRST_VAR+ mID) << endl;
+      obj.setID(var, BTCMD_1ST_ID + mID);
+      // *mDbgSerial << mID << " - " << (char)(BTCMD_1ST_ID + mID) << endl;
       mID += 1;
     }
   }

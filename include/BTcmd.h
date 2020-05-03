@@ -9,6 +9,7 @@
 #define BTCMD_BUFF_SIZE 127
 #define BTCMD_MAXOBJ    15
 
+#define BTCMD_1ST_ID  '!'
 #define BTCMD_TERM    '\n' 
 #define BTCMD_ALIVE    '~'
 #define BTCMD_DELIM   " " // strtok_r needs a null-terminated string
