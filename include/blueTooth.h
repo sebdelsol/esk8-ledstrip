@@ -13,7 +13,7 @@
 
 //#define BT_BAUD 9600 //38400 //9600
 #define BT_TERMINAL_NAME "Esk8"
-#define AUTO_STOP_IF_NOTCONNECTED 10000 // duration before bluetooth autostop after started if not connected
+#define AUTO_STOP_IF_NOTCONNECTED 30000 // duration before bluetooth autostop after started if not connected
 
 class BlueTooth
 {
