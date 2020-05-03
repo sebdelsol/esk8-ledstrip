@@ -272,7 +272,7 @@ void loop()
     if(Cfg.probe)
     {
       int light = analogRead(LDR_PIN);
-      Cfg.bright = map(light, Cfg.minProbe, MaxProbe, 255, 0); // to darker the light, the brighter the leds
+      Cfg.bright = map(light, Cfg.minProbe, MaxProbe, 255, 0); // the darker the light, the brighter the leds
     }
     AllLeds.setBrightness(Cfg.bright);
 
@@ -343,10 +343,10 @@ void loop()
       }
 
       #ifdef DEBUG_ACC
-        Serial << "[areal  " << VACC.x << "\t" << VACC.y << "\t" << VACC.z << "]\t";
-        Serial << "[fwd " << fwd << "\trwd " << rwd << "\tACC " << acc << "]\t";
-        Serial << "[alpha " << alpha << "\tinv " << invAlpha << "]\t";
-        Serial << "[eyeR " << eyeR << "\teyeF " << eyeF << "\talphaR " << alphaR << "\talphaF " << alphaF << "]" << endl; //"       \r";//endl;
+        Serial << "[areal  " << VACC.x << "\t"      << VACC.y   << "\t"        << VACC.z << "]\t";
+        Serial << "[fwd "    << fwd    << "\trwd "  << rwd      << "\tACC "    << acc << "]\t";
+        Serial << "[alpha "  << alpha  << "\tinv "  << invAlpha << "]\t";
+        Serial << "[eyeR "   << eyeR   << "\teyeF " << eyeF     << "\talphaR " << alphaR << "\talphaF " << alphaF << "]" << endl;
       #endif
     }
 
