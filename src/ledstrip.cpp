@@ -8,7 +8,6 @@ void FX::init(int nLeds)
   CLEAR_LED(mLeds, nLeds);
   specialInit(nLeds);
 
-  registerAllCmd();
   REGISTER_VAR(FX, "alpha", { self->setAlpha(arg0); },  self->getAlpha(), 0, 255)
 }
 
@@ -42,17 +41,13 @@ bool FX::drawOn(CRGBSet dst, ulong time, ulong dt)
 FireFX::FireFX(const bool reverse, const byte speed, const int dimRatio) : mReverse(reverse),  mSpeed(speed), mDimRatio(dimRatio) 
 {
   mPal = HeatColors_p;
+  REGISTER_VAR_SIMPLE(FireFX, "speed", self->mSpeed, 1, 255)
+  REGISTER_VAR_SIMPLE(FireFX, "dim", self->mDimRatio, 1, 10)
 }
 
 void FireFX::specialInit(int nLeds)
 {
   mHeat = (ushort*)malloc(nLeds * sizeof(ushort));
-}
-
-void FireFX::registerAllCmd()
-{
-  REGISTER_VAR_SIMPLE(FireFX, "speed", self->mSpeed, 1, 255)
-  REGISTER_VAR_SIMPLE(FireFX, "dim", self->mDimRatio, 1, 10)
 }
 
 void FireFX::update(ulong time, ulong dt)
@@ -94,9 +89,7 @@ AquaFX::AquaFX(const bool reverse, const byte speed, const float dimRatio) : Fir
 }
 
 // ----------------------------------------------------
-PlasmaFX::PlasmaFX(const byte wavelenght, const byte period1, const byte period2) : mK(wavelenght), mP1(period1), mP2(period2) {}
-
-void PlasmaFX::registerAllCmd()
+PlasmaFX::PlasmaFX(const byte wavelenght, const byte period1, const byte period2) : mK(wavelenght), mP1(period1), mP2(period2) 
 {
   REGISTER_VAR_SIMPLE(PlasmaFX,  "p1",    self->mP1, 1, 20)
   REGISTER_VAR_SIMPLE(PlasmaFX,  "p2",    self->mP2, 1, 20)
@@ -127,9 +120,7 @@ void PlasmaFX::update(ulong time, ulong dt)
 }
 
 // ----------------------------------------------------
-CylonFX::CylonFX(const CRGB color, const int eyeSize, const int speed) : mEyeSize(eyeSize), mSpeed(speed), mColor(color) {}
-
-void CylonFX::registerAllCmd()
+CylonFX::CylonFX(const CRGB color, const int eyeSize, const int speed) : mEyeSize(eyeSize), mSpeed(speed), mColor(color) 
 {
   REGISTER_VAR3(CylonFX, "color",   { self->mColor = CRGB(arg0, arg1, arg2); },        self->mColor.r,   self->mColor.g,   self->mColor.b, 0, 255)
   REGISTER_VAR(CylonFX,  "eyeSize", { self->setEyeSize(arg0*(self->mNLEDS-1)/255); },  self->mEyeSize*255/(self->mNLEDS-1), 1, 255)
@@ -171,9 +162,7 @@ void DblCylonFX::update(ulong time, ulong dt)
 }
 
 // ----------------------------------------------------
-RunningFX::RunningFX(const CRGB color, const int width, const int speed) : mWidth(width), mSpeed(speed), mColor(color) {}
-
-void RunningFX::registerAllCmd()
+RunningFX::RunningFX(const CRGB color, const int width, const int speed) : mWidth(width), mSpeed(speed), mColor(color) 
 {
   REGISTER_VAR3(RunningFX, "color", { self->mColor = CRGB(arg0, arg1, arg2); }, self->mColor.r, self->mColor.g, self->mColor.b, 0, 255)
   REGISTER_VAR_SIMPLE(RunningFX,  "speed", self->mSpeed, -10, 10)
@@ -198,11 +187,13 @@ void RunningFX::update(ulong time, ulong dt)
 TwinkleFX::TwinkleFX(const byte hue, const byte hueDiv, const byte div) : mHueDiv(hueDiv), mDiv(div) 
 {
   setHue(hue);
+  registerAllCmd();
 }
 
 TwinkleFX::TwinkleFX(const CRGB color, const byte hueDiv, const byte div) : mHueDiv(hueDiv), mDiv(div)
 {
   setHue(color);
+  registerAllCmd();
 }
 
 void TwinkleFX::setHue(const CRGB color)  {  mHSV = rgb2hsv_approximate(color); mColor = color; }
@@ -234,10 +225,6 @@ PacificaFX::PacificaFX(const byte speed) : mSpeed(speed)
   mPal1 = {0x000507, 0x000409, 0x00030B, 0x00030D, 0x000210, 0x000212, 0x000114, 0x000117, 0x000019, 0x00001C, 0x000026, 0x000031, 0x00003B, 0x000046, 0x14554B, 0x28AA50};
   mPal2 = {0x000507, 0x000409, 0x00030B, 0x00030D, 0x000210, 0x000212, 0x000114, 0x000117, 0x000019, 0x00001C, 0x000026, 0x000031, 0x00003B, 0x000046, 0x0C5F52, 0x19BE5F};
   mPal3 = {0x000208, 0x00030E, 0x000514, 0x00061A, 0x000820, 0x000927, 0x000B2D, 0x000C33, 0x000E39, 0x001040, 0x001450, 0x001860, 0x001C70, 0x002080, 0x1040BF, 0x2060FF};
-}
-
-void PacificaFX::registerAllCmd()
-{
   REGISTER_VAR_SIMPLE(PacificaFX, "speed", self->mSpeed, 1, 7)
 }
 
