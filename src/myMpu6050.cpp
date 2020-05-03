@@ -5,7 +5,48 @@
 MPU6050 mpu;
 
 //--------------------------------------
-void myMPU6050::begin(Stream &serial, void (*handleOta)())
+myMPU6050::myMPU6050()
+{
+  #define REGISTER_MPU(var) REGISTER_VAR_SIMPLE_NOSHOW(myMPU6050, #var, self->var, -32768, 32767)
+  REGISTER_MPU(mXGyroOffset);
+  REGISTER_MPU(mYGyroOffset);
+  REGISTER_MPU(mZGyroOffset);
+  REGISTER_MPU(mXAccelOffset);
+  REGISTER_MPU(mYAccelOffset);
+  REGISTER_MPU(mZAccelOffset);
+
+  REGISTER_CMD(myMPU6050, "calibrate",  {self->calibrate();} ) 
+}
+
+void myMPU6050::calibrate()
+{
+  mpu.CalibrateAccel(CALIBRATION_LOOP);
+  mpu.CalibrateGyro(CALIBRATION_LOOP);
+
+  mXGyroOffset = mpu.getXGyroOffset();
+  mYGyroOffset = mpu.getYGyroOffset();
+  mZGyroOffset = mpu.getZGyroOffset();
+  mXAccelOffset = mpu.getXAccelOffset();
+  mYAccelOffset = mpu.getYAccelOffset();
+  mZAccelOffset = mpu.getZAccelOffset();
+
+  mpu.PrintActiveOffsets();
+}
+
+void myMPU6050::loadCalibration()
+{
+  mpu.setXGyroOffset(mXGyroOffset);    
+  mpu.setYGyroOffset(mYGyroOffset);    
+  mpu.setZGyroOffset(mZGyroOffset);
+  mpu.setXAccelOffset(mXAccelOffset);  
+  mpu.setYAccelOffset(mYAccelOffset);  
+  mpu.setZAccelOffset(mZAccelOffset); 
+  
+  mpu.PrintActiveOffsets();
+}
+
+//--------------------------------------
+void myMPU6050::begin(Stream &serial, bool doCalibrate)
 { 
   #ifdef MPU_ZERO
     MPUzero(serial, handleOta);
@@ -20,15 +61,12 @@ void myMPU6050::begin(Stream &serial, void (*handleOta)())
   *mSerial << "MPU connection " << (mpu.testConnection() ? F("successful") : F("failed")) << endl;
   uint8_t devStatus = mpu.dmpInitialize();
 
-  // supply accel & gyro offsets, use #define MPU_ZERO for computing the offsets
-  mpu.setXGyroOffset(XGyroOffset);    mpu.setYGyroOffset(YGyroOffset);    mpu.setZGyroOffset(ZGyroOffset);
-  mpu.setXAccelOffset(XAccelOffset);  mpu.setYAccelOffset(YAccelOffset);  mpu.setZAccelOffset(ZAccelOffset); 
-
   if (devStatus == 0)
   { // did it work ?
-    mpu.CalibrateAccel(6);
-    mpu.CalibrateGyro(6);
-    mpu.PrintActiveOffsets();
+    if (doCalibrate) 
+      calibrate();
+    else
+      loadCalibration();
 
     mpu.setDMPEnabled(true);
     mDmpReady = true;

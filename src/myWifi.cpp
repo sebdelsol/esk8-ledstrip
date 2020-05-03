@@ -11,63 +11,80 @@ void myWifi::off()
   // WiFi.forceSleepBegin();
   digitalWrite(BUILTIN_LED, HIGH); // led off
 
+  mWantON = false;
   mON = false;
   *mSerial << "Wifi off" << endl;
 }
 
-void myWifi::on(int count)
+void myWifi::on()
 {
   WiFi.mode(WIFI_STA);
   // WiFi.forceSleepWake();
   WiFi.begin(WIFINAME, WIFIPASS);
+  
+  mBegunOn = millis();
+  mON = false;
+  mWantON = true;
 
-  *mSerial << "Wifi Connecting";
-  while(WiFi.status() != WL_CONNECTED && count-- > 0)
-  {
-    delay(500);
-    digitalWrite(BUILTIN_LED, !digitalRead(BUILTIN_LED));
-    *mSerial << ".";
-  }
-
-  if(WiFi.status() == WL_CONNECTED)
-  {
-    *mSerial << "Connected, IP address: " << WiFi.localIP() << endl;
-    digitalWrite(BUILTIN_LED, LOW); // led on
-    mON = true;
-  }
-  else off();
+  *mSerial << "Wifi Connecting" << endl;
 }
 
 void myWifi::addLeds(const BaseLedStrip &leds)
 {
-  if (mON)
-  {
-    if (!mSocketBegun)
-    {
-      *mSerial << "Socket client started" << endl;
-      webSocket.begin(SOCK_ADDR, SOCK_PORT);
-      mSocketBegun = true;
-    }
+  mIsSocket = true;
 
-    if (mNStrips < MAXSTRIPS)
-      mLeds[mNStrips++] = (BaseLedStrip*)&leds;
-  }
+  if (mNStrips < MAXSTRIPS)
+    mLeds[mNStrips++] = (BaseLedStrip*)&leds;
 }
 
-void myWifi::update()
+bool myWifi::update()
 {
-  if (mON && mSocketBegun)
+  if(mWantON)
   {
-    webSocket.loop();
-
-    for (byte i=0; i < mNStrips; i++)
+    if(!mON)
     {
-      int length;
-      byte *data = mLeds[i]->getData(length);
-      snprintf(mInfo, INFO_LEN, "STRIP %d %d", i, length/3); 
+      if(millis() - mBegunOn < WIFI_TIMEOUT)
+      {
+        if(WiFi.status() == WL_CONNECTED)
+        {
+          *mSerial << "Connected, IP address: " << WiFi.localIP() << endl;
+          digitalWrite(BUILTIN_LED, LOW); // led on
+          mON = true;
 
-      webSocket.sendTXT(mInfo, strlen(mInfo));
-      webSocket.sendBIN(data, length);
+          if (mIsSocket)
+          {
+            *mSerial << "Socket client started" << endl;
+            webSocket.begin(SOCK_ADDR, SOCK_PORT);
+          }
+        }
+        else
+        {
+          digitalWrite(BUILTIN_LED, !digitalRead(BUILTIN_LED));
+          *mSerial << ".";
+        }
+      }
+      else 
+        off();
+    }
+    
+    else
+    {
+      if (mIsSocket)
+      {
+        webSocket.loop();
+
+        for (byte i=0; i < mNStrips; i++)
+        {
+          int length;
+          byte *data = mLeds[i]->getData(length);
+          snprintf(mInfo, INFO_LEN, "STRIP %d %d", i, length/3); 
+
+          webSocket.sendTXT(mInfo, strlen(mInfo));
+          webSocket.sendBIN(data, length);
+        }
+      }
     }
   }
+
+  return mON;
 }

@@ -15,11 +15,15 @@
 // #define SOCK_PORT **
 
 #define MAXSTRIPS 3
+#define WIFI_TIMEOUT 10000
 
 class myWifi
 {
-  bool mON = true;
-  bool mSocketBegun = false;
+  int mBegunOn;
+  bool mON = false;
+  bool mWantON = false;
+
+  bool mIsSocket = false;
   WebSocketsClient webSocket;
 
   BaseLedStrip* mLeds[MAXSTRIPS];
@@ -32,9 +36,9 @@ class myWifi
 
 public:
   void init(Stream &serial);
-  void on(int count=15);
+  void on();
   void off();
   void toggle() { mON ? off() : on(); };
   void addLeds(const BaseLedStrip &leds);
-  void update();
+  bool update();
 };

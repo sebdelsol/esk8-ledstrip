@@ -1,6 +1,7 @@
 #define USE_BT // see p latformio & use "board_build.partitions = huge_app.csv"
 #define USE_OTA 
-// #define USE_TELNET //needs USE_OTA to work
+// #define USE_TELNET 
+// #define USE_PROBE
 
 // #define DEBUG_LED_INFO
 // #define DEBUG_LED_TOWIFI // use wifi
@@ -28,23 +29,13 @@ myWifi    MyWifi;
 #ifdef USE_OTA
   #include <OTA.h>
   OTA Ota;
-
-  #ifdef USE_TELNET
-    #include <TelnetSpy.h>
-    TelnetSpy SerialAndTelnet;
-    #define Serial  SerialAndTelnet
-  #endif
 #endif
 
-void handleOta()
-{
-  #ifdef USE_OTA
-    Ota.update();
-    #ifdef USE_TELNET
-      SerialAndTelnet.handle();
-    #endif
-  #endif
-}
+#ifdef USE_TELNET
+  #include <TelnetSpy.h>
+  TelnetSpy SerialAndTelnet;
+  #define Serial  SerialAndTelnet
+#endif
 
 // ----------------------------------------------------
 #define   SERIAL_BAUD   115200  // ms
@@ -71,15 +62,15 @@ TwinkleFX   AquaTwk(HUE_AQUA_BLUE);
 PlasmaFX    Plasma;
 
 LedStrip    <NBLEDS_TIPS, LEDR_PIN>  LedsR("LedR");
-DblCylonFX  CylonR(LUSH_LAVA); 
+// DblCylonFX  CylonR(LUSH_LAVA); 
 FireFX      FireRL;
 FireFX      FireRR(true);
 TwinkleFX   TwinkleR(CRGB::Red);
 RunningFX   RunR(CRGB::Gold); 
 
 LedStrip    <NBLEDS_TIPS, LEDF_PIN>  LedsF("LedF");
+// DblCylonFX  CylonF(AQUA);   
 PacificaFX  Pacifica;
-DblCylonFX  CylonF(AQUA);   
 TwinkleFX   TwinkleF(HUE_AQUA_BLUE); 
 RunningFX   RunF(CRGB::Gold);
 
@@ -108,15 +99,17 @@ public:
   bool ledF       = true;
   bool led        = true;
 
-  // light probe ?
-  #define MaxProbe 4095
-  bool probe      = false;
+  // brightness ?
   byte bright     = 128; // half brightness is enough to avoid reaching LED_MAX_MA
-  int  minProbe   = 400;
+  #ifdef USE_PROBE
+    #define MaxProbe 4095
+    int  minProbe   = 400;
+    bool probe      = false;
+  #endif
 
   // pacifica ?
-  byte pacifica   = 255;
-  byte fire       = 0;
+  // byte pacifica   = 255;
+  // byte fire       = 0;
 
   // for rotation
   byte runSpeed    = 3;
@@ -129,15 +122,15 @@ public:
   byte thresAcc   = 30;
   
   // Cylons
-  byte minEye     = 5;
-  byte maxEye     = 10;
+  // byte minEye     = 5;
+  // byte maxEye     = 10;
 
   // Fire
   int  minDim     = 4;
   int  maxDim     = 10;
 
   //twinkleR
-  int minTwkR     = 20;
+  int minTwkR     = 0;
 
   #ifdef USE_BT
     CFG()
@@ -154,12 +147,14 @@ public:
       REGISTER_CFG(ledF,       0, 1);
       REGISTER_CFG(led,        0, 1);
 
-      REGISTER_CFG(probe,      0, 1);
       REGISTER_CFG(bright,     1, 255);
-      REGISTER_CFG(minProbe,   1, MaxProbe);
+      #ifdef USE_PROBE
+        REGISTER_CFG(minProbe,   1, MaxProbe);
+        REGISTER_CFG(probe,      0, 1);
+      #endif
 
-      REGISTER_CFG(pacifica,   0, 255);
-      REGISTER_CFG(fire,       0, 255);
+      // REGISTER_CFG(pacifica,   0, 255);
+      // REGISTER_CFG(fire,       0, 255);
 
       REGISTER_CFG(runSpeed,   0, 10);
       REGISTER_CFG(neutralWZ,  0, 32768);
@@ -169,8 +164,8 @@ public:
       REGISTER_CFG(smoothAcc,  1, 32768);
       REGISTER_CFG(thresAcc,   0, 255);
 
-      REGISTER_CFG(minEye,     1, (NBLEDS_TIPS>>1));
-      REGISTER_CFG(maxEye,     1, (NBLEDS_TIPS>>1));
+      // REGISTER_CFG(minEye,     1, (NBLEDS_TIPS>>1));
+      // REGISTER_CFG(maxEye,     1, (NBLEDS_TIPS>>1));
       REGISTER_CFG(minDim,     1, 10);
       REGISTER_CFG(maxDim,     1, 10);
       REGISTER_CFG(minTwkR,    0, 255);
@@ -193,20 +188,45 @@ void setup()
   // LEDS -----------------------------
   #define AddFX(l, fx) l.registerFX(fx)
 
+  AllLeds.clearAndShow();
   AllLeds.registerStrip(Leds); 
   AllLeds.registerStrip(LedsR); 
   AllLeds.registerStrip(LedsF); 
 
-  AddFX(Leds, FireRun);   AddFX(Leds, FireTwk); AddFX(Leds, AquaRun); AddFX(Leds, AquaTwk);   AddFX(Leds, Plasma);
-  AddFX(LedsR, TwinkleR); AddFX(LedsR, CylonR); AddFX(LedsR, FireRR); AddFX(LedsR, FireRL);   AddFX(LedsR, RunR);
-  AddFX(LedsF, TwinkleF); AddFX(LedsF, CylonF); AddFX(LedsF, RunF);   AddFX(LedsF, Pacifica);
-
-  AllLeds.clearAndShow();
+  AddFX(Leds, FireRun);   AddFX(Leds, FireTwk); AddFX(Leds, AquaRun);   AddFX(Leds, AquaTwk);   AddFX(Leds, Plasma);
+  AddFX(LedsR, TwinkleR); AddFX(LedsR, FireRR); AddFX(LedsR, FireRL);   AddFX(LedsR, RunR);     //AddFX(LedsR, CylonR);
+  AddFX(LedsF, TwinkleF); AddFX(LedsF, RunF);   AddFX(LedsF, Pacifica); //AddFX(LedsF, CylonF);
   
+  // BlueTooth -----------------------------
+  #ifdef USE_BT
+    #define AddOBJ(o) BT.registerObj(o, #o);
+    
+    BT.init(Serial);
+
+    AddOBJ(Accel);     AddOBJ(Cfg);            
+    AddOBJ(TwinkleF);  AddOBJ(RunF);    AddOBJ(Pacifica); //AddOBJ(CylonF);
+    AddOBJ(TwinkleR);  AddOBJ(FireRR);  AddOBJ(FireRL);   AddOBJ(RunR);      //AddOBJ(CylonR);
+    AddOBJ(FireRun);   AddOBJ(FireTwk); AddOBJ(AquaRun);  AddOBJ(AquaTwk);   AddOBJ(Plasma);
+
+    BT.save(true); // save default
+    BT.load(false, false); // load not default, do not send change to BT
+    BT.start();
+
+    Accel.begin(Serial);
+    Button.begin();
+
+  #else    
+    Accel.begin(Serial, true); // calibrate
+
+    pinMode(LIGHT_PIN, OUTPUT); //blue led
+    digitalWrite(LIGHT_PIN, LOW); // switch off blue led
+    btStop(); // turnoff bt 
+  #endif
+
   // Wifi -----------------------------
   MyWifi.init(Serial);
   
-  #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA)
+  #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET)
     MyWifi.on();
   
     #ifdef DEBUG_LED_TOWIFI
@@ -215,51 +235,22 @@ void setup()
       MyWifi.addLeds(LedsF);
     #endif
   
-    #ifdef USE_OTA
-      Ota.begin();
-    #endif
-  
   #else
     MyWifi.off();
   #endif
-
-  // BlueTooth -----------------------------
-  #ifdef USE_BT
-    #define AddOBJ(o) BT.registerObj(o, #o);
-    
-    BT.init(Serial);
-
-    AddOBJ(Cfg);
-    AddOBJ(TwinkleF);  AddOBJ(CylonF);  AddOBJ(RunF);    AddOBJ(Pacifica);
-    AddOBJ(TwinkleR);  AddOBJ(CylonR);  AddOBJ(FireRR);  AddOBJ(FireRL);    AddOBJ(RunR);
-    AddOBJ(FireRun);   AddOBJ(FireTwk); AddOBJ(AquaRun); AddOBJ(AquaTwk);   AddOBJ(Plasma);
-
-    BT.save(true); // save default
-    BT.load(false, false); // load not default, do not send change to BT
-    BT.start();
-
-    Button.begin();
-
-  #else    
-    pinMode(LIGHT_PIN, OUTPUT); //blue led
-    digitalWrite(LIGHT_PIN, LOW); // switch off blue led
-    btStop(); // turnoff bt 
-  #endif
-
-  // accel -----------------------------
-  Accel.begin(Serial, &handleOta);
 }
 
 // ----------------------------------------------------
 void loop()
 {
-  handleOta();
-
   GotAccel = Accel.getMotion(AXIS, ANGLE, VACC, WZ);
 
   #ifdef USE_BT
     if (Button.pressed())
+    {
+      Serial << "button pressed" << endl;
       BT.toggle();
+    }
     
     EVERY_N_MILLISECONDS(BT_TICK)
       BT.update();
@@ -267,13 +258,14 @@ void loop()
 
   EVERY_N_MILLISECONDS(LED_TICK)
   {
-    
     // Master brightness
-    if(Cfg.probe)
-    {
-      int light = analogRead(LDR_PIN);
-      Cfg.bright = map(light, Cfg.minProbe, MaxProbe, 255, 0); // the darker the light, the brighter the leds
-    }
+    #ifdef USE_PROBE
+      if(Cfg.probe)
+      {
+        int light = analogRead(LDR_PIN);
+        Cfg.bright = map(light, Cfg.minProbe, MaxProbe, 255, 0); // the darker the light, the brighter the leds
+      }
+    #endif
     AllLeds.setBrightness(Cfg.bright);
 
     // handle motion
@@ -298,15 +290,17 @@ void loop()
       FWD = fwd > FWD ? fwd : lerp16by16(FWD, fwd, Cfg.smoothAcc);
 
       int alphaF = constrain((FWD - (Cfg.thresAcc << 8))/(MAXACC - Cfg.thresAcc), 0, 255);
-      int eyeF = Cfg.minEye + (((Cfg.maxEye - Cfg.minEye) * alphaF) >> 8);
+      // int eyeF = Cfg.minEye + (((Cfg.maxEye - Cfg.minEye) * alphaF) >> 8);
 
       if (Cfg.ledF)
       { 
         RunF.setSpeed(runSpeed);
         RunF.setAlpha(alpha);
-        CylonF.setEyeSize(eyeF);
-        CylonF.setAlpha(MulAlpha(255 - Cfg.pacifica, invAlpha)); 
-        Pacifica.setAlpha(MulAlpha(Cfg.pacifica, invAlpha)); 
+        // CylonF.setEyeSize(eyeF);
+        // CylonF.setAlpha(MulAlpha(255 - Cfg.pacifica, invAlpha)); 
+        // Pacifica.setAlpha(MulAlpha(Cfg.pacifica, invAlpha)); 
+        // TwinkleF.setAlpha(MulAlpha(alphaF, invAlpha)); 
+        Pacifica.setAlpha(invAlpha); 
         TwinkleF.setAlpha(MulAlpha(alphaF, invAlpha)); 
       }
 
@@ -316,17 +310,19 @@ void loop()
       RWD = rwd > RWD ? rwd : lerp16by16(RWD, rwd, Cfg.smoothAcc);
 
       int alphaR = constrain((RWD - (Cfg.thresAcc << 8))/(MAXACC - Cfg.thresAcc), 0, 255);
-      int eyeR = Cfg.minEye + (((Cfg.maxEye - Cfg.minEye) * alphaR) >> 8);
+      // int eyeR = Cfg.minEye + (((Cfg.maxEye - Cfg.minEye) * alphaR) >> 8);
       int dim = Cfg.minDim + (((Cfg.maxDim - Cfg.minDim) * alphaR) >> 8);
 
       if (Cfg.ledR)
       { 
         RunR.setSpeed(runSpeed);
         RunR.setAlpha(alpha);
-        CylonR.setEyeSize(eyeR);
-        CylonR.setAlpha(MulAlpha(255 - Cfg.fire, invAlpha)); 
-        FireRR.setAlpha(MulAlpha(Cfg.fire, invAlpha)); 
-        FireRL.setAlpha(MulAlpha(Cfg.fire, invAlpha));
+        // CylonR.setEyeSize(eyeR);
+        // CylonR.setAlpha(MulAlpha(255 - Cfg.fire, invAlpha)); 
+        // FireRR.setAlpha(MulAlpha(Cfg.fire, invAlpha)); 
+        // FireRL.setAlpha(MulAlpha(Cfg.fire, invAlpha));
+        FireRR.setAlpha(invAlpha); 
+        FireRL.setAlpha(invAlpha);
         FireRR.setDimRatio(dim); 
         FireRL.setDimRatio(dim); 
         TwinkleR.setAlpha(MulAlpha(max(Cfg.minTwkR, alphaR), invAlpha)); 
@@ -352,8 +348,17 @@ void loop()
 
     AllLeds.update();
 
-    #ifdef DEBUG_LED_TOWIFI
-      MyWifi.update();
+    #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET)
+      if(MyWifi.update())
+      {
+        #ifdef USE_TELNET
+          SerialAndTelnet.handle();
+        #endif
+
+        #ifdef USE_OTA
+          Ota.update();
+        #endif
+      }
     #endif
   }
 

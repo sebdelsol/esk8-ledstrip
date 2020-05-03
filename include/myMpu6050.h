@@ -5,33 +5,20 @@
 #include <FastLED.h> // for lerp15by16
 #include <myPins.h>
 #include <helper_3dmath.h>
+#include <objVar.h>
 
 //----------------------------- smooth accel & gyro
 #define ACCEL_AVG       .05 // use 5% of the new measure in the avg
 #define ACCEL_BASE_FREQ 60. // based on a 60fps measure
-#define VEC16_UNIT      16384
-
-//----------------------------- OFFSETS
-// if you need to compute the offset
-
-// #define MPU_ZERO 
-#ifdef MPU_ZERO
-  void MPUzero(Stream &serial, void (*handleOta)());
-#endif
-
-#define XGyroOffset   80 //77
-#define YGyroOffset   4
-#define ZGyroOffset   8
-#define XAccelOffset  -1843 // -1772
-#define YAccelOffset  -267 // -155
-#define ZAccelOffset  1297 // 1270
 
 //-----------------------------
 #define STAYS_SHORT(x) constrain(x, -32768, 32767)
 #define TOdeg(x) (x * 180/M_PI)
 
+#define CALIBRATION_LOOP  6
+
 //-----------------------------
-class myMPU6050
+class myMPU6050 : public OBJVar
 {
   ulong mT = 0;
   int mX = 0, mY = 0, mZ = 0, mWz = 0;
@@ -41,7 +28,7 @@ class myMPU6050
   bool mDmpReady = false;           // set true if DMP init was successful
   uint8_t mFifoBuffer[64];          // FIFO storage buffer
 
-  Quaternion  mQuat;                 // [w, x, y, z]         quaternion container
+  Quaternion  mQuat;                // [w, x, y, z]         quaternion container
   VectorInt16 mGy;                  // [x, y, z]            gyro sensor measurements
   VectorInt16 mAcc;                 // [x, y, z]            accel sensor measurements
   VectorInt16 mAccReal;             // [x, y, z]            gravity-free accel sensor measurements
@@ -49,12 +36,18 @@ class myMPU6050
   VectorInt16 mAxis;
   int         mAngle;
 
-  bool readAccel();
-  
-public:
+  int16_t mXGyroOffset,   mYGyroOffset,   mZGyroOffset;
+  int16_t mXAccelOffset,  mYAccelOffset,  mZAccelOffset;
 
   void getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q);
+  bool readAccel();
 
-  void begin(Stream &serial, void (*handleOta)());
+  void loadCalibration();
+  void calibrate();
+
+public:
+
+  myMPU6050();
+  void begin(Stream &serial, bool doCalibrate = false);
   bool getMotion(VectorInt16 &axis, int &angle, VectorInt16 &acc, int &wz);
 };

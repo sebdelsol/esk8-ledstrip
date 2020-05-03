@@ -5,8 +5,9 @@
 
 class OTA
 {
-    bool mOn = false;
-public:
+    bool mBegun = false;
     void begin();
+
+public:
     void update();
 };
