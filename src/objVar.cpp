@@ -5,16 +5,19 @@ bool OBJVar::registerVar(void *obj, const char *name, setVarFunc set, getVarFunc
   bool ok = mNVAR < MAX_VAR;
   if (ok)
   {
-    mVar[mNVAR].obj = obj;
-    mVar[mNVAR].set = set;
-    mVar[mNVAR].get = get;
-    mVar[mNVAR].min = min;
-    mVar[mNVAR].max = max;
-    mVar[mNVAR].show = show;
-    
+    MyVar *var = (MyVar *)malloc(sizeof(MyVar));
+    mVar[mNVAR++] = var;
+
     char* str = (char *)malloc(strlen(name) + 1);
     strcpy(str, name);
-    mVar[mNVAR++].name = str;
+    var->name = str;
+
+    var->obj = obj;
+    var->set = set;
+    var->get = get;
+    var->min = min;
+    var->max = max;
+    var->show = show;
   }
   return ok;
 }
@@ -22,8 +25,8 @@ bool OBJVar::registerVar(void *obj, const char *name, setVarFunc set, getVarFunc
 MyVar* OBJVar::getVarFromName(const char* name)
 {
   for (byte i = 0; i < mNVAR; i++) //look for the cmd
-    if (strcmp(name, mVar[i].name)==0)
-      return &mVar[i];
+    if (strcmp(name, mVar[i]->name)==0)
+      return mVar[i];
 
   return NULL;
 }
@@ -49,7 +52,7 @@ byte OBJVar::get(MyVar* var, int* toGet)
 
 bool OBJVar::hasVarChanged(byte i)
 {
-  MyVar *var = &mVar[i]; 
+  MyVar *var = mVar[i]; 
 
   int cur[MAX_ARGS]; 
   byte n = get(var, cur); //update value in cur
