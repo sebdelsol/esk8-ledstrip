@@ -177,9 +177,10 @@ void BTcmd::readStream(Stream* stream, BUF& buf, bool change, bool useShortCut)
         buf.clear();
       }
       else if (isprint(c))
+      {
         buf.append(c);
-
-      // *mDbgSerial << ">>>>>>>>>>>>>>>>>>>" << buf.getBuf() << "<<<<<<<<<<<<<<<" << endl;
+        // *mDbgSerial << "Buf >>>" << buf.getBuf() << "<<<" << endl;
+      }
     }
   }
 }
