@@ -273,7 +273,7 @@ void loop()
       }
     #endif
     Cfg.fade = lerp16by16(Cfg.fade,  65535,  650);
-    byte bright = (Cfg.bright * ((Cfg.fade >> 8) + 1)) >>z8; 
+    byte bright = (Cfg.bright * ((Cfg.fade >> 8) + 1)) >> 8; 
     AllLeds.setBrightness(bright);
 
     // handle motion
