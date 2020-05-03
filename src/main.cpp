@@ -100,7 +100,8 @@ public:
   bool led        = true;
 
   // brightness ?
-  byte bright     = 128; // half brightness is enough to avoid reaching LED_MAX_MA
+  byte bright     = 128;  // half brightness is enough to avoid reaching LED_MAX_MA
+  int fade        = 0;    // to be smoothed
   #ifdef USE_PROBE
     #define MaxProbe 4095
     int  minProbe   = 400;
@@ -130,47 +131,47 @@ public:
   int  maxDim     = 10;
 
   //twinkleR
-  int minTwkR     = 0;
+  int minTwkR     = 128;
 
-  #ifdef USE_BT
-    CFG()
-    {
-      #define REGISTER_CFG(var, min, max) REGISTER_VAR_SIMPLE(CFG, #var, self->var, min, max)
+  void init()
+  {
+    #define REGISTER_CFG(var, min, max) REGISTER_VAR_SIMPLE(CFG, #var, self->var, min, max)
 
+    #ifdef USE_BT
       REGISTER_CMD(CFG,        "save",      {BT.save(false);} )       // save not default
       REGISTER_CMD(CFG,        "load",      {BT.load(false);} )       // load not default
       REGISTER_CMD(CFG,        "default",   {BT.load(true);}  )       // load default
       REGISTER_CMD_NOSHOW(CFG, "getInits",  {BT.sendInitsOverBT();} ) // answer with all vars init (min, max, value)
       REGISTER_CMD_NOSHOW(CFG, "getUpdate", {sendUpdate();} )         // answer with all updates
+    #endif
 
-      REGISTER_CFG(ledR,       0, 1);
-      REGISTER_CFG(ledF,       0, 1);
-      REGISTER_CFG(led,        0, 1);
+    REGISTER_CFG(ledR,       0, 1);
+    REGISTER_CFG(ledF,       0, 1);
+    REGISTER_CFG(led,        0, 1);
 
-      REGISTER_CFG(bright,     1, 255);
-      #ifdef USE_PROBE
-        REGISTER_CFG(minProbe,   1, MaxProbe);
-        REGISTER_CFG(probe,      0, 1);
-      #endif
+    REGISTER_CFG(bright,     1, 255);
+    #ifdef USE_PROBE
+      REGISTER_CFG(minProbe,   1, MaxProbe);
+      REGISTER_CFG(probe,      0, 1);
+    #endif
 
-      // REGISTER_CFG(pacifica,   0, 255);
-      // REGISTER_CFG(fire,       0, 255);
+    // REGISTER_CFG(pacifica,   0, 255);
+    // REGISTER_CFG(fire,       0, 255);
 
-      REGISTER_CFG(runSpeed,   0, 10);
-      REGISTER_CFG(neutralWZ,  0, 32768);
-      REGISTER_CFG(maxWZ,      0, 32768);
+    REGISTER_CFG(runSpeed,   0, 10);
+    REGISTER_CFG(neutralWZ,  0, 32768);
+    REGISTER_CFG(maxWZ,      0, 32768);
 
-      REGISTER_CFG(divAcc,     1, 10);
-      REGISTER_CFG(smoothAcc,  1, 32768);
-      REGISTER_CFG(thresAcc,   0, 255);
+    REGISTER_CFG(divAcc,     1, 10);
+    REGISTER_CFG(smoothAcc,  1, 32768);
+    REGISTER_CFG(thresAcc,   0, 255);
 
-      // REGISTER_CFG(minEye,     1, (NBLEDS_TIPS>>1));
-      // REGISTER_CFG(maxEye,     1, (NBLEDS_TIPS>>1));
-      REGISTER_CFG(minDim,     1, 10);
-      REGISTER_CFG(maxDim,     1, 10);
-      REGISTER_CFG(minTwkR,    0, 255);
-    };
-  #endif
+    // REGISTER_CFG(minEye,     1, (NBLEDS_TIPS>>1));
+    // REGISTER_CFG(maxEye,     1, (NBLEDS_TIPS>>1));
+    REGISTER_CFG(minDim,     1, 10);
+    REGISTER_CFG(maxDim,     1, 10);
+    REGISTER_CFG(minTwkR,    0, 255);
+  };
 };
 
 CFG Cfg;
@@ -178,6 +179,9 @@ CFG Cfg;
 // ----------------------------------------------------
 void setup()
 {
+  AllLeds.setBrightness(0);
+  AllLeds.clearAndShow();
+
   Serial.begin(SERIAL_BAUD);
   
   Serial << endl << "-------- START --------" << endl;
@@ -185,10 +189,12 @@ void setup()
   Serial << "Esp32 core " << esp_get_idf_version() << endl;
   Serial << "CPU freq " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
 
+  Cfg.init();
+  Accel.init();
+
   // LEDS -----------------------------
   #define AddFX(l, fx) l.registerFX(fx)
 
-  AllLeds.clearAndShow();
   AllLeds.registerStrip(Leds); 
   AllLeds.registerStrip(LedsR); 
   AllLeds.registerStrip(LedsF); 
@@ -196,7 +202,7 @@ void setup()
   AddFX(Leds, FireRun);   AddFX(Leds, FireTwk); AddFX(Leds, AquaRun);   AddFX(Leds, AquaTwk);   AddFX(Leds, Plasma);
   AddFX(LedsR, TwinkleR); AddFX(LedsR, FireRR); AddFX(LedsR, FireRL);   AddFX(LedsR, RunR);     //AddFX(LedsR, CylonR);
   AddFX(LedsF, TwinkleF); AddFX(LedsF, RunF);   AddFX(LedsF, Pacifica); //AddFX(LedsF, CylonF);
-  
+
   // BlueTooth -----------------------------
   #ifdef USE_BT
     #define AddOBJ(o) BT.registerObj(o, #o);
@@ -266,7 +272,9 @@ void loop()
         Cfg.bright = map(light, Cfg.minProbe, MaxProbe, 255, 0); // the darker the light, the brighter the leds
       }
     #endif
-    AllLeds.setBrightness(Cfg.bright);
+    Cfg.fade = lerp16by16(Cfg.fade,  65535,  650);
+    byte bright = (Cfg.bright * ((Cfg.fade >> 8) + 1)) >>z8; 
+    AllLeds.setBrightness(bright);
 
     // handle motion
     if (GotAccel)
