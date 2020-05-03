@@ -66,9 +66,8 @@
 * 1x LDR
 * 1x 220Ω resistor
 * 1x blue LED
-</sub>
-
 * 1x 12x12 switch
+</sub>
 
 
 
