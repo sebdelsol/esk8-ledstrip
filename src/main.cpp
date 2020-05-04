@@ -3,7 +3,7 @@
 // #define USE_TELNET 
 // #define USE_PROBE
 // #define USE_RASTER
-#define USE_CYLON
+// #define USE_CYLON
 
 // #define DEBUG_LED_INFO
 // #define DEBUG_LED_TOWIFI
