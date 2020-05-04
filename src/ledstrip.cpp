@@ -103,8 +103,8 @@ void PlasmaFX::update(ulong time, ulong dt)
 {
   // cos16 & sin16(0 to 65535) => results in -32767 to 32767
   u_long t = (time * 66) >> 2;          // 65536/1000 => 2pi * time / 4
-  int16_t cos_tp1 = cos16(t/mP1) >> 1;      // .5 cos(time/mP1)
-  int16_t sin_tp2 = sq(sin16(t/mP2)) >> 2;  // (.5 sin(time/mP2))^2
+  int16_t cos_tp1 = cos16(t / mP1) >> 1;      // .5 cos(time/mP1)
+  int16_t sin_tp2 = sq(sin16(t / mP2)) >> 2;  // (.5 sin(time/mP2))^2
   int16_t sin_t = sin16(t);
 
   int16_t x = -5215;
@@ -114,11 +114,11 @@ void PlasmaFX::update(ulong time, ulong dt)
   {
     //  cx = x + .5 cos(time/mP1); cy = .5 sin(time/mP2);
     int16_t cx = x + cos_tp1;
-    int16_t sqrxy = sqrt16((cx*cx + sin_tp2) >> 16) << 8;
+    int16_t sqrxy = sqrt16((cx * cx + sin_tp2) >> 16) << 8;
 
     // sin(time) + 2 sin(.5 (x k + time)) + sin(sqrt(k^2(cx^2 + cy^2) + 1) + time);
-    int16_t v = sin_t + (sin16((mK*x + t) >> 1) << 1) + sin16(mK*sqrxy + t);
-    mLeds[i] = CHSV(v>>8, 0xff, 0xff);
+    int16_t v = sin_t + (sin16((mK * x + t) >> 1) << 1) + sin16(mK * sqrxy + t);
+    mLeds[i] = CHSV(v >> 8, 0xff, 0xff);
   }
 }
 
@@ -237,17 +237,17 @@ void PacificaFX::update(ulong time, ulong dt)
   uint32_t dt1 = (dt * beatsin16(3, 179, 269)) / 256;
   uint32_t dt2 = (dt * beatsin16(4, 179, 269)) / 256;
   uint32_t dt21 = (dt1 + dt2) / 2;
-  mT1 += dt1 * beatsin88(1011,10,13);
-  mT2 -= dt21 * beatsin88(777,8,11);
-  mT3 -= dt1 * beatsin88(501,5,7);
-  mT4 -= dt2 * beatsin88(257,4,6);
+  mT1 += dt1 * beatsin88(1011, 10, 13);
+  mT2 -= dt21 * beatsin88(777, 8, 11);
+  mT3 -= dt1 * beatsin88(501, 5, 7);
+  mT4 -= dt2 * beatsin88(257, 4, 6);
 
   // Clear out the LED array to a dim background blue-green
   fill_solid(mLeds, mNLEDS, CRGB(2, 6, 10));
 
   // Render each of four layers, with different scales and speeds, that vary over time
-  oneLayer(mPal1, mT1, beatsin16(3, 11 * 256, 14 * 256), beatsin8(10, 70, 130), 0-beat16(301) );
-  oneLayer(mPal2, mT2, beatsin16(4, 6 * 256,  9 * 256), beatsin8(17, 40,  80), beat16(401) );
+  oneLayer(mPal1, mT1, beatsin16(3, 11 * 256, 14 * 256), beatsin8(10, 70, 130), 0-beat16(301));
+  oneLayer(mPal2, mT2, beatsin16(4, 6 * 256,  9 * 256), beatsin8(17, 40,  80), beat16(401));
   oneLayer(mPal3, mT3, 6 * 256, beatsin8(9, 10, 38), 0-beat16(503));
   oneLayer(mPal3, mT4, 5 * 256, beatsin8(8, 10, 28), beat16(601));
 
@@ -271,7 +271,7 @@ void PacificaFX::update(ulong time, ulong dt)
   // Deepen the blues and greens a bit
   for(byte i = 0; i < mNLEDS; i++)
   {
-    mLeds[i].blue = scale8(mLeds[i].blue,  145); 
+    mLeds[i].blue = scale8(mLeds[i].blue, 145); 
     mLeds[i].green = scale8(mLeds[i].green, 200); 
     mLeds[i] |= CRGB(2, 5, 7);
   }
@@ -284,8 +284,8 @@ void PacificaFX::oneLayer(CRGBPalette16& p, uint16_t cistart, uint16_t wavescale
   for(byte i = 0; i < mNLEDS; i++)
   {
     waveangle += 250;
-    uint16_t s16 = sin16(waveangle ) + 32768;
-    uint16_t cs = scale16(s16 , wavescaleHalf ) + wavescaleHalf;
+    uint16_t s16 = sin16(waveangle) + 32768;
+    uint16_t cs = scale16(s16 , wavescaleHalf) + wavescaleHalf;
     cistart += cs;
     uint16_t sindex16 = sin16(cistart) + 32768;
     uint8_t sindex8 = scale16(sindex16, 240);
