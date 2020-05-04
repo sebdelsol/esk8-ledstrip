@@ -9,7 +9,6 @@
 #define CHIPSET         WS2812B
 #define MAXFX           6
 #define MAXSTRIP        3
-#define SATURATION      0xff    // for HSV FX
 #define CLEAR_LED(l, n) memset8(l, 0, n * sizeof(CRGB)); 
 
 //--------------------------------------

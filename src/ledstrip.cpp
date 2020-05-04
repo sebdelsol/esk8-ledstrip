@@ -118,7 +118,7 @@ void PlasmaFX::update(ulong time, ulong dt)
 
     // sin(time) + 2 sin(.5 (x k + time)) + sin(sqrt(k^2(cx^2 + cy^2) + 1) + time);
     int16_t v = sin_t + (sin16((mK*x + t) >> 1) << 1) + sin16(mK*sqrxy + t);
-    mLeds[i] = CHSV(v>>8, SATURATION, 0xff);
+    mLeds[i] = CHSV(v>>8, 0xff, 0xff);
   }
 }
 
