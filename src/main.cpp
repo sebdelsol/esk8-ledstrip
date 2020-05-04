@@ -283,7 +283,9 @@ void setup()
     { \
       _rasters[_rasterCount].time = micros(); \
       _rasters[_rasterCount++].name = F(txt); \
-    } 
+    }  \
+    else \
+      Serial << "--------------!!!!!!!!  Max Raster reached "  << _rasterCount << endl;
 
   #define RASTER_END \
     long _endTime = micros(); \
@@ -293,7 +295,7 @@ void setup()
     Serial << endl;
 
 #else
-  #define RASTER_BEGIN(nb)
+  #define RASTER_BEGIN
   #define RASTER(txt)
   #define RASTER_END
 #endif
@@ -450,5 +452,6 @@ void loop()
 
   AllLeds.show(); // to be called as much as possible for Fastled brightness dithering
   RASTER("led show");
+
   RASTER_END;
 }
