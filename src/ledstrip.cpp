@@ -50,7 +50,7 @@ FireFX::FireFX(const bool reverse, const byte speed, const int dimRatio) : mReve
 
 void FireFX::specialInit(int nLeds)
 {
-  mHeat = (ushort*)malloc(nLeds * sizeof(ushort));
+  mHeat = (ushort *) malloc(nLeds * sizeof(ushort));
 }
 
 void FireFX::update(ulong time, ulong dt)
@@ -63,23 +63,23 @@ void FireFX::update(ulong time, ulong dt)
   #define NOISE(y) (inoise16(Y + scale * (y - centre), Z) + 1)
 
   // seed the fire.
-  mHeat[mNLEDS-1] = NOISE(0);
+  mHeat[mNLEDS - 1] = NOISE(0);
 
   // move upstream & dim
-  ushort ratio = 256 / pow(mDimRatio, dt/14.); 
+  ushort ratio = 256 / pow(mDimRatio, dt / 14.); 
 	
   for (uint8_t y = 0; y < mNLEDS - 1; y++)
   {
-    mHeat[y] = (mHeat[y] * 128 + mHeat[y+1] * (255-128))>>8;
+    mHeat[y] = (mHeat[y] * 128 + mHeat[y+1] * 127) >> 8;
 
-    uint8_t dim = 255 - (( (NOISE(y+1)>>8) * ratio )>>8);
-    mHeat[y] = (mHeat[y] * dim)>>8; 
+    uint8_t dim = 255 - (((NOISE(y + 1) >> 8) * ratio) >> 8);
+    mHeat[y] = (mHeat[y] * dim) >> 8; 
   }
  
   // map the colors based on the heatmap.
   for (uint8_t y = 0; y < mNLEDS; y++)
   {
-    byte colorindex = scale8( mHeat[y]>>8, 240); // scale down to 0-240 for best results with color palettes.
+    byte colorindex = scale8( mHeat[y] >> 8, 240); // scale down to 0-240 for best results with color palettes.
     byte i = mReverse ?  y : mNLEDS - 1 - y;
     mLeds[i] = ColorFromPalette(mPal, colorindex);
   }

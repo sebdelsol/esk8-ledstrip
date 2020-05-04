@@ -9,6 +9,7 @@
 #define CHIPSET         WS2812B
 #define MAXFX           6
 #define MAXSTRIP        3
+
 #define CLEAR_LED(l, n) memset8(l, 0, n * sizeof(CRGB)); 
 
 //--------------------------------------
@@ -151,6 +152,7 @@ class BaseLedStrip
 {
 protected:
   Stream* mSerial;
+  
 public:
   virtual void getInfo(); 
   virtual void update(ulong time, ulong dt);  
