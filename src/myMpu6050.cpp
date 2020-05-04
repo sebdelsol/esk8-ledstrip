@@ -48,10 +48,6 @@ void myMPU6050::loadCalibration()
 //--------------------------------------
 void myMPU6050::begin(Stream &serial, bool doCalibrate)
 { 
-  #ifdef MPU_ZERO
-    MPUzero(serial, handleOta);
-  #endif
-
   mSerial = &serial;
   
   Wire.begin(SDA, SCL);
