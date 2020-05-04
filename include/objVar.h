@@ -62,8 +62,8 @@ public:
       0, 0, show \
     );
 
-#define REGISTER_CMD(class, name, doCode) _REGISTER_CMD(class, name, doCode, true)
-#define REGISTER_CMD_NOSHOW(class, name, doCode) _REGISTER_CMD(class, name, doCode, false)
+#define REGISTER_CMD(class, name, doCode)         _REGISTER_CMD(class, name, doCode, true)
+#define REGISTER_CMD_NOSHOW(class, name, doCode)  _REGISTER_CMD(class, name, doCode, false)
 
 #define _REGISTER_VAR(class, name, setCode, toGet0, min, max, show) \
     registerVar(this, name, \
@@ -85,10 +85,11 @@ public:
       min, max, show \
     );
 
-#define REGISTER_VAR(class, name, setCode, toGet0, min, max) _REGISTER_VAR(class, name, setCode, toGet0, min, max, true) 
+#define REGISTER_VAR(class, name, setCode, toGet0, min, max)        _REGISTER_VAR(class, name, setCode, toGet0, min, max, true) 
 #define REGISTER_VAR_NOSHOW(class, name, setCode, toGet0, min, max) _REGISTER_VAR(class, name, setCode, toGet0, min, max, false) 
-#define REGISTER_VAR_SIMPLE(class, name, var, min, max) REGISTER_VAR(class, name, { var = arg0; }, var, min, max) 
-#define REGISTER_VAR_SIMPLE_NOSHOW(class, name, var, min, max) REGISTER_VAR_NOSHOW(class, name, { var = arg0; }, var, min, max) 
+
+#define REGISTER_VAR_SIMPLE(class, name, var, min, max)             _REGISTER_VAR(class, name, { var = arg0; }, var, min, max, true) 
+#define REGISTER_VAR_SIMPLE_NOSHOW(class, name, var, min, max)      _REGISTER_VAR(class, name, { var = arg0; }, var, min, max, false) 
 
 #define REGISTER_VAR3(class, name, setCode, toGet0, toGet1, toGet2, min, max) \
     registerVar(this, name, \
