@@ -309,6 +309,9 @@ bool AllLedStrips::registerStrip(BaseLedStrip &strip)
     mStrips[mNStrips++] = &strip;
     strip.setSerial(mSerial);
   }
+  else
+    *mSerial << "----------- !!!!!!!!!! Max LedStrips is reached " << MAXSTRIP << endl; 
+
   return ok;
 }
 
