@@ -17,7 +17,7 @@
 
 #define CALIBRATION_LOOP  6
 
-#define MPU_GETFIFO_OLD // old faster method ?
+// #define MPU_GETFIFO_OLD // old faster method ?
 
 //-----------------------------
 class myMPU6050 : public OBJVar
