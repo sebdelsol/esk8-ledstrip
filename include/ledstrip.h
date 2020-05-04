@@ -211,6 +211,9 @@ public:
       mFX[mNFX++] = &fx;
       fx.init(NLEDS);
     }
+    else
+      *mSerial << "----------- !!!!!!!!!! Max FX is reached " << MAXFX << endl; 
+
     return ok;
   };
 
