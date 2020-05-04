@@ -56,7 +56,7 @@
 <sub>1x</sub>|<sub>blue LED</sub> | . | .
 <sub>1x</sub>|<sub>12x12 switch</sub> | . | .
 
-# Dependencies
+# Misc
 
 * in **BluetoothSerial.cpp** modify `#define TX_QUEUE_SIZE 128` to avoid bluetooth congestion
 * in **MPU6050_6Axis_MotionApps20.h** you'll need to comment those typedef `prog_int8_t`, `prog_int32_t` & `prog_uint32_t`
