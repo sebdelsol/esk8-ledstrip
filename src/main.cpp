@@ -1,10 +1,10 @@
-#define USE_BT // see p latformio & use "board_build.partitions = huge_app.csv"
+#define USE_BT
 #define USE_OTA 
 // #define USE_TELNET 
 // #define USE_PROBE
 
 // #define DEBUG_LED_INFO
-// #define DEBUG_LED_TOWIFI // use wifi
+// #define DEBUG_LED_TOWIFI
 // #define DEBUG_ACC
 
 // ----------------------------------------------------
@@ -12,7 +12,7 @@
 #include <myMpu6050.h>
 #include <myWifi.h>
 #include <Streaming.h>
-#include <soc/rtc.h> // get cpu freq
+#include <soc/rtc.h> // cpu freq
 
 myWifi    MyWifi;
 
