@@ -101,7 +101,7 @@ public:
 
   // brightness ?
   byte bright     = 128;  // half brightness is enough to avoid reaching LED_MAX_MA
-  int fade        = 0;    // to be smoothed
+  int fade        = 0;    // for the fade in
   #ifdef USE_PROBE
     #define MaxProbe 4095
     int  minProbe   = 400;
