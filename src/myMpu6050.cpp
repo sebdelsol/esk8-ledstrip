@@ -57,8 +57,8 @@ void myMPU6050::begin(Stream &serial, bool doCalibrate)
   *mSerial << "MPU connection " << (mpu.testConnection() ? F("successful") : F("failed")) << endl;
   uint8_t devStatus = mpu.dmpInitialize();
 
-  if (devStatus == 0)
-  { // did it work ?
+  if (devStatus == 0) // did it work ?
+  { 
     if (doCalibrate) 
       calibrate();
     else
