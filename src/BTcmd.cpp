@@ -47,10 +47,12 @@ bool BTcmd::registerObj(OBJVar& obj, const char* name)
       MyVar* var = obj.getVar(i);
       
       obj.setID(var, BTCMD_1ST_ID + mID);
-      // *mDbgSerial << mID << " - " << (char)(BTCMD_1ST_ID + mID) << endl;
       mID += 1;
     }
   }
+  else
+    *mDbgSerial << "----------- !!!!!!!!!! Max obj is reached " << BTCMD_MAXOBJ << endl; 
+
   return ok;
 }
 
