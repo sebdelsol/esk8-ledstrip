@@ -2,6 +2,7 @@
 #define USE_OTA 
 // #define USE_TELNET 
 // #define USE_PROBE
+#define USE_RASTER
 
 // #define DEBUG_LED_INFO
 // #define DEBUG_LED_TOWIFI
@@ -245,9 +246,44 @@ void setup()
 }
 
 // ----------------------------------------------------
+#ifdef USE_RASTER
+  #define RASTER_BEGIN(nb) \
+    struct Raster \
+    { \
+      const __FlashStringHelper* name; \
+      long time; \
+    } _rasters[nb]; \
+    int _rasterMax = nb; \
+    int _rasterCount = 0; \
+    long _startTime = micros(); \
+
+  #define RASTER(txt) \
+    if (_rasterCount < _rasterMax) \
+    { \
+      _rasters[_rasterCount].time = micros(); \
+      _rasters[_rasterCount++].name = F(txt); \
+    } 
+
+  #define RASTER_END \
+    long _endTime = micros(); \
+    Serial << "TOTAL " << (_endTime - _startTime) << "ms"; \
+    for(byte i=0; i < _rasterCount; i++) \
+      Serial << " \t - " << _rasters[i].name << " " << (_rasters[i].time - (i==0 ? _startTime : _rasters[i-1].time)) << "ms  "; \
+    Serial << endl;
+
+#else
+  #define RASTER_BEGIN(nb)
+  #define RASTER(txt)
+  #define RASTER_END
+#endif
+
+// ----------------------------------------------------
 void loop()
 {
+  RASTER_BEGIN(20);
+
   GotAccel = Accel.getMotion(AXIS, ANGLE, VACC, WZ);
+  RASTER("accel");
 
   #ifdef USE_BT
     EVERY_N_MILLISECONDS(BT_TICK)
@@ -260,6 +296,7 @@ void loop()
       BT.update();
     }
   #endif
+  RASTER("BT");
 
   EVERY_N_MILLISECONDS(LED_TICK)
   {
@@ -352,8 +389,10 @@ void loop()
         Serial << "[eyeR "   << eyeR   << "\teyeF " << eyeF     << "\talphaR " << alphaR << "\talphaF " << alphaF << "]" << endl;
       #endif
     }
+    RASTER("led setup");
 
     AllLeds.update();
+    RASTER("Led update");
 
     #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET)
       if(MyWifi.update())
@@ -367,6 +406,7 @@ void loop()
         #endif
       }
     #endif
+    RASTER("wifi");
   }
 
   #ifdef DEBUG_LED_INFO
@@ -375,4 +415,8 @@ void loop()
   #endif
 
   AllLeds.show(); // to be called as much as possible for Fastled brightness dithering
+  RASTER("led show");
+
+  RASTER_END;
+
 }
