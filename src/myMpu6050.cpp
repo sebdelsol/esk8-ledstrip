@@ -67,6 +67,10 @@ void myMPU6050::begin(Stream &serial, bool doCalibrate)
     mpu.setDMPEnabled(true);
     mDmpReady = true;
 
+    #ifdef MPU_GETFIFO_OLD
+      mPacketSize = mpu.dmpGetFIFOPacketSize();
+    #endif
+
     *mSerial << "DMP enabled" << endl;
   }
   else // ERROR! 1 = initial memory load failed, 2 = DMP configuration updates failed
@@ -93,9 +97,42 @@ void myMPU6050::getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q)
 }
 
 // ================================================================
+#ifdef MPU_GETFIFO_OLD
+  bool myMPU6050::getFifoBuf()
+  {
+    uint16_t fifoCount = mpu.getFIFOCount();
+    
+    if (fifoCount >= mPacketSize)
+    {
+      uint8_t mpuIntStatus = mpu.getIntStatus();
+
+      // check for overflow
+      if ((mpuIntStatus & _BV(MPU6050_INTERRUPT_FIFO_OFLOW_BIT)) || fifoCount >= 1024) 
+      {
+        mpu.resetFIFO(); // reset so we can continue cleanly
+        *mSerial << "FIFO overflow! " << endl;
+      }
+
+      // otherwise, check for DMP data ready interrupt
+      else if (mpuIntStatus & _BV(MPU6050_INTERRUPT_DMP_INT_BIT)) 
+      {
+        while (fifoCount >= mPacketSize) // read all available
+        {
+          mpu.getFIFOBytes(mFifoBuffer, mPacketSize);
+          fifoCount -= mPacketSize;
+        }
+        return true;
+      }
+    }
+    return false;
+  }
+#else
+  bool myMPU6050::getFifoBuf() { return mpu.dmpGetCurrentFIFOPacket(mFifoBuffer); }
+#endif
+
 bool myMPU6050::readAccel()
 {
-  if (mDmpReady && mpu.dmpGetCurrentFIFOPacket(mFifoBuffer))
+  if (mDmpReady && getFifoBuf())
   {
     // axis angle
     mpu.dmpGetQuaternion(&mQuat, mFifoBuffer);
@@ -114,6 +151,7 @@ bool myMPU6050::readAccel()
   return false;
 }
 
+// ================================================================
 bool myMPU6050::getMotion(VectorInt16 &axis, int &angle, VectorInt16 &acc, int &wz)
 {
   if (readAccel())

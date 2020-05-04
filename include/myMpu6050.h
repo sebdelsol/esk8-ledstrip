@@ -17,6 +17,8 @@
 
 #define CALIBRATION_LOOP  6
 
+#define MPU_GETFIFO_OLD // old faster method ?
+
 //-----------------------------
 class myMPU6050 : public OBJVar
 {
@@ -39,7 +41,12 @@ class myMPU6050 : public OBJVar
   int16_t mXGyroOffset,   mYGyroOffset,   mZGyroOffset;
   int16_t mXAccelOffset,  mYAccelOffset,  mZAccelOffset;
 
+  #ifdef MPU_GETFIFO_OLD
+    uint16_t mPacketSize;
+  #endif
+
   void getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q);
+  bool getFifoBuf();
   bool readAccel();
 
   void loadCalibration();
