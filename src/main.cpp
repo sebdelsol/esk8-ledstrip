@@ -250,14 +250,15 @@ void loop()
   GotAccel = Accel.getMotion(AXIS, ANGLE, VACC, WZ);
 
   #ifdef USE_BT
-    if (Button.pressed())
-    {
-      Serial << "button pressed" << endl;
-      BT.toggle();
-    }
-    
     EVERY_N_MILLISECONDS(BT_TICK)
+    {
+      if (Button.pressed())
+      {
+        Serial << "button pressed" << endl;
+        BT.toggle();
+      }
       BT.update();
+    }
   #endif
 
   EVERY_N_MILLISECONDS(LED_TICK)
