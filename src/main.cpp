@@ -199,8 +199,9 @@ void setup()
 
   // esp32 inits
   Serial.begin(SERIAL_BAUD);
-  Serial << endl << "-------- START --------" << endl;
+
   rtc_clk_cpu_freq_set(RTC_CPU_FREQ_240M);
+  Serial << endl << "-------- START --------" << endl;
   Serial << "Esp32 core " << esp_get_idf_version() << endl;
   Serial << "CPU freq " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
 
