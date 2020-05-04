@@ -1,11 +1,11 @@
 # eSK8 LEDstrips
 <img src="https://media.giphy.com/media/IhCHKo42Hx7WFkRmzQ/giphy.gif" height="225" align="right"><img src="https://media.giphy.com/media/fY5xLxGayUptPZuTfG/giphy.gif" height="225" align="right"><img src="https://media.giphy.com/media/RfYtkG17dUJyVmbPet/giphy.gif" height="225" align="right">
 
-**controlled by an [accelerometer](https://github.com/sebdelsol/esk8-ledstrip/blob/master/README.md#bom) with a [companion app](https://github.com/sebdelsol/esk8-ledstrip/blob/master/README.md#android-app)**
+**controlled by an [accelerometer](https://github.com/sebdelsol/esk8-ledstrip/blob/master/README.md#bom) with a [phone app](https://github.com/sebdelsol/esk8-ledstrip/blob/master/README.md#android-app)**
 <p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>  <p>&nbsp;</p>
 
 # PCB & Schematic
-[<img src="https://image.easyeda.com/histories/aaf838e4a54c468f9502dc529522ac38.png" height="185" align="right">](https://easyeda.com/seb.morin/esk8)[<img src="https://i.imgur.com/bn5Pk2N.jpg" height="185" align="right">](https://easyeda.com/seb.morin/esk8)[<img src="https://i.imgur.com/fsrZ5Zs.jpg" height="185" align="right">](https://easyeda.com/seb.morin/esk8)
+[<img src="https://i.imgur.com/fsrZ5Zs.jpg" height="185" align="right">](https://easyeda.com/seb.morin/esk8)[<img src="https://i.imgur.com/bn5Pk2N.jpg" height="185" align="right">](https://easyeda.com/seb.morin/esk8)[<img src="https://image.easyeda.com/histories/aaf838e4a54c468f9502dc529522ac38.png" height="185" align="right">](https://easyeda.com/seb.morin/esk8)
 
 **check the [EasyEDA project](https://easyeda.com/seb.morin/esk8)**
 
@@ -16,7 +16,7 @@
 
 **to *tweak* your setup in real time on your *phone***
 * login on **[App Inventor](http://ai2.appinventor.mit.edu/)** & import **[esk8.aia](https://github.com/sebdelsol/Esk8/blob/master/esk8.aia)**
-* pair your Android phone with the **Esk8** device *within 5s after power on*
+* pair your Android phone with the **Esk8** bluetooth device *within 30s after power on*
 * use `REGISTER_VAR` & `REGISTER_CMD` macros to ***automatically create new app's widgets***
 <p>&nbsp;</p>  <p>&nbsp;</p>  
 
@@ -29,7 +29,7 @@
 
 <p>&nbsp;</p>  <p>&nbsp;</p>
 
-# OTA update & Telnet log
+# OTA update & logs
 **to update *OTA***
 * uncomment `#define USE_OTA` in **[main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)** 
 * uncomment `upload_protocol = espota` & `upload_port = "esk8.local"` in **[platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini)** 
