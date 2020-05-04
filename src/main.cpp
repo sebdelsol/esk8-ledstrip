@@ -142,7 +142,7 @@ public:
   //twinkleR
   int minTwkR     = 128;
 
-  CFG()
+  void init()
   {
     #define REGISTER_CFG(var, min, max) REGISTER_VAR_SIMPLE(CFG, #var, self->var, min, max)
 
@@ -204,6 +204,9 @@ void setup()
   Serial << endl << "-------- START --------" << endl;
   Serial << "Esp32 core " << esp_get_idf_version() << endl;
   Serial << "CPU freq " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
+
+  Cfg.init();
+  Accel.init();
 
   // LEDS -----------------------------
   #define AddFX(l, fx) l.registerFX(fx)

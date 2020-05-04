@@ -54,7 +54,7 @@ class myMPU6050 : public OBJVar
 
 public:
 
-  myMPU6050();
+  void init();
   void begin(Stream &serial, bool doCalibrate = false);
   bool getMotion(VectorInt16 &axis, int &angle, VectorInt16 &acc, int &wz);
 };
