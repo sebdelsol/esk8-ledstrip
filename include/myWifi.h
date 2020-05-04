@@ -7,8 +7,7 @@
 #include <ledstrip.h>
 #include <WebSocketsClient.h>
 
-#include <wificonfig.h>
-// wificonfig.h needs to define :
+#include <wificonfig.h>  // wificonfig.h needs to define :
 // #define WIFINAME "******"
 // #define WIFIPASS "****"
 // #define SOCK_ADDR "**.**.**.**"
