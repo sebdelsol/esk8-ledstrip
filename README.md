@@ -11,7 +11,7 @@
 
 <p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>  
 
-# Android App 
+# Phone App 
 <img src="https://media.giphy.com/media/TfFm0aNsc1LnWPsiab/giphy.gif" height="250" align="right">
 
 **to *tweak* your setup in real time on your *phone***
@@ -36,7 +36,7 @@
 
 **to get *Telnet* logs**
 * uncomment `#define USE_TELNET` in **[main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)** 
-* launch a  `telnet` cmd line & `open esk8.local`
+* launch a  `telnet` session & `open esk8.local`
 
 # BOM
 
@@ -56,7 +56,7 @@
 <sub>1x</sub>|<sub>blue LED</sub> | . | .
 <sub>1x</sub>|<sub>12x12 switch</sub> | . | .
 
-# Dependencies
+# Misc
 
 * in **BluetoothSerial.cpp** modify `#define TX_QUEUE_SIZE 128` to avoid bluetooth congestion
 * in **MPU6050_6Axis_MotionApps20.h** you'll need to comment those typedef `prog_int8_t`, `prog_int32_t` & `prog_uint32_t`
