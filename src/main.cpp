@@ -9,7 +9,6 @@
 // #define DEBUG_LED_TOWIFI
 // #define DEBUG_ACC
 
-
 // ----------------------------------------------------
 #include <ledstrip.h>
 #include <myMpu6050.h>
@@ -19,7 +18,6 @@
 
 myWifi    MyWifi;
 
-// ----------------------------------------------------
 #ifdef USE_BT
   #include <bluetooth.h>
   #include <Button.h>
@@ -28,7 +26,6 @@ myWifi    MyWifi;
   Button    Button(BUTTON_PIN);
 #endif
 
-// ----------------------------------------------------
 #ifdef USE_OTA
   #include <OTA.h>
   OTA Ota;
@@ -54,7 +51,6 @@ myWifi    MyWifi;
 #define   LUSH_LAVA     CRGB(0xFF4500)
 #define   HUE_AQUA_BLUE 140
 
-// ----------------------------------------------------
 AllLedStrips  AllLeds(LED_MAX_MA, Serial);
 
 LedStrip    <NBLEDS_MIDDLE, LED_PIN> Leds("Led");
