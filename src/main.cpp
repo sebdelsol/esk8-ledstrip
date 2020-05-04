@@ -12,7 +12,7 @@
 #include <myMpu6050.h>
 #include <myWifi.h>
 #include <Streaming.h>
-#include <soc/rtc.h> // get cpu freq
+#include <soc/rtc.h> // cpu freq
 
 myWifi    MyWifi;
 
