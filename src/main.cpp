@@ -3,7 +3,7 @@
 // #define USE_TELNET 
 // #define USE_PROBE
 // #define USE_RASTER
-// #define USE_CYLON
+#define USE_CYLON
 
 // #define DEBUG_LED_INFO
 // #define DEBUG_LED_TOWIFI
@@ -303,7 +303,7 @@ void loop()
 {
   RASTER_BEGIN(20);
 
-  EVERY_N_MILLISECONDS(10)
+  EVERY_N_MILLISECONDS(10) // MPU6050 is refreshed every 10ms
   {
     GotAccel = Accel.getMotion(AXIS, ANGLE, VACC, WZ);
     RASTER("accel");
