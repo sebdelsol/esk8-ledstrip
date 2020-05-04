@@ -23,7 +23,6 @@ protected:
   CRGB *mLeds;
 
 public:
-  FX();
   void init(int nLeds);
   void setAlpha(const byte alpha);
   byte getAlpha();
