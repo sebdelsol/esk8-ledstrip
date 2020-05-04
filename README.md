@@ -36,7 +36,7 @@
 
 **to get *Telnet* logs**
 * uncomment `#define USE_TELNET` in **[main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)** 
-* launch a  `telnet` cmd line & `open esk8.local`
+* launch a  `telnet` session & `open esk8.local`
 
 # BOM
 
