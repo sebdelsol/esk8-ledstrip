@@ -100,28 +100,31 @@ void myMPU6050::getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q)
 #ifdef MPU_GETFIFO_OLD
   bool myMPU6050::getFifoBuf()
   {
-    uint16_t fifoCount = mpu.getFIFOCount();
-    
-    if (fifoCount >= mPacketSize)
+    if (mpu.dmpPacketAvailable())
     {
-      uint8_t mpuIntStatus = mpu.getIntStatus();
-
-      // check for overflow
-      if ((mpuIntStatus & _BV(MPU6050_INTERRUPT_FIFO_OFLOW_BIT)) || fifoCount >= 1024) 
+      uint16_t fifoCount = mpu.getFIFOCount();
+      
+      if (fifoCount >= mPacketSize)
       {
-        mpu.resetFIFO(); // reset so we can continue cleanly
-        *mSerial << "FIFO overflow! " << endl;
-      }
+        uint8_t mpuIntStatus = mpu.getIntStatus();
 
-      // otherwise, check for DMP data ready interrupt
-      else if (mpuIntStatus & _BV(MPU6050_INTERRUPT_DMP_INT_BIT)) 
-      {
-        while (fifoCount >= mPacketSize) // read all available
+        // check for overflow
+        if ((mpuIntStatus & _BV(MPU6050_INTERRUPT_FIFO_OFLOW_BIT)) || fifoCount >= 1024) 
         {
-          mpu.getFIFOBytes(mFifoBuffer, mPacketSize);
-          fifoCount -= mPacketSize;
+          mpu.resetFIFO(); // reset so we can continue cleanly
+          *mSerial << "FIFO overflow! " << endl;
         }
-        return true;
+
+        // otherwise, check for DMP data ready interrupt
+        else if (mpuIntStatus & _BV(MPU6050_INTERRUPT_DMP_INT_BIT)) 
+        {
+          while (fifoCount >= mPacketSize) // read all available
+          {
+            mpu.getFIFOBytes(mFifoBuffer, mPacketSize);
+            fifoCount -= mPacketSize;
+          }
+          return true;
+        }
       }
     }
     return false;
