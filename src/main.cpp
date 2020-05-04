@@ -1,4 +1,4 @@
-#define USE_BT // see p latformio & use "board_build.partitions = huge_app.csv"
+#define USE_BT
 #define USE_OTA 
 // #define USE_TELNET 
 // #define USE_PROBE
