@@ -7,7 +7,7 @@
 #define FORMAT_SPIFFS_IF_FAILED true
 
 #define BTCMD_BUFF_SIZE 127
-#define BTCMD_MAXOBJ    15
+#define BTCMD_MAXOBJ    20
 
 #define BTCMD_1ST_ID  '!'
 #define BTCMD_TERM    '\n' 
