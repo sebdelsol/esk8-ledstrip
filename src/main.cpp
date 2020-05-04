@@ -4,7 +4,7 @@
 // #define USE_PROBE
 
 // #define DEBUG_LED_INFO
-// #define DEBUG_LED_TOWIFI // use wifi
+// #define DEBUG_LED_TOWIFI
 // #define DEBUG_ACC
 
 // ----------------------------------------------------
