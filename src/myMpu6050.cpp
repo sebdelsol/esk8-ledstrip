@@ -8,12 +8,8 @@ MPU6050 mpu;
 void myMPU6050::init()
 {
   #define REGISTER_MPU(var) REGISTER_VAR_SIMPLE_NOSHOW(myMPU6050, #var, self->var, -32768, 32767)
-  REGISTER_MPU(mXGyroOffset);
-  REGISTER_MPU(mYGyroOffset);
-  REGISTER_MPU(mZGyroOffset);
-  REGISTER_MPU(mXAccelOffset);
-  REGISTER_MPU(mYAccelOffset);
-  REGISTER_MPU(mZAccelOffset);
+  REGISTER_MPU(mXGyroOffset);   REGISTER_MPU(mYGyroOffset);  REGISTER_MPU(mZGyroOffset);
+  REGISTER_MPU(mXAccelOffset);  REGISTER_MPU(mYAccelOffset); REGISTER_MPU(mZAccelOffset);
 
   REGISTER_CMD(myMPU6050, "calibrate",  {self->calibrate();} ) 
 }
@@ -23,24 +19,16 @@ void myMPU6050::calibrate()
   mpu.CalibrateAccel(CALIBRATION_LOOP);
   mpu.CalibrateGyro(CALIBRATION_LOOP);
 
-  mXGyroOffset = mpu.getXGyroOffset();
-  mYGyroOffset = mpu.getYGyroOffset();
-  mZGyroOffset = mpu.getZGyroOffset();
-  mXAccelOffset = mpu.getXAccelOffset();
-  mYAccelOffset = mpu.getYAccelOffset();
-  mZAccelOffset = mpu.getZAccelOffset();
+  mXGyroOffset = mpu.getXGyroOffset();   mYGyroOffset = mpu.getYGyroOffset();   mZGyroOffset = mpu.getZGyroOffset();
+  mXAccelOffset = mpu.getXAccelOffset(); mYAccelOffset = mpu.getYAccelOffset(); mZAccelOffset = mpu.getZAccelOffset();
 
   mpu.PrintActiveOffsets();
 }
 
 void myMPU6050::loadCalibration()
 {
-  mpu.setXGyroOffset(mXGyroOffset);    
-  mpu.setYGyroOffset(mYGyroOffset);    
-  mpu.setZGyroOffset(mZGyroOffset);
-  mpu.setXAccelOffset(mXAccelOffset);  
-  mpu.setYAccelOffset(mYAccelOffset);  
-  mpu.setZAccelOffset(mZAccelOffset); 
+  mpu.setXGyroOffset(mXGyroOffset);   mpu.setYGyroOffset(mYGyroOffset);   mpu.setZGyroOffset(mZGyroOffset);
+  mpu.setXAccelOffset(mXAccelOffset); mpu.setYAccelOffset(mYAccelOffset); mpu.setZAccelOffset(mZAccelOffset); 
   
   mpu.PrintActiveOffsets();
 }
