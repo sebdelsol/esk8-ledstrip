@@ -9,6 +9,7 @@ void FX::init(int nLeds)
 
   specialInit(nLeds);
 
+  // better for startup, no blinking, strips is initialized before to 0 brightness
   REGISTER_VAR(FX, "alpha", { self->setAlpha(arg0); },  self->getAlpha(), 0, 255)
   RegisterVars();
 }
@@ -325,6 +326,12 @@ bool AllLedStrips::registerStrip(BaseLedStrip &strip)
     *mSerial << "----------- !!!!!!!!!! Max LedStrips is reached " << MAXSTRIP << endl; 
 
   return ok;
+}
+
+void AllLedStrips::init() 
+{
+  for (byte i=0; i < mNStrips; i++)
+    mStrips[i]->init();
 }
 
 void AllLedStrips::clearAndShow() 

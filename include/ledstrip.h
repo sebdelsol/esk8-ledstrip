@@ -161,6 +161,7 @@ protected:
 public:
   virtual void getInfo(); 
   virtual void update(ulong time, ulong dt);  
+  virtual void init();
   virtual byte* getData(int& n); // for myWifi
   void setSerial(Stream *serial) {mSerial = serial;};
 };
@@ -178,6 +179,7 @@ public:
   void setBrightness(const byte scale) { FastLED.setBrightness(scale); };
   void show() { FastLED.show(); };
   void clearAndShow();
+  void init();
 
   bool registerStrip(BaseLedStrip &strip);
   void getInfo();
@@ -204,7 +206,10 @@ public:
   {
     mName = (char *)malloc(strlen(name) + 1);
     sprintf(mName, "%s", name);
+  };
 
+  void init() // better for startup, no blinking, fastled is initialized before with 0 brightness
+  {
     mController = &FastLED.addLeds<CHIPSET, LEDPIN, COLOR_ORDER>(mDisplay, NLEDS);
     mController->setCorrection(TypicalSMD5050); // = TypicalLEDStrip
   };

@@ -201,9 +201,6 @@ void setup()
   Serial << "Esp32 core " << esp_get_idf_version() << endl;
   Serial << "CPU freq " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
 
-  Cfg.init();
-  Accel.init();
-
   // LEDS -----------------------------
   #define AddFX(l, fx) l.registerFX(fx)
 
@@ -218,6 +215,12 @@ void setup()
     AddFX(LedsR, CylonR); 
     AddFX(LedsF, CylonF);
   #endif
+
+  // delayed inits --------------------------
+  // long enough to make the leds blinking @ startup
+  Cfg.init();
+  Accel.init();
+  AllLeds.init();
 
   // BlueTooth -----------------------------
   #ifdef USE_BT
