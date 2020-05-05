@@ -306,6 +306,43 @@ void PacificaFX::oneLayer(CRGBPalette16& p, uint16_t cistart, uint16_t wavescale
 }
 
 // ----------------------------------------------------
+#ifdef FASTLED_SHOW_CORE
+
+  static TaskHandle_t FastLEDshowTaskHandle = 0;
+  static TaskHandle_t userTaskHandle = 0;
+
+  // Call this function instead of FastLED.show(). It signals core 0 to issue a show,
+  // then waits for a notification that it is done.
+  void TriggerFastLEDShow()
+  {
+    if (userTaskHandle == 0)
+    {
+      // Store the handle of the current task, so that the show task can notify it when it's done
+      userTaskHandle = xTaskGetCurrentTaskHandle();
+
+      // Trigger the show task
+      xTaskNotifyGive(FastLEDshowTaskHandle);
+
+      // Wait to be notified that it's done
+      const TickType_t xMaxBlockTime = pdMS_TO_TICKS(200);
+      ulTaskNotifyTake(pdTRUE, xMaxBlockTime);
+      userTaskHandle = 0;
+    }
+  }
+
+  // This function runs on core 0 and just waits for requests to call FastLED.show()
+  void FastLEDshowTask(void *pvParameters)
+  {
+    for (;;) // forever
+    {
+      ulTaskNotifyTake(pdTRUE, portMAX_DELAY); // Wait for the trigger
+      FastLED.show(); //Do the show (synchronously)
+      xTaskNotifyGive(userTaskHandle); // Notify the calling task
+    }
+  }
+#endif
+
+// ----------------------------------------------------
 AllLedStrips::AllLedStrips(const int maxmA, Stream &serial) : mSerial(&serial)
 {
   FastLED.setMaxPowerInVoltsAndMilliamps(5, maxmA);
@@ -332,6 +369,10 @@ void AllLedStrips::init()
 {
   for (byte i=0; i < mNStrips; i++)
     mStrips[i]->init();
+
+  #ifdef FASTLED_SHOW_CORE
+    xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", 2048, NULL, 2, &FastLEDshowTaskHandle, FASTLED_SHOW_CORE);  
+  #endif
 }
 
 void AllLedStrips::clearAndShow() 
@@ -356,3 +397,13 @@ void AllLedStrips::getInfo()
   for (byte i=0; i < mNStrips; i++)
     mStrips[i]->getInfo();
 }
+
+void AllLedStrips::show() 
+{ 
+  #ifdef FASTLED_SHOW_CORE
+    TriggerFastLEDShow();
+  #else
+    FastLED.show(); 
+  #endif
+}
+

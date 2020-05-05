@@ -1,6 +1,8 @@
 #pragma once
 
+#define FASTLED_ALLOW_INTERRUPTS 0
 #include <FastLED.h>
+
 #include <myPins.h>
 #include <Streaming.h>
 #include <objVar.h>
@@ -11,6 +13,9 @@
 #define MAXSTRIP        3
 
 #define CLEAR_LED(l, n) memset8(l, 0, n * sizeof(CRGB)); 
+
+// The core to run FastLED.show()
+#define FASTLED_SHOW_CORE 1
 
 //--------------------------------------
 class FX : public OBJVar
@@ -177,7 +182,7 @@ class AllLedStrips
 public:
   AllLedStrips(const int maxmA, Stream &serial);
   void setBrightness(const byte scale) { FastLED.setBrightness(scale); };
-  void show() { FastLED.show(); };
+  void show();
   void clearAndShow();
   void init();
 
@@ -187,7 +192,6 @@ public:
 };
 
 //--------------------------------------
-
 template <int NLEDS, int LEDPIN>
 class LedStrip : public BaseLedStrip
 {
