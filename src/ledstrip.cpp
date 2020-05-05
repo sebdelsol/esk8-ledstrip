@@ -6,7 +6,7 @@ void FX::init(int nLeds)
   mNLEDS = nLeds;
   mLeds = (CRGB *)malloc(nLeds * sizeof(CRGB));
   CLEAR_LED(mLeds, nLeds);
-  
+
   specialInit(nLeds);
 
   REGISTER_VAR(FX, "alpha", { self->setAlpha(arg0); },  self->getAlpha(), 0, 255)
@@ -132,9 +132,9 @@ CylonFX::CylonFX(const CRGB color, const int eyeSize, const int speed) : mEyeSiz
 
 void CylonFX::RegisterVars()
 {
-  REGISTER_VAR3(CylonFX, "color",   { self->mColor = CRGB(arg0, arg1, arg2); },        self->mColor.r,   self->mColor.g,   self->mColor.b, 0, 255)
-  REGISTER_VAR(CylonFX,  "eyeSize", { self->setEyeSize(arg0*(self->mNLEDS-1)/255); },  self->mEyeSize*255/(self->mNLEDS-1), 1, 255)
-  REGISTER_VAR(CylonFX,  "speed",   { self->mSpeed = arg0<<3; },                       self->mSpeed>>3, 0, 10)
+  REGISTER_VAR3(CylonFX, "color",   { self->mColor = CRGB(arg0, arg1, arg2); },               self->mColor.r,   self->mColor.g,   self->mColor.b, 0, 255)
+  REGISTER_VAR(CylonFX,  "eyeSize", { self->setEyeSize(arg0 * (self->mNLEDS - 1) / 255); },   self->mEyeSize * 255 / (self->mNLEDS - 1), 1, 255)
+  REGISTER_VAR(CylonFX,  "speed",   { self->mSpeed = arg0 << 3; },                            self->mSpeed>>3, 0, 10)
 }
 
 int CylonFX::getPos(ulong time) 
@@ -221,8 +221,8 @@ void TwinkleFX::update(ulong time, ulong dt)
 
   for (int i = 0; i<mNLEDS; i++)
   {
-    byte fader = sin8(time/random8(mDiv, mDiv<<1));       // The random number for each 'i' will be the same every time.
-    byte hue = sin8(time/random8(mDiv, mDiv)) >> mHueDiv; // ditto
+    byte fader = sin8(time / random8(mDiv, mDiv << 1));       // The random number for each 'i' will be the same every time.
+    byte hue = sin8(time / random8(mDiv, mDiv)) >> mHueDiv; // ditto
     mLeds[i] = CHSV(mHSV.h + hue, mHSV.s , fader);
   }
 
