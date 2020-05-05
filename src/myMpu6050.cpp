@@ -77,7 +77,7 @@ void myMPU6050::begin(Stream &serial, bool doCalibrate)
     *mSerial << "DMP Initialization failed (" << devStatus << ")" << endl;
 }
 
-// ================================================================
+//--------------------------------------
 void myMPU6050::getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q)
 {
   if (q.w > 1) q.normalize(); // needs q.w < 1 for acos and sqrt
@@ -96,7 +96,7 @@ void myMPU6050::getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q)
   }
 }
 
-// ================================================================
+//--------------------------------------
 #ifdef MPU_GETFIFO_OLD
   bool myMPU6050::getFifoBuf()
   {
@@ -133,6 +133,7 @@ void myMPU6050::getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q)
   bool myMPU6050::getFifoBuf() { return mpu.dmpGetCurrentFIFOPacket(mFifoBuffer); }
 #endif
 
+//--------------------------------------
 bool myMPU6050::readAccel()
 {
   if (mDmpReady && getFifoBuf())
@@ -154,7 +155,7 @@ bool myMPU6050::readAccel()
   return false;
 }
 
-// ================================================================
+//--------------------------------------
 bool myMPU6050::getMotion(VectorInt16 &axis, int &angle, VectorInt16 &acc, int &wz)
 {
   if (readAccel())
