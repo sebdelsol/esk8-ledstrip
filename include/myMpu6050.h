@@ -1,8 +1,10 @@
 #pragma once
 
+#define FASTLED_ALLOW_INTERRUPTS 0
+#include <FastLED.h> // for lerp15by16
+
 #include <Wire.h>
 #include <Streaming.h>
-#include <FastLED.h> // for lerp15by16
 #include <myPins.h>
 #include <helper_3dmath.h>
 #include <objVar.h>
@@ -17,7 +19,7 @@
 
 #define CALIBRATION_LOOP  6
 
-#define MPU_GETFIFO_OLD // old faster method ?
+#define MPU_GETFIFO_OLD // old fasters method ?
 
 //-----------------------------
 class myMPU6050 : public OBJVar
