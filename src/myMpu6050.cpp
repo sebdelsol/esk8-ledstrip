@@ -48,10 +48,7 @@ void myMPU6050::begin(Stream &serial, bool doCalibrate)
 
   if (devStatus == 0) // did it work ?
   { 
-    if (doCalibrate) 
-      calibrate();
-    else
-      loadCalibration();
+    doCalibrate ? calibrate() : loadCalibration();
 
     mpu.setDMPEnabled(true);
     mDmpReady = true;
