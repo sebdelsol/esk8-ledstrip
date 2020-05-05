@@ -6,6 +6,7 @@ void FX::init(int nLeds)
   mNLEDS = nLeds;
   mLeds = (CRGB *)malloc(nLeds * sizeof(CRGB));
   CLEAR_LED(mLeds, nLeds);
+  
   specialInit(nLeds);
 
   REGISTER_VAR(FX, "alpha", { self->setAlpha(arg0); },  self->getAlpha(), 0, 255)
@@ -64,7 +65,7 @@ void FireFX::update(ulong time, ulong dt)
   uint32_t centre = (mNLEDS / 2) - 1;
   #define NOISE(y) (inoise16(Y + scale * (y - centre), Z) + 1)
 
-  // seed the fire.
+  // seed the fire
   mHeat[mNLEDS - 1] = NOISE(0);
 
   // move upstream & dim
@@ -78,10 +79,10 @@ void FireFX::update(ulong time, ulong dt)
     mHeat[y] = (mHeat[y] * dim) >> 8; 
   }
  
-  // map the colors based on the heatmap.
+  // map the colors based on the heatmap
   for (uint8_t y = 0; y < mNLEDS; y++)
   {
-    byte colorindex = scale8( mHeat[y] >> 8, 240); // scale down to 0-240 for best results with color palettes.
+    byte colorindex = scale8( mHeat[y] >> 8, 240); // scale down to 0-240 for best results with color palettes
     byte i = mReverse ?  y : mNLEDS - 1 - y;
     mLeds[i] = ColorFromPalette(mPal, colorindex);
   }
