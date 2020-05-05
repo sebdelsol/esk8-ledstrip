@@ -371,13 +371,16 @@ void AllLedStrips::init()
     mStrips[i]->init();
 
   #ifdef FASTLED_SHOW_CORE
-    xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", 2048, NULL, 2, &FastLEDshowTaskHandle, FASTLED_SHOW_CORE);  
+    xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", 2048, NULL, FASTLED_TASK_PRIO, &FastLEDshowTaskHandle, FASTLED_SHOW_CORE);  
+    Serial << "Fastled run on Core " << FASTLED_SHOW_CORE << " with Prio " << FASTLED_TASK_PRIO << endl;
+  #else 
+    Serial << "Fastled run on main Core " << endl;
   #endif
 }
 
 void AllLedStrips::clearAndShow() 
 { 
-  for(byte i=0; i <3; i++)
+  for(byte i=0; i < 3; i++)
     FastLED.clear(true);
 }
 

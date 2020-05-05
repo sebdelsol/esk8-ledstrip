@@ -185,8 +185,9 @@ void setup()
 
   rtc_clk_cpu_freq_set(RTC_CPU_FREQ_240M);
   Serial << endl << "-------- START --------" << endl;
-  Serial << "Esp32 core " << esp_get_idf_version() << endl;
+  Serial << "Esp32 " << esp_get_idf_version() << endl;
   Serial << "CPU freq " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
+  Serial << "Main run on Core " << xPortGetCoreID() << endl;
 
   // LEDS -----------------------------
   #define AddFX(l, fx) l.registerFX(fx)

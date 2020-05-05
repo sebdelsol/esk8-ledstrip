@@ -14,8 +14,10 @@
 
 #define CLEAR_LED(l, n) memset8(l, 0, n * sizeof(CRGB)); 
 
+//--------------------------------------
 // The core to run FastLED.show()
 #define FASTLED_SHOW_CORE 1
+#define FASTLED_TASK_PRIO 9
 
 //--------------------------------------
 class FX : public OBJVar
