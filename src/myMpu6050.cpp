@@ -5,6 +5,29 @@
 MPU6050 mpu;
 
 //--------------------------------------
+#ifdef MPU_GETFIFO_CORE
+  SemaphoreHandle_t mpuMutex;
+  bool mpuGotaReading = false;
+
+  void MPUGetTask(void *buffer)
+  {
+    uint16_t  packetSize = mpu.dmpGetFIFOPacketSize();
+    uint8_t _fifoBuffer[64]; // FIFO storage buffer
+    
+    for (;;) // forever
+    {
+      mpu.dmpGetCurrentFIFOPacket(_fifoBuffer);
+      mpuGotaReading = true;
+
+      xSemaphoreTake(mpuMutex, portMAX_DELAY);
+      memcpy(buffer, _fifoBuffer, packetSize);
+      xSemaphoreGive(mpuMutex);
+    }
+    vTaskDelay( pdMS_TO_TICKS(9) ); // a packet every 10ms 
+  }
+#endif
+
+//--------------------------------------
 void myMPU6050::init()
 {
   #define REGISTER_MPU(var) REGISTER_VAR_SIMPLE_NOSHOW(myMPU6050, #var, self->var, -32768, 32767)
@@ -55,6 +78,11 @@ void myMPU6050::begin(Stream &serial, bool doCalibrate)
 
     #ifdef MPU_GETFIFO_OLD
       mPacketSize = mpu.dmpGetFIFOPacketSize();
+    #endif
+
+    #ifdef MPU_GETFIFO_CORE
+      mpuMutex = xSemaphoreCreateMutex();
+      xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", 2048, mFifoBuffer, MPU_GETFIFO_PRIO, NULL, MPU_GETFIFO_CORE);  
     #endif
 
     *mSerial << "DMP enabled" << endl;
@@ -115,6 +143,8 @@ void myMPU6050::getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q)
     }
     return false;
   }
+#elif defined(MPU_GETFIFO_CORE)
+  bool myMPU6050::getFifoBuf() { return mpuGotaReading && xSemaphoreTake(mpuMutex, 0) == pdTRUE; } // pool the mpuTask
 
 #else
   bool myMPU6050::getFifoBuf() { return mpu.dmpGetCurrentFIFOPacket(mFifoBuffer); }
@@ -125,16 +155,19 @@ bool myMPU6050::readAccel()
 {
   if (mDmpReady && getFifoBuf())
   {
-    // axis angle
     mpu.dmpGetQuaternion(&mQuat, mFifoBuffer);
+    mpu.dmpGetGyro(&mGy, mFifoBuffer);
+    mpu.dmpGetAccel(&mAcc, mFifoBuffer);
+
+    #ifdef MPU_GETFIFO_CORE
+      xSemaphoreGive(mpuMutex); // release the mutex after mFifoBuffer has been handled
+    #endif
+
+    // axis angle
     mpu.dmpGetGravity(&mGrav, &mQuat);
     getAxiSAngle(mAxis, mAngle, mQuat);
 
-    // angular speed
-    mpu.dmpGetGyro(&mGy, mFifoBuffer);
-
     // real acceleration, adjusted to remove gravity
-    mpu.dmpGetAccel(&mAcc, mFifoBuffer);
     mpu.dmpGetLinearAccel(&mAccReal, &mAcc, &mGrav);
     
     return true;
@@ -157,6 +190,7 @@ bool myMPU6050::getMotion(VectorInt16 &axis, int &angle, VectorInt16 &acc, int &
     mZ =  lerp15by16(mZ,  STAYS_SHORT(mAccReal.z),  smooth);
     mWz = lerp15by16(mWz, STAYS_SHORT(mGy.z * -655),smooth);
 
+    // #define MPU_DBG
     #ifdef MPU_DBG
       *mSerial << "[ gyr " << mWz << "\t " << mGy.x << "\t " << mGy.y << "\t " << mGy.z << "]\t ";
       *mSerial << "[ dt " << dt*.001 << "ms\t smooth" << smooth/65536. << "\t Wz " << mWz  << "]\t ";
