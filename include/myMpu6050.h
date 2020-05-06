@@ -21,7 +21,7 @@
 
 // #define MPU_GETFIFO_OLD // old fasters method ?
 
-#define MPU_GETFIFO_CORE 0 //if mpu is accessed by a xtask
+#define MPU_GETFIFO_CORE 0 // mpu on a task
 #define MPU_GETFIFO_PRIO 0
 //-----------------------------
 class myMPU6050 : public OBJVar

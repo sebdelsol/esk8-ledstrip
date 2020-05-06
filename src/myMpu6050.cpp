@@ -8,7 +8,7 @@ MPU6050 mpu;
 //--------------------------------------
 #ifdef MPU_GETFIFO_CORE
   SemaphoreHandle_t mpuMutex;
-  bool mpuGotaReading = false;
+  bool mpuReadingCount = 0;
 
   void MPUGetTask(void* _myMpu)
   {
@@ -18,11 +18,12 @@ MPU6050 mpu;
     for (;;) // forever
     {
       mpu.dmpGetCurrentFIFOPacket(fifoBuffer);
-      mpuGotaReading = true;
+      mpuReadingCount++;;
 
       xSemaphoreTake(mpuMutex, portMAX_DELAY);
       memcpy(myMpu->mFifoBuffer, fifoBuffer, myMpu->mPacketSize);
       xSemaphoreGive(mpuMutex);
+
     }
     vTaskDelay( pdMS_TO_TICKS(9) ); // a packet every 10ms 
   }
@@ -145,7 +146,7 @@ void myMPU6050::getAxiSAngle(VectorInt16& v, int& angle, Quaternion& q)
     return false;
   }
 #elif defined(MPU_GETFIFO_CORE)
-  bool myMPU6050::getFifoBuf() { return mpuGotaReading && xSemaphoreTake(mpuMutex, 0) == pdTRUE; } // pool the mpuTask
+  bool myMPU6050::getFifoBuf() { return mpuReadingCount > 10 && xSemaphoreTake(mpuMutex, 0) == pdTRUE; } // pool the mpuTask
 
 #else
   bool myMPU6050::getFifoBuf() { return mpu.dmpGetCurrentFIFOPacket(mFifoBuffer); }
@@ -191,7 +192,7 @@ bool myMPU6050::getMotion(VectorInt16& axis, int& angle, VectorInt16& acc, int& 
     mZ =  lerp15by16(mZ,  STAYS_SHORT(mAccReal.z),  smooth);
     mWz = lerp15by16(mWz, STAYS_SHORT(mGy.z * -655),smooth);
 
-    // #define MPU_DBG
+    #define MPU_DBG
     #ifdef MPU_DBG
       *mSerial << "[ gyr " << mWz << "\t " << mGy.x << "\t " << mGy.y << "\t " << mGy.z << "]\t ";
       *mSerial << "[ dt " << dt*.001 << "ms\t smooth" << smooth/65536. << "\t Wz " << mWz  << "]\t ";
