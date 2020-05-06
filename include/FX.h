@@ -1,6 +1,6 @@
 #pragma once
 
-#define FASTLED_ALLOW_INTERRUPTS 0
+// #define FASTLED_ALLOW_INTERRUPTS 0
 #include <FastLED.h>
 #include <Streaming.h>
 #include <objVar.h>
