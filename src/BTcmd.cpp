@@ -1,11 +1,11 @@
 #include <BTcmd.h>
 
-BTcmd::BTcmd(Stream &btStream) : mBTStream(&btStream)
+BTcmd::BTcmd(Stream& btStream) : mBTStream(&btStream)
 {
   mBTbuf.clear();
 }  
 
-void BTcmd::init(Stream &dbgSerial)
+void BTcmd::init(Stream& dbgSerial)
 {
   mDbgSerial = &dbgSerial;
   initSPIFFS();

@@ -85,12 +85,12 @@ class BTcmd
 
 public:
 
-  BTcmd(Stream &btStream);
+  BTcmd(Stream& btStream);
   
   bool registerObj(OBJVar& obj, const char* name);
   OBJVar* getObjFromName(const char* name); 
 
-  void init(Stream &dbgSerial);
+  void init(Stream& dbgSerial);
   void save(bool isdefault);
   void load(bool isdefault, bool change);
   void sendInitsOverBT();

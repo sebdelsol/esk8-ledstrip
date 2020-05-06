@@ -32,7 +32,7 @@ BlueTooth::BlueTooth()
 
 static __NOINIT_ATTR bool WasOn; // HACK
 
-void BlueTooth::init(Stream &dbgSerial)
+void BlueTooth::init(Stream& dbgSerial)
 {
   mDbgSerial = &dbgSerial;
   DbgSerialForCB = &dbgSerial;

@@ -40,13 +40,13 @@ class AllLedStrips
   Stream* mSerial;
 
 public:
-  AllLedStrips(const int maxmA, Stream &serial);
+  AllLedStrips(const int maxmA, Stream& serial);
   void setBrightness(const byte scale) { FastLED.setBrightness(scale); };
   void show();
   void clearAndShow();
   void init();
 
-  bool registerStrip(BaseLedStrip &strip);
+  bool registerStrip(BaseLedStrip& strip);
   void getInfo();
   void update();
 };

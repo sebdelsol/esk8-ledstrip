@@ -33,7 +33,7 @@ public:
   void sendInitsOverBT() { mBTcmd->sendInitsOverBT(); };
 
   BlueTooth();
-  void init(Stream &serial);
+  void init(Stream& serial);
   void start(const bool on=true);
   void toggle();
 };
