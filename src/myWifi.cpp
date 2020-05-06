@@ -47,7 +47,7 @@ bool myWifi::update()
       {
         if(WiFi.status() == WL_CONNECTED)
         {
-          *mSerial << "Connected, IP address: " << WiFi.localIP() << endl;
+          *mSerial << "Wifi connected, IP address: " << WiFi.localIP() << endl;
           digitalWrite(BUILTIN_LED, LOW); // led on
           mON = true;
 
@@ -57,11 +57,11 @@ bool myWifi::update()
             webSocket.begin(SOCK_ADDR, SOCK_PORT);
           }
         }
-        else
-        {
-          digitalWrite(BUILTIN_LED, !digitalRead(BUILTIN_LED));
-          *mSerial << ".";
-        }
+        // else
+        // {
+        //   digitalWrite(BUILTIN_LED, !digitalRead(BUILTIN_LED));
+        //   *mSerial << ".";
+        // }
       }
       else 
         off();
