@@ -1,6 +1,7 @@
 #include <myMpu6050.h>
 #include <I2Cdev.h>
 #include <MPU6050_6Axis_MotionApps20.h>
+// #include <MPU6050_6Axis_MotionApps_V6_12.h> // longer to init
 
 MPU6050 mpu;
 
@@ -12,7 +13,7 @@ MPU6050 mpu;
   void MPUGetTask(void *buffer)
   {
     uint16_t  packetSize = mpu.dmpGetFIFOPacketSize();
-    uint8_t _fifoBuffer[64]; // FIFO storage buffer
+    uint8_t *_fifoBuffer = (uint8_t *)malloc(packetSize * sizeof(uint8_t)); // FIFO storage buffer
     
     for (;;) // forever
     {
