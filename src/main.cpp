@@ -39,7 +39,7 @@ myWifi    MyWifi;
 // ----------------------------------------------------
 #define   SERIAL_BAUD   115200  // ms
 #define   LED_MAX_MA    800     // mA, please check OBJVar.bright to avoid reaching this value
-#define   LED_TICK      15      // ms
+#define   LED_TICK      10      // ms
 #define   BT_TICK       30      // ms
 
 #define   NBLEDS_MIDDLE 30
@@ -80,7 +80,7 @@ int           ANGLE, WZ;
 
 // ----------------------------------------------------
 #ifdef USE_BT
-  void sendUpdate()
+  void sendUpdate() //answer phone app see Cfg getUpdate cmd
   {
     if(BT.sendUpdate() && GotAccel)
       *BT.getBtSerial() << "A " << AXIS.x << " " << AXIS.y << " " << AXIS.z << " " << ANGLE << " " << VACC.y << " " << WZ << endl;
@@ -276,9 +276,9 @@ void setup()
 
   #define RASTER_END \
     long _endTime = micros(); \
-    Serial << "TOTAL " << (_endTime - _startTime) << "ms"; \
+    Serial << "TOTAL " << (_endTime - _startTime) << "µs"; \
     for(byte i=0; i < _rasterCount; i++) \
-      Serial << " \t - " << _rasters[i].name << " " << (_rasters[i].time - (i==0 ? _startTime : _rasters[i-1].time)) << "ms  "; \
+      Serial << " \t - " << _rasters[i].name << " " << (_rasters[i].time - (i==0 ? _startTime : _rasters[i-1].time)) << "µs  "; \
     Serial << endl;
 
 #else
@@ -292,24 +292,12 @@ void loop()
 {
   RASTER_BEGIN(20);
 
-  GotAccel = Accel.getMotion(AXIS, ANGLE, VACC, WZ);
-  RASTER("accel");
-
-  #ifdef USE_BT
-    EVERY_N_MILLISECONDS(BT_TICK)
-    {
-      if (Button.pressed())
-      {
-        Serial << "button pressed" << endl;
-        BT.toggle();
-      }
-      BT.update();
-    }
-    RASTER("BT");
-  #endif
-
   EVERY_N_MILLISECONDS(LED_TICK)
   {
+    // pool motion
+    GotAccel = Accel.getMotion(AXIS, ANGLE, VACC, WZ);
+    RASTER("accel");
+
     // Master brightness
     #ifdef USE_PROBE
       if(Cfg.probe)
@@ -414,6 +402,19 @@ void loop()
       RASTER("wifi");
     #endif
   }
+
+  #ifdef USE_BT
+    EVERY_N_MILLISECONDS(BT_TICK)
+    {
+      if (Button.pressed())
+      {
+        Serial << "button pressed" << endl;
+        BT.toggle();
+      }
+      BT.update();
+    }
+    RASTER("BT");
+  #endif
 
   #ifdef DEBUG_LED_INFO
     EVERY_N_MILLISECONDS(1000)

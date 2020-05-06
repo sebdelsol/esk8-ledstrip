@@ -324,7 +324,7 @@ void PacificaFX::oneLayer(CRGBPalette16& p, uint16_t cistart, uint16_t wavescale
       xTaskNotifyGive(FastLEDshowTaskHandle);
 
       // Wait to be notified that it's done
-      const TickType_t xMaxBlockTime = pdMS_TO_TICKS(200);
+      const TickType_t xMaxBlockTime = pdMS_TO_TICKS(5);
       ulTaskNotifyTake(pdTRUE, xMaxBlockTime);
       userTaskHandle = 0;
     }
@@ -372,7 +372,7 @@ void AllLedStrips::init()
 
   #ifdef FASTLED_SHOW_CORE
     xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", 2048, NULL, FASTLED_TASK_PRIO, &FastLEDshowTaskHandle, FASTLED_SHOW_CORE);  
-    Serial << "Fastled run on Core " << FASTLED_SHOW_CORE << " with Prio " << FASTLED_TASK_PRIO << endl;
+    Serial << "Fastled run on task on Core " << FASTLED_SHOW_CORE << " with Prio " << FASTLED_TASK_PRIO << endl;
   #else 
     Serial << "Fastled run on main Core " << endl;
   #endif
