@@ -83,6 +83,7 @@ void myMPU6050::begin(Stream &serial, bool doCalibrate)
     #ifdef MPU_GETFIFO_CORE
       mpuMutex = xSemaphoreCreateMutex();
       xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", 2048, mFifoBuffer, MPU_GETFIFO_PRIO, NULL, MPU_GETFIFO_CORE);  
+      Serial << "Mpu runs on task on Core " << MPU_GETFIFO_CORE << " with Prio " << MPU_GETFIFO_PRIOs << endl;
     #endif
 
     *mSerial << "DMP enabled" << endl;
