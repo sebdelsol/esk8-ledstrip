@@ -192,7 +192,7 @@ bool myMPU6050::getMotion(VectorInt16& axis, int& angle, VectorInt16& acc, int& 
     mZ =  lerp15by16(mZ,  STAYS_SHORT(mAccReal.z),  smooth);
     mWz = lerp15by16(mWz, STAYS_SHORT(mGy.z * -655),smooth);
 
-    #define MPU_DBG
+    // #define MPU_DBG
     #ifdef MPU_DBG
       *mSerial << "[ gyr " << mWz << "\t " << mGy.x << "\t " << mGy.y << "\t " << mGy.z << "]\t ";
       *mSerial << "[ dt " << dt*.001 << "ms\t smooth" << smooth/65536. << "\t Wz " << mWz  << "]\t ";
