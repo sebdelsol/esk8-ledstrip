@@ -26,7 +26,7 @@
   }
 
   // This function runs on core 0 and just waits for requests to call FastLED.show()
-  void FastLEDshowTask(void *pvParameters)
+  void FastLEDshowTask(void* pvParameters)
   {
     for (;;) // forever
     {
@@ -38,7 +38,7 @@
 #endif
 
 // ----------------------------------------------------
-AllLedStrips::AllLedStrips(const int maxmA, Stream &serial) : mSerial(&serial)
+AllLedStrips::AllLedStrips(const int maxmA, Stream& serial) : mSerial(&serial)
 {
   FastLED.setMaxPowerInVoltsAndMilliamps(5, maxmA);
   FastLED.countFPS();

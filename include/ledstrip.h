@@ -28,13 +28,13 @@ public:
   virtual void update(ulong time, ulong dt);  
   virtual void init();
   virtual byte* getData(int& n); // for myWifi
-  void setSerial(Stream *serial) {mSerial = serial;};
+  void setSerial(Stream* serial) {mSerial = serial;};
 };
 
 //---------
 class AllLedStrips
 {
-  BaseLedStrip *mStrips[MAXSTRIP];
+  BaseLedStrip* mStrips[MAXSTRIP];
   byte mNStrips = 0;
   ulong  mLastT = 0;
   Stream* mSerial;
@@ -58,17 +58,17 @@ class LedStrip : public BaseLedStrip
   CRGBArray<NLEDS> mBuffer; // tmp buffer for copying & fading of each fx
   CRGBArray<NLEDS> mDisplay; // target display
 
-  CLEDController *mController;
-  char *mName;
+  CLEDController* mController;
+  char* mName;
 
-  FX *mFX[MAXFX];
+  FX* mFX[MAXFX];
   byte mNFX = 0;
 
 public:
 
   LedStrip(const char* name="")
   {
-    mName = (char *)malloc(strlen(name) + 1);
+    mName = (char* )malloc(strlen(name) + 1);
     sprintf(mName, "%s", name);
   };
 
@@ -97,7 +97,7 @@ public:
     *mSerial << mName;
     for (byte i=0; i < mNFX; i++)
     {
-      FX *fx = mFX[i];
+      FX* fx = mFX[i];
       *mSerial << " - " << fx->getName() << "(" << fx->getAlpha() << ")";
     }
     *mSerial << "                  " << endl;
@@ -107,7 +107,7 @@ public:
   {
     // *mSerial << "getdata" << NLEDS << endl;
     n = NLEDS * sizeof(CRGB);
-    return (byte *) mDisplay.leds;
+    return (byte* ) mDisplay.leds;
   };
 
   void update(ulong time, ulong dt)

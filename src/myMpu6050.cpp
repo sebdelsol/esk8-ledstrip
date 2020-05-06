@@ -10,10 +10,10 @@ MPU6050 mpu;
   SemaphoreHandle_t mpuMutex;
   bool mpuGotaReading = false;
 
-  void MPUGetTask(void *_myMpu)
+  void MPUGetTask(void* _myMpu)
   {
-    myMPU6050* myMpu = (myMPU6050 *)_myMpu;
-    uint8_t *fifoBuffer = (uint8_t *)malloc(myMpu->mPacketSize * sizeof(uint8_t)); // FIFO storage buffer
+    myMPU6050* myMpu = (myMPU6050* )_myMpu;
+    uint8_t* fifoBuffer = (uint8_t* )malloc(myMpu->mPacketSize * sizeof(uint8_t)); // FIFO storage buffer
     
     for (;;) // forever
     {
@@ -93,7 +93,7 @@ void myMPU6050::begin(Stream &serial, bool doCalibrate)
 }
 
 //--------------------------------------
-void myMPU6050::getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q)
+void myMPU6050::getAxiSAngle(VectorInt16& v, int& angle, Quaternion& q)
 {
   if (q.w > 1) q.normalize(); // needs q.w < 1 for acos and sqrt
   angle = acos(q.w) * 2 * 10430.; // 32767 / PI 
@@ -177,7 +177,7 @@ bool myMPU6050::readAccel()
 }
 
 //--------------------------------------
-bool myMPU6050::getMotion(VectorInt16 &axis, int &angle, VectorInt16 &acc, int &wz)
+bool myMPU6050::getMotion(VectorInt16& axis, int& angle, VectorInt16& acc, int& wz)
 {
   if (readAccel())
   {

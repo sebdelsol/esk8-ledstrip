@@ -9,7 +9,7 @@ BTcmd BTcmd(BTSerial);
 bool Connected = false;
 Stream* DbgSerialForCB;
 
-void BTcallback(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
+void BTcallback(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
 {
   if(event == ESP_SPP_SRV_OPEN_EVT)
   {
@@ -99,6 +99,6 @@ bool BlueTooth::sendUpdate()
 {
   bool ok = mON && Connected;
   if (ok)
-      mBTcmd->sendUpdateOverBT();
+    mBTcmd->sendUpdateOverBT();
   return ok;
 }

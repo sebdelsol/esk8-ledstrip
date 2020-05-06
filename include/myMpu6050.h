@@ -54,9 +54,9 @@ class myMPU6050 : public OBJVar
 public:
 
   uint16_t mPacketSize;
-  uint8_t *mFifoBuffer;          // FIFO storage buffer
+  uint8_t* mFifoBuffer;          // FIFO storage buffer
 
   void init();
-  void begin(Stream &serial, bool doCalibrate = false);
-  bool getMotion(VectorInt16 &axis, int &angle, VectorInt16 &acc, int &wz);
+  void begin(Stream& serial, bool doCalibrate = false);
+  bool getMotion(VectorInt16& axis, int& angle, VectorInt16& acc, int& wz);
 };

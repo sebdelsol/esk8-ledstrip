@@ -1,14 +1,14 @@
 #include <objVar.h>
 
-bool OBJVar::registerVar(void *obj, const char *name, setVarFunc set, getVarFunc get, int min, int max, bool show)
+bool OBJVar::registerVar(void* obj, const char* name, setVarFunc set, getVarFunc get, int min, int max, bool show)
 {
   bool ok = mNVAR < MAX_VAR;
   if (ok)
   {
-    MyVar *var = (MyVar *)malloc(sizeof(MyVar));
+    MyVar* var = (MyVar* )malloc(sizeof(MyVar));
     mVar[mNVAR++] = var;
 
-    char* str = (char *)malloc(strlen(name) + 1);
+    char* str = (char* )malloc(strlen(name) + 1);
     strcpy(str, name);
     var->name = str;
 

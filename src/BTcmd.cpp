@@ -75,7 +75,7 @@ void BTcmd::dbgCmd(const char *cmd, const char *objName, const char *varName, in
 
 void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool useShortCut)
 {
-  const char *cmd = buf.first();
+  const char* cmd = buf.first();
   if (cmd!=NULL)
   {
     if (strcmp(cmd, "U")==0) // shortcut
@@ -84,13 +84,13 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool useShortCut)
       cmd = buf.first();
     }
 
-    const char *objName = buf.next();
+    const char* objName = buf.next();
     if (objName!=NULL)
     {
       OBJVar* obj = getObjFromName(objName);
       if(obj!=NULL)
       {
-        const char *varName = buf.next();
+        const char* varName = buf.next();
         if (varName!=NULL)
         { 
           MyVar* var = obj->getVarFromName(varName);
@@ -107,7 +107,7 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool useShortCut)
 
               for (nbArg = 0; nbArg < MAX_ARGS; nbArg++) // get the args
               {
-                const char *a = buf.next();
+                const char* a = buf.next();
                 if (a!=NULL && isNumber(a))
                   args[nbArg] = constrain(strtol(a, NULL, 10), min, max);
                 else 
@@ -184,11 +184,11 @@ void BTcmd::readStream(Stream* stream, BUF& buf, bool change, bool useShortCut)
 }
 
 //--------------------------------------
-File BTcmd::getFile(bool isdefault, const char *mode)
+File BTcmd::getFile(bool isdefault, const char* mode)
 {	
   if (spiffsOK)
   {
-    const char *fname = isdefault ? def_fname : cfg_fname;
+    const char* fname = isdefault ? def_fname : cfg_fname;
     return SPIFFS.open(fname, mode);
   }
   return File();
@@ -225,7 +225,7 @@ void BTcmd::load(bool isdefault, bool change)
   if (f)
   {
     mFilebuf.clear(); // might not be cleared by readStream
-    readStream((Stream*)&f, mFilebuf, change); // should be a succession of set cmd
+    readStream((Stream* )&f, mFilebuf, change); // should be a succession of set cmd
 
     *mDbgSerial << "loaded from " << f.name() << endl;
     f.close();

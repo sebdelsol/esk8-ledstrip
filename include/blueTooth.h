@@ -19,12 +19,12 @@ class BlueTooth
 {
   long mStartTime;
   bool mON = false;
-  BTcmd *mBTcmd;
-  BluetoothSerial *mBTserial;
+  BTcmd* mBTcmd;
+  BluetoothSerial* mBTserial;
   Stream* mDbgSerial;
 
 public:
-  BluetoothSerial *getBtSerial() { return mBTserial; };
+  BluetoothSerial* getBtSerial() { return mBTserial; };
   bool update();
   bool sendUpdate();
   bool registerObj(OBJVar& obj, char* name) { return mBTcmd->registerObj(obj, name); };

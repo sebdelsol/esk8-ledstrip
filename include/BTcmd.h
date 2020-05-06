@@ -80,8 +80,8 @@ class BTcmd
   bool isNumber(const char* txt);
   void handleCmd(Stream* stream, BUF& buf, bool change=true, bool useShortCut=false);
   void readStream(Stream* stream, BUF& buf, bool change=true, bool useShortCut=false);
-  File getFile(bool isdefault, const char *mode);
-  void dbgCmd(const char *cmd, const char *objName, const char *varName, int nbArg, int *args);
+  File getFile(bool isdefault, const char* mode);
+  void dbgCmd(const char* cmd, const char* objName, const char* varName, int nbArg, int* args);
 
 public:
 

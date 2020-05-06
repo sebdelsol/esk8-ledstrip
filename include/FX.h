@@ -16,7 +16,7 @@ class FX : public OBJVar
 
 protected:
   int mNLEDS = 0;
-  CRGB *mLeds;
+  CRGB* mLeds;
 
 public:
   void init(int nLeds);
@@ -36,7 +36,7 @@ class FireFX : public FX
   bool mReverse;
   byte mSpeed;
   int mDimRatio;
-  ushort *mHeat; 
+  ushort* mHeat; 
 
 protected:
   CRGBPalette16 mPal;

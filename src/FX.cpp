@@ -5,7 +5,7 @@
 void FX::init(int nLeds)
 {
   mNLEDS = nLeds;
-  mLeds = (CRGB *)malloc(nLeds * sizeof(CRGB));
+  mLeds = (CRGB* )malloc(nLeds * sizeof(CRGB));
   ClearLeds(mLeds, nLeds);
 
   specialInit(nLeds);
