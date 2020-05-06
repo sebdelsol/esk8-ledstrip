@@ -275,8 +275,11 @@ void setup()
       Serial << "--------------!!!!!!!!  Max Raster reached "  << _rasterCount << endl;
 
   #define RASTER_END \
+    static long _lastEndTime;  \
     long _endTime = micros(); \
-    Serial << "TOTAL " << (_endTime - _startTime) << "µs"; \
+    Serial << "LOOP "  << (_endTime - _lastEndTime) << "µs"; \
+    _lastEndTime = _endTime; \
+    Serial << " \t TOTAL " << (_endTime - _startTime) << "µs"; \
     for(byte i=0; i < _rasterCount; i++) \
       Serial << " \t - " << _rasters[i].name << " " << (_rasters[i].time - (i==0 ? _startTime : _rasters[i-1].time)) << "µs  "; \
     Serial << endl;
