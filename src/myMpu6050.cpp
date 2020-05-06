@@ -23,7 +23,6 @@ MPU6050 mpu;
       xSemaphoreTake(mpuMutex, portMAX_DELAY);
       memcpy(myMpu->mFifoBuffer, fifoBuffer, myMpu->mPacketSize);
       xSemaphoreGive(mpuMutex);
-
     }
     vTaskDelay( pdMS_TO_TICKS(9) ); // a packet every 10ms 
   }
