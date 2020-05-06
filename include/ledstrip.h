@@ -1,6 +1,6 @@
 #pragma once
 
-// #define FASTLED_ALLOW_INTERRUPTS 0
+#define FASTLED_ALLOW_INTERRUPTS 0
 #include <FastLED.h>
 #include <myPins.h>
 #include <Streaming.h>
@@ -14,8 +14,8 @@
 
 //--------------------------------------
 // The core to run FastLED.show()
-#define FASTLED_SHOW_CORE 1
-#define FASTLED_TASK_PRIO 9
+// #define FASTLED_SHOW_CORE 1
+// #define FASTLED_TASK_PRIO 2
 
 //--------------------------------------
 class BaseLedStrip

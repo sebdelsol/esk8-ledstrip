@@ -1,6 +1,6 @@
 #pragma once
 
-// #define FASTLED_ALLOW_INTERRUPTS 0
+#define FASTLED_ALLOW_INTERRUPTS 0
 #include <FastLED.h> // for lerp15by16
 
 #include <Wire.h>
@@ -19,10 +19,10 @@
 
 #define CALIBRATION_LOOP  6
 
-#define MPU_GETFIFO_OLD // old fasters method ?
+// #define MPU_GETFIFO_OLD // old fasters method ?
 
-// #define MPU_GETFIFO_CORE 0 //if mpu is accessed by a xtask
-// #define MPU_GETFIFO_PRIO 0
+#define MPU_GETFIFO_CORE 0 //if mpu is accessed by a xtask
+#define MPU_GETFIFO_PRIO 0
 //-----------------------------
 class myMPU6050 : public OBJVar
 {
@@ -32,7 +32,6 @@ class myMPU6050 : public OBJVar
   Stream* mSerial;
 
   bool mDmpReady = false;           // set true if DMP init was successful
-  uint8_t mFifoBuffer[64];          // FIFO storage buffer
 
   Quaternion  mQuat;                // [w, x, y, z]         quaternion container
   VectorInt16 mGy;                  // [x, y, z]            gyro sensor measurements
@@ -45,10 +44,6 @@ class myMPU6050 : public OBJVar
   int16_t mXGyroOffset,   mYGyroOffset,   mZGyroOffset;
   int16_t mXAccelOffset,  mYAccelOffset,  mZAccelOffset;
 
-  #ifdef MPU_GETFIFO_OLD
-    uint16_t mPacketSize;
-  #endif
-
   void getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q);
   bool getFifoBuf();
   bool readAccel();
@@ -57,6 +52,9 @@ class myMPU6050 : public OBJVar
   void calibrate();
 
 public:
+
+  uint16_t mPacketSize;
+  uint8_t *mFifoBuffer;          // FIFO storage buffer
 
   void init();
   void begin(Stream &serial, bool doCalibrate = false);

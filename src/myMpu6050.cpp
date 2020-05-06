@@ -10,18 +10,18 @@ MPU6050 mpu;
   SemaphoreHandle_t mpuMutex;
   bool mpuGotaReading = false;
 
-  void MPUGetTask(void *buffer)
+  void MPUGetTask(void *_myMpu)
   {
-    uint16_t  packetSize = mpu.dmpGetFIFOPacketSize();
-    uint8_t *_fifoBuffer = (uint8_t *)malloc(packetSize * sizeof(uint8_t)); // FIFO storage buffer
+    myMPU6050* myMpu = (myMPU6050 *)_myMpu;
+    uint8_t *fifoBuffer = (uint8_t *)malloc(myMpu->mPacketSize * sizeof(uint8_t)); // FIFO storage buffer
     
     for (;;) // forever
     {
-      mpu.dmpGetCurrentFIFOPacket(_fifoBuffer);
+      mpu.dmpGetCurrentFIFOPacket(fifoBuffer);
       mpuGotaReading = true;
 
       xSemaphoreTake(mpuMutex, portMAX_DELAY);
-      memcpy(buffer, _fifoBuffer, packetSize);
+      memcpy(myMpu->mFifoBuffer, fifoBuffer, myMpu->mPacketSize);
       xSemaphoreGive(mpuMutex);
     }
     vTaskDelay( pdMS_TO_TICKS(9) ); // a packet every 10ms 
@@ -77,13 +77,12 @@ void myMPU6050::begin(Stream &serial, bool doCalibrate)
     mpu.setDMPEnabled(true);
     mDmpReady = true;
 
-    #ifdef MPU_GETFIFO_OLD
-      mPacketSize = mpu.dmpGetFIFOPacketSize();
-    #endif
+    mPacketSize = mpu.dmpGetFIFOPacketSize();
+    mFifoBuffer = (uint8_t *)malloc(mPacketSize * sizeof(uint8_t)); // FIFO storage buffer
 
     #ifdef MPU_GETFIFO_CORE
       mpuMutex = xSemaphoreCreateMutex();
-      xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", 2048, mFifoBuffer, MPU_GETFIFO_PRIO, NULL, MPU_GETFIFO_CORE);  
+      xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", 2048, this, MPU_GETFIFO_PRIO, NULL, MPU_GETFIFO_CORE);  
       *mSerial << "Mpu runs on task on Core " << MPU_GETFIFO_CORE << " with Prio " << MPU_GETFIFO_PRIO << endl;
     #endif
 
