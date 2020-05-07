@@ -37,7 +37,6 @@ void BlueTooth::init(Stream& dbgSerial)
   mDbgSerial = &dbgSerial;
   DbgSerialForCB = &dbgSerial;
 
-  *mDbgSerial << "Init BT" << endl;
   BTSerial.register_callback(BTcallback);
   mBTcmd->init(dbgSerial);  
 
@@ -55,7 +54,7 @@ void BlueTooth::start(const bool on)
 {
   if (mON != on)
   {
-    *mDbgSerial << (on ? "Starting" : "Stopping") << " BT" << endl;
+    *mDbgSerial << "BT " << (on ? "Starting" : "Stopping") << endl;
     Connected = false;
   
     if (on)

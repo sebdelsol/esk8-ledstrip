@@ -13,7 +13,7 @@ void BTcmd::init(Stream& dbgSerial)
 
 void BTcmd::initSPIFFS()
 {
-  *mDbgSerial << "SPIFFS begin" << endl;
+  *mDbgSerial << "mount SPIFFS" << endl;
   spiffsOK = SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED);
   if (!spiffsOK)
     *mDbgSerial << "SPIFFS Mount Failed" << endl;

@@ -69,12 +69,13 @@ void myMPU6050::loadCalibration()
 void myMPU6050::begin(Stream &serial, bool doCalibrate)
 { 
   mSerial = &serial;
+  *mSerial << "---------" << endl;
   
   Wire.begin(SDA, SCL);
   Wire.setClock(400000); // 400kHz I2C clock.
 
   mpu.initialize();
-  *mSerial << "MPU connection " << (mpu.testConnection() ? F("successful") : F("failed")) << endl;
+  *mSerial << "MPU connection " << (mpu.testConnection() ? "successful" : "failed") << endl;
   uint8_t devStatus = mpu.dmpInitialize();
 
   if (devStatus == 0) // did it work ?
@@ -101,6 +102,8 @@ void myMPU6050::begin(Stream &serial, bool doCalibrate)
   }
   else // ERROR! 1 = initial memory load failed, 2 = DMP configuration updates failed
     *mSerial << "DMP Initialization failed (" << devStatus << ")" << endl;
+  
+  *mSerial << "---------" << endl;
 }
 
 //--------------------------------------
