@@ -5,32 +5,26 @@
   static TaskHandle_t FastLEDshowTaskHandle = 0;
   static TaskHandle_t userTaskHandle = 0;
 
-  // Call this function instead of FastLED.show(). It signals core 0 to issue a show,
-  // then waits for a notification that it is done.
+  // Trigger FastLED.show()
   void TriggerFastLEDShow()
   {
     if (userTaskHandle == 0)
     {
-      // Store the handle of the current task, so that the show task can notify it when it's done
+      // the show task can notify it when it's done
       userTaskHandle = xTaskGetCurrentTaskHandle();
 
-      // Trigger the show task
-      xTaskNotifyGive(FastLEDshowTaskHandle);
-
-      // Wait to be notified that it's done
-      const TickType_t xMaxBlockTime = pdMS_TO_TICKS(5);
-      ulTaskNotifyTake(pdTRUE, xMaxBlockTime);
+      xTaskNotifyGive(FastLEDshowTaskHandle); // trigger fastled show task
+      ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(5)); // Wait to be notified that it's done (max 5ms)
       userTaskHandle = 0;
     }
   }
 
-  // This function runs on core 0 and just waits for requests to call FastLED.show()
   void FastLEDshowTask(void* pvParameters)
   {
     for (;;) // forever
     {
       ulTaskNotifyTake(pdTRUE, portMAX_DELAY); // Wait for the trigger
-      FastLED.show(); //Do the show (synchronously)
+      FastLED.show(); 
       xTaskNotifyGive(userTaskHandle); // Notify the calling task
     }
   }
@@ -42,7 +36,6 @@ AllLedStrips::AllLedStrips(const int maxmA, Stream& serial) : mSerial(&serial)
   FastLED.setMaxPowerInVoltsAndMilliamps(5, maxmA);
   FastLED.countFPS();
   FastLED.setDither(BINARY_DITHER); //DISABLE_DITHER
-  // FastLED.setTemperature(UncorrectedTemperature);    
 }
 
 bool AllLedStrips::registerStrip(BaseLedStrip &strip)
