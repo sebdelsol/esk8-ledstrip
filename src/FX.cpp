@@ -17,7 +17,7 @@ void FX::init(int nLeds)
 
 void FX::setAlpha(const byte alpha) 
 { 
-  mAlpha = ((alpha + 1) * alpha)>>8; 
+  mAlpha = ((alpha + 1) * alpha)>>8; // fast gamma
   mLinearAlpha = alpha; 
 }
 
