@@ -5,7 +5,6 @@
   static TaskHandle_t FastLEDshowTaskHandle = 0;
   static TaskHandle_t userTaskHandle = 0;
 
-  // Trigger FastLED.show()
   void TriggerFastLEDShow()
   {
     if (userTaskHandle == 0)
