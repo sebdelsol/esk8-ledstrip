@@ -1,6 +1,6 @@
 #pragma once
 
-#define FASTLED_ALLOW_INTERRUPTS 0
+#define FASTLED_ESP32_FLASH_LOCK 1
 #include <FastLED.h> // for lerp15by16
 
 #include <Wire.h>
@@ -10,19 +10,19 @@
 #include <objVar.h>
 
 //----------------------------- smooth accel & gyro
-#define ACCEL_AVG       .05 // use 5% of the new measure in the avg
-#define ACCEL_BASE_FREQ 60. // based on a 60fps measure
+#define ACCEL_AVG         .05 // use 5% of the new measure in the avg
+#define ACCEL_BASE_FREQ   60. // based on a 60fps measure
+#define CALIBRATION_LOOP  6
 
-//-----------------------------
 #define STAYS_SHORT(x) constrain(x, -32768, 32767)
 #define TOdeg(x) (x * 180/M_PI)
 
-#define CALIBRATION_LOOP  6
-
-// #define MPU_GETFIFO_OLD // old fasters method ?
-
+//-----------------------------
+// The core to run mpu.dmpGetCurrentFIFOPacket()
 #define MPU_GETFIFO_CORE 0 // mpu on a task
 #define MPU_GETFIFO_PRIO 0
+#define MPU_NB_BadReading 10 // @ beginning
+
 //-----------------------------
 class myMPU6050 : public OBJVar
 {
