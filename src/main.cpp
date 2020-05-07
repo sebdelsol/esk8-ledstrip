@@ -1,7 +1,6 @@
 #define USE_BT
 #define USE_OTA 
 // #define USE_TELNET 
-// #define USE_PROBE
 // #define USE_RASTER
 
 // #define DEBUG_LED_INFO
@@ -38,9 +37,11 @@ myWifi    MyWifi;
 
 // ----------------------------------------------------
 #define   SERIAL_BAUD   115200  // ms
-#define   LED_MAX_MA    800     // mA, please check OBJVar.bright to avoid reaching this value
+#define   LED_MAX_MA    800     // mA, please check Cfg.bright to avoid reaching this value
+
 #define   LED_TICK      10      // ms
 #define   BT_TICK       30      // ms
+#define   ACCEL_TICK    10      // mpu6050 is refreshed every 10ms
 
 #define   NBLEDS_MIDDLE 30
 #define   NBLEDS_TIPS   36
@@ -91,7 +92,6 @@ int           ANGLE, WZ;
 class CFG : public OBJVar
 {
 public:
-  
   // update ?
   bool ledR       = true;
   bool ledF       = true;
@@ -101,11 +101,9 @@ public:
   byte bright     = 128;  // half brightness is enough to avoid reaching LED_MAX_MA
   int fade        = 0;    // for the fade in
   
-  #ifdef USE_PROBE
-    #define MaxProbe 4095
-    int  minProbe   = 400;
-    bool probe      = false;
-  #endif
+  #define MaxProbe 4095
+  int  minProbe   = 400;
+  bool probe      = false;
 
   byte pacifica   = 255;
   byte fire       = 0;
@@ -146,10 +144,8 @@ public:
     REGISTER_CFG(ledF,       0, 1);
     REGISTER_CFG(led,        0, 1);
 
-    #ifdef USE_PROBE
-      REGISTER_CFG(probe,      0, 1);
-      REGISTER_CFG(minProbe,   1, MaxProbe);
-    #endif
+    REGISTER_CFG(probe,      0, 1);
+    REGISTER_CFG(minProbe,   1, MaxProbe);
     REGISTER_CFG(bright,     1, 255);
 
     REGISTER_CFG(pacifica,   0, 255);
@@ -296,23 +292,25 @@ void loop()
 {
   RASTER_BEGIN(20);
 
-  EVERY_N_MILLISECONDS(LED_TICK)
+  EVERY_N_MILLISECONDS(ACCEL_TICK)
   {
     // pool motion
     GotAccel = Accel.getMotion(AXIS, ANGLE, VACC, WZ);
     RASTER("accel");
+  }
 
+  EVERY_N_MILLISECONDS(LED_TICK)
+  {
     // Master brightness
-    #ifdef USE_PROBE
-      if(Cfg.probe)
-      {
-        int light = analogRead(LDR_PIN);
-        Cfg.bright = map(light, Cfg.minProbe, MaxProbe, 255, 0); // the darker the light, the brighter the leds
-      }
-    #endif
+    if(Cfg.probe)
+    {
+      int light = analogRead(LDR_PIN);
+      Cfg.bright = map(light, Cfg.minProbe, MaxProbe, 255, 0); // the darker the light, the brighter the leds
+    }
     Cfg.fade = lerp16by16(Cfg.fade,  65535,  650);
     byte bright = (Cfg.bright * ((Cfg.fade >> 8) + 1)) >> 8; 
     AllLeds.setBrightness(bright);
+    RASTER("probe");
 
     // handle motion
     if (GotAccel)
@@ -426,7 +424,7 @@ void loop()
   #endif
 
   AllLeds.show(); // to be called as much as possible for Fastled brightness dithering
-  RASTER("led show");
+  RASTER("led show"); 
 
   RASTER_END;
 }
