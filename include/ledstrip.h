@@ -69,6 +69,7 @@ public:
   LedStrip(const char* name="")
   {
     mName = (char* )malloc(strlen(name) + 1);
+    assert (mName!=NULL);
     sprintf(mName, "%s", name);
   };
 
