@@ -2,7 +2,6 @@
 
 // ----------------------------------------------------
 #ifdef FASTLED_SHOW_CORE
-
   static TaskHandle_t FastLEDshowTaskHandle = 0;
   static TaskHandle_t userTaskHandle = 0;
 

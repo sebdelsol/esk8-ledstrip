@@ -34,9 +34,9 @@ bool BTcmd::registerObj(OBJVar& obj, const char* name)
   bool ok = mNOBJ < BTCMD_MAXOBJ;
   if (ok)
   {
-    mOBJ[mNOBJ].obj = (OBJVar*)&obj;
+    mOBJ[mNOBJ].obj = (OBJVar* )&obj;
     
-    char* str = (char *)malloc(strlen(name) + 1);
+    char* str = (char* )malloc(strlen(name) + 1);
     strcpy(str, name);
     mOBJ[mNOBJ++].name = str;
 
@@ -66,7 +66,7 @@ bool BTcmd::isNumber(const char* txt)
   return true; 
 } 
 
-void BTcmd::dbgCmd(const char *cmd, const char *objName, const char *varName, int nbArg, int *args)
+void BTcmd::dbgCmd(const char* cmd, const char* objName, const char* varName, int nbArg, int* args)
 {
   *mDbgSerial << cmd << " " << objName << " " << varName;
   for (byte i=0; i < nbArg; i++) *mDbgSerial << " " << args[i];

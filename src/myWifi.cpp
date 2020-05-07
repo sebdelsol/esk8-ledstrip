@@ -57,11 +57,6 @@ bool myWifi::update()
             webSocket.begin(SOCK_ADDR, SOCK_PORT);
           }
         }
-        // else
-        // {
-        //   digitalWrite(BUILTIN_LED, !digitalRead(BUILTIN_LED));
-        //   *mSerial << ".";
-        // }
       }
       else 
         off();
