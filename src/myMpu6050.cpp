@@ -116,9 +116,7 @@ void myMPU6050::getAxiSAngle(VectorInt16& v, int& angle, Quaternion& q)
   else
   {
     float n = 32767. / s; 
-    v.x = q.x * n;
-    v.y = q.y * n;
-    v.z = q.z * n;
+    v.x = q.x * n; v.y = q.y * n; v.z = q.z * n;
   }
 }
 
