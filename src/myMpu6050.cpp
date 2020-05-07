@@ -6,29 +6,6 @@
 MPU6050 mpu;
 
 //--------------------------------------
-#ifdef MPU_GETFIFO_CORE
-  SemaphoreHandle_t mpuMutex;
-  bool mpuReadingCount = 0;
-
-  void MPUGetTask(void* _myMpu)
-  {
-    myMPU6050* myMpu = (myMPU6050* )_myMpu;
-    uint8_t* fifoBuffer = (uint8_t* )malloc(myMpu->mPacketSize * sizeof(uint8_t)); // FIFO storage buffer
-    
-    for (;;) // forever
-    {
-      mpu.dmpGetCurrentFIFOPacket(fifoBuffer);
-      mpuReadingCount++;;
-
-      xSemaphoreTake(mpuMutex, portMAX_DELAY);
-      memcpy(myMpu->mFifoBuffer, fifoBuffer, myMpu->mPacketSize);
-      xSemaphoreGive(mpuMutex);
-    }
-    vTaskDelay( pdMS_TO_TICKS(9) ); // a packet every 10ms 
-  }
-#endif
-
-//--------------------------------------
 void myMPU6050::init()
 {
   #define REGISTER_MPU(var) REGISTER_VAR_SIMPLE_NOSHOW(myMPU6050, #var, self->var, -32768, 32767)
