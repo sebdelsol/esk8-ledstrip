@@ -37,26 +37,24 @@ void myMPU6050::loadCalibration()
 
 //--------------------------------------
 #ifdef MPU_GETFIFO_CORE
-  SemaphoreHandle_t mpuMutex;
+  SemaphoreHandle_t mpuBufferMutex;
   EventGroupHandle_t mpuFlagReady;
 
   void MPUGetTask(void* _myMpu)
   {
     myMPU6050* myMpu = (myMPU6050* )_myMpu;
     uint8_t* fifoBuffer = (uint8_t* )malloc(myMpu->mPacketSize * sizeof(uint8_t)); // FIFO storage buffer
-    long badReadingLeft = MPU_NB_BadReading;
 
     for (;;) // forever
     {
-      mpu.dmpGetCurrentFIFOPacket(fifoBuffer);
-      
-      if (badReadingLeft)
-        if (!--badReadingLeft)
-          xEventGroupSetBits(mpuFlagReady, 1);
-  
-      xSemaphoreTake(mpuMutex, portMAX_DELAY);
-      memcpy(myMpu->mFifoBuffer, fifoBuffer, myMpu->mPacketSize);
-      xSemaphoreGive(mpuMutex);
+      if(mpu.dmpGetCurrentFIFOPacket(fifoBuffer))
+      {
+        xSemaphoreTake(mpuBufferMutex, portMAX_DELAY);
+        memcpy(myMpu->mFifoBuffer, fifoBuffer, myMpu->mPacketSize);
+        xSemaphoreGive(mpuBufferMutex);
+
+        xEventGroupSetBits(mpuFlagReady, 1);
+      }
     }
     vTaskDelay( pdMS_TO_TICKS(9) ); // a packet every 10ms 
   }
@@ -85,7 +83,7 @@ void myMPU6050::begin(Stream &serial, bool doCalibrate)
     mFifoBuffer = (uint8_t* )malloc(mPacketSize * sizeof(uint8_t)); // FIFO storage buffer
 
     #ifdef MPU_GETFIFO_CORE
-      mpuMutex = xSemaphoreCreateMutex();
+      mpuBufferMutex = xSemaphoreCreateMutex();
       mpuFlagReady = xEventGroupCreate();
       xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", 2048, this, MPU_GETFIFO_PRIO, NULL, MPU_GETFIFO_CORE);  
       *mSerial << "Mpu runs on task on Core " << MPU_GETFIFO_CORE << " with Prio " << MPU_GETFIFO_PRIO << endl;
@@ -120,8 +118,7 @@ void myMPU6050::getAxiSAngle(VectorInt16& v, int& angle, Quaternion& q)
 
 //--------------------------------------
 #ifdef MPU_GETFIFO_CORE
-  // bool myMPU6050::getFifoBuf() { return mpuReadingCounter > 10 && xSemaphoreTake(mpuMutex, 0) == pdTRUE; } // pool the mpuTask
-  bool myMPU6050::getFifoBuf() { return xEventGroupGetBits(mpuFlagReady) && xSemaphoreTake(mpuMutex, 0) == pdTRUE; } // pool the mpuTask
+  bool myMPU6050::getFifoBuf() { return xEventGroupGetBits(mpuFlagReady) && xSemaphoreTake(mpuBufferMutex, 0) == pdTRUE; } // pool the mpuTask
 
 #else
   bool myMPU6050::getFifoBuf() { return mpu.dmpGetCurrentFIFOPacket(mFifoBuffer); }
@@ -137,7 +134,7 @@ bool myMPU6050::readAccel()
     mpu.dmpGetAccel(&mAcc, mFifoBuffer);
 
     #ifdef MPU_GETFIFO_CORE
-      xSemaphoreGive(mpuMutex); // release the mutex after mFifoBuffer has been handled
+      xSemaphoreGive(mpuBufferMutex); // release the mutex after mFifoBuffer has been handled
     #endif
 
     // axis angle
