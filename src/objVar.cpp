@@ -6,9 +6,11 @@ bool OBJVar::registerVar(void* obj, const char* name, setVarFunc set, getVarFunc
   if (ok)
   {
     MyVar* var = (MyVar* )malloc(sizeof(MyVar));
+    assert (var!=NULL);
     mVar[mNVAR++] = var;
 
     char* str = (char* )malloc(strlen(name) + 1);
+    assert (str!=NULL);
     strcpy(str, name);
     var->name = str;
 

@@ -44,6 +44,7 @@ void myMPU6050::loadCalibration()
   {
     myMPU6050* myMpu = (myMPU6050* )_myMpu;
     uint8_t* fifoBuffer = (uint8_t* )malloc(myMpu->mPacketSize * sizeof(uint8_t)); // FIFO storage buffer
+    assert (fifoBuffer!=NULL);
 
     for (;;) // forever
     {
@@ -81,6 +82,7 @@ void myMPU6050::begin(Stream &serial, bool doCalibrate)
 
     mPacketSize = mpu.dmpGetFIFOPacketSize();
     mFifoBuffer = (uint8_t* )malloc(mPacketSize * sizeof(uint8_t)); // FIFO storage buffer
+    assert (mFifoBuffer!=NULL);
 
     #ifdef MPU_GETFIFO_CORE
       mpuBufferMutex = xSemaphoreCreateMutex();

@@ -6,6 +6,7 @@ void FX::init(int nLeds)
 {
   mNLEDS = nLeds;
   mLeds = (CRGB* )malloc(nLeds * sizeof(CRGB));
+  assert (mLeds!=NULL);
   ClearLeds(mLeds, nLeds);
 
   specialInit(nLeds);
@@ -56,6 +57,7 @@ void FireFX::RegisterVars()
 void FireFX::specialInit(int nLeds)
 {
   mHeat = (ushort *) malloc(nLeds * sizeof(ushort));
+  assert (mHeat!=NULL);
 }
 
 void FireFX::update(ulong time, ulong dt)

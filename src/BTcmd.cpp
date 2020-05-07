@@ -37,6 +37,7 @@ bool BTcmd::registerObj(OBJVar& obj, const char* name)
     mOBJ[mNOBJ].obj = (OBJVar* )&obj;
     
     char* str = (char* )malloc(strlen(name) + 1);
+    assert (str!=NULL);
     strcpy(str, name);
     mOBJ[mNOBJ++].name = str;
 
@@ -247,6 +248,7 @@ void BTcmd::sendUpdateOverBT()
       {
         char* varName = obj->getVarName(j);
         snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mGetKeyword, objName, varName); // emulate a Get cmd
+        *mDbgSerial << mFilebuf.getBuf() << endl;
         handleCmd(mBTStream, mFilebuf, true, true); // answer with a Set cmd on BT 
       }
     }
