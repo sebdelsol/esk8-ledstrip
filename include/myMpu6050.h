@@ -19,8 +19,8 @@
 
 //-----------------------------
 // The core to run mpu.dmpGetCurrentFIFOPacket()
-// #define MPU_GETFIFO_CORE 1 // mpu on a task
-// #define MPU_GETFIFO_PRIO 0
+#define MPU_GETFIFO_CORE 1 // mpu on a task
+#define MPU_GETFIFO_PRIO 1
 
 //-----------------------------
 class myMPU6050 : public OBJVar

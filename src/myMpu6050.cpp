@@ -44,20 +44,24 @@ void myMPU6050::loadCalibration()
   {
     myMPU6050* myMpu = (myMPU6050* )_myMpu;
     uint8_t* fifoBuffer = (uint8_t* )malloc(myMpu->mPacketSize * sizeof(uint8_t)); // FIFO storage buffer
-    assert (fifoBuffer!=NULL);
 
-    for (;;) // forever
+    if(fifoBuffer!=NULL)
     {
-      if(mpu.dmpGetCurrentFIFOPacket(fifoBuffer))
+      for (;;) // forever
       {
-        xSemaphoreTake(mpuBufferMutex, portMAX_DELAY);
-        memcpy(myMpu->mFifoBuffer, fifoBuffer, myMpu->mPacketSize);
-        xSemaphoreGive(mpuBufferMutex);
+        if(mpu.dmpGetCurrentFIFOPacket(fifoBuffer))
+        {
+          xSemaphoreTake(mpuBufferMutex, portMAX_DELAY);
+          memcpy(myMpu->mFifoBuffer, fifoBuffer, myMpu->mPacketSize);
+          xSemaphoreGive(mpuBufferMutex);
 
-        xEventGroupSetBits(mpuFlagReady, 1);
+          xEventGroupSetBits(mpuFlagReady, 1);
+        }
+        vTaskDelay( pdMS_TO_TICKS(9) ); // a packet every 10ms 
       }
     }
-    vTaskDelay( pdMS_TO_TICKS(9) ); // a packet every 10ms 
+    Serial << "!!! task fifobuffer malloc failed" << endl;
+    vTaskDelete(NULL);
   }
 #endif
 
@@ -123,6 +127,7 @@ void myMPU6050::getAxiSAngle(VectorInt16& v, int& angle, Quaternion& q)
   bool myMPU6050::getFifoBuf() { return xEventGroupGetBits(mpuFlagReady) && xSemaphoreTake(mpuBufferMutex, 0) == pdTRUE; } // pool the mpuTask
 
 #else
+
   bool myMPU6050::getFifoBuf() { return mpu.dmpGetCurrentFIFOPacket(mFifoBuffer); }
 #endif
 
