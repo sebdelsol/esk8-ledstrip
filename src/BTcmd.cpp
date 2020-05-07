@@ -248,7 +248,6 @@ void BTcmd::sendUpdateOverBT()
       {
         char* varName = obj->getVarName(j);
         snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mGetKeyword, objName, varName); // emulate a Get cmd
-        *mDbgSerial << mFilebuf.getBuf() << endl;
         handleCmd(mBTStream, mFilebuf, true, true); // answer with a Set cmd on BT 
       }
     }
