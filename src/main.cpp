@@ -100,6 +100,7 @@ public:
   // brightness ?
   byte bright     = 128;  // half brightness is enough to avoid reaching LED_MAX_MA
   int fade        = 0;    // for the fade in
+  
   #ifdef USE_PROBE
     #define MaxProbe 4095
     int  minProbe   = 400;
@@ -145,11 +146,11 @@ public:
     REGISTER_CFG(ledF,       0, 1);
     REGISTER_CFG(led,        0, 1);
 
-    REGISTER_CFG(bright,     1, 255);
     #ifdef USE_PROBE
-      REGISTER_CFG(minProbe,   1, MaxProbe);
       REGISTER_CFG(probe,      0, 1);
+      REGISTER_CFG(minProbe,   1, MaxProbe);
     #endif
+    REGISTER_CFG(bright,     1, 255);
 
     REGISTER_CFG(pacifica,   0, 255);
     REGISTER_CFG(fire,       0, 255);
