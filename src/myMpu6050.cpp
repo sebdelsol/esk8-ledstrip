@@ -82,7 +82,7 @@ void myMPU6050::begin(Stream &serial, bool doCalibrate)
     mDmpReady = true;
 
     mPacketSize = mpu.dmpGetFIFOPacketSize();
-    mFifoBuffer = (uint8_t *)malloc(mPacketSize * sizeof(uint8_t)); // FIFO storage buffer
+    mFifoBuffer = (uint8_t* )malloc(mPacketSize * sizeof(uint8_t)); // FIFO storage buffer
 
     #ifdef MPU_GETFIFO_CORE
       mpuMutex = xSemaphoreCreateMutex();
