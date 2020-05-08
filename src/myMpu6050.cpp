@@ -135,9 +135,7 @@ void myMPU6050::getAxiSAngle(VectorInt16& v, int& angle, Quaternion& q)
 //--------------------------------------
 #ifdef MPU_GETFIFO_CORE
   bool myMPU6050::getFifoBuf() { return xEventGroupGetBits(mpuFlagReady) && xSemaphoreTake(mpuBufferMutex, 0) == pdTRUE; } // pool the mpuTask
-
 #else
-
   bool myMPU6050::getFifoBuf() { return mpu.dmpGetCurrentFIFOPacket(mFifoBuffer); }
 #endif
 
