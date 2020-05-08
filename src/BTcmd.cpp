@@ -162,10 +162,10 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool compact)
             
             // GET cmd ?
             else if (strcmp(cmd, mGetKeyword)==0)
-              handleGetCmd(parsed, stream, compact); //write in stream the parsed var value           
+              handleGetCmd(parsed, stream, compact); //write to stream the parsed var value           
             
             // INIT cmd ?
-            else if (strcmp(cmd, mInitKeyword)==0) //write in stream the parsed var init           
+            else if (strcmp(cmd, mInitKeyword)==0) //write to stream the parsed var init           
               handleInitCmd(parsed, stream);            
           }
         }
