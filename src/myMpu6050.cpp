@@ -7,35 +7,28 @@ MPU6050 mpu;
 
 //--------------------------------------
 #ifdef MPU_GETFIFO_CORE
-  SemaphoreHandle_t mpuBufferMutex;
+  SemaphoreHandle_t mpuMeasureMutex;
   EventGroupHandle_t mpuFlagReady;
   TaskHandle_t mpuNotifyToCalibrate;
 
   void MPUGetTask(void* _myMpu)
   {
     myMPU6050* myMpu = (myMPU6050* )_myMpu;
-    uint8_t* fifoBuffer = (uint8_t* )malloc(myMpu->mPacketSize * sizeof(uint8_t)); // FIFO storage buffer
 
-    if(fifoBuffer!=NULL)
+    for (;;) // forever
     {
-      for (;;) // forever
+      if(ulTaskNotifyTake(pdTRUE, 0)) // pool the the task notification semaphore
+        myMpu->calibrate();
+
+      if(mpu.dmpGetCurrentFIFOPacket(myMpu->mFifoBuffer))
       {
-        if(ulTaskNotifyTake(pdTRUE, 0)) // pool the the task notification semaphore
-          myMpu->calibrate();
+        xSemaphoreTake(mpuMeasureMutex, portMAX_DELAY);
+        myMpu->computeMotion();
+        xSemaphoreGive(mpuMeasureMutex);
 
-        if(mpu.dmpGetCurrentFIFOPacket(fifoBuffer))
-        {
-          xSemaphoreTake(mpuBufferMutex, portMAX_DELAY);
-          memcpy(myMpu->mFifoBuffer, fifoBuffer, myMpu->mPacketSize);
-          xSemaphoreGive(mpuBufferMutex);
-
-          xEventGroupSetBits(mpuFlagReady, 1);
-        }
-        vTaskDelay( pdMS_TO_TICKS(9) ); // a packet every 10ms 
+        xEventGroupSetBits(mpuFlagReady, 1);
       }
     }
-    Serial << "!!! task fifobuffer malloc failed" << endl;
-    vTaskDelete(NULL);
   }
 #endif
 
@@ -93,12 +86,12 @@ void myMPU6050::begin(Stream &serial, bool doCalibrate)
     mpu.setDMPEnabled(true);
     mDmpReady = true;
 
-    mPacketSize = mpu.dmpGetFIFOPacketSize();
-    mFifoBuffer = (uint8_t* )malloc(mPacketSize * sizeof(uint8_t)); // FIFO storage buffer
+    uint16_t packetSize = mpu.dmpGetFIFOPacketSize();
+    mFifoBuffer = (uint8_t* )malloc(packetSize * sizeof(uint8_t)); // FIFO storage buffer
     assert (mFifoBuffer!=NULL);
 
     #ifdef MPU_GETFIFO_CORE
-      mpuBufferMutex = xSemaphoreCreateMutex();
+      mpuMeasureMutex = xSemaphoreCreateMutex();
       mpuFlagReady = xEventGroupCreate();
       xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", 2048, this, MPU_GETFIFO_PRIO, &mpuNotifyToCalibrate, MPU_GETFIFO_CORE);  
       *mSerial << "Mpu runs on task on Core " << MPU_GETFIFO_CORE << " with Prio " << MPU_GETFIFO_PRIO << endl;
@@ -133,70 +126,66 @@ void myMPU6050::getAxiSAngle(VectorInt16& v, int& angle, Quaternion& q)
 }
 
 //--------------------------------------
-#ifdef MPU_GETFIFO_CORE
-  bool myMPU6050::getFifoBuf() { return xEventGroupGetBits(mpuFlagReady) && xSemaphoreTake(mpuBufferMutex, 0) == pdTRUE; } // pool the mpuTask
-
-#else
-
-  bool myMPU6050::getFifoBuf() { return mpu.dmpGetCurrentFIFOPacket(mFifoBuffer); }
-#endif
-
-//--------------------------------------
-bool myMPU6050::readAccel()
+void myMPU6050::computeMotion()
 {
-  if (mDmpReady && getFifoBuf())
-  {
-    mpu.dmpGetQuaternion(&mQuat, mFifoBuffer);
-    mpu.dmpGetGyro(&mGy, mFifoBuffer);
-    mpu.dmpGetAccel(&mAcc, mFifoBuffer);
+  ulong t = micros();
+  ulong dt = t - mT;
+  mT = t;
 
-    #ifdef MPU_GETFIFO_CORE
-      xSemaphoreGive(mpuBufferMutex); // release the mutex after mFifoBuffer has been handled
-    #endif
+  mpu.dmpGetQuaternion(&mQuat, mFifoBuffer);
+  mpu.dmpGetGyro(&mW, mFifoBuffer);
 
-    // axis angle
-    mpu.dmpGetGravity(&mGrav, &mQuat);
-    getAxiSAngle(mAxis, mAngle, mQuat);
+  // axis angle
+  mpu.dmpGetGravity(&mGrav, &mQuat);
+  getAxiSAngle(mAxis, mAngle, mQuat);
 
-    // real acceleration, adjusted to remove gravity
-    mpu.dmpGetLinearAccel(&mAccReal, &mAcc, &mGrav);
-    
-    return true;
-  }
-  return false;
+  // real acceleration, adjusted to remove gravity
+  mpu.dmpGetAccel(&mAcc, mFifoBuffer);
+  mpu.dmpGetLinearAccel(&mAccReal, &mAcc, &mGrav);
+
+  // smooth acc & gyro
+  uint16_t smooth = - int(pow(1. - ACCEL_AVG, dt * ACCEL_BASE_FREQ * .000001) * 65536.); // 1 - (1-accel_avg) ^ (dt * 60 / 1000 000) using fract16
+  mAccSmoothX =  lerp15by16(mAccSmoothX,  STAYS_SHORT(mAccReal.x),  smooth);
+  mAccSmoothY =  lerp15by16(mAccSmoothY,  STAYS_SHORT(mAccReal.y),  smooth);
+  mAccSmoothZ =  lerp15by16(mAccSmoothZ,  STAYS_SHORT(mAccReal.z),  smooth);
+  mWz = lerp15by16(mWz, STAYS_SHORT(mW.z * -655),smooth);
+
+  // #define MPU_DBG
+  #ifdef MPU_DBG
+    *mSerial << "[ dt "   << dt*.001 << "ms\t smooth" << smooth/65536. << "\t Wz "  << mWz  << "]\t ";
+    *mSerial << "[ gyr "  << mWz << "\t "             << mW.x << "\t "              << mW.y << "\t ";
+    *mSerial << "[ grav " << mGrav.x << "\t "         << mGrav.y << "\t "           << mGrav.z << "]\t ";
+    *mSerial << "[ avg "  << mAccSmoothX << "\t "     << mAccSmoothY << "\t "       << mAccSmoothZ << "]\t ";
+    *mSerial << "[ acc "  << mAcc.x << "\t "          << mAcc.y << "\t "            << mAcc.z << "]\t ";
+    *mSerial << "[ real " << mAccReal.x << "\t "      << mAccReal.y << "\t "        << mAccReal.z << "]\t ";
+    *mSerial << endl;
+  #endif
 }
 
 //--------------------------------------
-bool myMPU6050::getMotion(VectorInt16& axis, int& angle, VectorInt16& acc, int& wz)
+void myMPU6050::copyMotion(VectorInt16& axis, int& angle, VectorInt16& acc, int& wz)
 {
-  if (readAccel())
-  {
-    ulong t = micros();
-    ulong dt = t - mT;
-    mT = t;
-
-    uint16_t smooth = - int(pow(1. - ACCEL_AVG, dt * ACCEL_BASE_FREQ * .000001) * 65536.); // 1 - (1-accel_avg) ^ (dt * 60 / 1000 000) using fract16
-    mX =  lerp15by16(mX,  STAYS_SHORT(mAccReal.x),  smooth);
-    mY =  lerp15by16(mY,  STAYS_SHORT(mAccReal.y),  smooth);
-    mZ =  lerp15by16(mZ,  STAYS_SHORT(mAccReal.z),  smooth);
-    mWz = lerp15by16(mWz, STAYS_SHORT(mGy.z * -655),smooth);
-
-    // #define MPU_DBG
-    #ifdef MPU_DBG
-      *mSerial << "[ gyr " << mWz << "\t " << mGy.x << "\t " << mGy.y << "\t " << mGy.z << "]\t ";
-      *mSerial << "[ dt " << dt*.001 << "ms\t smooth" << smooth/65536. << "\t Wz " << mWz  << "]\t ";
-      *mSerial << "[ grav " << mGrav.x << "\t " << mGrav.y << "\t " << mGrav.z << "]\t ";
-      *mSerial << "[ avg " << mX << "\t " << mY << "\t " << mZ << "]\t ";
-      *mSerial << "[ acc " << mAcc.x << "\t " << mAcc.y << "\t " << mAcc.z << "]\t ";
-      *mSerial << "[ real " << mAccReal.x << "\t " << mAccReal.y << "\t " << mAccReal.z << "]\t ";
-      *mSerial << endl; // *mSerial << "                                 \r"; //endl;
-    #endif
-  }
-
-  wz = mWz;  
-  acc.x = mX;  acc.y = mY;  acc.z = mZ; 
   axis.x = mAxis.x; axis.y = mAxis.y; axis.z = mAxis.z;  
   angle = mAngle;
+
+  acc.x = mAccSmoothX;  acc.y = mAccSmoothY;  acc.z = mAccSmoothZ; 
+  wz = mWz;  
+}
+
+bool myMPU6050::getMotion(VectorInt16& axis, int& angle, VectorInt16& acc, int& wz)
+{
+  #ifdef MPU_GETFIFO_CORE
+    if(xEventGroupGetBits(mpuFlagReady) && xSemaphoreTake(mpuMeasureMutex, 0) == pdTRUE) // pool the mpuTask
+    {
+      copyMotion(axis, angle, acc, wz);
+      xSemaphoreGive(mpuMeasureMutex); // release the mutex after measures have been copied
+    }
+  #else
+    if(mpu.dmpGetCurrentFIFOPacket(mFifoBuffer)) 
+      computeMotion();
+
+    copyMotion(axis, angle, acc, wz);
+  #endif
 
   return mDmpReady;
 }

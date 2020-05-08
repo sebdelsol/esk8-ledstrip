@@ -19,24 +19,26 @@
 
 //-----------------------------
 // The core to run mpu.dmpGetCurrentFIFOPacket()
-// #define MPU_GETFIFO_CORE 1 // mpu on a task
-// #define MPU_GETFIFO_PRIO 1
+#define MPU_GETFIFO_CORE 1 // mpu on a task
+#define MPU_GETFIFO_PRIO 1
 
 //-----------------------------
 class myMPU6050 : public OBJVar
 {
   ulong mT = 0;
-  int mX = 0, mY = 0, mZ = 0, mWz = 0;
+  int mAccSmoothX = 0, mAccSmoothY = 0, mAccSmoothZ = 0;
+  int mWz = 0;
 
   Stream* mSerial;
 
-  bool mDmpReady = false;           // set true if DMP init was successful
+  bool mDmpReady = false; // if DMP init was successful
 
-  Quaternion  mQuat;                // [w, x, y, z]         quaternion container
-  VectorInt16 mGy;                  // [x, y, z]            gyro sensor measurements
-  VectorInt16 mAcc;                 // [x, y, z]            accel sensor measurements
-  VectorInt16 mAccReal;             // [x, y, z]            gravity-free accel sensor measurements
-  VectorFloat mGrav;                // [x, y, z]            gravity vector
+  Quaternion  mQuat;      // quaternion from fifoBuffer
+  VectorInt16 mW;         // gyro sensor
+  VectorInt16 mAcc;       // accel sensor
+  VectorInt16 mAccReal;   // gravity-free accel
+  VectorFloat mGrav;      // gravity vector
+  
   VectorInt16 mAxis;
   int         mAngle;
 
@@ -44,17 +46,16 @@ class myMPU6050 : public OBJVar
   int16_t mXAccelOffset,  mYAccelOffset,  mZAccelOffset;
 
   void getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q);
-  bool getFifoBuf();
-  bool readAccel();
   void loadCalibration();
+  void copyMotion(VectorInt16& axis, int& angle, VectorInt16& acc, int& wz);
 
 public:
 
-  uint16_t mPacketSize;
   uint8_t* mFifoBuffer;          // FIFO storage buffer
 
   void init();
   void begin(Stream& serial, bool doCalibrate = false);
   void calibrate();
+  void computeMotion();
   bool getMotion(VectorInt16& axis, int& angle, VectorInt16& acc, int& wz);
 };
