@@ -6,6 +6,40 @@
 MPU6050 mpu;
 
 //--------------------------------------
+#ifdef MPU_GETFIFO_CORE
+  SemaphoreHandle_t mpuBufferMutex;
+  EventGroupHandle_t mpuFlagReady;
+  TaskHandle_t mpuNotifyToCalibrate;
+
+  void MPUGetTask(void* _myMpu)
+  {
+    myMPU6050* myMpu = (myMPU6050* )_myMpu;
+    uint8_t* fifoBuffer = (uint8_t* )malloc(myMpu->mPacketSize * sizeof(uint8_t)); // FIFO storage buffer
+
+    if(fifoBuffer!=NULL)
+    {
+      for (;;) // forever
+      {
+        if(ulTaskNotifyTake(pdTRUE, 0)) // pool the the task notification semaphore
+          myMpu->calibrate();
+
+        if(mpu.dmpGetCurrentFIFOPacket(fifoBuffer))
+        {
+          xSemaphoreTake(mpuBufferMutex, portMAX_DELAY);
+          memcpy(myMpu->mFifoBuffer, fifoBuffer, myMpu->mPacketSize);
+          xSemaphoreGive(mpuBufferMutex);
+
+          xEventGroupSetBits(mpuFlagReady, 1);
+        }
+        vTaskDelay( pdMS_TO_TICKS(9) ); // a packet every 10ms 
+      }
+    }
+    Serial << "!!! task fifobuffer malloc failed" << endl;
+    vTaskDelete(NULL);
+  }
+#endif
+
+//--------------------------------------
 void myMPU6050::init()
 {
   #define REGISTER_MPU(var) REGISTER_VAR_SIMPLE_NOSHOW(myMPU6050, #var, self->var, -32768, 32767)
@@ -13,7 +47,11 @@ void myMPU6050::init()
   REGISTER_MPU(mXGyroOffset);   REGISTER_MPU(mYGyroOffset);  REGISTER_MPU(mZGyroOffset);
   REGISTER_MPU(mXAccelOffset);  REGISTER_MPU(mYAccelOffset); REGISTER_MPU(mZAccelOffset);
 
-  REGISTER_CMD(myMPU6050, "calibrate",  {self->calibrate();} ) 
+  #ifdef MPU_GETFIFO_CORE
+    REGISTER_CMD(myMPU6050, "calibrate",  {xTaskNotifyGive(mpuNotifyToCalibrate);} ) // trigger a calibration
+  #else
+    REGISTER_CMD(myMPU6050, "calibrate",  {self->calibrate();} ) 
+  #endif
 }
 
 void myMPU6050::calibrate()
@@ -34,36 +72,6 @@ void myMPU6050::loadCalibration()
   
   mpu.PrintActiveOffsets();
 }
-
-//--------------------------------------
-#ifdef MPU_GETFIFO_CORE
-  SemaphoreHandle_t mpuBufferMutex;
-  EventGroupHandle_t mpuFlagReady;
-
-  void MPUGetTask(void* _myMpu)
-  {
-    myMPU6050* myMpu = (myMPU6050* )_myMpu;
-    uint8_t* fifoBuffer = (uint8_t* )malloc(myMpu->mPacketSize * sizeof(uint8_t)); // FIFO storage buffer
-
-    if(fifoBuffer!=NULL)
-    {
-      for (;;) // forever
-      {
-        if(mpu.dmpGetCurrentFIFOPacket(fifoBuffer))
-        {
-          xSemaphoreTake(mpuBufferMutex, portMAX_DELAY);
-          memcpy(myMpu->mFifoBuffer, fifoBuffer, myMpu->mPacketSize);
-          xSemaphoreGive(mpuBufferMutex);
-
-          xEventGroupSetBits(mpuFlagReady, 1);
-        }
-        vTaskDelay( pdMS_TO_TICKS(9) ); // a packet every 10ms 
-      }
-    }
-    Serial << "!!! task fifobuffer malloc failed" << endl;
-    vTaskDelete(NULL);
-  }
-#endif
 
 //--------------------------------------
 void myMPU6050::begin(Stream &serial, bool doCalibrate)
@@ -92,7 +100,7 @@ void myMPU6050::begin(Stream &serial, bool doCalibrate)
     #ifdef MPU_GETFIFO_CORE
       mpuBufferMutex = xSemaphoreCreateMutex();
       mpuFlagReady = xEventGroupCreate();
-      xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", 2048, this, MPU_GETFIFO_PRIO, NULL, MPU_GETFIFO_CORE);  
+      xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", 2048, this, MPU_GETFIFO_PRIO, &mpuNotifyToCalibrate, MPU_GETFIFO_CORE);  
       *mSerial << "Mpu runs on task on Core " << MPU_GETFIFO_CORE << " with Prio " << MPU_GETFIFO_PRIO << endl;
     #else 
       *mSerial << "Mpu runs on Main Core" << endl;

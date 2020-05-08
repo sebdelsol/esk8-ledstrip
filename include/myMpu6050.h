@@ -19,8 +19,8 @@
 
 //-----------------------------
 // The core to run mpu.dmpGetCurrentFIFOPacket()
-#define MPU_GETFIFO_CORE 1 // mpu on a task
-#define MPU_GETFIFO_PRIO 1
+// #define MPU_GETFIFO_CORE 1 // mpu on a task
+// #define MPU_GETFIFO_PRIO 1
 
 //-----------------------------
 class myMPU6050 : public OBJVar
@@ -46,9 +46,7 @@ class myMPU6050 : public OBJVar
   void getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q);
   bool getFifoBuf();
   bool readAccel();
-
   void loadCalibration();
-  void calibrate();
 
 public:
 
@@ -57,5 +55,6 @@ public:
 
   void init();
   void begin(Stream& serial, bool doCalibrate = false);
+  void calibrate();
   bool getMotion(VectorInt16& axis, int& angle, VectorInt16& acc, int& wz);
 };
