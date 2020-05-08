@@ -51,6 +51,13 @@ public:
 };
 
 //-------------------------------
+struct parsedCmd {
+  OBJVar* obj;
+  MyVar* var;
+  const char* objName;
+  const char* varName;
+};
+
 class BTcmd
 {
   struct mRegisteredOBJ {
@@ -77,9 +84,13 @@ class BTcmd
   const char* mInitKeyword = BTCMD_INIT;
   
   bool isNumber(const char* txt);
-  void dbgCmd(const char* cmd, const char* objName, const char* varName, int nbArg, int* args);
+  void dbgCmd(const char* cmd, const parsedCmd& parsed, int nbArg, int* args);
 
+  void handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change);
+  void handleGetCmd(const parsedCmd& parsed, Stream* stream, bool compact);
+  void handleInitCmd(const parsedCmd& parsed, Stream* stream);
   void handleCmd(Stream* stream, BUF& buf, bool change = true, bool compact = false);
+
   void readStream(Stream* stream, BUF& buf, bool change = true, bool compact = false);
   void emulateCmdForAllVars(const char* cmdKeyword, Stream *stream, OBJVar::ObjTestVarFunc testVar = NULL, bool change = true, bool compact = false);
 

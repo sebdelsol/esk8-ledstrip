@@ -63,11 +63,70 @@ bool BTcmd::isNumber(const char* txt)
   return true; 
 } 
 
-void BTcmd::dbgCmd(const char* cmd, const char* objName, const char* varName, int nbArg, int* args)
+void BTcmd::dbgCmd(const char* cmd, const parsedCmd& parsed, int nbArg, int* args)
 {
-  *mDbgSerial << cmd << " " << objName << " " << varName;
+  *mDbgSerial << cmd << " " << parsed.objName << " " << parsed.varName;
   for (byte i=0; i < nbArg; i++) *mDbgSerial << " " << args[i];
   *mDbgSerial << endl;
+}
+
+void BTcmd::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
+{
+  int min, max;
+  parsed.obj->getMinMax(parsed.var, &min, &max);
+
+  int args[MAX_ARGS];
+  byte nbArg = 0;
+
+  for (; nbArg < MAX_ARGS; nbArg++) // get the args
+  {
+    const char* a = buf.next();
+    if (a!=NULL && isNumber(a))
+      args[nbArg] = constrain(strtol(a, NULL, 10), min, max);
+    else 
+      break;
+  }
+
+  parsed.obj->set(parsed.var, args, nbArg, change); //set the value from args
+  // dbgCmd(mSetKeyword, parsed , nbArg, args);
+}
+
+void BTcmd::handleGetCmd(const parsedCmd& parsed, Stream* stream, bool compact)
+{
+  int args[MAX_ARGS];
+  byte nbArg = parsed.obj->get(parsed.var, args); //get the value in args
+
+  if (nbArg) 
+  { 
+    if (compact)
+      *stream << parsed.obj->getID(parsed.var);
+    else
+      *stream << mSetKeyword << " " << parsed.objName << " " << parsed.varName;
+
+    for (byte i=0; i < nbArg; i++)
+      *stream << " " << args[i];
+  
+    *stream << endl;
+    // dbgCmd(mGetKeyword, parsed, nbArg, args);
+  }
+}
+
+void BTcmd::handleInitCmd(const parsedCmd& parsed, Stream* stream)
+{
+  *stream << mInitKeyword << " " << parsed.objName << " " << parsed.varName << " " << parsed.obj->getID(parsed.var); 
+
+  int min, max;
+  parsed.obj->getMinMax(parsed.var, &min, &max);
+  *stream << " " << min << " " << max;
+
+  int args[MAX_ARGS];
+  byte nbArg = parsed.obj->get(parsed.var, args); 
+
+  for (byte i=0; i < nbArg; i++)
+    *stream << " " << args[i];
+  
+  *stream << endl;
+  // dbgCmd(mInitKeyword, parsed, nbArg, args);
 }
 
 void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool compact)
@@ -81,77 +140,31 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool compact)
       cmd = buf.first();
     }
 
-    const char* objName = buf.next();
-    if (objName!=NULL)
-    {
-      OBJVar* obj = getObjFromName(objName);
-      if(obj!=NULL)
-      {
-        const char* varName = buf.next();
-        if (varName!=NULL)
-        { 
-          MyVar* var = obj->getVarFromName(varName);
-          if (var)
-          {
-            int min=0, max=0;
-            int args[MAX_ARGS];
-            byte nbArg;
+    parsedCmd parsed;
 
+    parsed.objName = buf.next();
+    if (parsed.objName != NULL)
+    {
+      parsed.obj = getObjFromName(parsed.objName);
+      if(parsed.obj != NULL)
+      {
+        parsed.varName = buf.next();
+        if (parsed.varName != NULL)
+        { 
+          parsed.var = parsed.obj->getVarFromName(parsed.varName);
+          if (parsed.var != NULL)
+          {
             // SET cmd ?
             if (strcmp(cmd, mSetKeyword)==0)
-            {
-              obj->getMinMax(var, &min, &max);
-
-              for (nbArg = 0; nbArg < MAX_ARGS; nbArg++) // get the args
-              {
-                const char* a = buf.next();
-                if (a!=NULL && isNumber(a))
-                  args[nbArg] = constrain(strtol(a, NULL, 10), min, max);
-                else 
-                  break;
-              }
-
-              obj->set(var, args, nbArg, change); //set the value from args
-              // dbgCmd(mSetKeyword, objName, varName, nbArg, args);
-            }
+              handleSetCmd(parsed, buf, change);
             
             // GET cmd ?
             else if (strcmp(cmd, mGetKeyword)==0)
-            {
-              // answer on stream
-              nbArg = obj->get(var, args); //get the value in args
-              if (nbArg) 
-              { 
-                if (compact)
-                  *stream << obj->getID(var);
-                else
-                  *stream << mSetKeyword << " " << objName << " " << varName;
-
-                for (byte i=0; i < nbArg; i++)
-                  *stream << " " << args[i];
-              
-                *stream << endl;
-                // dbgCmd(mGetKeyword, objName, varName, nbArg, args);
-              }
-            }
+              handleGetCmd(parsed, stream, compact);            
             
             // INIT cmd ?
             else if (strcmp(cmd, mInitKeyword)==0)
-            {
-              // answer on stream
-              *stream << mInitKeyword << " " << objName << " " << varName << " " << obj->getID(var); 
-
-              obj->getMinMax(var, &min, &max);
-              *stream << " " << min << " " << max;
-
-              nbArg = obj->get(var, args); 
-              for (byte i=0; i < nbArg; i++)
-                *stream << " " << args[i];
-              
-              *stream << endl;
-              // dbgCmd(mInitKeyword, objName, varName, nbArg, args);
-            }
-
+              handleInitCmd(parsed, stream);            
           }
         }
       }
