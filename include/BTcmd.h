@@ -76,15 +76,14 @@ class BTcmd
   const char* mGetKeyword = BTCMD_GET;
   const char* mInitKeyword = BTCMD_INIT;
   
-  void initSPIFFS();
   bool isNumber(const char* txt);
+  void dbgCmd(const char* cmd, const char* objName, const char* varName, int nbArg, int* args);
 
   void handleCmd(Stream* stream, BUF& buf, bool change = true, bool compact = false);
   void readStream(Stream* stream, BUF& buf, bool change = true, bool compact = false);
   void emulateCmdForAllVars(const char* cmdKeyword, Stream *stream, OBJVar::ObjTestVarFunc testVar = NULL, bool change = true, bool compact = false);
 
   File getFile(bool isdefault, const char* mode);
-  void dbgCmd(const char* cmd, const char* objName, const char* varName, int nbArg, int* args);
 
 public:
 
