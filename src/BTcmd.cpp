@@ -246,6 +246,7 @@ void BTcmd::save(bool isdefault)
   if (f)
   {
     emulateCmdForAllVars(mGetKeyword, (Stream*)&f); //for all vars, emulate a get cmd and send the result to mBTStream
+    
     *mDbgSerial << "saved to " << f.name() << endl;
     f.close();
   }
@@ -261,5 +262,6 @@ void BTcmd::sendUpdateOverBT()
 void BTcmd::sendInitsOverBT()
 {
   emulateCmdForAllVars(mInitKeyword, mBTStream, &OBJVar::isVarShown); //for all vars, emulate a init cmd and send the result to mBTStream
+  
   *mBTStream << "initdone" << endl;
 }
