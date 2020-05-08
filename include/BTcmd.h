@@ -84,7 +84,7 @@ class BTcmd
   const char* mInitKeyword = BTCMD_INIT;
   
   bool isNumber(const char* txt);
-  void dbgCmd(const char* cmd, const parsedCmd& parsed, int nbArg, int* args);
+  void dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args);
 
   void handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change);
   void handleGetCmd(const parsedCmd& parsed, Stream* stream, bool compact);

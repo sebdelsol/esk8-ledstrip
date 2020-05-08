@@ -63,13 +63,14 @@ bool BTcmd::isNumber(const char* txt)
   return true; 
 } 
 
-void BTcmd::dbgCmd(const char* cmd, const parsedCmd& parsed, int nbArg, int* args)
+void BTcmd::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args)
 {
-  *mDbgSerial << cmd << " " << parsed.objName << " " << parsed.varName;
+  *mDbgSerial << cmdKeyword << " " << parsed.objName << " " << parsed.varName;
   for (byte i=0; i < nbArg; i++) *mDbgSerial << " " << args[i];
   *mDbgSerial << endl;
 }
 
+//--------------------------------------
 void BTcmd::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
 {
   int min, max;
@@ -129,6 +130,7 @@ void BTcmd::handleInitCmd(const parsedCmd& parsed, Stream* stream)
   // dbgCmd(mInitKeyword, parsed, nbArg, args);
 }
 
+//--------------------------------------
 void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool compact)
 {
   const char* cmd = buf.first();
@@ -217,12 +219,16 @@ void BTcmd::emulateCmdForAllVars(const char* cmdKeyword, Stream *stream, OBJVar:
 //--------------------------------------
 File BTcmd::getFile(bool isdefault, const char* mode)
 {	
-  if (spiffsOK)
-  {
-    const char* fname = isdefault ? def_fname : cfg_fname;
-    return SPIFFS.open(fname, mode);
-  }
-  return File();
+  const char* fname = isdefault ? def_fname : cfg_fname;
+  File f = spiffsOK ? SPIFFS.open(fname, mode) : File();
+  bool isLoad = strcmp(mode, "r")==0;
+
+  if (f)
+    *mDbgSerial << (isLoad ? "loading from " : "saving to ") << fname << endl;
+  else
+    *mDbgSerial << "FAIL to " << (isLoad ? "load from " : "save to ") << fname << endl;
+  
+  return f;
 }
 
 void BTcmd::load(bool isdefault, bool change)
@@ -233,11 +239,8 @@ void BTcmd::load(bool isdefault, bool change)
     mTmpBuf.clear(); // might not be cleared by readStream
     readStream((Stream* )&f, mTmpBuf, change); // should be a succession of set cmd
 
-    *mDbgSerial << "loaded from " << f.name() << endl;
     f.close();
   }
-  else    
-    *mDbgSerial << "FAIL to load" << endl;
 }
 
 void BTcmd::save(bool isdefault)
@@ -247,11 +250,8 @@ void BTcmd::save(bool isdefault)
   {
     emulateCmdForAllVars(mGetKeyword, (Stream*)&f); //for all vars, emulate a get cmd and send the result to mBTStream
     
-    *mDbgSerial << "saved to " << f.name() << endl;
     f.close();
   }
-  else    
-    *mDbgSerial << "FAIL to save" << endl;
 }
 
 void BTcmd::sendUpdateOverBT()
