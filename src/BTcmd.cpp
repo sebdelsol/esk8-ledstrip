@@ -134,7 +134,7 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool compact)
   const char* cmd = buf.first();
   if (cmd!=NULL)
   {
-    if (strcmp(cmd, "U")==0) // shortcut
+    if (strcmp(cmd, "U")==0) // shortcut for update
     {
       snprintf(buf.getBuf(), buf.getLen(), "%s Cfg getUpdate", mSetKeyword); // emulate a set cmd
       cmd = buf.first();
@@ -156,14 +156,14 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool compact)
           {
             // SET cmd ?
             if (strcmp(cmd, mSetKeyword)==0)
-              handleSetCmd(parsed, buf, change);
+              handleSetCmd(parsed, buf, change); //read in buf and set the parsed var value
             
             // GET cmd ?
             else if (strcmp(cmd, mGetKeyword)==0)
-              handleGetCmd(parsed, stream, compact);            
+              handleGetCmd(parsed, stream, compact); //write in stream the parsed var value           
             
             // INIT cmd ?
-            else if (strcmp(cmd, mInitKeyword)==0)
+            else if (strcmp(cmd, mInitKeyword)==0) //write in stream the parsed var init           
               handleInitCmd(parsed, stream);            
           }
         }
