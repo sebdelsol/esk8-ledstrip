@@ -8,11 +8,7 @@ BTcmd::BTcmd(Stream& btStream) : mBTStream(&btStream)
 void BTcmd::init(Stream& dbgSerial)
 {
   mDbgSerial = &dbgSerial;
-  initSPIFFS();
-}
-
-void BTcmd::initSPIFFS()
-{
+  
   *mDbgSerial << "mount SPIFFS" << endl;
   spiffsOK = SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED);
   if (!spiffsOK)
@@ -228,7 +224,7 @@ void BTcmd::load(bool isdefault, bool change)
     f.close();
   }
   else    
-    *mDbgSerial << "FAIL load" << endl;
+    *mDbgSerial << "FAIL to load" << endl;
 }
 
 void BTcmd::save(bool isdefault)
@@ -241,7 +237,7 @@ void BTcmd::save(bool isdefault)
     f.close();
   }
   else    
-    *mDbgSerial << "FAIL save" << endl;
+    *mDbgSerial << "FAIL to save" << endl;
 }
 
 void BTcmd::sendUpdateOverBT()
