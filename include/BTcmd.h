@@ -70,7 +70,7 @@ class BTcmd
   const char* def_fname = FNAME_DEFAULT;
 
   BUF mBTbuf;
-  BUF mFilebuf;
+  BUF mTmpBuf;
   
   const char* mSetKeyword = BTCMD_SET;
   const char* mGetKeyword = BTCMD_GET;
@@ -78,8 +78,11 @@ class BTcmd
   
   void initSPIFFS();
   bool isNumber(const char* txt);
-  void handleCmd(Stream* stream, BUF& buf, bool change=true, bool useShortCut=false);
-  void readStream(Stream* stream, BUF& buf, bool change=true, bool useShortCut=false);
+
+  void handleCmd(Stream* stream, BUF& buf, bool change = true, bool compact = false);
+  void readStream(Stream* stream, BUF& buf, bool change = true, bool compact = false);
+  void emulateCmdForAllVars(const char* cmdKeyword, Stream *stream, OBJVar::ObjTestVarFunc testVar = NULL, bool change = true, bool compact = false);
+
   File getFile(bool isdefault, const char* mode);
   void dbgCmd(const char* cmd, const char* objName, const char* varName, int nbArg, int* args);
 

@@ -41,6 +41,8 @@ public:
 
   byte getNbVar() { return mNVAR;};
   char* getVarName(byte i) { return mVar[i]->name; };
+
+  typedef bool (OBJVar::*ObjTestVarFunc)(byte i);
   bool isVarShown(byte i) { return mVar[i]->show; };
   bool hasVarChanged(byte i);
 };

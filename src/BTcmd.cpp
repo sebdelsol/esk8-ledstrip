@@ -74,7 +74,7 @@ void BTcmd::dbgCmd(const char* cmd, const char* objName, const char* varName, in
   *mDbgSerial << endl;
 }
 
-void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool useShortCut)
+void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool compact)
 {
   const char* cmd = buf.first();
   if (cmd!=NULL)
@@ -126,7 +126,7 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool useShortCut)
               nbArg = obj->get(var, args); //get the value in args
               if (nbArg) 
               { 
-                if (useShortCut)
+                if (compact)
                   *stream << obj->getID(var);
                 else
                   *stream << mSetKeyword << " " << objName << " " << varName;
@@ -163,7 +163,7 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool useShortCut)
   }
 }
 
-void BTcmd::readStream(Stream* stream, BUF& buf, bool change, bool useShortCut)
+void BTcmd::readStream(Stream* stream, BUF& buf, bool change, bool compact)
 {
   while (stream->available() > 0) 
   {
@@ -172,7 +172,7 @@ void BTcmd::readStream(Stream* stream, BUF& buf, bool change, bool useShortCut)
     {
       if (c == BTCMD_TERM)
       {
-        handleCmd(stream, buf, change, useShortCut);
+        handleCmd(stream, buf, change, compact);
         buf.clear();
       }
       else if (isprint(c))
@@ -182,6 +182,27 @@ void BTcmd::readStream(Stream* stream, BUF& buf, bool change, bool useShortCut)
       }
     }
   }
+}
+
+void BTcmd::emulateCmdForAllVars(const char* cmdKeyword, Stream *stream, OBJVar::ObjTestVarFunc testVar, bool change, bool compact)
+{
+  for (byte i = 0; i < mNOBJ; i++)
+  {
+    char* objName = mOBJ[i].name;
+    OBJVar* obj = mOBJ[i].obj;
+    
+    byte nbVar = obj->getNbVar();
+    for (byte j = 0; j < nbVar; j++)
+    {
+      if(testVar == NULL || (obj->*testVar)(j))
+      {
+        char* varName = obj->getVarName(j);
+
+        snprintf(mTmpBuf.getBuf(), mTmpBuf.getLen(), "%s %s %s", cmdKeyword, objName, varName); // emulate a cmd
+        handleCmd(stream, mTmpBuf, change, compact); // the result of the cmd is sent to the stream
+      }
+    }
+  } 
 }
 
 //--------------------------------------
@@ -195,38 +216,13 @@ File BTcmd::getFile(bool isdefault, const char* mode)
   return File();
 }
 
-void BTcmd::save(bool isdefault)
-{
-  File f = getFile(isdefault, "w");
-  if (f)
-  {
-    for (byte i = 0; i < mNOBJ; i++)
-    {
-      char* objName = mOBJ[i].name;
-      OBJVar* obj = mOBJ[i].obj;
-      byte nbVar = obj->getNbVar();
-      for (byte j = 0; j < nbVar; j++)
-      {
-        char* varName = obj->getVarName(j);
-        snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mGetKeyword, objName, varName); // emulate a get cmd
-        handleCmd((Stream*)&f, mFilebuf); // set cmd stored in the file 
-      }
-    } 
-
-    *mDbgSerial << "saved to " << f.name() << endl;
-    f.close();
-  }
-  else    
-    *mDbgSerial << "FAIL save" << endl;
-}
-
 void BTcmd::load(bool isdefault, bool change)
 {
   File f = getFile(isdefault, "r");
   if (f)
   {
-    mFilebuf.clear(); // might not be cleared by readStream
-    readStream((Stream* )&f, mFilebuf, change); // should be a succession of set cmd
+    mTmpBuf.clear(); // might not be cleared by readStream
+    readStream((Stream* )&f, mTmpBuf, change); // should be a succession of set cmd
 
     *mDbgSerial << "loaded from " << f.name() << endl;
     f.close();
@@ -235,41 +231,26 @@ void BTcmd::load(bool isdefault, bool change)
     *mDbgSerial << "FAIL load" << endl;
 }
 
+void BTcmd::save(bool isdefault)
+{
+  File f = getFile(isdefault, "w");
+  if (f)
+  {
+    emulateCmdForAllVars(mGetKeyword, (Stream*)&f); //for all vars, emulate a get cmd and send the result to mBTStream
+    *mDbgSerial << "saved to " << f.name() << endl;
+    f.close();
+  }
+  else    
+    *mDbgSerial << "FAIL save" << endl;
+}
+
 void BTcmd::sendUpdateOverBT()
 {
-  for (byte i = 0; i < mNOBJ; i++)
-  {
-    char* objName = mOBJ[i].name;
-    OBJVar* obj = mOBJ[i].obj;
-    byte nbVar = obj->getNbVar();
-    for (byte j = 0; j < nbVar; j++)
-    {
-      if (obj->hasVarChanged(j))
-      {
-        char* varName = obj->getVarName(j);
-        snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mGetKeyword, objName, varName); // emulate a Get cmd
-        handleCmd(mBTStream, mFilebuf, true, true); // answer with a Set cmd on BT 
-      }
-    }
-  } 
+  emulateCmdForAllVars(mGetKeyword, mBTStream, &OBJVar::hasVarChanged, true, true); //for all vars, emulate a get cmd and send the result to mBTStream
 }
 
 void BTcmd::sendInitsOverBT()
 {
-  for (byte i = 0; i < mNOBJ; i++)
-  {
-    char* objName = mOBJ[i].name;
-    OBJVar* obj = mOBJ[i].obj;
-    byte nbVar = obj->getNbVar();
-    for (byte j = 0; j < nbVar; j++)
-    {
-      if(obj->isVarShown(j))
-      {
-        char* varName = obj->getVarName(j);
-        snprintf(mFilebuf.getBuf(), mFilebuf.getLen(), "%s %s %s", mInitKeyword, objName, varName); // emulate a Init cmd
-        handleCmd(mBTStream, mFilebuf); // answer with a Init cmd on BT
-      }
-    }
-  } 
+  emulateCmdForAllVars(mInitKeyword, mBTStream, &OBJVar::isVarShown); //for all vars, emulate a init cmd and send the result to mBTStream
   *mBTStream << "initdone" << endl;
 }
