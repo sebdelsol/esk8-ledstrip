@@ -53,4 +53,3 @@
 # Misc
 
 * in **BluetoothSerial.cpp** modify `#define TX_QUEUE_SIZE 128` to avoid bluetooth congestion
-* in **MPU6050_6Axis_MotionApps20.h** comment those typedefs `prog_int8_t`, `prog_int32_t` & `prog_uint32_t`
