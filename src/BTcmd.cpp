@@ -25,6 +25,7 @@ OBJVar* BTcmd::getObjFromName(const char* name)
   return NULL;
 }
 
+//----------------
 bool BTcmd::registerObj(OBJVar& obj, const char* name)
 {
   bool ok = mNOBJ < BTCMD_MAXOBJ;
@@ -92,6 +93,7 @@ void BTcmd::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
   // dbgCmd(mSetKeyword, parsed , nbArg, args);
 }
 
+//----------------
 void BTcmd::handleGetCmd(const parsedCmd& parsed, Stream* stream, bool compact)
 {
   int args[MAX_ARGS];
@@ -112,6 +114,7 @@ void BTcmd::handleGetCmd(const parsedCmd& parsed, Stream* stream, bool compact)
   }
 }
 
+//----------------
 void BTcmd::handleInitCmd(const parsedCmd& parsed, Stream* stream)
 {
   *stream << mInitKeyword << " " << parsed.objName << " " << parsed.varName << " " << parsed.obj->getID(parsed.var); 
@@ -151,6 +154,7 @@ bool BTcmd::getObjVar(parsedCmd& parsed, BUF& buf)
   return false;
 }
 
+//----------------
 void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool compact)
 {
   const char* cmd = buf.first();
@@ -181,6 +185,7 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool compact)
   }
 }
 
+//----------------
 void BTcmd::readStream(Stream* stream, BUF& buf, bool change, bool compact)
 {
   while (stream->available() > 0) 
@@ -202,6 +207,7 @@ void BTcmd::readStream(Stream* stream, BUF& buf, bool change, bool compact)
   }
 }
 
+//----------------
 void BTcmd::emulateCmdForAllVars(const char* cmdKeyword, Stream *stream, OBJVar::ObjTestVarFunc testVar, bool change, bool compact)
 {
   for (byte i = 0; i < mNOBJ; i++)
@@ -238,6 +244,7 @@ File BTcmd::getFile(bool isdefault, const char* mode)
   return f;
 }
 
+//----------------
 void BTcmd::load(bool isdefault, bool change)
 {
   File f = getFile(isdefault, "r");
@@ -249,6 +256,7 @@ void BTcmd::load(bool isdefault, bool change)
   }
 }
 
+//----------------
 void BTcmd::save(bool isdefault)
 {
   File f = getFile(isdefault, "w");
@@ -259,6 +267,7 @@ void BTcmd::save(bool isdefault)
   }
 }
 
+//----------------
 void BTcmd::sendUpdateOverBT()
 {
   emulateCmdForAllVars(mGetKeyword, mBTStream, &OBJVar::hasVarChanged, true, true); //for all vars, emulate a get cmd and send the result to mBTStream
