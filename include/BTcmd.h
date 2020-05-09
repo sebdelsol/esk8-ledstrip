@@ -90,6 +90,7 @@ class BTcmd
   void handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change);
   void handleGetCmd(const parsedCmd& parsed, Stream* stream, bool compact);
   void handleInitCmd(const parsedCmd& parsed, Stream* stream);
+  bool getObjVar(parsedCmd& parsed, BUF& buf);
   void handleCmd(Stream* stream, BUF& buf, bool change = true, bool compact = false);
 
   void readStream(Stream* stream, BUF& buf, bool change = true, bool compact = false);

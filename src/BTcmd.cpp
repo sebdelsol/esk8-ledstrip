@@ -131,6 +131,26 @@ void BTcmd::handleInitCmd(const parsedCmd& parsed, Stream* stream)
 }
 
 //--------------------------------------
+bool BTcmd::getObjVar(parsedCmd& parsed, BUF& buf)
+{
+  parsed.objName = buf.next();
+  if (parsed.objName != NULL)
+  {
+    parsed.obj = getObjFromName(parsed.objName);
+    if(parsed.obj != NULL)
+    {
+      parsed.varName = buf.next();
+      if (parsed.varName != NULL)
+      { 
+        parsed.var = parsed.obj->getVarFromName(parsed.varName);
+        if (parsed.var != NULL)
+          return true;
+      }
+    }
+  }
+  return false;
+}
+
 void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool compact)
 {
   const char* cmd = buf.first();
@@ -143,33 +163,20 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool compact)
     }
 
     parsedCmd parsed;
-
-    parsed.objName = buf.next();
-    if (parsed.objName != NULL)
+    
+    if (getObjVar(parsed, buf))
     {
-      parsed.obj = getObjFromName(parsed.objName);
-      if(parsed.obj != NULL)
-      {
-        parsed.varName = buf.next();
-        if (parsed.varName != NULL)
-        { 
-          parsed.var = parsed.obj->getVarFromName(parsed.varName);
-          if (parsed.var != NULL)
-          {
-            // SET cmd ?
-            if (strcmp(cmd, mSetKeyword)==0)
-              handleSetCmd(parsed, buf, change); //read in buf and set the parsed var value
-            
-            // GET cmd ?
-            else if (strcmp(cmd, mGetKeyword)==0)
-              handleGetCmd(parsed, stream, compact); //write to stream the parsed var value           
-            
-            // INIT cmd ?
-            else if (strcmp(cmd, mInitKeyword)==0) //write to stream the parsed var init           
-              handleInitCmd(parsed, stream);            
-          }
-        }
-      }
+      // SET cmd ?
+      if (strcmp(cmd, mSetKeyword)==0)
+        handleSetCmd(parsed, buf, change); //read in buf and set the parsed var value
+      
+      // GET cmd ?
+      else if (strcmp(cmd, mGetKeyword)==0)
+        handleGetCmd(parsed, stream, compact); //write to stream the parsed var value           
+      
+      // INIT cmd ?
+      else if (strcmp(cmd, mInitKeyword)==0) //write to stream the parsed var init           
+        handleInitCmd(parsed, stream);            
     }
   }
 }
