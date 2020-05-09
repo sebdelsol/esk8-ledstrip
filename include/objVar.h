@@ -9,7 +9,8 @@
 typedef void (*setVarFunc)(void* obj, int* toSet, byte n);
 typedef byte (*getVarFunc)(void* obj, int* toGet);
 
-struct MyVar {
+struct MyVar 
+{
   char*       name;
   void*       obj;
   setVarFunc  set;

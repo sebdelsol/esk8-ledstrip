@@ -51,7 +51,8 @@ public:
 };
 
 //-------------------------------
-struct parsedCmd {
+struct parsedCmd 
+{
   OBJVar* obj;
   MyVar* var;
   const char* objName;
