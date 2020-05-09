@@ -19,17 +19,17 @@
 
 //-----------------------------
 // The core to run mpu.dmpGetCurrentFIFOPacket()
-#define MPU_GETFIFO_CORE 1 // mpu on a task
-#define MPU_GETFIFO_PRIO 1
+// #define MPU_GETFIFO_CORE 1 // mpu on a task
+// #define MPU_GETFIFO_PRIO 1
 
 struct SensorOutput 
 {
-  int accX = 0; 
-  int accY = 0; 
-  int accZ = 0;
-  int wZ = 0;
+  int         accX = 0; 
+  int         accY = 0; 
+  int         accZ = 0;
+  int         wZ = 0;
   VectorInt16 axis;
-  int angle = 0;
+  int         angle = 0;
 };
 
 //-----------------------------

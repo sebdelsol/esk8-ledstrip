@@ -92,10 +92,13 @@ bool BlueTooth::update()
   return false;
 }
 
-bool BlueTooth::sendUpdate()
+void BlueTooth::sendUpdate(SensorOutput &Motion, bool GotMotion)
 {
-  bool ok = mON && Connected;
-  if (ok)
+  if (mON && Connected)
+  {
     mBTcmd->sendUpdateOverBT();
-  return ok;
+
+    if(GotMotion)
+      *getBtSerial() << "A " << Motion.axis.x << " " << Motion.axis.y << " " << Motion.axis.z << " " << Motion.angle << " " << Motion.accY << " " << Motion.wZ << endl;
+  }
 }

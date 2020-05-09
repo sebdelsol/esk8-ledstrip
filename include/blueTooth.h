@@ -2,6 +2,7 @@
 
 #include <Streaming.h>
 #include <BluetoothSerial.h>
+#include <myMpu6050.h>
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // in BluetoothSerial.cpp
@@ -26,7 +27,7 @@ class BlueTooth
 public:
   BluetoothSerial* getBtSerial() { return mBTserial; };
   bool update();
-  bool sendUpdate();
+  void sendUpdate(SensorOutput &Motion, bool GotMotion);
   bool registerObj(OBJVar& obj, char* name) { return mBTcmd->registerObj(obj, name); };
   void save(bool isdefault) { mBTcmd->save(isdefault); };
   void load(bool isdefault, bool change = true) { mBTcmd->load(isdefault, change); };

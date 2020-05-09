@@ -80,15 +80,6 @@ SensorOutput  Motion;
 bool          GotMotion = false;
 
 // ----------------------------------------------------
-#ifdef USE_BT
-  void sendUpdate() //answer phone app see Cfg getUpdate cmd
-  {
-    if(BT.sendUpdate() && GotMotion)
-      *BT.getBtSerial() << "A " << Motion.axis.x << " " << Motion.axis.y << " " << Motion.axis.z << " " << Motion.angle << " " << Motion.accY << " " << Motion.wZ << endl;
-  }
-#endif
-
-// ----------------------------------------------------
 class CFG : public OBJVar
 {
 public:
@@ -137,7 +128,7 @@ public:
       REGISTER_CMD(CFG,        "load",      {BT.load(false);} )       // load not default
       REGISTER_CMD(CFG,        "default",   {BT.load(true);}  )       // load default
       REGISTER_CMD_NOSHOW(CFG, "getInits",  {BT.sendInitsOverBT();} ) // answer with all vars init (min, max, value)
-      REGISTER_CMD_NOSHOW(CFG, "getUpdate", {sendUpdate();} )         // answer with all updates
+      REGISTER_CMD_NOSHOW(CFG, "getUpdate", {BT.sendUpdate(Motion, GotMotion);} )         // answer with all updates
     #endif
 
     REGISTER_CFG(ledR,       0, 1);
