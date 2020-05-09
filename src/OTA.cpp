@@ -1,11 +1,5 @@
 #include <OTA.h>
 
-#include <ESPmDNS.h>
-#include <WiFiUdp.h>
-#include <ArduinoOTA.h>  
-#include <wificonfig.h>
-#include <Streaming.h>
-
 void OTA::begin()
 {
   if(WiFi.status() == WL_CONNECTED)
