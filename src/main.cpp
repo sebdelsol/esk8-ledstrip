@@ -5,7 +5,7 @@
 
 // #define DEBUG_LED_INFO
 // #define DEBUG_LED_TOWIFI
-#define DEBUG_ACC
+// #define DEBUG_ACC
 
 // ----------------------------------------------------
 #include <ledstrip.h>
