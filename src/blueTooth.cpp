@@ -1,6 +1,5 @@
 
 #include <bluetooth.h>
-#include <stdarg.h>
 #include <rom/rtc.h>
 
 BluetoothSerial BTSerial;

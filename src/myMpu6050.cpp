@@ -1,5 +1,4 @@
 #include <myMpu6050.h>
-#include <I2Cdev.h>
 
 #define __PGMSPACE_H_ 1 // pgmsplace.h define PGMSPACE_INCLUDE instead of __PGMSPACE_H
 #include <MPU6050_6Axis_MotionApps20.h>
