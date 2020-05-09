@@ -408,10 +408,8 @@ void loop()
     EVERY_N_MILLISECONDS(BT_TICK)
     {
       if (Button.pressed())
-      {
-        Serial << "button pressed" << endl;
         BT.toggle();
-      }
+
       BT.update();
     }
     RASTER("BT");
