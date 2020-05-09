@@ -1,11 +1,11 @@
 #define USE_BT
 #define USE_OTA 
-// #define USE_TELNET 
+#define USE_TELNET 
 // #define USE_RASTER
 
 // #define DEBUG_LED_INFO
 // #define DEBUG_LED_TOWIFI
-// #define DEBUG_ACC
+#define DEBUG_ACC
 
 // ----------------------------------------------------
 #include <ledstrip.h>
@@ -75,16 +75,15 @@ RunningFX   RunF(CRGB::Gold);
 
 // ----------------------------------------------------
 myMPU6050     Accel;
-bool          GotAccel = false;
-VectorInt16   AXIS, VACC;
-int           ANGLE, WZ;
+bool          GotMotion = false;
+SensorOutput  Motion;
 
 // ----------------------------------------------------
 #ifdef USE_BT
   void sendUpdate() //answer phone app see Cfg getUpdate cmd
   {
-    if(BT.sendUpdate() && GotAccel)
-      *BT.getBtSerial() << "A " << AXIS.x << " " << AXIS.y << " " << AXIS.z << " " << ANGLE << " " << VACC.y << " " << WZ << endl;
+    if(BT.sendUpdate() && GotMotion)
+      *BT.getBtSerial() << "A " << Motion.axis.x << " " << Motion.axis.y << " " << Motion.axis.z << " " << Motion.angle << " " << Motion.accY << " " << Motion.wZ << endl;
   }
 #endif
 
@@ -166,9 +165,8 @@ public:
     REGISTER_CFG(maxDim,     1, 10);
     REGISTER_CFG(minTwkR,    0, 255);
   };
-};
 
-CFG Cfg;
+} Cfg;
 
 // ----------------------------------------------------
 void setup()
@@ -296,7 +294,7 @@ void loop()
   EVERY_N_MILLISECONDS(ACCEL_TICK)
   {
     // pool motion
-    GotAccel = Accel.getMotion(AXIS, ANGLE, VACC, WZ);
+    GotMotion = Accel.getMotion(Motion);
     RASTER("accel");
   }
 
@@ -314,20 +312,20 @@ void loop()
     RASTER("probe");
 
     // handle motion
-    if (GotAccel)
+    if (GotMotion)
     {
       #define MulAlpha(a, b) (((a) * ((b) + 1)) >> 8)
 
-      int runSpeed =  ((WZ>0) - (WZ<0)) * Cfg.runSpeed;
+      int runSpeed =  ((Motion.wZ > 0) - (Motion.wZ < 0)) * Cfg.runSpeed;
 
       //------
-      int _WZ = abs(WZ);
+      int _WZ = abs(Motion.wZ);
       byte alpha = _WZ > Cfg.neutralWZ ? min((_WZ - Cfg.neutralWZ) * 255 / Cfg.maxWZ, 255) : 0;
       byte invAlpha = 255 - alpha;
 
       //----------------------
       #define MAXACC 256
-      int acc = constrain(VACC.y / Cfg.divAcc, -MAXACC, MAXACC) << 8;
+      int acc = constrain(Motion.accY / Cfg.divAcc, -MAXACC, MAXACC) << 8;
 
       //------
       static int FWD = 0;
@@ -380,7 +378,7 @@ void loop()
       }
 
       #ifdef DEBUG_ACC
-        Serial << "[areal  " << VACC.x << "\t"      << VACC.y   << "\t"        << VACC.z << "]\t";
+        Serial << "[areal  " << Motion.accX << "\t"      << Motion.accY   << "\t"        << Motion.accZ << "]\t";
         Serial << "[fwd "    << fwd    << "\trwd "  << rwd      << "\tACC "    << acc << "]\t";
         Serial << "[alpha "  << alpha  << "\tinv "  << invAlpha << "]\t";
         Serial << "[eyeR "   << eyeR   << "\teyeF " << eyeF     << "\talphaR " << alphaR << "\talphaF " << alphaF << "]" << endl;

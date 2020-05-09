@@ -22,13 +22,19 @@
 #define MPU_GETFIFO_CORE 1 // mpu on a task
 #define MPU_GETFIFO_PRIO 1
 
+struct SensorOutput 
+{
+  int accX = 0; 
+  int accY = 0; 
+  int accZ = 0;
+  int wZ = 0;
+  VectorInt16 axis;
+  int angle = 0;
+};
+
 //-----------------------------
 class myMPU6050 : public OBJVar
 {
-  ulong mT = 0;
-  int mAccSmoothX = 0, mAccSmoothY = 0, mAccSmoothZ = 0;
-  int mWz = 0;
-
   Stream* mSerial;
 
   bool mDmpReady = false; // if DMP init was successful
@@ -38,24 +44,23 @@ class myMPU6050 : public OBJVar
   VectorInt16 mAcc;       // accel sensor
   VectorInt16 mAccReal;   // gravity-free accel
   VectorFloat mGrav;      // gravity vector
-  
-  VectorInt16 mAxis;
-  int         mAngle;
 
   int16_t mXGyroOffset,   mYGyroOffset,   mZGyroOffset;
   int16_t mXAccelOffset,  mYAccelOffset,  mZAccelOffset;
 
+  ulong mT = 0;
+
   void getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q);
   void loadCalibration();
-  void copyMotion(VectorInt16& axis, int& angle, VectorInt16& acc, int& wz);
 
 public:
 
-  uint8_t* mFifoBuffer;          // FIFO storage buffer
+  uint8_t*      mFifoBuffer; // FIFO storage buffer
+  SensorOutput  mMotion;     // computed motion outpout
 
   void init();
   void begin(Stream& serial, bool doCalibrate = false);
   void calibrate();
   void computeMotion();
-  bool getMotion(VectorInt16& axis, int& angle, VectorInt16& acc, int& wz);
+  bool getMotion(SensorOutput& m);
 };
