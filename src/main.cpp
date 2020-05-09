@@ -1,10 +1,10 @@
 #define USE_BT
 #define USE_OTA 
-#define USE_TELNET 
-// #define USE_RASTER
+// #define USE_TELNET 
 
-// #define DEBUG_LED_INFO
+// #define DEBUG_RASTER
 // #define DEBUG_LED_TOWIFI
+// #define DEBUG_LED_INFO
 // #define DEBUG_ACC
 
 // ----------------------------------------------------
@@ -75,8 +75,8 @@ RunningFX   RunF(CRGB::Gold);
 
 // ----------------------------------------------------
 myMPU6050     Accel;
-bool          GotMotion = false;
 SensorOutput  Motion;
+bool          GotMotion = false;
 
 // ----------------------------------------------------
 #ifdef USE_BT
@@ -250,7 +250,7 @@ void setup()
 }
 
 // ----------------------------------------------------
-#ifdef USE_RASTER
+#ifdef DEBUG_RASTER
   #define RASTER_BEGIN(nb) \
     struct Raster \
     { \
