@@ -166,31 +166,28 @@ void myMPU6050::computeMotion()
 }
 
 //--------------------------------------
+bool myMPU6050::getMotion(SensorOutput& m)
+{
 #ifdef MPU_GETFIFO_CORE
-  bool myMPU6050::getMotion(SensorOutput& m)
+  if (mDmpReady && xEventGroupGetBits(mpuFlagReady))
   {
-    if (mDmpReady && xEventGroupGetBits(mpuFlagReady))
+    if(xSemaphoreTake(mpuMeasureMutex, 0) == pdTRUE) // pool the mpuTask
     {
-      if(xSemaphoreTake(mpuMeasureMutex, 0) == pdTRUE) // pool the mpuTask
-      {
-        memcpy(&m, &sharedMotion, sizeof(SensorOutput)); 
-        xSemaphoreGive(mpuMeasureMutex); // release the mutex after measures have been copied
-        return true;
-      }
+      memcpy(&m, &sharedMotion, sizeof(SensorOutput)); 
+      xSemaphoreGive(mpuMeasureMutex); // release the mutex after measures have been copied
+      return true;
     }
-    return false;
   }
+  return false;
 
 #else
-  bool myMPU6050::getMotion(SensorOutput& m)
+  if (mDmpReady)
   {
-    if (mDmpReady)
-    {
-      if(mpu.dmpGetCurrentFIFOPacket(mFifoBuffer)) 
-        computeMotion();
-      
-      memcpy(&m, &mMotion, sizeof(SensorOutput));
-    }
-    return mDmpReady;
+    if(mpu.dmpGetCurrentFIFOPacket(mFifoBuffer)) 
+      computeMotion();
+    
+    memcpy(&m, &mMotion, sizeof(SensorOutput));
   }
+  return mDmpReady;
 #endif
+}
