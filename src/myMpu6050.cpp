@@ -8,7 +8,7 @@ MPU6050 mpu;
 
 //--------------------------------------
 #ifdef MPU_GETFIFO_CORE
-  SemaphoreHandle_t   mpuMeasureMutex;
+  SemaphoreHandle_t   mpuOutputMutex;
   EventGroupHandle_t  mpuFlagReady;
   TaskHandle_t        mpuNotifyToCalibrate;
   SensorOutput        sharedOutput; // shared with updateMotion so that the mutex is barely taken by MPUGetTask
@@ -27,9 +27,9 @@ MPU6050 mpu;
       {
         myMpu->computeMotion(computeOutput);
 
-        xSemaphoreTake(mpuMeasureMutex, portMAX_DELAY);
+        xSemaphoreTake(mpuOutputMutex, portMAX_DELAY);
         memcpy(&sharedOutput, &computeOutput, sizeof(SensorOutput)); 
-        xSemaphoreGive(mpuMeasureMutex);
+        xSemaphoreGive(mpuOutputMutex);
 
         xEventGroupSetBits(mpuFlagReady, 1);
       }
@@ -96,7 +96,7 @@ void myMPU6050::begin(Stream &serial, bool doCalibrate)
     assert (mFifoBuffer!=NULL);
 
     #ifdef MPU_GETFIFO_CORE
-      mpuMeasureMutex = xSemaphoreCreateMutex();
+      mpuOutputMutex = xSemaphoreCreateMutex();
       mpuFlagReady = xEventGroupCreate();
       xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", 2048, this, MPU_GETFIFO_PRIO, &mpuNotifyToCalibrate, MPU_GETFIFO_CORE);  
       *mSerial << "Mpu runs on task on Core " << MPU_GETFIFO_CORE << " with Prio " << MPU_GETFIFO_PRIO << endl;
@@ -172,10 +172,10 @@ void myMPU6050::updateMotion()
 {
 #ifdef MPU_GETFIFO_CORE
   
-  if (mDmpReady && xEventGroupGetBits(mpuFlagReady) && xSemaphoreTake(mpuMeasureMutex, 0) == pdTRUE) // pool the mpuTask
+  if (mDmpReady && xEventGroupGetBits(mpuFlagReady) && xSemaphoreTake(mpuOutputMutex, 0) == pdTRUE) // pool the mpuTask
   {
     memcpy(&mOutput, &sharedOutput, sizeof(SensorOutput)); 
-    xSemaphoreGive(mpuMeasureMutex); // release the mutex after measures have been copied
+    xSemaphoreGive(mpuOutputMutex); // release the mutex after measures have been copied
     updated = true;
   }
   else
