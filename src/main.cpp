@@ -8,26 +8,30 @@
 // #define DEBUG_ACC
 
 // ----------------------------------------------------
-#include <raster.h>
-#include <ledstrip.h>
-#include <myMpu6050.h>
-#include <myWifi.h>
 #include <Streaming.h>
 #include <soc/rtc.h> // cpu freq
 
+#include <myPins.h>
+#include <ledstrip.h>
+#include <myMpu6050.h>
+#include <myWifi.h>
+#include <Cfg.h>
+#include <raster.h>
+
 // ----------------------------------------------------
+myMPU6050 Motion;
+myWifi    MyWifi;
+
 #ifdef USE_BT
   #include  <bluetooth.h>
   #include  <Button.h>
 
-  BlueTooth BT;
   Button    Button(BUTTON_PIN);
+  BlueTooth BT(Motion);
+  CFG       Cfg(BT);
+#else
+  CFG       Cfg;
 #endif
-
-myMPU6050 Motion;
-myWifi    MyWifi;
-
-#include  <Cfg.h>
 
 // ----------------------------------------------------
 #ifdef USE_OTA
@@ -119,9 +123,7 @@ void setup()
     BT.start();
 
     Button.begin();
-
   #else   
-
     pinMode(LIGHT_PIN, OUTPUT); //blue led
     digitalWrite(LIGHT_PIN, LOW); // switch off blue led
     btStop(); // turnoff bt 

@@ -22,7 +22,7 @@ void BTcallback(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
 }
 
 // inits
-BlueTooth::BlueTooth()
+BlueTooth::BlueTooth(myMPU6050& motion) : mMotion(motion)
 {
   mBTserial = &BTSerial;
   mBTcmd = &BTcmd;
@@ -92,15 +92,15 @@ bool BlueTooth::update()
   return false;
 }
 
-void BlueTooth::sendUpdate(myMPU6050 &Motion)
+void BlueTooth::sendUpdate()
 {
   if (mON && Connected)
   {
     mBTcmd->sendUpdateOverBT();
 
-    if(Motion.updated)
+    if(mMotion.updated)
     {
-      SensorOutput& m = Motion.mOutput;
+      SensorOutput& m = mMotion.mOutput;
       *mBTserial << "A " << m.axis.x << " " << m.axis.y << " " << m.axis.z << " " << m.angle << " " << m.accY << " " << m.wZ << endl;
     }
   }

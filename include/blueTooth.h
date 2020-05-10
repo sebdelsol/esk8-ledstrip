@@ -24,15 +24,17 @@ class BlueTooth
   BluetoothSerial* mBTserial;
   Stream* mDbgSerial;
 
+  myMPU6050& mMotion; // for sendUpdate
+
 public:
   bool update();
-  void sendUpdate(myMPU6050 &Motion);
   bool registerObj(OBJVar& obj, char* name) { return mBTcmd->registerObj(obj, name); };
   void save(bool isdefault) { mBTcmd->save(isdefault); };
   void load(bool isdefault, bool change = true) { mBTcmd->load(isdefault, change); };
   void sendInitsOverBT() { mBTcmd->sendInitsOverBT(); };
+  void sendUpdate();
 
-  BlueTooth();
+  BlueTooth(myMPU6050& motion);
   void init(Stream& serial);
   void start(const bool on=true);
   void toggle();

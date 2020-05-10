@@ -1,5 +1,10 @@
 #pragma once
 
+#ifdef USE_BT
+  #include  <bluetooth.h>
+#endif
+
+// ----------------------------------------------------
 #define   SERIAL_BAUD   115200  // ms
 #define   LED_MAX_MA    800     // mA, please check Cfg.bright to avoid reaching this value
 
@@ -49,16 +54,21 @@ public:
   //twinkleR
   int minTwkR     = 128;
 
+  #ifdef USE_BT
+    BlueTooth &BT;
+    CFG(BlueTooth& BT) : BT(BT) {};
+  #endif
+
   void init()
   {
     #define REGISTER_CFG(var, min, max) REGISTER_VAR_SIMPLE(CFG, #var, self->var, min, max)
 
     #ifdef USE_BT
-      REGISTER_CMD(CFG,        "save",      {BT.save(false);} )       // save not default
-      REGISTER_CMD(CFG,        "load",      {BT.load(false);} )       // load not default
-      REGISTER_CMD(CFG,        "default",   {BT.load(true);}  )       // load default
-      REGISTER_CMD_NOSHOW(CFG, "getInits",  {BT.sendInitsOverBT();} ) // answer with all vars init (min, max, value)
-      REGISTER_CMD_NOSHOW(CFG, "getUpdate", {BT.sendUpdate(Motion);} )         // answer with all updates
+      REGISTER_CMD(CFG,        "save",      {self->BT.save(false);} )       // save not default
+      REGISTER_CMD(CFG,        "load",      {self->BT.load(false);} )       // load not default
+      REGISTER_CMD(CFG,        "default",   {self->BT.load(true);}  )       // load default
+      REGISTER_CMD_NOSHOW(CFG, "getInits",  {self->BT.sendInitsOverBT();} ) // answer with all vars init (min, max, value)
+      REGISTER_CMD_NOSHOW(CFG, "getUpdate", {self->BT.sendUpdate();} )      // answer with all updates
     #endif
 
     REGISTER_CFG(ledR,       0, 1);
@@ -88,4 +98,4 @@ public:
     REGISTER_CFG(minTwkR,    0, 255);
   };
 
-} Cfg;
+};
