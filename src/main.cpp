@@ -42,9 +42,8 @@ myWifi      MyWifi;
 #define   SERIAL_BAUD   115200  // ms
 #define   LED_MAX_MA    800     // mA, please check Cfg.bright to avoid reaching this value
 
-#define   LED_TICK      10      // ms
+#define   LED_TICK      10      // ms, it's used too  for mpu6050 which is refreshed every 10ms
 #define   BT_TICK       30      // ms
-#define   MOTION_TICK   10      // mpu6050 is refreshed every 10ms
 
 #define   NBLEDS_MIDDLE 30
 #define   NBLEDS_TIPS   36
@@ -130,7 +129,8 @@ void setup()
 
     Button.begin();
 
-  #else    
+  #else   
+
     pinMode(LIGHT_PIN, OUTPUT); //blue led
     digitalWrite(LIGHT_PIN, LOW); // switch off blue led
     btStop(); // turnoff bt 
@@ -165,14 +165,12 @@ void loop()
 {
   RASTER_BEGIN(20);
 
-  EVERY_N_MILLISECONDS(MOTION_TICK)
-  {
-    Motion.updateMotion();
-    RASTER("Motion");
-  }
-
   EVERY_N_MILLISECONDS(LED_TICK)
   {
+    // Update mpu 6050
+    Motion.updateMotion(); 
+    RASTER("Motion");
+
     // Master brightness
     if(Cfg.probe)
     {
@@ -260,9 +258,11 @@ void loop()
     }
     RASTER("led setup");
 
+    // Leds actual drawing
     AllLeds.update();
     RASTER("Led update");
 
+    // wifi Update
     #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET)
       if(MyWifi.update())
       {
