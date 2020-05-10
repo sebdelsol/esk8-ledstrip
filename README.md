@@ -49,7 +49,3 @@
 <sub>1m of **[IP67](https://en.wikipedia.org/wiki/IP_Code)** Neopixel **[WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)** w/ 60 leds/m </sub>| <sub>5€</sub> | [ⓘ](https://www.aliexpress.com/wholesale?catId=0&SearchText=ws2812b+ip67)
 <sub>0.5m of **[IP67](https://en.wikipedia.org/wiki/IP_Code)** Neopixel **[WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)** w/ 144 leds/m </sub>| <sub>7€</sub> | [ⓘ](https://www.aliexpress.com/wholesale?catId=0&SearchText=ws2812b+ip67)
 <sub>3x 470Ω resistors, 1000μF capacitor, 10kΩ resistor, LDR, 220Ω resistor, blue LED, 12x12 switch </sub> | <sub>50c</sub> | .
-
-# Misc
-
-* in **BluetoothSerial.cpp** modify `#define TX_QUEUE_SIZE 128` to avoid bluetooth congestion
