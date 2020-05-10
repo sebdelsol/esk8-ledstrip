@@ -16,17 +16,20 @@
 #include <soc/rtc.h> // cpu freq
 
 // ----------------------------------------------------
-myMPU6050   Motion;
-myWifi      MyWifi;
-
 #ifdef USE_BT
-  #include <bluetooth.h>
-  #include <Button.h>
+  #include  <bluetooth.h>
+  #include  <Button.h>
 
   BlueTooth BT;
   Button    Button(BUTTON_PIN);
 #endif
 
+myMPU6050 Motion;
+myWifi    MyWifi;
+
+#include  <Cfg.h>
+
+// ----------------------------------------------------
 #ifdef USE_OTA
   #include <OTA.h>
   OTA Ota;
@@ -39,15 +42,6 @@ myWifi      MyWifi;
 #endif
 
 // ----------------------------------------------------
-#define   SERIAL_BAUD   115200  // ms
-#define   LED_MAX_MA    800     // mA, please check Cfg.bright to avoid reaching this value
-
-#define   LED_TICK      10      // ms, it's used too  for mpu6050 which is refreshed every 10ms
-#define   BT_TICK       30      // ms
-
-#define   NBLEDS_MIDDLE 30
-#define   NBLEDS_TIPS   36
-
 #define   AQUA          CRGB(0x00FFFF)
 #define   AQUA_MENTHE   CRGB(0x7FFFD4)
 #define   LUSH_LAVA     CRGB(0xFF4500)
@@ -74,9 +68,6 @@ DblCylonFX  CylonF(AQUA);
 PacificaFX  Pacifica;
 TwinkleFX   TwinkleF(HUE_AQUA_BLUE); 
 RunningFX   RunF(CRGB::Gold);
-
-// ----------------------------------------------------
-#include <Cfg.h>
 
 // ----------------------------------------------------
 void setup()
@@ -290,7 +281,7 @@ void loop()
   #endif
 
   #ifdef DEBUG_LED_INFO
-    EVERY_N_MILLISECONDS(1000)
+    EVERY_N_SECONDS(1)
       AllLeds.getInfo();
   #endif
 

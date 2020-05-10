@@ -1,5 +1,15 @@
 #pragma once
 
+#define   SERIAL_BAUD   115200  // ms
+#define   LED_MAX_MA    800     // mA, please check Cfg.bright to avoid reaching this value
+
+#define   LED_TICK      10      // ms, it's used too  for mpu6050 which is refreshed every 10ms
+#define   BT_TICK       30      // ms
+
+#define   NBLEDS_MIDDLE 30
+#define   NBLEDS_TIPS   36
+
+// ----------------------------------------------------
 class CFG : public OBJVar
 {
 public:
