@@ -44,7 +44,7 @@ myWifi      MyWifi;
 
 #define   LED_TICK      10      // ms
 #define   BT_TICK       30      // ms
-#define   MOTION_TICK    10      // mpu6050 is refreshed every 10ms
+#define   MOTION_TICK   10      // mpu6050 is refreshed every 10ms
 
 #define   NBLEDS_MIDDLE 30
 #define   NBLEDS_TIPS   36
