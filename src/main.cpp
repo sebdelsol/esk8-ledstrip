@@ -16,8 +16,8 @@
 #include <soc/rtc.h> // cpu freq
 
 // ----------------------------------------------------
-myMPU6050     Motion;
-myWifi    MyWifi;
+myMPU6050   Motion;
+myWifi      MyWifi;
 
 #ifdef USE_BT
   #include <bluetooth.h>
