@@ -101,7 +101,7 @@ void BlueTooth::sendUpdate(myMPU6050 &Motion)
     if(Motion.updated)
     {
       SensorOutput& m = Motion.mOutput;
-      *getBtSerial() << "A " << m.axis.x << " " << m.axis.y << " " << m.axis.z << " " << m.angle << " " << m.accY << " " << m.wZ << endl;
+      *mBTserial << "A " << m.axis.x << " " << m.axis.y << " " << m.axis.z << " " << m.angle << " " << m.accY << " " << m.wZ << endl;
     }
   }
 }

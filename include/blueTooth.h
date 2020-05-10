@@ -25,7 +25,6 @@ class BlueTooth
   Stream* mDbgSerial;
 
 public:
-  BluetoothSerial* getBtSerial() { return mBTserial; };
   bool update();
   void sendUpdate(myMPU6050 &Motion);
   bool registerObj(OBJVar& obj, char* name) { return mBTcmd->registerObj(obj, name); };
