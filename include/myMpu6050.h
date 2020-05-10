@@ -19,8 +19,8 @@
 
 //-----------------------------
 // The core to run mpu.dmpGetCurrentFIFOPacket()
-// #define MPU_GETFIFO_CORE 1 // mpu on a task
-// #define MPU_GETFIFO_PRIO 1
+#define MPU_GETFIFO_CORE 0 // mpu on a task
+#define MPU_GETFIFO_PRIO 1
 
 struct SensorOutput 
 {
@@ -62,6 +62,6 @@ public:
   void init();
   void begin(Stream& serial, bool doCalibrate = false);
   void calibrate();
-  void computeMotion(SensorOutput& m);
+  void computeMotion(SensorOutput& output);
   void updateMotion();
 };

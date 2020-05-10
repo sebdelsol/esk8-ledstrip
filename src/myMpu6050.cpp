@@ -131,7 +131,7 @@ void myMPU6050::getAxiSAngle(VectorInt16& v, int& angle, Quaternion& q)
 }
 
 //--------------------------------------
-void myMPU6050::computeMotion(SensorOutput& m)
+void myMPU6050::computeMotion(SensorOutput& output)
 {
   ulong t = micros();
   ulong dt = t - mT;
@@ -142,7 +142,7 @@ void myMPU6050::computeMotion(SensorOutput& m)
 
   // axis angle
   mpu.dmpGetGravity(&mGrav, &mQuat);
-  getAxiSAngle(m.axis, m.angle, mQuat);
+  getAxiSAngle(output.axis, output.angle, mQuat);
 
   // real acceleration, adjusted to remove gravity
   mpu.dmpGetAccel(&mAcc, mFifoBuffer);
@@ -150,17 +150,17 @@ void myMPU6050::computeMotion(SensorOutput& m)
 
   // smooth acc & gyro
   uint16_t smooth = - int(pow(1. - ACCEL_AVG, dt * ACCEL_BASE_FREQ * .000001) * 65536.); // 1 - (1-accel_avg) ^ (dt * 60 / 1000 000) using fract16
-  m.accX =  lerp15by16(m.accX,  STAYS_SHORT(mAccReal.x),  smooth);
-  m.accY =  lerp15by16(m.accY,  STAYS_SHORT(mAccReal.y),  smooth);
-  m.accZ =  lerp15by16(m.accZ,  STAYS_SHORT(mAccReal.z),  smooth);
-  m.wZ =    lerp15by16(m.wZ,    STAYS_SHORT(mW.z * -655), smooth);
+  output.accX =  lerp15by16(output.accX,  STAYS_SHORT(mAccReal.x),  smooth);
+  output.accY =  lerp15by16(output.accY,  STAYS_SHORT(mAccReal.y),  smooth);
+  output.accZ =  lerp15by16(output.accZ,  STAYS_SHORT(mAccReal.z),  smooth);
+  output.wZ =    lerp15by16(output.wZ,    STAYS_SHORT(mW.z * -655), smooth);
 
   // #define MPU_DBG
   #ifdef MPU_DBG
-    *mSerial << "[ dt "   << dt*.001 << "ms\t smooth" << smooth/65536. << "\t Wz "  << m.wZ  << "]\t ";
+    *mSerial << "[ dt "   << dt*.001 << "ms\t smooth" << smooth/65536. << "\t Wz "  << output.wZ  << "]\t ";
     *mSerial << "[ gyr "  << mW.x << "\t "            << mW.y << "\t "              << mW.z << "\t ";
     *mSerial << "[ grav " << mGrav.x << "\t "         << mGrav.y << "\t "           << mGrav.z << "]\t ";
-    *mSerial << "[ avg "  << m.accX << "\t "          << m.accY << "\t "            << m.accZ << "]\t ";
+    *mSerial << "[ avg "  << output.accX << "\t "     << output.accY << "\t "       << output.accZ << "]\t ";
     *mSerial << "[ acc "  << mAcc.x << "\t "          << mAcc.y << "\t "            << mAcc.z << "]\t ";
     *mSerial << "[ real " << mAccReal.x << "\t "      << mAccReal.y << "\t "        << mAccReal.z << "]\t ";
     *mSerial << endl;
