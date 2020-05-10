@@ -11,12 +11,12 @@ MPU6050 mpu;
   SemaphoreHandle_t   mpuMeasureMutex;
   EventGroupHandle_t  mpuFlagReady;
   TaskHandle_t        mpuNotifyToCalibrate;
-  SensorOutput        computeOutput; //output to store computation
-  SensorOutput        sharedOutput; //and copied here so that the mutex is barely taken by MPUGetTask
+  SensorOutput        sharedOutput; // shared with updateMotion so that the mutex is barely taken by MPUGetTask
 
   void MPUGetTask(void* _myMpu)
   {
-    myMPU6050* myMpu = (myMPU6050* )_myMpu;
+    myMPU6050*    myMpu = (myMPU6050* )_myMpu;
+    SensorOutput  computeOutput; //output to store computation
 
     for (;;) // forever
     {
