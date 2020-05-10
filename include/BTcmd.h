@@ -43,7 +43,8 @@ public:
 
   void append(char c)
   {
-    if (mBufPos < BTCMD_BUFF_SIZE) {
+    if (mBufPos < BTCMD_BUFF_SIZE)
+    {
       mBuf[mBufPos++] = c;  // Put character into buffer
       mBuf[mBufPos] = '\0';      // Null terminate
     }
