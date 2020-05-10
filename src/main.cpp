@@ -19,8 +19,8 @@
 #include <raster.h>
 
 // ----------------------------------------------------
-myMPU6050 Motion;
-myWifi    MyWifi;
+myMPU6050   Motion;
+myWifi      MyWifi;
 
 #ifdef USE_BT
   #include  <bluetooth.h>
@@ -35,14 +35,14 @@ myWifi    MyWifi;
 
 // ----------------------------------------------------
 #ifdef USE_OTA
-  #include <OTA.h>
-  OTA Ota;
+  #include  <OTA.h>
+  OTA       Ota;
 #endif
 
 #ifdef USE_TELNET
-  #include <TelnetSpy.h>
+  #include  <TelnetSpy.h>
   TelnetSpy SerialAndTelnet;
-  #define Serial  SerialAndTelnet
+  #define   Serial  SerialAndTelnet
 #endif
 
 // ----------------------------------------------------

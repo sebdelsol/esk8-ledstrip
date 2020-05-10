@@ -61,7 +61,8 @@ struct parsedCmd
 
 class BTcmd
 {
-  struct mRegisteredOBJ {
+  struct mRegisteredOBJ
+  {
     char* name;
     OBJVar* obj;
   };
