@@ -15,6 +15,8 @@
 #include <Streaming.h>
 #include <soc/rtc.h> // cpu freq
 
+// ----------------------------------------------------
+myMPU6050     Motion;
 myWifi    MyWifi;
 
 #ifdef USE_BT
@@ -42,7 +44,7 @@ myWifi    MyWifi;
 
 #define   LED_TICK      10      // ms
 #define   BT_TICK       30      // ms
-#define   ACCEL_TICK    10      // mpu6050 is refreshed every 10ms
+#define   MOTION_TICK    10      // mpu6050 is refreshed every 10ms
 
 #define   NBLEDS_MIDDLE 30
 #define   NBLEDS_TIPS   36
@@ -73,11 +75,6 @@ DblCylonFX  CylonF(AQUA);
 PacificaFX  Pacifica;
 TwinkleFX   TwinkleF(HUE_AQUA_BLUE); 
 RunningFX   RunF(CRGB::Gold);
-
-// ----------------------------------------------------
-myMPU6050     Accel;
-SensorOutput  Motion;
-bool          GotMotion = false;
 
 // ----------------------------------------------------
 class CFG : public OBJVar
@@ -128,7 +125,7 @@ public:
       REGISTER_CMD(CFG,        "load",      {BT.load(false);} )       // load not default
       REGISTER_CMD(CFG,        "default",   {BT.load(true);}  )       // load default
       REGISTER_CMD_NOSHOW(CFG, "getInits",  {BT.sendInitsOverBT();} ) // answer with all vars init (min, max, value)
-      REGISTER_CMD_NOSHOW(CFG, "getUpdate", {BT.sendUpdate(Motion, GotMotion);} )         // answer with all updates
+      REGISTER_CMD_NOSHOW(CFG, "getUpdate", {BT.sendUpdate(Motion);} )         // answer with all updates
     #endif
 
     REGISTER_CFG(ledR,       0, 1);
@@ -191,7 +188,7 @@ void setup()
   // delayed inits --------------------------
   // long enough to make the leds blinking @ startup
   Cfg.init();
-  Accel.init();
+  Motion.init();
   AllLeds.init();
 
   // BlueTooth -----------------------------
@@ -200,7 +197,7 @@ void setup()
     
     BT.init(Serial);
 
-    AddOBJ(Accel);     AddOBJ(Cfg);            
+    AddOBJ(Motion);    AddOBJ(Cfg);            
     AddOBJ(TwinkleF);  AddOBJ(RunF);    AddOBJ(Pacifica); 
     AddOBJ(TwinkleR);  AddOBJ(FireRR);  AddOBJ(FireRL);   AddOBJ(RunR);      AddOBJ(CylonR);
     AddOBJ(FireRun);   AddOBJ(FireTwk); AddOBJ(AquaRun);  AddOBJ(AquaTwk);   AddOBJ(Plasma);  AddOBJ(CylonF);
@@ -217,11 +214,11 @@ void setup()
     btStop(); // turnoff bt 
   #endif
 
-  // Accel -----------------------------
+  // Motion -----------------------------
   #ifdef USE_BT 
-    Accel.begin(Serial, false);  
+    Motion.begin(Serial, false);  
   #else 
-    Accel.begin(Serial, true);   // calibrate
+    Motion.begin(Serial, true);   // calibrate
   #endif
   
   // Wifi -----------------------------
@@ -246,11 +243,10 @@ void loop()
 {
   RASTER_BEGIN(20);
 
-  EVERY_N_MILLISECONDS(ACCEL_TICK)
+  EVERY_N_MILLISECONDS(MOTION_TICK)
   {
-    // pool motion
-    GotMotion = Accel.getMotion(Motion);
-    RASTER("accel");
+    Motion.updateMotion();
+    RASTER("Motion");
   }
 
   EVERY_N_MILLISECONDS(LED_TICK)
@@ -267,20 +263,21 @@ void loop()
     RASTER("probe");
 
     // handle motion
-    if (GotMotion)
+    if (Motion.updated)
     {
       #define MulAlpha(a, b) (((a) * ((b) + 1)) >> 8)
+      SensorOutput& m = Motion.mOutput;
 
-      int runSpeed =  ((Motion.wZ > 0) - (Motion.wZ < 0)) * Cfg.runSpeed;
+      int runSpeed =  ((m.wZ > 0) - (m.wZ < 0)) * Cfg.runSpeed;
 
       //------
-      int _WZ = abs(Motion.wZ);
+      int _WZ = abs(m.wZ);
       byte alpha = _WZ > Cfg.neutralWZ ? min((_WZ - Cfg.neutralWZ) * 255 / Cfg.maxWZ, 255) : 0;
       byte invAlpha = 255 - alpha;
 
       //----------------------
       #define MAXACC 256
-      int acc = constrain(Motion.accY / Cfg.divAcc, -MAXACC, MAXACC) << 8;
+      int acc = constrain(m.accY / Cfg.divAcc, -MAXACC, MAXACC) << 8;
 
       //------
       static int FWD = 0;
@@ -333,7 +330,7 @@ void loop()
       }
 
       #ifdef DEBUG_ACC
-        Serial << "[areal  " << Motion.accX << "\t"      << Motion.accY   << "\t"        << Motion.accZ << "]\t";
+        Serial << "[areal  " << m.accX << "\t"      << m.accY   << "\t"        << m.accZ << "]\t";
         Serial << "[fwd "    << fwd    << "\trwd "  << rwd      << "\tACC "    << acc << "]\t";
         Serial << "[alpha "  << alpha  << "\tinv "  << invAlpha << "]\t";
         Serial << "[eyeR "   << eyeR   << "\teyeF " << eyeF     << "\talphaR " << alphaR << "\talphaF " << alphaF << "]" << endl;

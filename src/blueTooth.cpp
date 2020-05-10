@@ -92,13 +92,16 @@ bool BlueTooth::update()
   return false;
 }
 
-void BlueTooth::sendUpdate(SensorOutput &Motion, bool GotMotion)
+void BlueTooth::sendUpdate(myMPU6050 &Motion)
 {
   if (mON && Connected)
   {
     mBTcmd->sendUpdateOverBT();
 
-    if(GotMotion)
-      *getBtSerial() << "A " << Motion.axis.x << " " << Motion.axis.y << " " << Motion.axis.z << " " << Motion.angle << " " << Motion.accY << " " << Motion.wZ << endl;
+    if(Motion.updated)
+    {
+      SensorOutput& m = Motion.mOutput;
+      *getBtSerial() << "A " << m.axis.x << " " << m.axis.y << " " << m.axis.z << " " << m.angle << " " << m.accY << " " << m.wZ << endl;
+    }
   }
 }

@@ -56,11 +56,12 @@ class myMPU6050 : public OBJVar
 public:
 
   uint8_t*      mFifoBuffer; // FIFO storage buffer
-  SensorOutput  mMotion;     // computed motion outpout
+  SensorOutput  mOutput;     // computed motion outpout
+  bool          updated = false;
 
   void init();
   void begin(Stream& serial, bool doCalibrate = false);
   void calibrate();
-  void computeMotion();
-  bool getMotion(SensorOutput& m);
+  void computeMotion(SensorOutput& m);
+  void updateMotion();
 };

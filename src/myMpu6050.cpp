@@ -11,7 +11,8 @@ MPU6050 mpu;
   SemaphoreHandle_t   mpuMeasureMutex;
   EventGroupHandle_t  mpuFlagReady;
   TaskHandle_t        mpuNotifyToCalibrate;
-  SensorOutput        sharedMotion; //as intermediary so that the mutex is barely taken by MPUGetTask
+  SensorOutput        computeOutput; //output to store computation
+  SensorOutput        sharedOutput; //and copied here so that the mutex is barely taken by MPUGetTask
 
   void MPUGetTask(void* _myMpu)
   {
@@ -24,10 +25,10 @@ MPU6050 mpu;
 
       if(mpu.dmpGetCurrentFIFOPacket(myMpu->mFifoBuffer))
       {
-        myMpu->computeMotion();
+        myMpu->computeMotion(computeOutput);
 
         xSemaphoreTake(mpuMeasureMutex, portMAX_DELAY);
-        memcpy(&sharedMotion, &myMpu->mMotion, sizeof(SensorOutput)); 
+        memcpy(&sharedOutput, &computeOutput, sizeof(SensorOutput)); 
         xSemaphoreGive(mpuMeasureMutex);
 
         xEventGroupSetBits(mpuFlagReady, 1);
@@ -130,7 +131,7 @@ void myMPU6050::getAxiSAngle(VectorInt16& v, int& angle, Quaternion& q)
 }
 
 //--------------------------------------
-void myMPU6050::computeMotion()
+void myMPU6050::computeMotion(SensorOutput& m)
 {
   ulong t = micros();
   ulong dt = t - mT;
@@ -141,7 +142,7 @@ void myMPU6050::computeMotion()
 
   // axis angle
   mpu.dmpGetGravity(&mGrav, &mQuat);
-  getAxiSAngle(mMotion.axis, mMotion.angle, mQuat);
+  getAxiSAngle(m.axis, m.angle, mQuat);
 
   // real acceleration, adjusted to remove gravity
   mpu.dmpGetAccel(&mAcc, mFifoBuffer);
@@ -149,17 +150,17 @@ void myMPU6050::computeMotion()
 
   // smooth acc & gyro
   uint16_t smooth = - int(pow(1. - ACCEL_AVG, dt * ACCEL_BASE_FREQ * .000001) * 65536.); // 1 - (1-accel_avg) ^ (dt * 60 / 1000 000) using fract16
-  mMotion.accX =  lerp15by16(mMotion.accX,  STAYS_SHORT(mAccReal.x),  smooth);
-  mMotion.accY =  lerp15by16(mMotion.accY,  STAYS_SHORT(mAccReal.y),  smooth);
-  mMotion.accZ =  lerp15by16(mMotion.accZ,  STAYS_SHORT(mAccReal.z),  smooth);
-  mMotion.wZ =    lerp15by16(mMotion.wZ,    STAYS_SHORT(mW.z * -655), smooth);
+  m.accX =  lerp15by16(m.accX,  STAYS_SHORT(mAccReal.x),  smooth);
+  m.accY =  lerp15by16(m.accY,  STAYS_SHORT(mAccReal.y),  smooth);
+  m.accZ =  lerp15by16(m.accZ,  STAYS_SHORT(mAccReal.z),  smooth);
+  m.wZ =    lerp15by16(m.wZ,    STAYS_SHORT(mW.z * -655), smooth);
 
   // #define MPU_DBG
   #ifdef MPU_DBG
-    *mSerial << "[ dt "   << dt*.001 << "ms\t smooth" << smooth/65536. << "\t Wz "  << mMotion.wZ  << "]\t ";
+    *mSerial << "[ dt "   << dt*.001 << "ms\t smooth" << smooth/65536. << "\t Wz "  << m.wZ  << "]\t ";
     *mSerial << "[ gyr "  << mW.x << "\t "            << mW.y << "\t "              << mW.z << "\t ";
     *mSerial << "[ grav " << mGrav.x << "\t "         << mGrav.y << "\t "           << mGrav.z << "]\t ";
-    *mSerial << "[ avg "  << mMotion.accX << "\t "    << mMotion.accY << "\t "      << mMotion.accZ << "]\t ";
+    *mSerial << "[ avg "  << m.accX << "\t "          << m.accY << "\t "            << m.accZ << "]\t ";
     *mSerial << "[ acc "  << mAcc.x << "\t "          << mAcc.y << "\t "            << mAcc.z << "]\t ";
     *mSerial << "[ real " << mAccReal.x << "\t "      << mAccReal.y << "\t "        << mAccReal.z << "]\t ";
     *mSerial << endl;
@@ -167,28 +168,23 @@ void myMPU6050::computeMotion()
 }
 
 //--------------------------------------
-bool myMPU6050::getMotion(SensorOutput& m)
+void myMPU6050::updateMotion()
 {
 #ifdef MPU_GETFIFO_CORE
-  if (mDmpReady && xEventGroupGetBits(mpuFlagReady))
+  
+  if (mDmpReady && xEventGroupGetBits(mpuFlagReady) && xSemaphoreTake(mpuMeasureMutex, 0) == pdTRUE) // pool the mpuTask
   {
-    if(xSemaphoreTake(mpuMeasureMutex, 0) == pdTRUE) // pool the mpuTask
-    {
-      memcpy(&m, &sharedMotion, sizeof(SensorOutput)); 
-      xSemaphoreGive(mpuMeasureMutex); // release the mutex after measures have been copied
-      return true;
-    }
+    memcpy(&mOutput, &sharedOutput, sizeof(SensorOutput)); 
+    xSemaphoreGive(mpuMeasureMutex); // release the mutex after measures have been copied
+    updated = true;
   }
-  return false;
+  else
+    updated = false;
 
 #else
-  if (mDmpReady)
-  {
-    if(mpu.dmpGetCurrentFIFOPacket(mFifoBuffer)) 
-      computeMotion();
-    
-    memcpy(&m, &mMotion, sizeof(SensorOutput));
-  }
-  return mDmpReady;
+  if (mDmpReady && mpu.dmpGetCurrentFIFOPacket(mFifoBuffer))
+    computeMotion(mOutput);
+
+  updated = mDmpReady;
 #endif
 }
