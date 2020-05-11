@@ -54,8 +54,8 @@ myWifi      MyWifi;
 AllLedStrips  AllLeds(LED_MAX_MA, Serial);
 
 LedStrip    <NBLEDS_MIDDLE, LED_PIN> Leds("Led");
-RunningFX   FireRun(LUSH_LAVA, 10, 3);     
-RunningFX   AquaRun(AQUA_MENTHE, 10, -3);  
+RunningFX   FireRun(LUSH_LAVA, 3);     
+RunningFX   AquaRun(AQUA_MENTHE, -3);  
 TwinkleFX   FireTwk(HUE_RED); 
 TwinkleFX   AquaTwk(HUE_AQUA_BLUE);
 PlasmaFX    Plasma;

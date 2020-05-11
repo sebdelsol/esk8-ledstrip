@@ -175,7 +175,7 @@ void DblCylonFX::update(ulong time, ulong dt)
 }
 
 // ----------------------------------------------------
-RunningFX::RunningFX(const CRGB color, const int width, const int speed) : mWidth(width), mSpeed(speed), mColor(color) {}
+RunningFX::RunningFX(const CRGB color, const int speed, const int width) : mWidth(width), mSpeed(speed), mColor(color) {}
 
 void RunningFX::RegisterVars()
 {

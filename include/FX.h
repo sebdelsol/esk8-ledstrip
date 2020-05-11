@@ -105,7 +105,7 @@ protected:
   CRGB mColor;
 
 public:
-  RunningFX(const CRGB color=0x0000FF, const int width = 5, const int speed = 2);
+  RunningFX(const CRGB color=0x0000FF, const int speed = 2, const int width = 10);
   void setSpeed(const int speed) {mSpeed = speed;};
   void RegisterVars();
   void update(ulong time, ulong dt);
