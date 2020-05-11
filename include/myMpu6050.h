@@ -9,6 +9,9 @@
 #include <helper_3dmath.h>
 #include <objVar.h>
 
+#define MPU6050_INCLUDE_DMP_MOTIONAPPS20 // so that all dmp functions are included
+#include <MPU6050.h>
+
 //-----------------------------
 // #define USE_V6.12
 // #define MPU_DBG
@@ -34,7 +37,7 @@ struct SensorOutput
 };
 
 //-----------------------------
-class myMPU6050 : public OBJVar
+class myMPU6050 : public OBJVar, public MPU6050
 {
   Stream* mSerial;
 
@@ -56,6 +59,7 @@ class myMPU6050 : public OBJVar
 
 public:
 
+  // MPU6050       mpu;
   uint8_t*      mFifoBuffer; // FIFO storage buffer
   SensorOutput  mOutput;     // computed motion outpout
   bool          updated = false;

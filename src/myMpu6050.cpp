@@ -7,8 +7,6 @@
   #include <MPU6050_6Axis_MotionApps20.h>
 #endif
 
-MPU6050 mpu;
-
 //--------------------------------------
 #ifdef MPU_GETFIFO_CORE
   SemaphoreHandle_t   mpuOutputMutex;
@@ -26,7 +24,7 @@ MPU6050 mpu;
       if(ulTaskNotifyTake(pdTRUE, 0)) // pool the the task notification semaphore
         myMpu->calibrate();
 
-      if(mpu.dmpGetCurrentFIFOPacket(myMpu->mFifoBuffer))
+      if(myMpu->dmpGetCurrentFIFOPacket(myMpu->mFifoBuffer))
       {
         myMpu->computeMotion(computeOutput);
 
@@ -57,21 +55,21 @@ void myMPU6050::init()
 
 void myMPU6050::calibrate()
 {
-  mpu.CalibrateAccel(CALIBRATION_LOOP);
-  mpu.CalibrateGyro(CALIBRATION_LOOP);
+  CalibrateAccel(CALIBRATION_LOOP);
+  CalibrateGyro(CALIBRATION_LOOP);
 
-  mXGyroOffset = mpu.getXGyroOffset();   mYGyroOffset = mpu.getYGyroOffset();   mZGyroOffset = mpu.getZGyroOffset();
-  mXAccelOffset = mpu.getXAccelOffset(); mYAccelOffset = mpu.getYAccelOffset(); mZAccelOffset = mpu.getZAccelOffset();
+  mXGyroOffset = getXGyroOffset();   mYGyroOffset = getYGyroOffset();   mZGyroOffset = getZGyroOffset();
+  mXAccelOffset = getXAccelOffset(); mYAccelOffset = getYAccelOffset(); mZAccelOffset = getZAccelOffset();
 
-  mpu.PrintActiveOffsets();
+  PrintActiveOffsets();
 }
 
 void myMPU6050::loadCalibration()
 {
-  mpu.setXGyroOffset(mXGyroOffset);   mpu.setYGyroOffset(mYGyroOffset);   mpu.setZGyroOffset(mZGyroOffset);
-  mpu.setXAccelOffset(mXAccelOffset); mpu.setYAccelOffset(mYAccelOffset); mpu.setZAccelOffset(mZAccelOffset); 
+  setXGyroOffset(mXGyroOffset);   setYGyroOffset(mYGyroOffset);   setZGyroOffset(mZGyroOffset);
+  setXAccelOffset(mXAccelOffset); setYAccelOffset(mYAccelOffset); setZAccelOffset(mZAccelOffset); 
   
-  mpu.PrintActiveOffsets();
+  PrintActiveOffsets();
 }
 
 //--------------------------------------
@@ -83,18 +81,18 @@ void myMPU6050::begin(Stream &serial, bool doCalibrate)
   Wire.begin(SDA, SCL);
   Wire.setClock(400000); // 400kHz I2C clock.
 
-  mpu.initialize();
-  *mSerial << "MPU connection " << (mpu.testConnection() ? "successful" : "failed") << endl;
-  uint8_t devStatus = mpu.dmpInitialize();
+  initialize();
+  *mSerial << "MPU connection " << (testConnection() ? "successful" : "failed") << endl;
+  uint8_t devStatus = dmpInitialize();
 
   if (devStatus == 0) // did it work ?
   { 
     doCalibrate ? calibrate() : loadCalibration();
 
-    mpu.setDMPEnabled(true);
+    setDMPEnabled(true);
     mDmpReady = true;
 
-    uint16_t packetSize = mpu.dmpGetFIFOPacketSize();
+    uint16_t packetSize = dmpGetFIFOPacketSize();
     mFifoBuffer = (uint8_t* )malloc(packetSize * sizeof(uint8_t)); // FIFO storage buffer
     assert (mFifoBuffer!=NULL);
 
@@ -143,22 +141,22 @@ void myMPU6050::computeMotion(SensorOutput& output)
   ulong dt = t - mT;
   mT = t;
 
-  mpu.dmpGetQuaternion(&mQuat, mFifoBuffer);
-  mpu.dmpGetGyro(&mW, mFifoBuffer);
+  dmpGetQuaternion(&mQuat, mFifoBuffer);
+  dmpGetGyro(&mW, mFifoBuffer);
   #ifdef USE_V6.12
     SHIFTR_VECTOR(mW, 2) // fix sensibility bug in <MPU6050_6Axis_MotionApps_V6_12.h
   #endif 
 
   // axis angle
-  mpu.dmpGetGravity(&mGrav, &mQuat);
+  dmpGetGravity(&mGrav, &mQuat);
   getAxiSAngle(output.axis, output.angle, mQuat);
 
   // real acceleration, adjusted to remove gravity
-  mpu.dmpGetAccel(&mAcc, mFifoBuffer);
+  dmpGetAccel(&mAcc, mFifoBuffer);
   #ifdef USE_V6.12 
     SHIFTR_VECTOR(mAcc, 1) // fix sensibility bug in <MPU6050_6Axis_MotionApps_V6_12.h
   #endif
-  mpu.dmpGetLinearAccel(&mAccReal, &mAcc, &mGrav);
+  dmpGetLinearAccel(&mAccReal, &mAcc, &mGrav);
 
   // smooth acc & gyro
   uint16_t smooth = - int(pow(1. - ACCEL_AVG, dt * ACCEL_BASE_FREQ * .000001) * 65536.); // 1 - (1-accel_avg) ^ (dt * 60 / 1000 000) using fract16
@@ -193,7 +191,7 @@ void myMPU6050::updateMotion()
     updated = false;
 
 #else
-  if (mDmpReady && mpu.dmpGetCurrentFIFOPacket(mFifoBuffer))
+  if (mDmpReady && dmpGetCurrentFIFOPacket(mFifoBuffer))
     computeMotion(mOutput);
 
   updated = mDmpReady;
