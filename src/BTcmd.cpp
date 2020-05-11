@@ -44,7 +44,7 @@ bool BTcmd::registerObj(OBJVar& obj, const char* name)
     {
       MyVar* var = obj.getVar(i);
       
-      obj.setID(var, BTCMD_1ST_ID + 1 + mID);
+      obj.setID(var, BTCMD_1ST_ID + mID);
       mID += 1;
     }
   }
@@ -67,7 +67,8 @@ bool BTcmd::isNumber(const char* txt)
 void BTcmd::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args)
 {
   *mDbgSerial << cmdKeyword << " " << parsed.objName << " " << parsed.varName;
-  for (byte i=0; i < nbArg; i++) *mDbgSerial << " " << args[i];
+  for (byte i=0; i < nbArg; i++) 
+    *mDbgSerial << " " << args[i];
   *mDbgSerial << endl;
 }
 
@@ -284,7 +285,7 @@ bool BTcmd::sendUpdate()
     if(mMotion.updated)
     {
       SensorOutput& m = mMotion.mOutput;
-      mBTSerial << BTCMD_1ST_ID << " " << m.axis.x << " " << m.axis.y << " " << m.axis.z << " " << m.angle << " " << m.accY << " " << m.wZ << endl;
+      mBTSerial << BTCMD_MOTION_CMD << " " << m.axis.x << " " << m.axis.y << " " << m.axis.z << " " << m.angle << " " << m.accY << " " << m.wZ << endl;
     }
   }
 }
