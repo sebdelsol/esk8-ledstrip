@@ -1,8 +1,11 @@
 #include <myMpu6050.h>
 
 #define __PGMSPACE_H_ 1 // pgmsplace.h define PGMSPACE_INCLUDE instead of __PGMSPACE_H
-#include <MPU6050_6Axis_MotionApps20.h>
-// #include <MPU6050_6Axis_MotionApps_V6_12.h> // longer to init
+#ifdef USE_V6.12
+  #include <MPU6050_6Axis_MotionApps_V6_12.h> // longer to init & bug with sensitivity
+#else
+  #include <MPU6050_6Axis_MotionApps20.h>
+#endif
 
 MPU6050 mpu;
 
@@ -131,6 +134,9 @@ void myMPU6050::getAxiSAngle(VectorInt16& v, int& angle, Quaternion& q)
 }
 
 //--------------------------------------
+#define STAYS_SHORT(x) constrain(x, -32768, 32767)
+#define SHIFTR_VECTOR(v, n) v.x = v.x >> n;   v.y = v.y >> n;   v.z = v.z >> n; 
+
 void myMPU6050::computeMotion(SensorOutput& output)
 {
   ulong t = micros();
@@ -139,6 +145,9 @@ void myMPU6050::computeMotion(SensorOutput& output)
 
   mpu.dmpGetQuaternion(&mQuat, mFifoBuffer);
   mpu.dmpGetGyro(&mW, mFifoBuffer);
+  #ifdef USE_V6.12
+    SHIFTR_VECTOR(mW, 2) // fix sensibility bug in <MPU6050_6Axis_MotionApps_V6_12.h
+  #endif 
 
   // axis angle
   mpu.dmpGetGravity(&mGrav, &mQuat);
@@ -146,6 +155,9 @@ void myMPU6050::computeMotion(SensorOutput& output)
 
   // real acceleration, adjusted to remove gravity
   mpu.dmpGetAccel(&mAcc, mFifoBuffer);
+  #ifdef USE_V6.12 
+    SHIFTR_VECTOR(mAcc, 1) // fix sensibility bug in <MPU6050_6Axis_MotionApps_V6_12.h
+  #endif
   mpu.dmpGetLinearAccel(&mAccReal, &mAcc, &mGrav);
 
   // smooth acc & gyro
@@ -155,7 +167,6 @@ void myMPU6050::computeMotion(SensorOutput& output)
   output.accZ =  lerp15by16(output.accZ,  STAYS_SHORT(mAccReal.z),  smooth);
   output.wZ =    lerp15by16(output.wZ,    STAYS_SHORT(mW.z * -655), smooth);
 
-  // #define MPU_DBG
   #ifdef MPU_DBG
     *mSerial << "[ dt "   << dt*.001 << "ms\t smooth" << smooth/65536. << "\t Wz "  << output.wZ  << "]\t ";
     *mSerial << "[ gyr "  << mW.x << "\t "            << mW.y << "\t "              << mW.z << "\t ";

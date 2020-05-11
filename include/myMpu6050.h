@@ -9,13 +9,14 @@
 #include <helper_3dmath.h>
 #include <objVar.h>
 
+//-----------------------------
+// #define USE_V6.12
+// #define MPU_DBG
+
 //----------------------------- smooth accel & gyro
 #define ACCEL_AVG         .05 // use 5% of the new measure in the avg
 #define ACCEL_BASE_FREQ   60. // based on a 60fps measure
 #define CALIBRATION_LOOP  6
-
-#define STAYS_SHORT(x) constrain(x, -32768, 32767)
-#define TOdeg(x) (x * 180/M_PI)
 
 //-----------------------------
 // The core to run mpu.dmpGetCurrentFIFOPacket()
