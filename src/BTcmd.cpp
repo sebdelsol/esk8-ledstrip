@@ -44,7 +44,7 @@ bool BTcmd::registerObj(OBJVar& obj, const char* name)
     {
       MyVar* var = obj.getVar(i);
       
-      obj.setID(var, BTCMD_1ST_ID + mID);
+      obj.setID(var, BTCMD_1ST_ID + 1 + mID);
       mID += 1;
     }
   }

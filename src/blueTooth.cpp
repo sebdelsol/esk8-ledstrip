@@ -104,8 +104,10 @@ void BlueTooth::sendUpdate()
 
     if(mMotion.updated)
     {
+      #define MOTION_UPDATE_CMD '!' // see BTCMD_1ST_ID
+
       SensorOutput& m = mMotion.mOutput;
-      *mBTserial << "A " << m.axis.x << " " << m.axis.y << " " << m.axis.z << " " << m.angle << " " << m.accY << " " << m.wZ << endl;
+      *mBTserial << MOTION_UPDATE_CMD << " " << m.axis.x << " " << m.axis.y << " " << m.axis.z << " " << m.angle << " " << m.accY << " " << m.wZ << endl;
     }
   }
 }
