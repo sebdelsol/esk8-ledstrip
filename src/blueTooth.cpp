@@ -11,7 +11,11 @@ void BTcallback(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
 {
   if(event == ESP_SPP_SRV_OPEN_EVT)
   {
-    *DbgSerialForCB << "BT Client Connected" << endl;
+    *DbgSerialForCB << "BT Client Connected @ ";
+    for (int i = 0; i < 6; i++)
+      *DbgSerialForCB << _HEX(param->srv_open.rem_bda[i]) << (i < 5 ? ":" : "");
+    *DbgSerialForCB << endl;
+
     Connected = true;
   }
   else if(event == ESP_SPP_CLOSE_EVT)
