@@ -28,12 +28,10 @@
 
 struct SensorOutput 
 {
-  int         accX = 0; 
-  int         accY = 0; 
-  int         accZ = 0;
-  int         wZ = 0;
   VectorInt16 axis;
   int         angle = 0;
+  int         accX = 0, accY = 0, accZ = 0;
+  int         wZ = 0;
 };
 
 //-----------------------------
