@@ -18,9 +18,17 @@
   {
     myMPU6050*    myMpu = (myMPU6050* )_myMpu;
     SensorOutput  computeOutput; //output to store computation
+    long          lastLoop = micros();
 
     for (;;) // forever
     {
+      // add a delay to share more the core // a packet every 10 ms 
+      long ct = micros();
+      long dt = ct - lastLoop; lastLoop = ct;
+      long wait = 10 - (1 + dt/1000); 
+      vTaskDelay( pdMS_TO_TICKS(wait > 0 ? wait : 0) ); // a packet every 10ms 
+      // Serial << "mpu " << dt << " wait " << wait <<  endl;
+      
       if(ulTaskNotifyTake(pdTRUE, 0)) // pool the the task notification semaphore
         myMpu->calibrate();
 
