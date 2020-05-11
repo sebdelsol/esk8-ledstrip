@@ -2,6 +2,8 @@
 
 #include <Streaming.h>
 #include <objVar.h>
+#include <bluetooth.h>
+#include <myMpu6050.h>
 #include <SPIFFS.h>
 
 #define FORMAT_SPIFFS_IF_FAILED true
@@ -60,7 +62,7 @@ struct parsedCmd
   const char* varName;
 };
 
-class BTcmd
+class BTcmd : public BlueTooth
 {
   struct mRegisteredOBJ
   {
@@ -72,8 +74,7 @@ class BTcmd
   byte mNOBJ = 0;
   byte mID = 0;
 
-  Stream* mBTStream;
-  Stream* mDbgSerial;
+  myMPU6050& mMotion; // for sendUpdate
   
   bool spiffsOK = false;
   const char* cfg_fname = FNAME_CURRENT;
@@ -90,27 +91,25 @@ class BTcmd
   void dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args);
 
   void handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change);
-  void handleGetCmd(const parsedCmd& parsed, Stream* stream, bool compact);
-  void handleInitCmd(const parsedCmd& parsed, Stream* stream);
+  void handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact);
+  void handleInitCmd(const parsedCmd& parsed, Stream& stream);
   bool getObjVar(parsedCmd& parsed, BUF& buf);
-  void handleCmd(Stream* stream, BUF& buf, bool change = true, bool compact = false);
-
-  void readStream(Stream* stream, BUF& buf, bool change = true, bool compact = false);
-  void emulateCmdForAllVars(const char* cmdKeyword, Stream *stream, OBJVar::ObjTestVarFunc testVar = NULL, bool change = true, bool compact = false);
-
+  void handleCmd(Stream& stream, BUF& buf, bool change = true, bool compact = false);
+  void readStream(Stream& stream, BUF& buf, bool change = true, bool compact = false);
+  void emulateCmdForAllVars(const char* cmdKeyword, Stream& stream, OBJVar::ObjTestVarFunc testVar = NULL, bool change = true, bool compact = false);
   File getFile(bool isdefault, const char* mode);
 
 public:
 
-  BTcmd(Stream& btStream);
+  BTcmd(myMPU6050& motion);
   
   bool registerObj(OBJVar& obj, const char* name);
   OBJVar* getObjFromName(const char* name); 
 
   void init(Stream& dbgSerial);
   void save(bool isdefault);
-  void load(bool isdefault, bool change);
-  void sendInitsOverBT();
-  void sendUpdateOverBT();
-  void readBTStream() { readStream(mBTStream, mBTbuf, false, true); };
+  void load(bool isdefault, bool change = true);
+  bool receiveUpdate();
+  bool sendUpdate();
+  void sendInits();
 };

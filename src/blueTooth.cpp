@@ -1,46 +1,42 @@
 #include <bluetooth.h>
+
+//------------------------------------------------------------
 #include <rom/rtc.h>
+static __NOINIT_ATTR bool WasOn; // HACK in case of reboot after a crash
 
-BluetoothSerial BTSerial;
-BTcmd BTcmd(BTSerial);
+//------------------------------------------------------------
+BlueTooth* TrampBT;
 
-bool Connected = false;
-Stream* DbgSerialForCB;
+void TrampCallback(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
+{
+  TrampBT->callback(event, param);
+}
 
-void BTcallback(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
+//------------------------------------------------------------
+void BlueTooth::callback(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
 {
   if(event == ESP_SPP_SRV_OPEN_EVT)
   {
-    *DbgSerialForCB << "BT Client Connected @ ";
+    *mDbgSerial << "BT Client Connected @ ";
     for (int i = 0; i < 6; i++)
-      *DbgSerialForCB << _HEX(param->srv_open.rem_bda[i]) << (i < 5 ? ":" : "");
-    *DbgSerialForCB << endl;
+      *mDbgSerial << _HEX(param->srv_open.rem_bda[i]) << (i < 5 ? ":" : "");
+    *mDbgSerial << endl;
 
-    Connected = true;
+    mConnected = true;
   }
   else if(event == ESP_SPP_CLOSE_EVT)
   {
-    *DbgSerialForCB << "BT Client DisConnected" << endl;
-    Connected = false;
+    *mDbgSerial << "BT Client DisConnected" << endl;
+    mConnected = false;
   }
 }
 
-// inits
-BlueTooth::BlueTooth(myMPU6050& motion) : mMotion(motion)
-{
-  mBTserial = &BTSerial;
-  mBTcmd = &BTcmd;
-}
-
-static __NOINIT_ATTR bool WasOn; // HACK
-
-void BlueTooth::init(Stream& dbgSerial)
+void BlueTooth::initBT(Stream& dbgSerial)
 {
   mDbgSerial = &dbgSerial;
-  DbgSerialForCB = &dbgSerial;
 
-  BTSerial.register_callback(BTcallback);
-  mBTcmd->init(dbgSerial);  
+  TrampBT = this;
+  mBTSerial.register_callback(TrampCallback);
 
   pinMode(LIGHT_PIN, OUTPUT); //blue led
 
@@ -57,17 +53,17 @@ void BlueTooth::start(const bool on)
   if (mON != on)
   {
     *mDbgSerial << "BT " << (on ? "Starting" : "Stopping") << endl;
-    Connected = false;
+    mConnected = false;
   
     if (on)
     {
-      mON = BTSerial.begin(BT_TERMINAL_NAME);
+      mON = mBTSerial.begin(BT_TERMINAL_NAME);
       if (mON) mStartTime = millis();
     }
     else 
     {
       mON = false;
-      BTSerial.end();
+      mBTSerial.end();
     }
 
     WasOn = mON; //HACK
@@ -81,33 +77,19 @@ void BlueTooth::toggle()
   start(mON ? false : true);
 }
 
-bool BlueTooth::update()
+bool BlueTooth::isReadyToReceive()
 {
   if (mON)
   {
-    if (Connected)
-    {
-      mBTcmd->readBTStream();
+    if (mConnected)
       return true;
-    }
     else if(millis() - mStartTime > AUTO_STOP_IF_NOTCONNECTED)
       start(false);
   }
   return false;
 }
 
-void BlueTooth::sendUpdate()
-{
-  if (mON && Connected)
-  {
-    mBTcmd->sendUpdateOverBT();
-
-    if(mMotion.updated)
-    {
-      #define MOTION_UPDATE_CMD '!' // see BTCMD_1ST_ID
-
-      SensorOutput& m = mMotion.mOutput;
-      *mBTserial << MOTION_UPDATE_CMD << " " << m.axis.x << " " << m.axis.y << " " << m.axis.z << " " << m.angle << " " << m.accY << " " << m.wZ << endl;
-    }
-  }
+bool BlueTooth::isReadyToSend()
+{ 
+  return mON && mConnected; 
 }

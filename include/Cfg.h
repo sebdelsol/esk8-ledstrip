@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef USE_BT
-  #include  <bluetooth.h>
+  #include  <BTcmd.h>
 #endif
 
 // ----------------------------------------------------
@@ -55,8 +55,8 @@ public:
   int minTwkR     = 128;
 
   #ifdef USE_BT
-    BlueTooth &BT;
-    CFG(BlueTooth& BT) : BT(BT) {};
+    BTcmd &BT;
+    CFG(BTcmd& BT) : BT(BT) {};
   #endif
 
   void init()
@@ -67,7 +67,7 @@ public:
       REGISTER_CMD(CFG,        "save",      {self->BT.save(false);} )       // save not default
       REGISTER_CMD(CFG,        "load",      {self->BT.load(false);} )       // load not default
       REGISTER_CMD(CFG,        "default",   {self->BT.load(true);}  )       // load default
-      REGISTER_CMD_NOSHOW(CFG, "getInits",  {self->BT.sendInitsOverBT();} ) // answer with all vars init (min, max, value)
+      REGISTER_CMD_NOSHOW(CFG, "getInits",  {self->BT.sendInits();} ) // answer with all vars init (min, max, value)
       REGISTER_CMD_NOSHOW(CFG, "getUpdate", {self->BT.sendUpdate();} )      // answer with all updates
     #endif
 

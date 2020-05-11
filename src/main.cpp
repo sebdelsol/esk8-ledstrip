@@ -23,11 +23,11 @@ myMPU6050   Motion;
 myWifi      MyWifi;
 
 #ifdef USE_BT
-  #include  <bluetooth.h>
+  #include  <BTcmd.h>
   #include  <Button.h>
 
   Button    Button(BUTTON_PIN);
-  BlueTooth BT(Motion);
+  BTcmd     BT(Motion);
   CFG       Cfg(BT);
 #else
   CFG       Cfg;
@@ -278,7 +278,7 @@ void loop()
       if (Button.pressed())
         BT.toggle();
 
-      BT.update();
+      BT.receiveUpdate();
     }
     RASTER("BT");
   #endif

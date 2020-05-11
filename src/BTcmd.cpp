@@ -1,13 +1,13 @@
 #include <BTcmd.h>
 
-BTcmd::BTcmd(Stream& btStream) : mBTStream(&btStream)
+BTcmd::BTcmd(myMPU6050& motion) : mMotion(motion)
 {
   mBTbuf.clear();
 }  
 
 void BTcmd::init(Stream& dbgSerial)
 {
-  mDbgSerial = &dbgSerial;
+  initBT(dbgSerial);
   
   *mDbgSerial << "mount SPIFFS" << endl;
   spiffsOK = SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED);
@@ -94,7 +94,7 @@ void BTcmd::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
 }
 
 //----------------
-void BTcmd::handleGetCmd(const parsedCmd& parsed, Stream* stream, bool compact)
+void BTcmd::handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact)
 {
   int args[MAX_ARGS];
   byte nbArg = parsed.obj->get(parsed.var, args); //get the value in args
@@ -102,34 +102,34 @@ void BTcmd::handleGetCmd(const parsedCmd& parsed, Stream* stream, bool compact)
   if (nbArg) 
   { 
     if (compact)
-      *stream << parsed.obj->getID(parsed.var);
+      stream << parsed.obj->getID(parsed.var);
     else
-      *stream << mSetKeyword << " " << parsed.objName << " " << parsed.varName;
+      stream << mSetKeyword << " " << parsed.objName << " " << parsed.varName;
 
     for (byte i=0; i < nbArg; i++)
-      *stream << " " << args[i];
+      stream << " " << args[i];
   
-    *stream << endl;
+    stream << endl;
     // dbgCmd(mGetKeyword, parsed, nbArg, args);
   }
 }
 
 //----------------
-void BTcmd::handleInitCmd(const parsedCmd& parsed, Stream* stream)
+void BTcmd::handleInitCmd(const parsedCmd& parsed, Stream& stream)
 {
-  *stream << mInitKeyword << " " << parsed.objName << " " << parsed.varName << " " << parsed.obj->getID(parsed.var); 
+  stream << mInitKeyword << " " << parsed.objName << " " << parsed.varName << " " << parsed.obj->getID(parsed.var); 
 
   int min, max;
   parsed.obj->getMinMax(parsed.var, &min, &max);
-  *stream << " " << min << " " << max;
+  stream << " " << min << " " << max;
 
   int args[MAX_ARGS];
   byte nbArg = parsed.obj->get(parsed.var, args); 
 
   for (byte i=0; i < nbArg; i++)
-    *stream << " " << args[i];
+    stream << " " << args[i];
   
-  *stream << endl;
+  stream << endl;
   // dbgCmd(mInitKeyword, parsed, nbArg, args);
 }
 
@@ -155,7 +155,7 @@ bool BTcmd::getObjVar(parsedCmd& parsed, BUF& buf)
 }
 
 //----------------
-void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool compact)
+void BTcmd::handleCmd(Stream& stream, BUF& buf, bool change, bool compact)
 {
   const char* cmd = buf.first();
   if (cmd!=NULL)
@@ -186,11 +186,11 @@ void BTcmd::handleCmd(Stream* stream, BUF& buf, bool change, bool compact)
 }
 
 //----------------
-void BTcmd::readStream(Stream* stream, BUF& buf, bool change, bool compact)
+void BTcmd::readStream(Stream& stream, BUF& buf, bool change, bool compact)
 {
-  while (stream->available() > 0) 
+  while (stream.available() > 0) 
   {
-    char c = stream->read();
+    char c = stream.read();
     if (c != BTCMD_ALIVE)
     {
       if (c == BTCMD_TERM)
@@ -208,7 +208,7 @@ void BTcmd::readStream(Stream* stream, BUF& buf, bool change, bool compact)
 }
 
 //----------------
-void BTcmd::emulateCmdForAllVars(const char* cmdKeyword, Stream *stream, OBJVar::ObjTestVarFunc testVar, bool change, bool compact)
+void BTcmd::emulateCmdForAllVars(const char* cmdKeyword, Stream& stream, OBJVar::ObjTestVarFunc testVar, bool change, bool compact)
 {
   for (byte i = 0; i < mNOBJ; i++)
   {
@@ -251,7 +251,7 @@ void BTcmd::load(bool isdefault, bool change)
   if (f)
   {
     mTmpBuf.clear(); // might not be cleared by readStream
-    readStream((Stream* )&f, mTmpBuf, change); // should be a succession of set cmd
+    readStream((Stream& )f, mTmpBuf, change); // should be a succession of set cmd
     f.close();
   }
 }
@@ -262,19 +262,35 @@ void BTcmd::save(bool isdefault)
   File f = getFile(isdefault, "w");
   if (f)
   {
-    emulateCmdForAllVars(mGetKeyword, (Stream*)&f); //for all vars, emulate a get cmd and send the result to mBTStream
+    emulateCmdForAllVars(mGetKeyword, (Stream& )f); //for all vars, emulate a get cmd and send the result to file stream
     f.close();
   }
 }
 
 //----------------
-void BTcmd::sendUpdateOverBT()
+void BTcmd::sendInits()
 {
-  emulateCmdForAllVars(mGetKeyword, mBTStream, &OBJVar::hasVarChanged, true, true); //for all vars, emulate a get cmd and send the result to mBTStream
+  emulateCmdForAllVars(mInitKeyword, mBTSerial, &OBJVar::isVarShown); //for all vars, emulate a init cmd and send the result to mBTSerial
+  mBTSerial << "initdone" << endl;
 }
 
-void BTcmd::sendInitsOverBT()
+//----------------
+bool BTcmd::sendUpdate()
 {
-  emulateCmdForAllVars(mInitKeyword, mBTStream, &OBJVar::isVarShown); //for all vars, emulate a init cmd and send the result to mBTStream
-  *mBTStream << "initdone" << endl;
+  if(isReadyToSend())
+  {
+    emulateCmdForAllVars(mGetKeyword, mBTSerial, &OBJVar::hasVarChanged, true, true); //for all vars, emulate a get cmd and send the result to mBTSerial
+
+    if(mMotion.updated)
+    {
+      SensorOutput& m = mMotion.mOutput;
+      mBTSerial << BTCMD_1ST_ID << " " << m.axis.x << " " << m.axis.y << " " << m.axis.z << " " << m.angle << " " << m.accY << " " << m.wZ << endl;
+    }
+  }
+}
+
+bool BTcmd::receiveUpdate()
+{
+  if (isReadyToReceive())
+    readStream(mBTSerial, mBTbuf, false, true);
 }

@@ -2,8 +2,6 @@
 
 #include <Streaming.h>
 #include <BluetoothSerial.h>
-#include <myMpu6050.h>
-#include <BTcmd.h>
 #include <myPins.h>
 
 #define BT_TERMINAL_NAME "Esk8"
@@ -13,22 +11,19 @@ class BlueTooth
 {
   long mStartTime;
   bool mON = false;
-  BTcmd* mBTcmd;
-  BluetoothSerial* mBTserial;
-  Stream* mDbgSerial;
+  bool mConnected = false;
 
-  myMPU6050& mMotion; // for sendUpdate
+protected:
+  Stream* mDbgSerial;
+  BluetoothSerial mBTSerial;
 
 public:
-  bool update();
-  bool registerObj(OBJVar& obj, char* name) { return mBTcmd->registerObj(obj, name); };
-  void save(bool isdefault) { mBTcmd->save(isdefault); };
-  void load(bool isdefault, bool change = true) { mBTcmd->load(isdefault, change); };
-  void sendInitsOverBT() { mBTcmd->sendInitsOverBT(); };
-  void sendUpdate();
+  void callback(esp_spp_cb_event_t event, esp_spp_cb_param_t* param); //for trampoline
 
-  BlueTooth(myMPU6050& motion);
-  void init(Stream& serial);
+  bool isReadyToReceive();
+  bool isReadyToSend();
+
+  void initBT(Stream& serial);
   void start(const bool on=true);
   void toggle();
 };
