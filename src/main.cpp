@@ -41,6 +41,7 @@ myWifi      MyWifi;
 
 #ifdef USE_TELNET
   #include  <TelnetSpy.h>
+  
   TelnetSpy SerialAndTelnet;
   #define   Serial  SerialAndTelnet
 #endif
