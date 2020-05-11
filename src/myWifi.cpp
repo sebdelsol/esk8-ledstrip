@@ -47,7 +47,7 @@ bool myWifi::update()
       {
         if(WiFi.status() == WL_CONNECTED)
         {
-          *mSerial << "Wifi connected, IP address: " << WiFi.localIP() << endl;
+          *mSerial << "Wifi connected @ " << WiFi.localIP() << endl;
           digitalWrite(BUILTIN_LED, LOW); // led on
           mON = true;
 
