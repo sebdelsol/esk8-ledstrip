@@ -36,9 +36,8 @@ class AllObj
   {
     char* name;
     OBJVar* obj;
-  };
+  } mOBJ[ALLOBJ_MAXOBJ];
 
-  mRegisteredOBJ mOBJ[ALLOBJ_MAXOBJ];
   byte mNOBJ = 0;
   byte mID = 0;
 
