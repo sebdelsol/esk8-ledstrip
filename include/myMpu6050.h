@@ -23,8 +23,8 @@
 
 //-----------------------------
 // The core to run mpu.dmpGetCurrentFIFOPacket()
-#define MPU_GETFIFO_CORE 0 // mpu on a task
-#define MPU_GETFIFO_PRIO 1
+// #define MPU_GETFIFO_CORE 0 // mpu on a task
+// #define MPU_GETFIFO_PRIO 1
 
 struct SensorOutput 
 {
