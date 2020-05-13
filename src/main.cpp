@@ -84,19 +84,21 @@ void setup()
   AllLeds.setBrightness(0);
   AllLeds.clearAndShow();
 
-  // esp32 inits -----------------------
+  // main inits -----------------------
   Serial.begin(SERIAL_BAUD);
+  Cfg.init();
+  Motion.init();
 
-  // rtc_clk_cpu_freq_set(RTC_CPU_FREQ_240M);
   Serial << endl << "-------- START --------" << endl;
   Serial << "Esp32 " << esp_get_idf_version() << endl;
   Serial << "CPU freq " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
   Serial << "Loop run on Core " << xPortGetCoreID() << endl;
   Serial << "---------" << endl;
 
-  // LEDS -----------------------------
+  // Leds  inits ----------------------
   #define AddFX(l, fx) l.registerFX(fx)
 
+  AllLeds.init();
   AllLeds.registerStrip(Leds); 
   AllLeds.registerStrip(LedsR); 
   AllLeds.registerStrip(LedsF); 
@@ -105,12 +107,7 @@ void setup()
   AddFX(LedsR, TwinkleR); AddFX(LedsR, FireRR); AddFX(LedsR, FireRL);   AddFX(LedsR, RunR);     AddFX(LedsR, CylonR);
   AddFX(LedsF, TwinkleF); AddFX(LedsF, RunF);   AddFX(LedsF, Pacifica); AddFX(LedsF, CylonF);
 
-  // delayed inits --------------------------
-  Cfg.init();
-  Motion.init();
-  AllLeds.init();
-
-  // AllObj -----------------------------
+  // register AllObj ------------------
   #define AddOBJ(o) AllObj.registerObj(o, #o);
   
   AllObj.init();
