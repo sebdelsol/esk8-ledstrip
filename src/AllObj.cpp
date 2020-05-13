@@ -44,7 +44,7 @@ bool AllObj::registerObj(OBJVar& obj, const char* name)
     }
   }
   else
-    mDbgSerial << "----------- !!!!!!!!!! Max obj is reached " << ALLOBJ_MAXOBJ << endl; 
+    mDbgSerial << ">> ERROR !! Max obj is reached " << ALLOBJ_MAXOBJ << endl; 
 
   return ok;
 }

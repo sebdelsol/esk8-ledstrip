@@ -88,7 +88,7 @@ public:
       fx.init(NLEDS);
     }
     else
-      *mSerial << "----------- !!!!!!!!!! Max FX is reached " << MAXFX << endl; 
+      *mSerial << ">> ERROR !! Max FX is reached " << MAXFX << endl; 
 
     return ok;
   };

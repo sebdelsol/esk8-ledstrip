@@ -22,7 +22,7 @@ bool OBJVar::registerVar(void* obj, const char* name, setVarFunc set, getVarFunc
     var->show = show;
   }
   else
-    Serial << "----------- !!!!!!!!!! Max var is reached " << MAX_VAR << endl; 
+    Serial << ">> ERROR !! Max var is reached " << MAX_VAR << endl; 
     
   return ok;
 }
