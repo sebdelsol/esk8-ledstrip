@@ -203,10 +203,7 @@ void AllObj::readCmdFromStream(Stream& stream, BUF& buf, bool change, bool compa
         buf.clear();
       }
       else if (isprint(c))
-      {
         buf.append(c);
-        // mDbgSerial << "Buf >>>" << buf.getBuf() << "<<<" << endl;
-      }
     }
   }
 }
@@ -225,7 +222,6 @@ void AllObj::emulateCmdForAllVars(const char* cmdKeyword, Stream& stream, OBJVar
       if(testVar == NULL || (obj->*testVar)(j))
       {
         char* varName = obj->getVarName(j);
-
         snprintf(mTmpBuf.getBuf(), mTmpBuf.getLen(), "%s %s %s", cmdKeyword, objName, varName); // emulate a cmd
         handleCmd(stream, mTmpBuf, change, compact); // the result of the cmd is sent to the stream
       }
