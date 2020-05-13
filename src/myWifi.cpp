@@ -5,7 +5,6 @@ myWifi::myWifi(Stream& serial) : mSerial(serial) {}
 void myWifi::stop()
 {
   WiFi.mode(WIFI_OFF);
-  // WiFi.forceSleepBegin();
   digitalWrite(BUILTIN_LED, HIGH); // led off
 
   mWantON = false;
@@ -16,7 +15,6 @@ void myWifi::stop()
 void myWifi::start()
 {
   WiFi.mode(WIFI_STA);
-  // WiFi.forceSleepWake();
   WiFi.begin(WIFINAME, WIFIPASS);
   
   mBegunOn = millis();
