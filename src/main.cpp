@@ -86,15 +86,14 @@ void setup()
 
   // -- main inits
   Serial.begin(SERIAL_BAUD);
+
+  Serial << endl << "---------" << endl;
+  Serial << "ESP32 " << esp_get_idf_version() << endl;
+  Serial << "CPU runs @ " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
+  Serial << "Main runs on Core " << xPortGetCoreID() << endl;
+
   Cfg.init();
   Motion.init();
-
-  Serial << endl;
-  Serial << "---------" << endl;
-  Serial << "Esp32 " << esp_get_idf_version() << endl;
-  Serial << "CPU freq " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
-  Serial << "Loop run on Core " << xPortGetCoreID() << endl;
-  Serial << "---------" << endl;
 
   // -- Leds inits
   #define AddFX(l, fx) l.registerFX(fx)

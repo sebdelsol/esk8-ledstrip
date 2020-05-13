@@ -97,8 +97,6 @@ bool MOTION::setOffsets()
 //--------------------------------------
 void MOTION::begin()
 { 
-  mSerial << "---------" << endl;
-  
   Wire.begin(SDA, SCL);
   Wire.setClock(400000); // 400kHz I2C clock.
 
@@ -122,7 +120,7 @@ void MOTION::begin()
       mpuOutputMutex = xSemaphoreCreateMutex();
       mpuFlagReady = xEventGroupCreate();
       xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", 2048, this, MPU_GETFIFO_PRIO, &mpuNotifyToCalibrate, MPU_GETFIFO_CORE);  
-      mSerial << "Mpu runs on task on Core " << MPU_GETFIFO_CORE << " with Prio " << MPU_GETFIFO_PRIO << endl;
+      mSerial << "Mpu runs in a task on Core " << MPU_GETFIFO_CORE << " with Prio " << MPU_GETFIFO_PRIO << endl;
     #else 
       mSerial << "Mpu runs on Main Core" << endl;
     #endif
@@ -131,8 +129,6 @@ void MOTION::begin()
   }
   else // ERROR! 1 = initial memory load failed, 2 = DMP configuration updates failed
     mSerial << "DMP Initialization failed (" << devStatus << ")" << endl;
-  
-  mSerial << "---------" << endl;
 }
 
 //--------------------------------------
