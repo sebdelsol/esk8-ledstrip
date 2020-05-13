@@ -12,20 +12,22 @@
 #define MPU6050_INCLUDE_DMP_MOTIONAPPS20 // so that all dmp functions are included
 #include <MPU6050.h>
 
-//-----------------------------
+//----------------------------- dmp Version & Debug
 // #define USE_V6.12
 // #define MPU_DBG
 
-//----------------------------- smooth accel & gyro
-#define ACCEL_AVG         .05 // use 5% of the new measure in the avg
-#define ACCEL_BASE_FREQ   60. // based on a 60fps measure
+//----------------------------- calibration
 #define CALIBRATION_LOOP  6
 
-//-----------------------------
-// The core to run getFiFoPacket & compute in a task
+//----------------------------- Smooth accel & gyro
+#define ACCEL_AVG         .05 // use 5% of the new measure in the avg
+#define ACCEL_BASE_FREQ   60. // based on a 60fps measure
+
+//----------------------------- Run in a task
 #define MPU_GETFIFO_CORE 0 // mpu on a task
 #define MPU_GETFIFO_PRIO 1
 
+//----------------------------- 
 struct SensorOutput 
 {
   VectorInt16 axis;
@@ -58,7 +60,7 @@ class MOTION : public OBJVar, public MPU6050
   bool setOffsets();
 
 public:
-  SensorOutput  mOutput;     // computed motion outpout
+  SensorOutput  mOutput; // useful outpout
 
   MOTION(Stream& serial);
   void init();
