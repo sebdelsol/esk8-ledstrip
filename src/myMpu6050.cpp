@@ -20,6 +20,8 @@
     SensorOutput  computeOutput; //output to store computation
     long          lastLoop = micros();
 
+    vTaskDelay( pdMS_TO_TICKS(1000) ); // or issue with offset !?
+
     for (;;) // forever
     {
       // add a delay to share more the core // a packet every 10 ms 
