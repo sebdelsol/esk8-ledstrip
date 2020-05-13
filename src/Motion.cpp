@@ -98,7 +98,7 @@ bool MOTION::setOffsets()
 void MOTION::begin()
 { 
   Wire.begin(SDA, SCL);
-  Wire.setClock(400000); // 400kHz I2C clock.
+  Wire.setClock(I2C_CLOCK); 
 
   initialize();
   mSerial << "MPU connection " << (testConnection() ? "successful" : "failed") << endl;

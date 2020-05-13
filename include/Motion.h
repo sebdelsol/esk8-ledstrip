@@ -16,8 +16,9 @@
 // #define USE_V6.12
 // #define MPU_DBG
 
-//----------------------------- calibration
+//----------------------------- calibration & I2c clock
 #define CALIBRATION_LOOP  6
+#define I2C_CLOCK         400000 // 400kHz 
 
 //----------------------------- Smooth accel & gyro
 #define ACCEL_AVG         .05 // use 5% of the new measure in the avg
