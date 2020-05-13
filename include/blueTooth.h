@@ -6,7 +6,7 @@
 #include <Pins.h>
 
 #define BT_TERMINAL_NAME "Esk8"
-#define AUTO_STOP_IF_NOTCONNECTED 30000 // duration before bluetooth autostop after started if not connected
+#define AUTO_STOP_IF_NOTCONNECTED 30000 // duration before bluetooth autostop if not connected
 
 class BlueTooth
 {
