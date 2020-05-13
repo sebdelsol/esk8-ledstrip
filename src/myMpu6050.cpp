@@ -17,7 +17,7 @@
   void MPUGetTask(void* _myMpu)
   {
     myMPU6050*    myMpu = (myMPU6050* )_myMpu;
-    SensorOutput  computeOutput; //output to store computation
+    SensorOutput  taskOutput; //output to store computation
     long          lastLoop = micros();
 
     vTaskDelay( pdMS_TO_TICKS(1000) ); // or issue with offset !?
@@ -29,17 +29,16 @@
       long dt = ct - lastLoop; lastLoop = ct;
       long wait = 10 - (1 + dt/1000); 
       vTaskDelay( pdMS_TO_TICKS(wait > 0 ? wait : 0) ); // a packet every 10ms 
-      // Serial << "mpu " << dt << " wait " << wait <<  endl;
       
       if(ulTaskNotifyTake(pdTRUE, 0)) // pool the the task notification semaphore
         myMpu->calibrate();
 
       if(myMpu->getFiFoPacket())
       {
-        myMpu->compute(computeOutput);
+        myMpu->compute(taskOutput);
 
         xSemaphoreTake(mpuOutputMutex, portMAX_DELAY);
-        memcpy(&sharedOutput, &computeOutput, sizeof(SensorOutput)); 
+        memcpy(&sharedOutput, &taskOutput, sizeof(SensorOutput)); 
         xSemaphoreGive(mpuOutputMutex);
 
         xEventGroupSetBits(mpuFlagReady, 1);
