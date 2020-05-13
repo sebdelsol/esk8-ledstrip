@@ -5,7 +5,7 @@
 
 #include <Wire.h>
 #include <Streaming.h>
-#include <myPins.h>
+#include <Pins.h>
 #include <helper_3dmath.h>
 #include <ObjVar.h>
 

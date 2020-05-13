@@ -3,7 +3,7 @@
 #include <Streaming.h>
 #include <BluetoothSerial.h>
 #include <Buf.h>
-#include <myPins.h>
+#include <Pins.h>
 
 #define BT_TERMINAL_NAME "Esk8"
 #define AUTO_STOP_IF_NOTCONNECTED 30000 // duration before bluetooth autostop after started if not connected

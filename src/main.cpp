@@ -11,7 +11,7 @@
 #include <Streaming.h>
 #include <soc/rtc.h> // cpu freq
 
-#include <myPins.h>
+#include <Pins.h>
 #include <Ledstrip.h>
 #include <Motion.h>
 #include <myWifi.h>

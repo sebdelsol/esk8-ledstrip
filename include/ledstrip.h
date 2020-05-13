@@ -2,7 +2,7 @@
 
 #define FASTLED_ESP32_FLASH_LOCK 1
 #include <FastLED.h>
-#include <myPins.h>
+#include <Pins.h>
 #include <Streaming.h>
 #include <ObjVar.h>
 #include <FX.h>
