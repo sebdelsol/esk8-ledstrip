@@ -65,6 +65,12 @@ void myMPU6050::init()
   #endif
 }
 
+void myMPU6050::printOffset()
+{
+  mSerial << "Acc Offset: x " << getXAccelOffset() << "\t y " << getYAccelOffset() << "\t z " << getZAccelOffset() << endl;
+  mSerial << "Gyr Offset: x " << getXGyroOffset()  << "\t y " << getYGyroOffset()  << "\t z " << getZGyroOffset()  << endl;
+}
+
 void myMPU6050::calibrate()
 {
   CalibrateAccel(CALIBRATION_LOOP);
@@ -73,8 +79,7 @@ void myMPU6050::calibrate()
   mXGyroOffset = getXGyroOffset();   mYGyroOffset = getYGyroOffset();   mZGyroOffset = getZGyroOffset();
   mXAccelOffset = getXAccelOffset(); mYAccelOffset = getYAccelOffset(); mZAccelOffset = getZAccelOffset();
   gotOffsets = true;
-
-  PrintActiveOffsets();
+  printOffset();
 }
 
 bool myMPU6050::setOffsets()
@@ -83,7 +88,7 @@ bool myMPU6050::setOffsets()
   {
     setXGyroOffset(mXGyroOffset);   setYGyroOffset(mYGyroOffset);   setZGyroOffset(mZGyroOffset);
     setXAccelOffset(mXAccelOffset); setYAccelOffset(mYAccelOffset); setZAccelOffset(mZAccelOffset); 
-    PrintActiveOffsets();
+    printOffset();
   }
   return gotOffsets;
 }
