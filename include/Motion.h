@@ -4,9 +4,9 @@
 #include <FastLED.h> // for lerp15by16
 
 #include <Wire.h>
+#include <helper_3dmath.h>  // vector & quaternion 
 #include <Streaming.h>
 #include <Pins.h>
-#include <helper_3dmath.h>
 #include <ObjVar.h>
 
 #define MPU6050_INCLUDE_DMP_MOTIONAPPS20 // so that all dmp functions are included
