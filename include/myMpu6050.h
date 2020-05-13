@@ -58,8 +58,6 @@ class myMPU6050 : public OBJVar, public MPU6050
   bool setOffsets();
 
 public:
-
-  // MPU6050       mpu;
   uint8_t*      mFifoBuffer; // FIFO storage buffer
   SensorOutput  mOutput;     // computed motion outpout
   bool          updated = false;
