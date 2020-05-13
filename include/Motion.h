@@ -36,7 +36,7 @@ struct SensorOutput
 };
 
 //-----------------------------
-class myMPU6050 : public OBJVar, public MPU6050
+class MOTION : public OBJVar, public MPU6050
 {
   Stream& mSerial;
 
@@ -62,7 +62,7 @@ class myMPU6050 : public OBJVar, public MPU6050
 public:
   SensorOutput  mOutput;     // computed motion outpout
 
-  myMPU6050(Stream& serial);
+  MOTION(Stream& serial);
   void init();
   void begin();
   void calibrate();

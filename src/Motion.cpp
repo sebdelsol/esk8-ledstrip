@@ -1,4 +1,4 @@
-#include <myMpu6050.h>
+#include <Motion.h>
 
 #define __PGMSPACE_H_ 1 // pgmsplace.h define PGMSPACE_INCLUDE instead of __PGMSPACE_H
 #ifdef USE_V6.12
@@ -16,7 +16,7 @@
 
   void MPUGetTask(void* _myMpu)
   {
-    myMPU6050*    myMpu = (myMPU6050* )_myMpu;
+    MOTION*    myMpu = (MOTION* )_myMpu;
     SensorOutput  taskOutput; //output to store computation
     long          lastLoop = micros();
 
@@ -49,30 +49,30 @@
 
 //--------------------------------------
 
-myMPU6050::myMPU6050(Stream& serial) : mSerial(serial) {}
+MOTION::MOTION(Stream& serial) : mSerial(serial) {}
 
-void myMPU6050::init()
+void MOTION::init()
 {
-  #define REGISTER_MPU(var) REGISTER_VAR_SIMPLE_NOSHOW(myMPU6050, #var, self->var, -32768, 32767)
+  #define REGISTER_MPU(var) REGISTER_VAR_SIMPLE_NOSHOW(MOTION, #var, self->var, -32768, 32767)
 
   REGISTER_MPU(mXGyroOffset);   REGISTER_MPU(mYGyroOffset);  REGISTER_MPU(mZGyroOffset);
   REGISTER_MPU(mXAccelOffset);  REGISTER_MPU(mYAccelOffset); REGISTER_MPU(mZAccelOffset);
-  REGISTER_VAR_SIMPLE_NOSHOW(myMPU6050, "gotOffsets", self->gotOffsets, 0, 1);
+  REGISTER_VAR_SIMPLE_NOSHOW(MOTION, "gotOffsets", self->gotOffsets, 0, 1);
 
   #ifdef MPU_GETFIFO_CORE
-    REGISTER_CMD(myMPU6050, "calibrate",  {xTaskNotifyGive(mpuNotifyToCalibrate);} ) // trigger a calibration
+    REGISTER_CMD(MOTION, "calibrate",  {xTaskNotifyGive(mpuNotifyToCalibrate);} ) // trigger a calibration
   #else
-    REGISTER_CMD(myMPU6050, "calibrate",  {self->calibrate();} ) 
+    REGISTER_CMD(MOTION, "calibrate",  {self->calibrate();} ) 
   #endif
 }
 
-void myMPU6050::printOffset()
+void MOTION::printOffset()
 {
   mSerial << "Acc Offset: x " << getXAccelOffset() << "\t y " << getYAccelOffset() << "\t z " << getZAccelOffset() << endl;
   mSerial << "Gyr Offset: x " << getXGyroOffset()  << "\t y " << getYGyroOffset()  << "\t z " << getZGyroOffset()  << endl;
 }
 
-void myMPU6050::calibrate()
+void MOTION::calibrate()
 {
   CalibrateAccel(CALIBRATION_LOOP);
   CalibrateGyro(CALIBRATION_LOOP);
@@ -83,7 +83,7 @@ void myMPU6050::calibrate()
   printOffset();
 }
 
-bool myMPU6050::setOffsets()
+bool MOTION::setOffsets()
 {
   if (gotOffsets)
   {
@@ -95,7 +95,7 @@ bool myMPU6050::setOffsets()
 }
 
 //--------------------------------------
-void myMPU6050::begin()
+void MOTION::begin()
 { 
   mSerial << "---------" << endl;
   
@@ -136,7 +136,7 @@ void myMPU6050::begin()
 }
 
 //--------------------------------------
-void myMPU6050::getAxiSAngle(VectorInt16& v, int& angle, Quaternion& q)
+void MOTION::getAxiSAngle(VectorInt16& v, int& angle, Quaternion& q)
 {
   if (q.w > 1) q.normalize(); // needs q.w < 1 for acos and sqrt
   angle = acos(q.w) * 2 * 10430.; // 32767 / PI 
@@ -157,7 +157,7 @@ void myMPU6050::getAxiSAngle(VectorInt16& v, int& angle, Quaternion& q)
 #define STAYS_SHORT(x) constrain(x, -32768, 32767)
 #define SHIFTR_VECTOR(v, n) v.x = v.x >> n;   v.y = v.y >> n;   v.z = v.z >> n; 
 
-void myMPU6050::compute(SensorOutput& output)
+void MOTION::compute(SensorOutput& output)
 {
   ulong t = micros();
   ulong dt = t - mT;
@@ -166,7 +166,7 @@ void myMPU6050::compute(SensorOutput& output)
   dmpGetQuaternion(&mQuat, mFifoBuffer);
   dmpGetGyro(&mW, mFifoBuffer);
   #ifdef USE_V6.12
-    SHIFTR_VECTOR(mW, 2) // fix sensibility bug in <MPU6050_6Axis_MotionApps_V6_12.h
+    SHIFTR_VECTOR(mW, 2) // fix sensibility bug in MPU6050_6Axis_MotionApps_V6_12.h
   #endif 
 
   // axis angle
@@ -176,7 +176,7 @@ void myMPU6050::compute(SensorOutput& output)
   // real acceleration, adjusted to remove gravity
   dmpGetAccel(&mAcc, mFifoBuffer);
   #ifdef USE_V6.12 
-    SHIFTR_VECTOR(mAcc, 1) // fix sensibility bug in <MPU6050_6Axis_MotionApps_V6_12.h
+    SHIFTR_VECTOR(mAcc, 1) // fix sensibility bug in MPU6050_6Axis_MotionApps_V6_12.h
   #endif
   dmpGetLinearAccel(&mAccReal, &mAcc, &mGrav);
 
@@ -200,7 +200,7 @@ void myMPU6050::compute(SensorOutput& output)
 }
 
 //--------------------------------------
-void myMPU6050::update()
+void MOTION::update()
 {
 #ifdef MPU_GETFIFO_CORE
   

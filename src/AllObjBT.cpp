@@ -12,7 +12,7 @@ void AllObjBT::sendInits(BlueTooth &BT)
 }
 
 //----------------
-bool AllObjBT::sendUpdate(BlueTooth &BT, myMPU6050& motion)
+bool AllObjBT::sendUpdate(BlueTooth &BT, MOTION& motion)
 {
   if(BT.isReadyToSend())
   {

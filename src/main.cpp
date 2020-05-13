@@ -13,7 +13,7 @@
 
 #include <myPins.h>
 #include <ledstrip.h>
-#include <myMpu6050.h>
+#include <Motion.h>
 #include <myWifi.h>
 #include <raster.h>
 
@@ -30,8 +30,8 @@
   OTA       Ota(Serial);
 #endif
 
-myMPU6050 Motion(Serial);
-myWifi    MyWifi(Serial);
+MOTION  Motion(Serial);
+myWifi  MyWifi(Serial);
 
 #ifdef USE_BT
   #include  <Bluetooth.h>
@@ -174,7 +174,7 @@ void loop()
     AllLeds.setBrightness(bright);
     RASTER("probe");
 
-    // handle motion
+    // handle Motion
     SensorOutput& m = Motion.mOutput;
     if (m.updated)
     {
