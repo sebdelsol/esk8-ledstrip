@@ -51,6 +51,7 @@ class AllObj
   
   bool isNumber(const char* txt);
   void dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args);
+  OBJVar* getObjFromName(const char* name); 
 
   void handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change);
   void handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact);
@@ -69,12 +70,8 @@ protected:
 
 public:
   AllObj(Stream& dbgSerial);
-  
   bool registerObj(OBJVar& obj, const char* name);
-  OBJVar* getObjFromName(const char* name); 
-
   void init();
   void save(bool isdefault);
   void load(bool isdefault, bool change = true);
-
 };
