@@ -238,12 +238,12 @@ File AllObj::getFile(bool isdefault, const char* mode)
 {	
   const char* fname = isdefault ? def_fname : cfg_fname;
   File f = spiffsOK ? SPIFFS.open(fname, mode) : File();
-  bool isLoad = strcmp(mode, "r")==0;
+  bool isLoading = strcmp(mode, "r")==0;
 
   if (f)
-    mDbgSerial << (isLoad ? "loading from " : "saving to ") << fname << endl;
+    mDbgSerial << (isLoading ? "loading from " : "saving to ") << fname << endl;
   else
-    mDbgSerial << "FAIL to " << (isLoad ? "load from " : "save to ") << fname << endl;
+    mDbgSerial << "FAIL to " << (isLoading ? "load from " : "save to ") << fname << endl;
   
   return f;
 }
