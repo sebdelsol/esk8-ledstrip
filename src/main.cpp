@@ -36,14 +36,14 @@ myWifi    MyWifi(Serial);
 #ifdef USE_BT
   #include  <Bluetooth.h>
   #include  <Button.h>
-  #include  <PickleBT.h>
+  #include  <AllObjBT.h>
 
   Button    Button(BUTTON_PIN);
   BlueTooth BT(Serial);
-  PickleBT  Pickle(Serial);
+  AllObjBT  AllObj(Serial);
 #else
-  #include  <Pickle.h>
-  Pickle    Pickle(Serial);
+  #include  <AllObj.h>
+  AllObj    AllObj(Serial);
 #endif
 
 #include  <Cfg.h> // needs Motion obje & BT obj defined
@@ -111,17 +111,17 @@ void setup()
   Motion.init();
   AllLeds.init();
 
-  // Pickle -----------------------------
-  #define AddOBJ(o) Pickle.registerObj(o, #o);
+  // AllObj -----------------------------
+  #define AddOBJ(o) AllObj.registerObj(o, #o);
   
-  Pickle.init();
+  AllObj.init();
   AddOBJ(Motion);    AddOBJ(Cfg);            
   AddOBJ(TwinkleF);  AddOBJ(RunF);    AddOBJ(Pacifica); 
   AddOBJ(TwinkleR);  AddOBJ(FireRR);  AddOBJ(FireRL);   AddOBJ(RunR);      AddOBJ(CylonR);
   AddOBJ(FireRun);   AddOBJ(FireTwk); AddOBJ(AquaRun);  AddOBJ(AquaTwk);   AddOBJ(Plasma);  AddOBJ(CylonF);
 
-  Pickle.save(true); // save default
-  Pickle.load(false, false); // load not default, do not send change to BT
+  AllObj.save(true); // save default
+  AllObj.load(false, false); // load not default, do not send change to BT
 
   // BlueTooth -----------------------------
   #ifdef USE_BT
@@ -276,7 +276,7 @@ void loop()
       if (Button.pressed())
         BT.toggle();
 
-      Pickle.receiveUpdate(BT);
+      AllObj.receiveUpdate(BT);
     }
     RASTER("BT");
   #endif

@@ -7,16 +7,16 @@
 
 #define FORMAT_SPIFFS_IF_FAILED true
 
-#define PICKLE_MAXOBJ    20
+#define ALLOBJ_MAXOBJ    20
 
-#define PICKLE_MOTION_CMD  '!'
-#define PICKLE_1ST_ID      (PICKLE_MOTION_CMD + 1)
-#define PICKLE_TERM        '\n' 
-#define PICKLE_ALIVE       '~'
+#define ALLOBJ_MOTION_CMD  '!'
+#define ALLOBJ_1ST_ID      (ALLOBJ_MOTION_CMD + 1)
+#define ALLOBJ_TERM        '\n' 
+#define ALLOBJ_ALIVE       '~'
 
-#define PICKLE_SET     "set"
-#define PICKLE_GET     "get"
-#define PICKLE_INIT    "init"
+#define ALLOBJ_SET     "set"
+#define ALLOBJ_GET     "get"
+#define ALLOBJ_INIT    "init"
 
 #define FNAME_CURRENT "/config.cfg"
 #define FNAME_DEFAULT "/config.def"
@@ -30,7 +30,7 @@ struct parsedCmd
   const char* varName;
 };
 
-class Pickle 
+class AllObj 
 {
   struct mRegisteredOBJ
   {
@@ -38,7 +38,7 @@ class Pickle
     OBJVar* obj;
   };
 
-  mRegisteredOBJ mOBJ[PICKLE_MAXOBJ];
+  mRegisteredOBJ mOBJ[ALLOBJ_MAXOBJ];
   byte mNOBJ = 0;
   byte mID = 0;
 
@@ -61,15 +61,15 @@ class Pickle
   File getFile(bool isdefault, const char* mode);
 
 protected:
-  const char* mSetKeyword = PICKLE_SET;
-  const char* mGetKeyword = PICKLE_GET;
-  const char* mInitKeyword = PICKLE_INIT;
+  const char* mSetKeyword = ALLOBJ_SET;
+  const char* mGetKeyword = ALLOBJ_GET;
+  const char* mInitKeyword = ALLOBJ_INIT;
 
   void readCmdFromStream(Stream& stream, BUF& buf, bool change = true, bool compact = false);
   void emulateCmdForAllVars(const char* cmdKeyword, Stream& stream, OBJVar::ObjTestVarFunc testVar = NULL, bool change = true, bool compact = false);
 
 public:
-  Pickle(Stream& dbgSerial);
+  AllObj(Stream& dbgSerial);
   
   bool registerObj(OBJVar& obj, const char* name);
   OBJVar* getObjFromName(const char* name); 

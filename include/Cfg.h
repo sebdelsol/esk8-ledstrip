@@ -55,11 +55,11 @@ public:
     #define REGISTER_CFG(var, min, max) REGISTER_VAR_SIMPLE(CFG, #var, self->var, min, max)
 
     #ifdef USE_BT
-      REGISTER_CMD(CFG,        "save",      {Pickle.save(false);} )             // save not default
-      REGISTER_CMD(CFG,        "load",      {Pickle.load(false);} )             // load not default
-      REGISTER_CMD(CFG,        "default",   {Pickle.load(true);}  )             // load default
-      REGISTER_CMD_NOSHOW(CFG, "getInits",  {Pickle.sendInits(BT);} )           // answer with all vars init (min, max, value)
-      REGISTER_CMD_NOSHOW(CFG, "getUpdate", {Pickle.sendUpdate(BT, Motion);} )  // answer with all updates
+      REGISTER_CMD(CFG,        "save",      {AllObj.save(false);} )             // save not default
+      REGISTER_CMD(CFG,        "load",      {AllObj.load(false);} )             // load not default
+      REGISTER_CMD(CFG,        "default",   {AllObj.load(true);}  )             // load default
+      REGISTER_CMD_NOSHOW(CFG, "getInits",  {AllObj.sendInits(BT);} )           // answer with all vars init (min, max, value)
+      REGISTER_CMD_NOSHOW(CFG, "getUpdate", {AllObj.sendUpdate(BT, Motion);} )  // answer with all updates
     #endif
 
     REGISTER_CFG(ledR,       0, 1);

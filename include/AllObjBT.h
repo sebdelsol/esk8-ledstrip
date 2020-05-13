@@ -2,12 +2,12 @@
 
 #include <bluetooth.h>
 #include <myMpu6050.h>
-#include <Pickle.h>
+#include <AllObj.h>
 
-class PickleBT : public Pickle
+class AllObjBT : public AllObj
 {
 public:
-  PickleBT(Stream& dbgSerial);
+  AllObjBT(Stream& dbgSerial);
   
   bool receiveUpdate(BlueTooth &BT);
   bool sendUpdate(BlueTooth &BT, myMPU6050& mMotion);

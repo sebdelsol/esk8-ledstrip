@@ -1,8 +1,8 @@
-#include <Pickle.h>
+#include <AllObj.h>
 
-Pickle::Pickle(Stream& dbgSerial) : mDbgSerial(dbgSerial) {}  
+AllObj::AllObj(Stream& dbgSerial) : mDbgSerial(dbgSerial) {}  
 
-void Pickle::init()
+void AllObj::init()
 {
   mDbgSerial << "mount SPIFFS" << endl;
   spiffsOK = SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED);
@@ -11,7 +11,7 @@ void Pickle::init()
 }
 
 //--------------------------------------
-OBJVar* Pickle::getObjFromName(const char* name)
+OBJVar* AllObj::getObjFromName(const char* name)
 {
   for (byte i = 0; i < mNOBJ; i++) //look for the obj
     if (strcmp(name, mOBJ[i].name)==0)
@@ -21,9 +21,9 @@ OBJVar* Pickle::getObjFromName(const char* name)
 }
 
 //----------------
-bool Pickle::registerObj(OBJVar& obj, const char* name)
+bool AllObj::registerObj(OBJVar& obj, const char* name)
 {
-  bool ok = mNOBJ < PICKLE_MAXOBJ;
+  bool ok = mNOBJ < ALLOBJ_MAXOBJ;
   if (ok)
   {
     mOBJ[mNOBJ].obj = (OBJVar* )&obj;
@@ -39,18 +39,18 @@ bool Pickle::registerObj(OBJVar& obj, const char* name)
     {
       MyVar* var = obj.getVar(i);
       
-      obj.setID(var, PICKLE_1ST_ID + mID);
+      obj.setID(var, ALLOBJ_1ST_ID + mID);
       mID += 1;
     }
   }
   else
-    mDbgSerial << "----------- !!!!!!!!!! Max obj is reached " << PICKLE_MAXOBJ << endl; 
+    mDbgSerial << "----------- !!!!!!!!!! Max obj is reached " << ALLOBJ_MAXOBJ << endl; 
 
   return ok;
 }
 
 //--------------------------------------
-bool Pickle::isNumber(const char* txt) 
+bool AllObj::isNumber(const char* txt) 
 { 
   for (int i = 0; i < strlen(txt); i++) 
     if (!(isdigit(txt[i]) || txt[i]=='-')) 
@@ -59,7 +59,7 @@ bool Pickle::isNumber(const char* txt)
   return true; 
 } 
 
-void Pickle::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args)
+void AllObj::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args)
 {
   mDbgSerial << cmdKeyword << " " << parsed.objName << " " << parsed.varName;
   for (byte i=0; i < nbArg; i++) 
@@ -68,7 +68,7 @@ void Pickle::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, 
 }
 
 //--------------------------------------
-void Pickle::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
+void AllObj::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
 {
   int min, max;
   parsed.obj->getMinMax(parsed.var, &min, &max);
@@ -90,7 +90,7 @@ void Pickle::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
 }
 
 //----------------
-void Pickle::handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact)
+void AllObj::handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact)
 {
   int args[MAX_ARGS];
   byte nbArg = parsed.obj->get(parsed.var, args); //get the value in args
@@ -111,7 +111,7 @@ void Pickle::handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact)
 }
 
 //----------------
-void Pickle::handleInitCmd(const parsedCmd& parsed, Stream& stream)
+void AllObj::handleInitCmd(const parsedCmd& parsed, Stream& stream)
 {
   stream << mInitKeyword << " " << parsed.objName << " " << parsed.varName << " " << parsed.obj->getID(parsed.var); 
 
@@ -130,7 +130,7 @@ void Pickle::handleInitCmd(const parsedCmd& parsed, Stream& stream)
 }
 
 //--------------------------------------
-bool Pickle::getObjVar(parsedCmd& parsed, BUF& buf)
+bool AllObj::getObjVar(parsedCmd& parsed, BUF& buf)
 {
   parsed.objName = buf.next();
   if (parsed.objName != NULL)
@@ -151,7 +151,7 @@ bool Pickle::getObjVar(parsedCmd& parsed, BUF& buf)
 }
 
 //----------------
-void Pickle::handleCmd(Stream& stream, BUF& buf, bool change, bool compact)
+void AllObj::handleCmd(Stream& stream, BUF& buf, bool change, bool compact)
 {
   const char* cmd = buf.first();
   if (cmd!=NULL)
@@ -182,14 +182,14 @@ void Pickle::handleCmd(Stream& stream, BUF& buf, bool change, bool compact)
 }
 
 //----------------
-void Pickle::readCmdFromStream(Stream& stream, BUF& buf, bool change, bool compact)
+void AllObj::readCmdFromStream(Stream& stream, BUF& buf, bool change, bool compact)
 {
   while (stream.available() > 0) 
   {
     char c = stream.read();
-    if (c != PICKLE_ALIVE)
+    if (c != ALLOBJ_ALIVE)
     {
-      if (c == PICKLE_TERM)
+      if (c == ALLOBJ_TERM)
       {
         handleCmd(stream, buf, change, compact);
         buf.clear();
@@ -204,7 +204,7 @@ void Pickle::readCmdFromStream(Stream& stream, BUF& buf, bool change, bool compa
 }
 
 //----------------
-void Pickle::emulateCmdForAllVars(const char* cmdKeyword, Stream& stream, OBJVar::ObjTestVarFunc testVar, bool change, bool compact)
+void AllObj::emulateCmdForAllVars(const char* cmdKeyword, Stream& stream, OBJVar::ObjTestVarFunc testVar, bool change, bool compact)
 {
   for (byte i = 0; i < mNOBJ; i++)
   {
@@ -226,7 +226,7 @@ void Pickle::emulateCmdForAllVars(const char* cmdKeyword, Stream& stream, OBJVar
 }
 
 //--------------------------------------
-File Pickle::getFile(bool isdefault, const char* mode)
+File AllObj::getFile(bool isdefault, const char* mode)
 {	
   const char* fname = isdefault ? def_fname : cfg_fname;
   File f = spiffsOK ? SPIFFS.open(fname, mode) : File();
@@ -241,7 +241,7 @@ File Pickle::getFile(bool isdefault, const char* mode)
 }
 
 //----------------
-void Pickle::load(bool isdefault, bool change)
+void AllObj::load(bool isdefault, bool change)
 {
   File f = getFile(isdefault, "r");
   if (f)
@@ -253,7 +253,7 @@ void Pickle::load(bool isdefault, bool change)
 }
 
 //----------------
-void Pickle::save(bool isdefault)
+void AllObj::save(bool isdefault)
 {
   File f = getFile(isdefault, "w");
   if (f)

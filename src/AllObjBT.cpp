@@ -1,8 +1,8 @@
-#include <PickleBT.h>
+#include <AllObjBT.h>
 
-PickleBT::PickleBT(Stream& dbgSerial) : Pickle(dbgSerial) {}  
+AllObjBT::AllObjBT(Stream& dbgSerial) : AllObj(dbgSerial) {}  
 
-void PickleBT::sendInits(BlueTooth &BT)
+void AllObjBT::sendInits(BlueTooth &BT)
 {
   if(BT.isReadyToSend())
   {
@@ -12,7 +12,7 @@ void PickleBT::sendInits(BlueTooth &BT)
 }
 
 //----------------
-bool PickleBT::sendUpdate(BlueTooth &BT, myMPU6050& mMotion)
+bool AllObjBT::sendUpdate(BlueTooth &BT, myMPU6050& mMotion)
 {
   if(BT.isReadyToSend())
   {
@@ -21,12 +21,12 @@ bool PickleBT::sendUpdate(BlueTooth &BT, myMPU6050& mMotion)
     if(mMotion.updated)
     {
       SensorOutput& m = mMotion.mOutput;
-      BT.mBTSerial << PICKLE_MOTION_CMD << " " << m.axis.x << " " << m.axis.y << " " << m.axis.z << " " << m.angle << " " << m.accY << " " << m.wZ << endl;
+      BT.mBTSerial << ALLOBJ_MOTION_CMD << " " << m.axis.x << " " << m.axis.y << " " << m.axis.z << " " << m.angle << " " << m.accY << " " << m.wZ << endl;
     }
   }
 }
 
-bool PickleBT::receiveUpdate(BlueTooth &BT)
+bool AllObjBT::receiveUpdate(BlueTooth &BT)
 {
   if (BT.isReadyToReceive())
     readCmdFromStream(BT.mBTSerial, BT.mBTbuf, false, true);
