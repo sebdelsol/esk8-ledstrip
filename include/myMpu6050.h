@@ -32,6 +32,7 @@ struct SensorOutput
   int         angle = 0;
   int         accX = 0, accY = 0, accZ = 0;
   int         wZ = 0;
+  bool        updated = false;
 };
 
 //-----------------------------
@@ -52,15 +53,14 @@ class myMPU6050 : public OBJVar, public MPU6050
   bool    gotOffsets  = false;
 
   ulong mT = 0;
+  uint8_t*      mFifoBuffer; // FIFO storage buffer
 
   void getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q);
   void printOffset();
   bool setOffsets();
 
 public:
-  uint8_t*      mFifoBuffer; // FIFO storage buffer
   SensorOutput  mOutput;     // computed motion outpout
-  bool          updated = false;
 
   myMPU6050(Stream& serial);
   void init();
@@ -68,4 +68,5 @@ public:
   void calibrate();
   void compute(SensorOutput& output);
   void update();
+  bool getFiFoPacket() { return dmpGetCurrentFIFOPacket(mFifoBuffer); };
 };

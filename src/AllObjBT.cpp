@@ -18,11 +18,9 @@ bool AllObjBT::sendUpdate(BlueTooth &BT, myMPU6050& mMotion)
   {
     emulateCmdForAllVars(mGetKeyword, BT.mBTSerial, &OBJVar::hasVarChanged, true, true); //for all vars, emulate a get cmd and send the result to mBTSerial
 
-    if(mMotion.updated)
-    {
-      SensorOutput& m = mMotion.mOutput;
+    SensorOutput& m = mMotion.mOutput;
+    if(m.updated)
       BT.mBTSerial << ALLOBJ_MOTION_CMD << " " << m.axis.x << " " << m.axis.y << " " << m.axis.z << " " << m.angle << " " << m.accY << " " << m.wZ << endl;
-    }
   }
 }
 

@@ -175,10 +175,10 @@ void loop()
     RASTER("probe");
 
     // handle motion
-    if (Motion.updated)
+    SensorOutput& m = Motion.mOutput;
+    if (m.updated)
     {
       #define MulAlpha(a, b) (((a) * ((b) + 1)) >> 8)
-      SensorOutput& m = Motion.mOutput;
 
       int runSpeed =  ((m.wZ > 0) - (m.wZ < 0)) * Cfg.runSpeed;
 

@@ -34,7 +34,7 @@
       if(ulTaskNotifyTake(pdTRUE, 0)) // pool the the task notification semaphore
         myMpu->calibrate();
 
-      if(myMpu->dmpGetCurrentFIFOPacket(myMpu->mFifoBuffer))
+      if(myMpu->getFiFoPacket())
       {
         myMpu->compute(computeOutput);
 
@@ -187,6 +187,7 @@ void myMPU6050::compute(SensorOutput& output)
   output.accY =  lerp15by16(output.accY,  STAYS_SHORT(mAccReal.y),  smooth);
   output.accZ =  lerp15by16(output.accZ,  STAYS_SHORT(mAccReal.z),  smooth);
   output.wZ =    lerp15by16(output.wZ,    STAYS_SHORT(mW.z * -655), smooth);
+  output.updated = true;
 
   #ifdef MPU_DBG
     mSerial << "[ dt "   << dt*.001 << "ms\t smooth" << smooth/65536. << "\t Wz "  << output.wZ  << "]\t ";
@@ -208,15 +209,12 @@ void myMPU6050::update()
   {
     memcpy(&mOutput, &sharedOutput, sizeof(SensorOutput)); 
     xSemaphoreGive(mpuOutputMutex); // release the mutex after measures have been copied
-    updated = true;
   }
-  else
-    updated = false;
 
 #else
-  if (mDmpReady && dmpGetCurrentFIFOPacket(mFifoBuffer))
+  
+  if (mDmpReady && getFiFoPacket())
     compute(mOutput);
 
-  updated = mDmpReady;
 #endif
 }
