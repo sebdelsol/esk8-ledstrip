@@ -24,13 +24,12 @@
 
     for (;;) // forever
     {
-      // add a delay to share more the core // a packet every 10 ms 
       long ct = micros();
       long dt = ct - lastLoop; lastLoop = ct;
-      long wait = 10 - (1 + dt/1000); 
-      vTaskDelay( pdMS_TO_TICKS(wait > 0 ? wait : 0) ); // a packet every 10ms 
+      long wait = 10 - (1 + dt / 1000); 
+      vTaskDelay( pdMS_TO_TICKS(wait > 0 ? wait : 0) ); // delay so that sync with a packet every 10ms 
       
-      if(ulTaskNotifyTake(pdTRUE, 0)) // pool the the task notification semaphore
+      if(ulTaskNotifyTake(pdTRUE, 0)) // pool the the task semaphore
         mpu->calibrate();
 
       if(mpu->getFiFoPacket())
