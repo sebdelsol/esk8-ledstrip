@@ -80,14 +80,14 @@ RunningFX   RunF(CRGB::Gold);
 // ----------------------------------------------------
 void setup()
 {
-  // switch off all leds 
+  // switch off all leds ---------------
   AllLeds.setBrightness(0);
   AllLeds.clearAndShow();
 
-  // esp32 inits
+  // esp32 inits -----------------------
   Serial.begin(SERIAL_BAUD);
 
-  rtc_clk_cpu_freq_set(RTC_CPU_FREQ_240M);
+  // rtc_clk_cpu_freq_set(RTC_CPU_FREQ_240M);
   Serial << endl << "-------- START --------" << endl;
   Serial << "Esp32 " << esp_get_idf_version() << endl;
   Serial << "CPU freq " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
@@ -106,7 +106,6 @@ void setup()
   AddFX(LedsF, TwinkleF); AddFX(LedsF, RunF);   AddFX(LedsF, Pacifica); AddFX(LedsF, CylonF);
 
   // delayed inits --------------------------
-  // long enough to make the leds blinking @ startup
   Cfg.init();
   Motion.init();
   AllLeds.init();
