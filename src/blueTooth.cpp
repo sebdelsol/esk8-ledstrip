@@ -1,4 +1,4 @@
-#include <bluetooth.h>
+#include <Bluetooth.h>
 
 //------------------------------------------------------------
 #include <rom/rtc.h>

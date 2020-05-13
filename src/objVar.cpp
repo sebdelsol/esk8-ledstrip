@@ -1,4 +1,4 @@
-#include <objVar.h>
+#include <ObjVar.h>
 
 bool OBJVar::registerVar(void* obj, const char* name, setVarFunc set, getVarFunc get, int min, int max, bool show)
 {

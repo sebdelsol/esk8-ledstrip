@@ -2,7 +2,7 @@
 
 #include <Streaming.h>
 #include <BluetoothSerial.h>
-#include <buf.h>
+#include <Buf.h>
 #include <myPins.h>
 
 #define BT_TERMINAL_NAME "Esk8"

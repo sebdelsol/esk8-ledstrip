@@ -3,7 +3,7 @@
 #define FASTLED_ESP32_FLASH_LOCK 1
 #include <FastLED.h>
 #include <Streaming.h>
-#include <objVar.h>
+#include <ObjVar.h>
 
 #define SetFxNAME(name) const char* getName() {return name;};
 #define ClearLeds(l, n) memset8(l, 0, n * sizeof(CRGB)); 

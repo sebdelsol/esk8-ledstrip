@@ -1,4 +1,4 @@
-#include <ledstrip.h>
+#include <Ledstrip.h>
 
 // ----------------------------------------------------
 #ifdef FASTLED_SHOW_CORE

@@ -4,7 +4,7 @@
 
 #include <WiFi.h>//<ESP8266WiFi.h>
 #include <Streaming.h>
-#include <ledstrip.h>
+#include <Ledstrip.h>
 #include <WebSocketsClient.h>
 
 #include <wificonfig.h>  

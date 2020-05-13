@@ -12,10 +12,10 @@
 #include <soc/rtc.h> // cpu freq
 
 #include <myPins.h>
-#include <ledstrip.h>
+#include <Ledstrip.h>
 #include <Motion.h>
 #include <myWifi.h>
-#include <raster.h>
+#include <Raster.h>
 
 // ----------------------------------------------------
 #ifdef USE_TELNET

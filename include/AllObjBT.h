@@ -1,6 +1,6 @@
 #pragma once
 
-#include <bluetooth.h>
+#include <Bluetooth.h>
 #include <Motion.h>
 #include <AllObj.h>
 

@@ -7,7 +7,7 @@
 #include <Streaming.h>
 #include <myPins.h>
 #include <helper_3dmath.h>
-#include <objVar.h>
+#include <ObjVar.h>
 
 #define MPU6050_INCLUDE_DMP_MOTIONAPPS20 // so that all dmp functions are included
 #include <MPU6050.h>

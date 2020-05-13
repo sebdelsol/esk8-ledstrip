@@ -4,7 +4,7 @@
 #include <FastLED.h>
 #include <myPins.h>
 #include <Streaming.h>
-#include <objVar.h>
+#include <ObjVar.h>
 #include <FX.h>
 
 #define COLOR_ORDER     GRB

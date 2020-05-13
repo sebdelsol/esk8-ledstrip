@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Streaming.h>
-#include <objVar.h>
-#include <buf.h>
+#include <ObjVar.h>
+#include <Buf.h>
 #include <SPIFFS.h>
 
 #define ALLOBJ_MAXOBJ    20
