@@ -66,7 +66,7 @@ void MOTION::init()
   #endif
 }
 
-void MOTION::printOffset()
+void MOTION::printOffsets()
 {
   mSerial << "Acc Offset: x " << getXAccelOffset() << "\t y " << getYAccelOffset() << "\t z " << getZAccelOffset() << endl;
   mSerial << "Gyr Offset: x " << getXGyroOffset()  << "\t y " << getYGyroOffset()  << "\t z " << getZGyroOffset()  << endl;
@@ -80,7 +80,7 @@ void MOTION::calibrate()
   mXGyroOffset = getXGyroOffset();   mYGyroOffset = getYGyroOffset();   mZGyroOffset = getZGyroOffset();
   mXAccelOffset = getXAccelOffset(); mYAccelOffset = getYAccelOffset(); mZAccelOffset = getZAccelOffset();
   gotOffsets = true;
-  printOffset();
+  printOffsets();
 }
 
 bool MOTION::setOffsets()
@@ -89,7 +89,7 @@ bool MOTION::setOffsets()
   {
     setXGyroOffset(mXGyroOffset);   setYGyroOffset(mYGyroOffset);   setZGyroOffset(mZGyroOffset);
     setXAccelOffset(mXAccelOffset); setYAccelOffset(mYAccelOffset); setZAccelOffset(mZAccelOffset); 
-    printOffset();
+    printOffsets();
   }
   return gotOffsets;
 }

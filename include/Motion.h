@@ -22,7 +22,7 @@
 #define CALIBRATION_LOOP  6
 
 //-----------------------------
-// The core to run mpu.dmpGetCurrentFIFOPacket()
+// The core to run getFiFoPacket & compute in a task
 #define MPU_GETFIFO_CORE 0 // mpu on a task
 #define MPU_GETFIFO_PRIO 1
 
@@ -38,25 +38,23 @@ struct SensorOutput
 //-----------------------------
 class MOTION : public OBJVar, public MPU6050
 {
-  Stream& mSerial;
+  Stream&     mSerial;
+  bool        mDmpReady = false; // if DMP init was successful
+  uint8_t*    mFifoBuffer; // FIFO storage buffer
 
-  bool mDmpReady = false; // if DMP init was successful
-
+  ulong       mT = 0;
   Quaternion  mQuat;      // quaternion from fifoBuffer
   VectorInt16 mW;         // gyro sensor
   VectorInt16 mAcc;       // accel sensor
   VectorInt16 mAccReal;   // gravity-free accel
   VectorFloat mGrav;      // gravity vector
 
-  int16_t mXGyroOffset,   mYGyroOffset,   mZGyroOffset;
-  int16_t mXAccelOffset,  mYAccelOffset,  mZAccelOffset;
-  bool    gotOffsets  = false;
-
-  ulong mT = 0;
-  uint8_t*      mFifoBuffer; // FIFO storage buffer
+  int16_t     mXGyroOffset,   mYGyroOffset,   mZGyroOffset;
+  int16_t     mXAccelOffset,  mYAccelOffset,  mZAccelOffset;
+  bool        gotOffsets  = false;
 
   void getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q);
-  void printOffset();
+  void printOffsets();
   bool setOffsets();
 
 public:
@@ -66,7 +64,7 @@ public:
   void init();
   void begin();
   void calibrate();
+  bool getFiFoPacket() { return dmpGetCurrentFIFOPacket(mFifoBuffer); };
   void compute(SensorOutput& output);
   void update();
-  bool getFiFoPacket() { return dmpGetCurrentFIFOPacket(mFifoBuffer); };
 };
