@@ -175,9 +175,8 @@ void loop()
     {
       #define MulAlpha(a, b) (((a) * ((b) + 1)) >> 8)
 
-      int runSpeed =  ((m.wZ > 0) - (m.wZ < 0)) * Cfg.runSpeed;
-
       // -- Gyro
+      int runSpeed =  ((m.wZ > 0) - (m.wZ < 0)) * Cfg.runSpeed;
       int _WZ = abs(m.wZ);
       byte alpha = _WZ > Cfg.neutralWZ ? min((_WZ - Cfg.neutralWZ) * 255 / Cfg.maxWZ, 255) : 0;
       byte invAlpha = 255 - alpha;
