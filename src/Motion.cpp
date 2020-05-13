@@ -121,8 +121,6 @@ void MOTION::begin()
       mpuFlagReady = xEventGroupCreate();
       xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", 2048, this, MPU_GETFIFO_PRIO, &mpuNotifyToCalibrate, MPU_GETFIFO_CORE);  
       mSerial << "Mpu runs in a task on Core " << MPU_GETFIFO_CORE << " with Prio " << MPU_GETFIFO_PRIO << endl;
-    #else 
-      mSerial << "Mpu runs on Main Core" << endl;
     #endif
 
     mSerial << "DMP enabled" << endl;
