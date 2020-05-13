@@ -5,8 +5,6 @@
 #include <buf.h>
 #include <SPIFFS.h>
 
-#define FORMAT_SPIFFS_IF_FAILED true
-
 #define ALLOBJ_MAXOBJ    20
 
 #define ALLOBJ_MOTION_CMD  '!'
@@ -20,6 +18,8 @@
 
 #define FNAME_CURRENT "/config.cfg"
 #define FNAME_DEFAULT "/config.def"
+
+#define FORMAT_SPIFFS_IF_FAILED true
 
 //-------------------------------
 struct parsedCmd 
