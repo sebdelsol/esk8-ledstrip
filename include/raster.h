@@ -18,7 +18,7 @@
       _rasters[_rasterCount++].name = F(txt); \
     }  \
     else \
-      Serial << "--------------!!!!!!!!  Max Raster reached "  << _rasterCount << endl;
+      Serial << ">> ERROR !! Max Raster reached "  << _rasterCount << endl;
 
   #define RASTER_END \
     static long _lastEndTime;  \
