@@ -9,14 +9,14 @@
 
 //--------------------------------------
 #ifdef MPU_GETFIFO_CORE
-  SemaphoreHandle_t   mpuOutputMutex;
-  EventGroupHandle_t  mpuFlagReady;
-  TaskHandle_t        mpuNotifyToCalibrate;
-  SensorOutput        sharedOutput; // shared with update so that the mutex is barely taken by MPUGetTask
+  SemaphoreHandle_t   OutputMutex;
+  EventGroupHandle_t  FlagReady;
+  TaskHandle_t        NotifyToCalibrate;
+  SensorOutput        SharedOutput; // shared with update so that the mutex is barely taken by MPUGetTask
 
-  void MPUGetTask(void* _myMpu)
+  void MPUGetTask(void* _mpu)
   {
-    MOTION*    myMpu = (MOTION* )_myMpu;
+    MOTION*       mpu = (MOTION* )_mpu;
     SensorOutput  taskOutput; //output to store computation
     long          lastLoop = micros();
 
@@ -31,17 +31,17 @@
       vTaskDelay( pdMS_TO_TICKS(wait > 0 ? wait : 0) ); // a packet every 10ms 
       
       if(ulTaskNotifyTake(pdTRUE, 0)) // pool the the task notification semaphore
-        myMpu->calibrate();
+        mpu->calibrate();
 
-      if(myMpu->getFiFoPacket())
+      if(mpu->getFiFoPacket())
       {
-        myMpu->compute(taskOutput);
+        mpu->compute(taskOutput);
 
-        xSemaphoreTake(mpuOutputMutex, portMAX_DELAY);
-        memcpy(&sharedOutput, &taskOutput, sizeof(SensorOutput)); 
-        xSemaphoreGive(mpuOutputMutex);
+        xSemaphoreTake(OutputMutex, portMAX_DELAY);
+        memcpy(&SharedOutput, &taskOutput, sizeof(SensorOutput)); 
+        xSemaphoreGive(OutputMutex);
 
-        xEventGroupSetBits(mpuFlagReady, 1);
+        xEventGroupSetBits(FlagReady, 1);
       }
     }
   }
@@ -60,7 +60,7 @@ void MOTION::init()
   REGISTER_VAR_SIMPLE_NOSHOW(MOTION, "gotOffsets", self->gotOffsets, 0, 1);
 
   #ifdef MPU_GETFIFO_CORE
-    REGISTER_CMD(MOTION, "calibrate",  {xTaskNotifyGive(mpuNotifyToCalibrate);} ) // trigger a calibration
+    REGISTER_CMD(MOTION, "calibrate",  {xTaskNotifyGive(NotifyToCalibrate);} ) // trigger a calibration
   #else
     REGISTER_CMD(MOTION, "calibrate",  {self->calibrate();} ) 
   #endif
@@ -117,9 +117,9 @@ void MOTION::begin()
     assert (mFifoBuffer!=NULL);
 
     #ifdef MPU_GETFIFO_CORE
-      mpuOutputMutex = xSemaphoreCreateMutex();
-      mpuFlagReady = xEventGroupCreate();
-      xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", 2048, this, MPU_GETFIFO_PRIO, &mpuNotifyToCalibrate, MPU_GETFIFO_CORE);  
+      OutputMutex = xSemaphoreCreateMutex();
+      FlagReady = xEventGroupCreate();
+      xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", 2048, this, MPU_GETFIFO_PRIO, &NotifyToCalibrate, MPU_GETFIFO_CORE);  
       mSerial << "Mpu runs in a task on Core " << MPU_GETFIFO_CORE << " with Prio " << MPU_GETFIFO_PRIO << endl;
     #endif
 
@@ -198,10 +198,10 @@ void MOTION::update()
 {
 #ifdef MPU_GETFIFO_CORE
   
-  if (mDmpReady && xEventGroupGetBits(mpuFlagReady) && xSemaphoreTake(mpuOutputMutex, 0) == pdTRUE) // pool the mpuTask
+  if (mDmpReady && xEventGroupGetBits(FlagReady) && xSemaphoreTake(OutputMutex, 0) == pdTRUE) // pool the mpuTask
   {
-    memcpy(&mOutput, &sharedOutput, sizeof(SensorOutput)); 
-    xSemaphoreGive(mpuOutputMutex); // release the mutex after measures have been copied
+    memcpy(&mOutput, &SharedOutput, sizeof(SensorOutput)); 
+    xSemaphoreGive(OutputMutex); // release the mutex after measures have been copied
   }
 
 #else
