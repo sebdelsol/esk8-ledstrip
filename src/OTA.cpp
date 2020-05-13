@@ -10,16 +10,23 @@ void OTA::begin()
     ArduinoOTA.setHostname(OTA_HOSTNAME);
 
     ArduinoOTA
-      .onStart([this]() {
+      .onStart([this]()
+      {
         mSerial << "Start updating " << (ArduinoOTA.getCommand() == U_FLASH ? "sketch" : "filesystem") << endl;
       })
-      .onEnd([this]() {
+      
+      .onEnd([this]()
+      {
         mSerial << "\nEnd\n";
       })
-      .onProgress([this](unsigned int progress, unsigned int total) {
+      
+      .onProgress([this](unsigned int progress, unsigned int total)
+      {
         mSerial << "Progress: " << (progress / (total / 100)) << "%\r";
       })
-      .onError([this](ota_error_t error) {
+      
+      .onError([this](ota_error_t error)
+      {
         mSerial << "Error " << error << endl; // check ArduinoOTA.h for errors
       });
 
