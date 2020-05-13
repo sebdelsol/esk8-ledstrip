@@ -1,11 +1,8 @@
 #include <myWifi.h>
 
-void myWifi::init(Stream &serial)
-{
-  mSerial = &serial;
-}
+myWifi::myWifi(Stream& serial) : mSerial(serial) {}
 
-void myWifi::off()
+void myWifi::stop()
 {
   WiFi.mode(WIFI_OFF);
   // WiFi.forceSleepBegin();
@@ -13,10 +10,10 @@ void myWifi::off()
 
   mWantON = false;
   mON = false;
-  *mSerial << "Wifi off" << endl;
+  mSerial << "Wifi off" << endl;
 }
 
-void myWifi::on()
+void myWifi::start()
 {
   WiFi.mode(WIFI_STA);
   // WiFi.forceSleepWake();
@@ -26,7 +23,7 @@ void myWifi::on()
   mON = false;
   mWantON = true;
 
-  *mSerial << "Wifi Connecting" << endl;
+  mSerial << "Wifi Connecting" << endl;
 }
 
 void myWifi::addLeds(const BaseLedStrip &leds)
@@ -47,19 +44,19 @@ bool myWifi::update()
       {
         if(WiFi.status() == WL_CONNECTED)
         {
-          *mSerial << "Wifi connected @ " << WiFi.localIP() << endl;
+          mSerial << "Wifi connected @ " << WiFi.localIP() << endl;
           digitalWrite(BUILTIN_LED, LOW); // led on
           mON = true;
 
           if (mIsSocket)
           {
-            *mSerial << "Socket client started" << endl;
+            mSerial << "Socket client started" << endl;
             webSocket.begin(SOCK_ADDR, SOCK_PORT);
           }
         }
       }
       else 
-        off();
+        stop();
     }
     
     else

@@ -32,13 +32,13 @@ class myWifi
   #define INFO_LEN 15
   char mInfo[INFO_LEN];
 
-  Stream* mSerial;
+  Stream& mSerial;
 
 public:
-  void init(Stream &serial);
-  void on();
-  void off();
-  void toggle() { mON ? off() : on(); };
+  myWifi(Stream &serial);
+  void start();
+  void stop();
+  void toggle() { mON ? stop() : start(); };
   void addLeds(const BaseLedStrip &leds);
   bool update();
 };

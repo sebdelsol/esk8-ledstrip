@@ -15,36 +15,39 @@
 #include <ledstrip.h>
 #include <myMpu6050.h>
 #include <myWifi.h>
-#include <Cfg.h>
 #include <raster.h>
 
 // ----------------------------------------------------
-myMPU6050   Motion;
-myWifi      MyWifi;
-
-#ifdef USE_BT
-  #include  <BTcmd.h>
-  #include  <Button.h>
-
-  Button    Button(BUTTON_PIN);
-  BTcmd     BT(Motion);
-  CFG       Cfg(BT);
-#else
-  CFG       Cfg;
-#endif
-
-// ----------------------------------------------------
-#ifdef USE_OTA
-  #include  <OTA.h>
-  OTA       Ota;
-#endif
-
 #ifdef USE_TELNET
   #include  <TelnetSpy.h>
   
-  TelnetSpy SerialAndTelnet;
-  #define   Serial  SerialAndTelnet
+  TelnetSpy SerialAndTelnet;  // define first sinc it redefine Serial
+  #define   Serial  SerialAndTelnet 
 #endif
+
+#ifdef USE_OTA
+  #include  <OTA.h>
+  OTA       Ota(Serial);
+#endif
+
+myMPU6050 Motion(Serial);
+myWifi    MyWifi(Serial);
+
+#ifdef USE_BT
+  #include  <Bluetooth.h>
+  #include  <Button.h>
+  #include  <PickleBT.h>
+
+  Button    Button(BUTTON_PIN);
+  BlueTooth BT(Serial);
+  PickleBT  Pickle(Serial);
+#else
+  #include  <Pickle.h>
+  Pickle    Pickle(Serial);
+#endif
+
+#include  <Cfg.h> // needs Motion obje & BT obj defined
+CFG       Cfg;
 
 // ----------------------------------------------------
 #define   AQUA          CRGB(0x00FFFF)
@@ -108,21 +111,22 @@ void setup()
   Motion.init();
   AllLeds.init();
 
+  // Pickle -----------------------------
+  #define AddOBJ(o) Pickle.registerObj(o, #o);
+  
+  Pickle.init();
+  AddOBJ(Motion);    AddOBJ(Cfg);            
+  AddOBJ(TwinkleF);  AddOBJ(RunF);    AddOBJ(Pacifica); 
+  AddOBJ(TwinkleR);  AddOBJ(FireRR);  AddOBJ(FireRL);   AddOBJ(RunR);      AddOBJ(CylonR);
+  AddOBJ(FireRun);   AddOBJ(FireTwk); AddOBJ(AquaRun);  AddOBJ(AquaTwk);   AddOBJ(Plasma);  AddOBJ(CylonF);
+
+  Pickle.save(true); // save default
+  Pickle.load(false, false); // load not default, do not send change to BT
+
   // BlueTooth -----------------------------
   #ifdef USE_BT
-    #define AddOBJ(o) BT.registerObj(o, #o);
-    
-    BT.init(Serial);
-
-    AddOBJ(Motion);    AddOBJ(Cfg);            
-    AddOBJ(TwinkleF);  AddOBJ(RunF);    AddOBJ(Pacifica); 
-    AddOBJ(TwinkleR);  AddOBJ(FireRR);  AddOBJ(FireRL);   AddOBJ(RunR);      AddOBJ(CylonR);
-    AddOBJ(FireRun);   AddOBJ(FireTwk); AddOBJ(AquaRun);  AddOBJ(AquaTwk);   AddOBJ(Plasma);  AddOBJ(CylonF);
-
-    BT.save(true); // save default
-    BT.load(false, false); // load not default, do not send change to BT
+    BT.init();
     BT.start();
-
     Button.begin();
   #else   
     pinMode(LIGHT_PIN, OUTPUT); //blue led
@@ -131,17 +135,11 @@ void setup()
   #endif
 
   // Motion -----------------------------
-  #ifdef USE_BT 
-    Motion.begin(Serial, false);  
-  #else 
-    Motion.begin(Serial, true);   // calibrate
-  #endif
+  Motion.begin();  
   
   // Wifi -----------------------------
-  MyWifi.init(Serial);
-  
   #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET)
-    MyWifi.on();
+    MyWifi.start();
   
     #ifdef DEBUG_LED_TOWIFI
       MyWifi.addLeds(Leds);   
@@ -150,7 +148,7 @@ void setup()
     #endif
   
   #else
-    MyWifi.off();
+    MyWifi.stop();
   #endif
 }
 
@@ -162,7 +160,7 @@ void loop()
   EVERY_N_MILLISECONDS(LED_TICK)
   {
     // Update mpu 6050
-    Motion.updateMotion(); 
+    Motion.update(); 
     RASTER("Motion");
 
     // Master brightness
@@ -278,7 +276,7 @@ void loop()
       if (Button.pressed())
         BT.toggle();
 
-      BT.receiveUpdate();
+      Pickle.receiveUpdate(BT);
     }
     RASTER("BT");
   #endif

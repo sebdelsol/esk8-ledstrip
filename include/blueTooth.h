@@ -2,6 +2,7 @@
 
 #include <Streaming.h>
 #include <BluetoothSerial.h>
+#include <buf.h>
 #include <myPins.h>
 
 #define BT_TERMINAL_NAME "Esk8"
@@ -13,17 +14,23 @@ class BlueTooth
   bool mON = false;
   bool mConnected = false;
 
-protected:
-  Stream* mDbgSerial;
-  BluetoothSerial mBTSerial;
+  Stream& mDbgSerial;
 
 public:
+  BluetoothSerial mBTSerial;
+  BUF mBTbuf;
+
   void callback(esp_spp_cb_event_t event, esp_spp_cb_param_t* param); //for trampoline
 
   bool isReadyToReceive();
   bool isReadyToSend();
 
-  void initBT(Stream& serial);
+  BlueTooth(Stream& serial);
+  void init();
   void start(const bool on=true);
   void toggle();
+
+  bool receiveUpdate();
+  bool sendUpdate();
+  void sendInits();
 };

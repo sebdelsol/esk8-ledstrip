@@ -7,9 +7,12 @@
 
 class OTA
 {
+    Stream& mSerial;
+
     bool mBegun = false;
     void begin();
 
 public:
+    OTA(Stream& dbgSerial);
     void update();
 };

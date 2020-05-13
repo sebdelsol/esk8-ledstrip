@@ -1,22 +1,17 @@
-#include <BTcmd.h>
+#include <Pickle.h>
 
-BTcmd::BTcmd(myMPU6050& motion) : mMotion(motion)
-{
-  mBTbuf.clear();
-}  
+Pickle::Pickle(Stream& dbgSerial) : mDbgSerial(dbgSerial) {}  
 
-void BTcmd::init(Stream& dbgSerial)
+void Pickle::init()
 {
-  initBT(dbgSerial);
-  
-  *mDbgSerial << "mount SPIFFS" << endl;
+  mDbgSerial << "mount SPIFFS" << endl;
   spiffsOK = SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED);
   if (!spiffsOK)
-    *mDbgSerial << "SPIFFS Mount Failed" << endl;
+    mDbgSerial << "SPIFFS Mount Failed" << endl;
 }
 
 //--------------------------------------
-OBJVar* BTcmd::getObjFromName(const char* name)
+OBJVar* Pickle::getObjFromName(const char* name)
 {
   for (byte i = 0; i < mNOBJ; i++) //look for the obj
     if (strcmp(name, mOBJ[i].name)==0)
@@ -26,9 +21,9 @@ OBJVar* BTcmd::getObjFromName(const char* name)
 }
 
 //----------------
-bool BTcmd::registerObj(OBJVar& obj, const char* name)
+bool Pickle::registerObj(OBJVar& obj, const char* name)
 {
-  bool ok = mNOBJ < BTCMD_MAXOBJ;
+  bool ok = mNOBJ < PICKLE_MAXOBJ;
   if (ok)
   {
     mOBJ[mNOBJ].obj = (OBJVar* )&obj;
@@ -44,18 +39,18 @@ bool BTcmd::registerObj(OBJVar& obj, const char* name)
     {
       MyVar* var = obj.getVar(i);
       
-      obj.setID(var, BTCMD_1ST_ID + mID);
+      obj.setID(var, PICKLE_1ST_ID + mID);
       mID += 1;
     }
   }
   else
-    *mDbgSerial << "----------- !!!!!!!!!! Max obj is reached " << BTCMD_MAXOBJ << endl; 
+    mDbgSerial << "----------- !!!!!!!!!! Max obj is reached " << PICKLE_MAXOBJ << endl; 
 
   return ok;
 }
 
 //--------------------------------------
-bool BTcmd::isNumber(const char* txt) 
+bool Pickle::isNumber(const char* txt) 
 { 
   for (int i = 0; i < strlen(txt); i++) 
     if (!(isdigit(txt[i]) || txt[i]=='-')) 
@@ -64,16 +59,16 @@ bool BTcmd::isNumber(const char* txt)
   return true; 
 } 
 
-void BTcmd::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args)
+void Pickle::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args)
 {
-  *mDbgSerial << cmdKeyword << " " << parsed.objName << " " << parsed.varName;
+  mDbgSerial << cmdKeyword << " " << parsed.objName << " " << parsed.varName;
   for (byte i=0; i < nbArg; i++) 
-    *mDbgSerial << " " << args[i];
-  *mDbgSerial << endl;
+    mDbgSerial << " " << args[i];
+  mDbgSerial << endl;
 }
 
 //--------------------------------------
-void BTcmd::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
+void Pickle::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
 {
   int min, max;
   parsed.obj->getMinMax(parsed.var, &min, &max);
@@ -95,7 +90,7 @@ void BTcmd::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
 }
 
 //----------------
-void BTcmd::handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact)
+void Pickle::handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact)
 {
   int args[MAX_ARGS];
   byte nbArg = parsed.obj->get(parsed.var, args); //get the value in args
@@ -116,7 +111,7 @@ void BTcmd::handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact)
 }
 
 //----------------
-void BTcmd::handleInitCmd(const parsedCmd& parsed, Stream& stream)
+void Pickle::handleInitCmd(const parsedCmd& parsed, Stream& stream)
 {
   stream << mInitKeyword << " " << parsed.objName << " " << parsed.varName << " " << parsed.obj->getID(parsed.var); 
 
@@ -135,7 +130,7 @@ void BTcmd::handleInitCmd(const parsedCmd& parsed, Stream& stream)
 }
 
 //--------------------------------------
-bool BTcmd::getObjVar(parsedCmd& parsed, BUF& buf)
+bool Pickle::getObjVar(parsedCmd& parsed, BUF& buf)
 {
   parsed.objName = buf.next();
   if (parsed.objName != NULL)
@@ -156,7 +151,7 @@ bool BTcmd::getObjVar(parsedCmd& parsed, BUF& buf)
 }
 
 //----------------
-void BTcmd::handleCmd(Stream& stream, BUF& buf, bool change, bool compact)
+void Pickle::handleCmd(Stream& stream, BUF& buf, bool change, bool compact)
 {
   const char* cmd = buf.first();
   if (cmd!=NULL)
@@ -187,14 +182,14 @@ void BTcmd::handleCmd(Stream& stream, BUF& buf, bool change, bool compact)
 }
 
 //----------------
-void BTcmd::readStream(Stream& stream, BUF& buf, bool change, bool compact)
+void Pickle::readCmdFromStream(Stream& stream, BUF& buf, bool change, bool compact)
 {
   while (stream.available() > 0) 
   {
     char c = stream.read();
-    if (c != BTCMD_ALIVE)
+    if (c != PICKLE_ALIVE)
     {
-      if (c == BTCMD_TERM)
+      if (c == PICKLE_TERM)
       {
         handleCmd(stream, buf, change, compact);
         buf.clear();
@@ -202,14 +197,14 @@ void BTcmd::readStream(Stream& stream, BUF& buf, bool change, bool compact)
       else if (isprint(c))
       {
         buf.append(c);
-        // *mDbgSerial << "Buf >>>" << buf.getBuf() << "<<<" << endl;
+        // mDbgSerial << "Buf >>>" << buf.getBuf() << "<<<" << endl;
       }
     }
   }
 }
 
 //----------------
-void BTcmd::emulateCmdForAllVars(const char* cmdKeyword, Stream& stream, OBJVar::ObjTestVarFunc testVar, bool change, bool compact)
+void Pickle::emulateCmdForAllVars(const char* cmdKeyword, Stream& stream, OBJVar::ObjTestVarFunc testVar, bool change, bool compact)
 {
   for (byte i = 0; i < mNOBJ; i++)
   {
@@ -231,34 +226,34 @@ void BTcmd::emulateCmdForAllVars(const char* cmdKeyword, Stream& stream, OBJVar:
 }
 
 //--------------------------------------
-File BTcmd::getFile(bool isdefault, const char* mode)
+File Pickle::getFile(bool isdefault, const char* mode)
 {	
   const char* fname = isdefault ? def_fname : cfg_fname;
   File f = spiffsOK ? SPIFFS.open(fname, mode) : File();
   bool isLoad = strcmp(mode, "r")==0;
 
   if (f)
-    *mDbgSerial << (isLoad ? "loading from " : "saving to ") << fname << endl;
+    mDbgSerial << (isLoad ? "loading from " : "saving to ") << fname << endl;
   else
-    *mDbgSerial << "FAIL to " << (isLoad ? "load from " : "save to ") << fname << endl;
+    mDbgSerial << "FAIL to " << (isLoad ? "load from " : "save to ") << fname << endl;
   
   return f;
 }
 
 //----------------
-void BTcmd::load(bool isdefault, bool change)
+void Pickle::load(bool isdefault, bool change)
 {
   File f = getFile(isdefault, "r");
   if (f)
   {
-    mTmpBuf.clear(); // might not be cleared by readStream
-    readStream((Stream& )f, mTmpBuf, change); // should be a succession of set cmd
+    mTmpBuf.clear(); // might not be cleared by readCmdFromStream
+    readCmdFromStream((Stream& )f, mTmpBuf, change); // should be a succession of set cmd
     f.close();
   }
 }
 
 //----------------
-void BTcmd::save(bool isdefault)
+void Pickle::save(bool isdefault)
 {
   File f = getFile(isdefault, "w");
   if (f)
@@ -266,32 +261,4 @@ void BTcmd::save(bool isdefault)
     emulateCmdForAllVars(mGetKeyword, (Stream& )f); //for all vars, emulate a get cmd and send the result to file stream
     f.close();
   }
-}
-
-//----------------
-void BTcmd::sendInits()
-{
-  emulateCmdForAllVars(mInitKeyword, mBTSerial, &OBJVar::isVarShown); //for all vars, emulate a init cmd and send the result to mBTSerial
-  mBTSerial << "initdone" << endl;
-}
-
-//----------------
-bool BTcmd::sendUpdate()
-{
-  if(isReadyToSend())
-  {
-    emulateCmdForAllVars(mGetKeyword, mBTSerial, &OBJVar::hasVarChanged, true, true); //for all vars, emulate a get cmd and send the result to mBTSerial
-
-    if(mMotion.updated)
-    {
-      SensorOutput& m = mMotion.mOutput;
-      mBTSerial << BTCMD_MOTION_CMD << " " << m.axis.x << " " << m.axis.y << " " << m.axis.z << " " << m.angle << " " << m.accY << " " << m.wZ << endl;
-    }
-  }
-}
-
-bool BTcmd::receiveUpdate()
-{
-  if (isReadyToReceive())
-    readStream(mBTSerial, mBTbuf, false, true);
 }

@@ -12,7 +12,7 @@
   SemaphoreHandle_t   mpuOutputMutex;
   EventGroupHandle_t  mpuFlagReady;
   TaskHandle_t        mpuNotifyToCalibrate;
-  SensorOutput        sharedOutput; // shared with updateMotion so that the mutex is barely taken by MPUGetTask
+  SensorOutput        sharedOutput; // shared with update so that the mutex is barely taken by MPUGetTask
 
   void MPUGetTask(void* _myMpu)
   {
@@ -34,7 +34,7 @@
 
       if(myMpu->dmpGetCurrentFIFOPacket(myMpu->mFifoBuffer))
       {
-        myMpu->computeMotion(computeOutput);
+        myMpu->compute(computeOutput);
 
         xSemaphoreTake(mpuOutputMutex, portMAX_DELAY);
         memcpy(&sharedOutput, &computeOutput, sizeof(SensorOutput)); 
@@ -47,12 +47,16 @@
 #endif
 
 //--------------------------------------
+
+myMPU6050::myMPU6050(Stream& serial) : mSerial(serial) {}
+
 void myMPU6050::init()
 {
   #define REGISTER_MPU(var) REGISTER_VAR_SIMPLE_NOSHOW(myMPU6050, #var, self->var, -32768, 32767)
 
   REGISTER_MPU(mXGyroOffset);   REGISTER_MPU(mYGyroOffset);  REGISTER_MPU(mZGyroOffset);
   REGISTER_MPU(mXAccelOffset);  REGISTER_MPU(mYAccelOffset); REGISTER_MPU(mZAccelOffset);
+  REGISTER_VAR_SIMPLE_NOSHOW(myMPU6050, "gotOffsets", self->gotOffsets, 0, 1);
 
   #ifdef MPU_GETFIFO_CORE
     REGISTER_CMD(myMPU6050, "calibrate",  {xTaskNotifyGive(mpuNotifyToCalibrate);} ) // trigger a calibration
@@ -68,34 +72,38 @@ void myMPU6050::calibrate()
 
   mXGyroOffset = getXGyroOffset();   mYGyroOffset = getYGyroOffset();   mZGyroOffset = getZGyroOffset();
   mXAccelOffset = getXAccelOffset(); mYAccelOffset = getYAccelOffset(); mZAccelOffset = getZAccelOffset();
+  gotOffsets = true;
 
   PrintActiveOffsets();
 }
 
-void myMPU6050::loadCalibration()
+bool myMPU6050::setOffsets()
 {
-  setXGyroOffset(mXGyroOffset);   setYGyroOffset(mYGyroOffset);   setZGyroOffset(mZGyroOffset);
-  setXAccelOffset(mXAccelOffset); setYAccelOffset(mYAccelOffset); setZAccelOffset(mZAccelOffset); 
-  
-  PrintActiveOffsets();
+  if (gotOffsets)
+  {
+    setXGyroOffset(mXGyroOffset);   setYGyroOffset(mYGyroOffset);   setZGyroOffset(mZGyroOffset);
+    setXAccelOffset(mXAccelOffset); setYAccelOffset(mYAccelOffset); setZAccelOffset(mZAccelOffset); 
+    PrintActiveOffsets();
+  }
+  return gotOffsets;
 }
 
 //--------------------------------------
-void myMPU6050::begin(Stream &serial, bool doCalibrate)
+void myMPU6050::begin()
 { 
-  mSerial = &serial;
-  *mSerial << "---------" << endl;
+  mSerial << "---------" << endl;
   
   Wire.begin(SDA, SCL);
   Wire.setClock(400000); // 400kHz I2C clock.
 
   initialize();
-  *mSerial << "MPU connection " << (testConnection() ? "successful" : "failed") << endl;
+  mSerial << "MPU connection " << (testConnection() ? "successful" : "failed") << endl;
   uint8_t devStatus = dmpInitialize();
 
   if (devStatus == 0) // did it work ?
   { 
-    doCalibrate ? calibrate() : loadCalibration();
+    if(!setOffsets())
+      calibrate();
 
     setDMPEnabled(true);
     mDmpReady = true;
@@ -108,17 +116,17 @@ void myMPU6050::begin(Stream &serial, bool doCalibrate)
       mpuOutputMutex = xSemaphoreCreateMutex();
       mpuFlagReady = xEventGroupCreate();
       xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", 2048, this, MPU_GETFIFO_PRIO, &mpuNotifyToCalibrate, MPU_GETFIFO_CORE);  
-      *mSerial << "Mpu runs on task on Core " << MPU_GETFIFO_CORE << " with Prio " << MPU_GETFIFO_PRIO << endl;
+      mSerial << "Mpu runs on task on Core " << MPU_GETFIFO_CORE << " with Prio " << MPU_GETFIFO_PRIO << endl;
     #else 
-      *mSerial << "Mpu runs on Main Core" << endl;
+      mSerial << "Mpu runs on Main Core" << endl;
     #endif
 
-    *mSerial << "DMP enabled" << endl;
+    mSerial << "DMP enabled" << endl;
   }
   else // ERROR! 1 = initial memory load failed, 2 = DMP configuration updates failed
-    *mSerial << "DMP Initialization failed (" << devStatus << ")" << endl;
+    mSerial << "DMP Initialization failed (" << devStatus << ")" << endl;
   
-  *mSerial << "---------" << endl;
+  mSerial << "---------" << endl;
 }
 
 //--------------------------------------
@@ -143,7 +151,7 @@ void myMPU6050::getAxiSAngle(VectorInt16& v, int& angle, Quaternion& q)
 #define STAYS_SHORT(x) constrain(x, -32768, 32767)
 #define SHIFTR_VECTOR(v, n) v.x = v.x >> n;   v.y = v.y >> n;   v.z = v.z >> n; 
 
-void myMPU6050::computeMotion(SensorOutput& output)
+void myMPU6050::compute(SensorOutput& output)
 {
   ulong t = micros();
   ulong dt = t - mT;
@@ -174,18 +182,18 @@ void myMPU6050::computeMotion(SensorOutput& output)
   output.wZ =    lerp15by16(output.wZ,    STAYS_SHORT(mW.z * -655), smooth);
 
   #ifdef MPU_DBG
-    *mSerial << "[ dt "   << dt*.001 << "ms\t smooth" << smooth/65536. << "\t Wz "  << output.wZ  << "]\t ";
-    *mSerial << "[ gyr "  << mW.x << "\t "            << mW.y << "\t "              << mW.z << "\t ";
-    *mSerial << "[ grav " << mGrav.x << "\t "         << mGrav.y << "\t "           << mGrav.z << "]\t ";
-    *mSerial << "[ avg "  << output.accX << "\t "     << output.accY << "\t "       << output.accZ << "]\t ";
-    *mSerial << "[ acc "  << mAcc.x << "\t "          << mAcc.y << "\t "            << mAcc.z << "]\t ";
-    *mSerial << "[ real " << mAccReal.x << "\t "      << mAccReal.y << "\t "        << mAccReal.z << "]\t ";
-    *mSerial << endl;
+    mSerial << "[ dt "   << dt*.001 << "ms\t smooth" << smooth/65536. << "\t Wz "  << output.wZ  << "]\t ";
+    mSerial << "[ gyr "  << mW.x << "\t "            << mW.y << "\t "              << mW.z << "\t ";
+    mSerial << "[ grav " << mGrav.x << "\t "         << mGrav.y << "\t "           << mGrav.z << "]\t ";
+    mSerial << "[ avg "  << output.accX << "\t "     << output.accY << "\t "       << output.accZ << "]\t ";
+    mSerial << "[ acc "  << mAcc.x << "\t "          << mAcc.y << "\t "            << mAcc.z << "]\t ";
+    mSerial << "[ real " << mAccReal.x << "\t "      << mAccReal.y << "\t "        << mAccReal.z << "]\t ";
+    mSerial << endl;
   #endif
 }
 
 //--------------------------------------
-void myMPU6050::updateMotion()
+void myMPU6050::update()
 {
 #ifdef MPU_GETFIFO_CORE
   
@@ -200,7 +208,7 @@ void myMPU6050::updateMotion()
 
 #else
   if (mDmpReady && dmpGetCurrentFIFOPacket(mFifoBuffer))
-    computeMotion(mOutput);
+    compute(mOutput);
 
   updated = mDmpReady;
 #endif

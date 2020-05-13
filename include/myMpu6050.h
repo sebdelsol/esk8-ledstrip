@@ -37,7 +37,7 @@ struct SensorOutput
 //-----------------------------
 class myMPU6050 : public OBJVar, public MPU6050
 {
-  Stream* mSerial;
+  Stream& mSerial;
 
   bool mDmpReady = false; // if DMP init was successful
 
@@ -49,11 +49,12 @@ class myMPU6050 : public OBJVar, public MPU6050
 
   int16_t mXGyroOffset,   mYGyroOffset,   mZGyroOffset;
   int16_t mXAccelOffset,  mYAccelOffset,  mZAccelOffset;
+  bool    gotOffsets  = false;
 
   ulong mT = 0;
 
   void getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q);
-  void loadCalibration();
+  bool setOffsets();
 
 public:
 
@@ -62,9 +63,10 @@ public:
   SensorOutput  mOutput;     // computed motion outpout
   bool          updated = false;
 
+  myMPU6050(Stream& serial);
   void init();
-  void begin(Stream& serial, bool doCalibrate = false);
+  void begin();
   void calibrate();
-  void computeMotion(SensorOutput& output);
-  void updateMotion();
+  void compute(SensorOutput& output);
+  void update();
 };

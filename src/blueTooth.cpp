@@ -17,24 +17,27 @@ void BlueTooth::callback(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
 {
   if(event == ESP_SPP_SRV_OPEN_EVT)
   {
-    *mDbgSerial << "BT Client Connected @ ";
+    mDbgSerial << "BT Client Connected @ ";
     for (int i = 0; i < 6; i++)
-      *mDbgSerial << _HEX(param->srv_open.rem_bda[i]) << (i < 5 ? ":" : "");
-    *mDbgSerial << endl;
+      mDbgSerial << _HEX(param->srv_open.rem_bda[i]) << (i < 5 ? ":" : "");
+    mDbgSerial << endl;
 
     mConnected = true;
   }
   else if(event == ESP_SPP_CLOSE_EVT)
   {
-    *mDbgSerial << "BT Client DisConnected" << endl;
+    mDbgSerial << "BT Client DisConnected" << endl;
     mConnected = false;
   }
 }
 
-void BlueTooth::initBT(Stream& dbgSerial)
+BlueTooth::BlueTooth(Stream& dbgSerial) : mDbgSerial(dbgSerial) 
 {
-  mDbgSerial = &dbgSerial;
+  mBTbuf.clear();
+}
 
+void BlueTooth::init()
+{
   TrampBT = this;
   mBTSerial.register_callback(TrampCallback);
 
@@ -42,7 +45,7 @@ void BlueTooth::initBT(Stream& dbgSerial)
 
   if (rtc_get_reset_reason(0) == 12 && WasOn) // HACK, SW reset is proly crash, so auto restart BT if it was on
   {
-    *mDbgSerial << "Reset detected, relaunch BT " << rtc_get_reset_reason(0) << endl;
+    mDbgSerial << "Reset detected, relaunch BT " << rtc_get_reset_reason(0) << endl;
     start(true);
   }
 }
@@ -52,7 +55,7 @@ void BlueTooth::start(const bool on)
 {
   if (mON != on)
   {
-    *mDbgSerial << "BT " << (on ? "Starting" : "Stopping") << endl;
+    mDbgSerial << "BT " << (on ? "Starting" : "Stopping") << endl;
     mConnected = false;
   
     if (on)
@@ -67,7 +70,7 @@ void BlueTooth::start(const bool on)
     }
 
     WasOn = mON; //HACK
-    *mDbgSerial << "BT has " << (mON ? "Started" : "Stopped") << endl;
+    mDbgSerial << "BT has " << (mON ? "Started" : "Stopped") << endl;
     digitalWrite(LIGHT_PIN, mON ? HIGH : LOW);
   }
 }
