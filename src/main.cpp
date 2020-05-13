@@ -89,7 +89,8 @@ void setup()
   Cfg.init();
   Motion.init();
 
-  Serial << endl << "---------" << endl;
+  Serial << endl 
+  Serial << "---------" << endl;
   Serial << "Esp32 " << esp_get_idf_version() << endl;
   Serial << "CPU freq " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
   Serial << "Loop run on Core " << xPortGetCoreID() << endl;
