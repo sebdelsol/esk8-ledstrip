@@ -88,5 +88,4 @@ public:
     REGISTER_CFG(maxDim,     1, 10);
     REGISTER_CFG(minTwkR,    0, 255);
   };
-
 };
