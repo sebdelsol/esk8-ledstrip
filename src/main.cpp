@@ -80,23 +80,23 @@ RunningFX   RunF(CRGB::Gold);
 // ----------------------------------------------------
 void setup()
 {
-  // switch off all leds
+  // -- switch off all leds
   AllLeds.setBrightness(0);
   AllLeds.clearAndShow();
 
-  // main inits
+  // -- main inits
   Serial.begin(SERIAL_BAUD);
   Cfg.init();
   Motion.init();
 
-  Serial << endl 
+  Serial << endl;
   Serial << "---------" << endl;
   Serial << "Esp32 " << esp_get_idf_version() << endl;
   Serial << "CPU freq " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
   Serial << "Loop run on Core " << xPortGetCoreID() << endl;
   Serial << "---------" << endl;
 
-  // Leds inits
+  // -- Leds inits
   #define AddFX(l, fx) l.registerFX(fx)
 
   AllLeds.init();
@@ -108,7 +108,7 @@ void setup()
   AddFX(LedsR, TwinkleR); AddFX(LedsR, FireRR); AddFX(LedsR, FireRL);   AddFX(LedsR, RunR);     AddFX(LedsR, CylonR);
   AddFX(LedsF, TwinkleF); AddFX(LedsF, RunF);   AddFX(LedsF, Pacifica); AddFX(LedsF, CylonF);
 
-  // Register AllObj
+  // -- Register AllObj
   #define AddOBJ(o) AllObj.registerObj(o, #o);
   
   AllObj.init();
@@ -120,7 +120,7 @@ void setup()
   AllObj.save(true); // save default
   AllObj.load(false, false); // load not default, do not send change to BT
 
-  // BlueTooth
+  // -- BlueTooth
   #ifdef USE_BT
     BT.init();
     BT.start();
@@ -131,10 +131,10 @@ void setup()
     btStop(); // turnoff bt 
   #endif
 
-  // Motion
+  // -- Motion
   Motion.begin();  
   
-  // Wifi
+  // -- Wifi
   #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET)
     MyWifi.start();
     #ifdef DEBUG_LED_TOWIFI
@@ -154,11 +154,11 @@ void loop()
 
   EVERY_N_MILLISECONDS(LED_TICK)
   {
-    // Update mpu 6050
+    // -- Update Motion sensor
     Motion.update(); 
     RASTER("Motion");
 
-    // Master brightness
+    // -- Master brightness
     if(Cfg.probe)
     {
       int light = analogRead(LDR_PIN);
@@ -169,7 +169,7 @@ void loop()
     AllLeds.setBrightness(bright);
     RASTER("probe");
 
-    // handle Motion
+    // -- handle Motion Sensor
     SensorOutput& m = Motion.mOutput;
     if (m.updated)
     {
@@ -177,16 +177,16 @@ void loop()
 
       int runSpeed =  ((m.wZ > 0) - (m.wZ < 0)) * Cfg.runSpeed;
 
-      //------
+      // -- Gyro
       int _WZ = abs(m.wZ);
       byte alpha = _WZ > Cfg.neutralWZ ? min((_WZ - Cfg.neutralWZ) * 255 / Cfg.maxWZ, 255) : 0;
       byte invAlpha = 255 - alpha;
 
-      //----------------------
+      // -- Acc
       #define MAXACC 256
       int acc = constrain(m.accY / Cfg.divAcc, -MAXACC, MAXACC) << 8;
 
-      //------
+      // -- Fwd leds
       static int FWD = 0;
       int fwd = constrain(acc, 0, 65535);
       FWD = fwd > FWD ? fwd : lerp16by16(FWD, fwd, Cfg.smoothAcc);
@@ -204,7 +204,7 @@ void loop()
         TwinkleF.setAlpha(MulAlpha(alphaF, invAlpha)); 
       }
 
-      //------
+      // -- Rwd Led
       static int RWD = 0;
       int rwd = constrain(-acc, 0, 65535);
       RWD = rwd > RWD ? rwd : lerp16by16(RWD, rwd, Cfg.smoothAcc);
@@ -226,7 +226,7 @@ void loop()
         TwinkleR.setAlpha(MulAlpha(max(Cfg.minTwkR, alphaR), invAlpha)); 
       }
 
-      //----------------------
+      // -- Central Leds
       if (Cfg.led)
       {
         AquaRun.setAlpha(alphaF);
@@ -245,11 +245,11 @@ void loop()
     }
     RASTER("led setup");
 
-    // Leds actual drawing
+    // -- Leds actual drawing
     AllLeds.update();
     RASTER("Led update");
 
-    // wifi Update
+    // -- wifi Update
     #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET)
       if(MyWifi.update())
       {
@@ -265,6 +265,7 @@ void loop()
     #endif
   }
 
+  // -- Bluetooth Update
   #ifdef USE_BT
     EVERY_N_MILLISECONDS(BT_TICK)
     {
@@ -276,6 +277,7 @@ void loop()
     RASTER("BT");
   #endif
 
+  // -- Leds dithering
   #ifdef DEBUG_LED_INFO
     EVERY_N_SECONDS(1)
       AllLeds.getInfo();
