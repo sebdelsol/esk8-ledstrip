@@ -80,11 +80,11 @@ RunningFX   RunF(CRGB::Gold);
 // ----------------------------------------------------
 void setup()
 {
-  // switch off all leds ---------------
+  // switch off all leds
   AllLeds.setBrightness(0);
   AllLeds.clearAndShow();
 
-  // main inits -----------------------
+  // main inits
   Serial.begin(SERIAL_BAUD);
   Cfg.init();
   Motion.init();
@@ -95,7 +95,7 @@ void setup()
   Serial << "Loop run on Core " << xPortGetCoreID() << endl;
   Serial << "---------" << endl;
 
-  // Leds  inits ----------------------
+  // Leds inits
   #define AddFX(l, fx) l.registerFX(fx)
 
   AllLeds.init();
@@ -107,7 +107,7 @@ void setup()
   AddFX(LedsR, TwinkleR); AddFX(LedsR, FireRR); AddFX(LedsR, FireRL);   AddFX(LedsR, RunR);     AddFX(LedsR, CylonR);
   AddFX(LedsF, TwinkleF); AddFX(LedsF, RunF);   AddFX(LedsF, Pacifica); AddFX(LedsF, CylonF);
 
-  // register AllObj ------------------
+  // Register AllObj
   #define AddOBJ(o) AllObj.registerObj(o, #o);
   
   AllObj.init();
@@ -119,7 +119,7 @@ void setup()
   AllObj.save(true); // save default
   AllObj.load(false, false); // load not default, do not send change to BT
 
-  // BlueTooth -----------------------------
+  // BlueTooth
   #ifdef USE_BT
     BT.init();
     BT.start();
@@ -130,19 +130,17 @@ void setup()
     btStop(); // turnoff bt 
   #endif
 
-  // Motion -----------------------------
+  // Motion
   Motion.begin();  
   
-  // Wifi -----------------------------
+  // Wifi
   #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET)
     MyWifi.start();
-  
     #ifdef DEBUG_LED_TOWIFI
       MyWifi.addLeds(Leds);   
       MyWifi.addLeds(LedsR);  
       MyWifi.addLeds(LedsF);
     #endif
-  
   #else
     MyWifi.stop();
   #endif
