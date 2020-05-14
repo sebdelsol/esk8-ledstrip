@@ -5,7 +5,7 @@
 
 class BUF
 {
-  char mBuf[BUFF_SIZE + 1];  // Buffer of stored characters while waiting for terminator character
+  char mBuf[BUFF_SIZE + 1];   // Buffer of stored characters while waiting for terminator character
   int mBufPos;                // Current position in the buffer
   char* mLast;                // for strtok_r
   const char* mDelim = BUFF_DELIM; // strtok_r needs a /0 terminated string
@@ -28,7 +28,7 @@ public:
     if (mBufPos < BUFF_SIZE)
     {
       mBuf[mBufPos++] = c;  // Put character into buffer
-      mBuf[mBufPos] = '\0';      // Null terminate
+      mBuf[mBufPos] = '\0'; // Null terminate
     }
   };
 };
