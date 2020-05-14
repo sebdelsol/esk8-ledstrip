@@ -32,7 +32,7 @@ class Pixel:
         self.x = int(round(wPixel * (i + .5)))
         self.y = int(round(maxPixel * ( j + .5)))
         self.cpos = (self.x, self.y)
-        self.rect = (self.x-cPixel * .5, self.y - cPixel * .5, cPixel, cPixel)
+        self.rect = (self.x - cPixel * .5, self.y - cPixel * .5, cPixel, cPixel)
         self.color = (0,0,0)
 
     def remanence(self, c, cd):
@@ -43,12 +43,12 @@ class Pixel:
                       self.remanence(self.color[1], color[1]),
                       self.remanence(self.color[2], color[2]))
         r, g, b = (e/255. for e in self.color)
-        lum = math.sqrt( 0.299*r**2 + 0.587*g**2 + 0.114*b**2 )
+        lum = math.sqrt( 0.299 * r**2 + 0.587 * g**2 + 0.114 * b**2 )
 
         r = int(round(.5 * (minPixel + (maxPixel-minPixel) * lum)))
         pygame.draw.circle(screen, self.color, self.cpos, r)
 
-        color2 = [min(c*1.5, 255) for c in self.color]
+        color2 = [min(c * 1.5, 255) for c in self.color]
         pygame.draw.rect(screen, color2, self.rect)
 
 #----------------------------------------------------------------
