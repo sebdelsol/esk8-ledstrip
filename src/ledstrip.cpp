@@ -11,7 +11,7 @@
     {
       userTaskHandle = xTaskGetCurrentTaskHandle(); //so that the show task can notify when it's done
       xTaskNotifyGive(FastLEDshowTaskHandle); // trigger fastled show task
-      ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(20)); // Wait to be notified that it's done (max 5ms)
+      ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(100)); // Wait to be notified that it's done (max 100ms)
       userTaskHandle = 0;
     }
   }
