@@ -119,7 +119,7 @@ void MOTION::begin()
       OutputMutex = xSemaphoreCreateMutex();
       FlagReady = xEventGroupCreate();
       xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", 2048, this, MPU_GETFIFO_PRIO, &NotifyToCalibrate, MPU_GETFIFO_CORE);  
-      mSerial << "Mpu runs in a task on Core " << MPU_GETFIFO_CORE << " with Prio " << MPU_GETFIFO_PRIO << endl;
+      mSerial << "Mpu runs on Core " << MPU_GETFIFO_CORE << " with Prio " << MPU_GETFIFO_PRIO << endl;
     #endif
 
     mSerial << "DMP enabled" << endl;
