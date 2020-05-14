@@ -78,14 +78,14 @@ class NeoPixel:
         posx, posy = 1920 / 2 - self.W / 2, 1200 - self.H
         os.environ['SDL_VIDEO_WINDOW_POS'] = '%i,%i' % (posx,posy)
 
-        self.screen = pygame.display.set_mode((self.W,self.H),pygame.NOFRAME|pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode((self.W, self.H), pygame.NOFRAME | pygame.RESIZABLE)
         hwnd = pygame.display.get_wm_info()['window'] # handle to the window
         SetWindowPos(hwnd, TOPMOST, 0, 0, 0, 0, NOMOVE|NOSIZE)
 
         self.running = True
 
     def write(self, buf, nb, row):
-        if nb==len(buf)/3:
+        if nb==len(buf) / 3:
             if self.nb.get(row, 0) != nb:
                 self.initPixels(nb, row)
                 
@@ -93,13 +93,13 @@ class NeoPixel:
                 buf = bytearray(buf)
 
                 if row == 0:
-                    self.screen.fill((0,0,0))
+                    self.screen.fill((0, 0, 0))
                     
                 for i, p in enumerate(self.pixels[row]):
                     pos = i * 3
-                    p.draw((buf[pos], buf[pos+1], buf[pos+2]), self.screen)
+                    p.draw((buf[pos], buf[pos + 1], buf[pos + 2]), self.screen)
 
-                if row == len(self.nb)-1:
+                if row == len(self.nb) - 1:
                     pygame.display.flip()
 
                 for event in pygame.event.get():
