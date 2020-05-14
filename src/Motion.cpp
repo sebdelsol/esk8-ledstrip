@@ -195,18 +195,17 @@ void MOTION::compute(SensorOutput& output)
 //--------------------------------------
 void MOTION::update()
 {
-#ifdef MPU_GETFIFO_CORE
-  
-  if (mDmpReady && xEventGroupGetBits(FlagReady) && xSemaphoreTake(OutputMutex, 0) == pdTRUE) // pool the mpuTask
+  if (mDmpReady)
   {
-    memcpy(&mOutput, &SharedOutput, sizeof(SensorOutput)); 
-    xSemaphoreGive(OutputMutex); // release the mutex after measures have been copied
+    #ifdef MPU_GETFIFO_CORE
+      if (xEventGroupGetBits(FlagReady) && xSemaphoreTake(OutputMutex, 0) == pdTRUE) // pool the mpuTask
+      {
+        memcpy(&mOutput, &SharedOutput, sizeof(SensorOutput)); 
+        xSemaphoreGive(OutputMutex); // release the mutex after measures have been copied
+      }
+    #else
+      if (getFiFoPacket())
+        compute(mOutput);
+    #endif
   }
-
-#else
-  
-  if (mDmpReady && getFiFoPacket())
-    compute(mOutput);
-
-#endif
 }
