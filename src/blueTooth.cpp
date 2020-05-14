@@ -5,14 +5,14 @@
 static __NOINIT_ATTR bool WasOn; // HACK in case of reboot after a crash
 
 //------------------------------------------------------------
-BlueTooth* TrampBT;
+BlueTooth* CurrentBT;
 
-void TrampCallback(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
+void CallbackWrapper(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
 {
-  TrampBT->callback(event, param);
+  CurrentBT->onEvent(event, param);
 }
 
-void BlueTooth::callback(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
+void BlueTooth::onEvent(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
 {
   if(event == ESP_SPP_SRV_OPEN_EVT)
   {
@@ -31,15 +31,12 @@ void BlueTooth::callback(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
 }
 
 //------------------------------------------------------------
-BlueTooth::BlueTooth(Stream& dbgSerial) : mDbgSerial(dbgSerial) 
-{
-  mBTbuf.clear();
-}
+BlueTooth::BlueTooth(Stream& dbgSerial) : mDbgSerial(dbgSerial) {}
 
 void BlueTooth::init()
 {
-  TrampBT = this;
-  mBTSerial.register_callback(TrampCallback);
+  CurrentBT = this;
+  mBTSerial.register_callback(CallbackWrapper);
 
   pinMode(LIGHT_PIN, OUTPUT); //blue led
 

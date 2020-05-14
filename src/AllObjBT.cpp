@@ -1,6 +1,10 @@
 #include <AllObjBT.h>
 
-AllObjBT::AllObjBT(Stream& dbgSerial) : AllObj(dbgSerial) {}  
+//----------------
+AllObjBT::AllObjBT(Stream& dbgSerial) : AllObj(dbgSerial) 
+{
+  mBTbuf.clear();
+}  
 
 //----------------
 void AllObjBT::sendInits(BlueTooth &BT)
@@ -29,5 +33,5 @@ bool AllObjBT::sendUpdate(BlueTooth &BT, MOTION& motion)
 bool AllObjBT::receiveUpdate(BlueTooth &BT)
 {
   if (BT.isReadyToReceive())
-    readCmdFromStream(BT.mBTSerial, BT.mBTbuf, false, true);
+    readCmdFromStream(BT.mBTSerial, mBTbuf, false, true);
 }
