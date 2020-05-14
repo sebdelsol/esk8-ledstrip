@@ -32,7 +32,7 @@ class Pixel:
         self.x = int(round(wPixel * (i + .5)))
         self.y = int(round(maxPixel * ( j + .5)))
         self.cpos = (self.x, self.y)
-        self.rect = (self.x-cPixel * .5, self.y - cPixel * .5, cPixel, cPixel)
+        self.rect = (self.x - cPixel * .5, self.y - cPixel * .5, cPixel, cPixel)
         self.color = (0,0,0)
 
     def remanence(self, c, cd):
@@ -43,12 +43,12 @@ class Pixel:
                       self.remanence(self.color[1], color[1]),
                       self.remanence(self.color[2], color[2]))
         r, g, b = (e/255. for e in self.color)
-        lum = math.sqrt( 0.299*r**2 + 0.587*g**2 + 0.114*b**2 )
+        lum = math.sqrt( 0.299 * r**2 + 0.587 * g**2 + 0.114 * b**2 )
 
         r = int(round(.5 * (minPixel + (maxPixel-minPixel) * lum)))
         pygame.draw.circle(screen, self.color, self.cpos, r)
 
-        color2 = [min(c*1.5, 255) for c in self.color]
+        color2 = [min(c * 1.5, 255) for c in self.color]
         pygame.draw.rect(screen, color2, self.rect)
 
 #----------------------------------------------------------------
@@ -78,14 +78,14 @@ class NeoPixel:
         posx, posy = 1920 / 2 - self.W / 2, 1200 - self.H
         os.environ['SDL_VIDEO_WINDOW_POS'] = '%i,%i' % (posx,posy)
 
-        self.screen = pygame.display.set_mode((self.W,self.H),pygame.NOFRAME|pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode((self.W, self.H), pygame.NOFRAME | pygame.RESIZABLE)
         hwnd = pygame.display.get_wm_info()['window'] # handle to the window
         SetWindowPos(hwnd, TOPMOST, 0, 0, 0, 0, NOMOVE|NOSIZE)
 
         self.running = True
 
     def write(self, buf, nb, row):
-        if nb==len(buf)/3:
+        if nb==len(buf) / 3:
             if self.nb.get(row, 0) != nb:
                 self.initPixels(nb, row)
                 
@@ -93,13 +93,13 @@ class NeoPixel:
                 buf = bytearray(buf)
 
                 if row == 0:
-                    self.screen.fill((0,0,0))
+                    self.screen.fill((0, 0, 0))
                     
                 for i, p in enumerate(self.pixels[row]):
                     pos = i * 3
-                    p.draw((buf[pos], buf[pos+1], buf[pos+2]), self.screen)
+                    p.draw((buf[pos], buf[pos + 1], buf[pos + 2]), self.screen)
 
-                if row == len(self.nb)-1:
+                if row == len(self.nb) - 1:
                     pygame.display.flip()
 
                 for event in pygame.event.get():
