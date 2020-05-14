@@ -4,6 +4,8 @@
 #include <Motion.h>
 #include <AllObj.h>
 
+#define ALLOBJ_MOTION_CMD ALLOBJ_RESERVED
+
 class AllObjBT : public AllObj
 {
 public:

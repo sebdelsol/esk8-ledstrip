@@ -8,8 +8,8 @@
 // #define DBG_CMD  // to see what's happening with send & received cmd
 #define ALLOBJ_MAXOBJ    20
 
-#define ALLOBJ_MOTION_CMD  '!'
-#define ALLOBJ_1ST_ID      (ALLOBJ_MOTION_CMD + 1)
+#define ALLOBJ_RESERVED   '!'
+#define ALLOBJ_1ST_ID      (ALLOBJ_RESERVED + 1)
 #define ALLOBJ_TERM        '\n' 
 #define ALLOBJ_ALIVE       '~'
 
