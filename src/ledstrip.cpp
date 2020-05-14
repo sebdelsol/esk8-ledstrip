@@ -2,7 +2,7 @@
 
 // ----------------------------------------------------
 #ifdef FASTLED_SHOW_CORE
-  TaskHandle_t FastLEDshowTaskHandle = 0;
+  TaskHandle_t FastLEDshowTaskHandle;
   TaskHandle_t userTaskHandle = 0;
 
   void TriggerFastLEDShow()
