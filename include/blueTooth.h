@@ -14,16 +14,15 @@ class BlueTooth
   bool mConnected = false;
 
   Stream& mDbgSerial;
-
-public:
   BluetoothSerial mBTSerial;
 
+public:
   BlueTooth(Stream& serial);
   void init();
   void start(const bool on=true);
   void toggle();
-
   void onEvent(esp_spp_cb_event_t event, esp_spp_cb_param_t* param); 
+  BluetoothSerial& getSerial() { return mBTSerial; };
   bool isReadyToReceive();
   bool isReadyToSend();
 };
