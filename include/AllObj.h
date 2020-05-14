@@ -42,7 +42,6 @@ struct mRegisteredOBJ
 class AllObj 
 {
   mRegisteredOBJ mOBJ[ALLOBJ_MAXOBJ];
-
   byte mNOBJ = 0;
   byte mID = 0;
 
