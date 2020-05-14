@@ -11,8 +11,10 @@ void AllObjBT::sendInits(BlueTooth &BT)
 {
   if(BT.isReadyToSend())
   {
-    emulateCmdForAllVars(mInitKeyword, BT.getSerial(), &OBJVar::isVarShown); //for all vars, emulate a init cmd and send the result to mBTSerial
-    BT.getSerial() << "initdone" << endl;
+    BluetoothSerial& BTSerial = BT.getSerial();
+
+    emulateCmdForAllVars(mInitKeyword, BTSerial, &OBJVar::isVarShown); //for all vars, emulate a init cmd and send the result to BTSerial
+    BTSerial << "initdone" << endl;
   }
 }
 
@@ -21,11 +23,12 @@ bool AllObjBT::sendUpdate(BlueTooth &BT, MOTION& motion)
 {
   if(BT.isReadyToSend())
   {
-    emulateCmdForAllVars(mGetKeyword, BT.getSerial(), &OBJVar::hasVarChanged, true, true); //for all vars, emulate a get cmd and send the result to mBTSerial
-
+    BluetoothSerial& BTSerial = BT.getSerial();
     SensorOutput& m = motion.mOutput;
+
+    emulateCmdForAllVars(mGetKeyword, BTSerial, &OBJVar::hasVarChanged, true, true); //for all vars, emulate a get cmd and send the result to BTSerial
     if(m.updated)
-      BT.getSerial() << ALLOBJ_MOTION_CMD << " " << m.axis.x << " " << m.axis.y << " " << m.axis.z << " " << m.angle << " " << m.accY << " " << m.wZ << endl;
+      BTSerial << ALLOBJ_MOTION_CMD << " " << m.axis.x << " " << m.axis.y << " " << m.axis.z << " " << m.angle << " " << m.accY << " " << m.wZ << endl;
   }
 }
 
@@ -33,5 +36,8 @@ bool AllObjBT::sendUpdate(BlueTooth &BT, MOTION& motion)
 bool AllObjBT::receiveUpdate(BlueTooth &BT)
 {
   if (BT.isReadyToReceive())
-    readCmdFromStream(BT.getSerial(), mBTbuf, false, true);
+  {
+    BluetoothSerial& BTSerial = BT.getSerial();
+    readCmdFromStream(BTSerial, mBTbuf, false, true);
+  }
 }
