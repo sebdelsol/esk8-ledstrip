@@ -1,5 +1,6 @@
 #include <myWifi.h>
 
+// ----------------------------------------------------
 myWifi::myWifi(Stream& serial) : mSerial(serial) {}
 
 void myWifi::stop()
@@ -24,6 +25,7 @@ void myWifi::start()
   mSerial << "Wifi Connecting" << endl;
 }
 
+// ----------------------------------------------------
 void myWifi::addLeds(const BaseLedStrip &leds)
 {
   mIsSocket = true;
@@ -32,6 +34,7 @@ void myWifi::addLeds(const BaseLedStrip &leds)
     mLeds[mNStrips++] = (BaseLedStrip* )&leds;
 }
 
+// ----------------------------------------------------
 bool myWifi::update()
 {
   if(mWantON)

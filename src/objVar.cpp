@@ -1,5 +1,6 @@
 #include <ObjVar.h>
 
+// ----------------------------------------------------
 bool OBJVar::registerVar(void* obj, const char* name, setVarFunc set, getVarFunc get, int min, int max, bool show)
 {
   bool ok = mNVAR < MAX_VAR;
@@ -27,6 +28,7 @@ bool OBJVar::registerVar(void* obj, const char* name, setVarFunc set, getVarFunc
   return ok;
 }
 
+// ----------------------------------------------------
 MyVar* OBJVar::getVarFromName(const char* name)
 {
   for (byte i = 0; i < mNVAR; i++) //look for the cmd
@@ -55,6 +57,7 @@ byte OBJVar::get(MyVar* var, int* toGet)
   return (*var->get)(var->obj, toGet);
 }
 
+// ----------------------------------------------------
 bool OBJVar::hasVarChanged(byte i)
 {
   MyVar *var = mVar[i]; 

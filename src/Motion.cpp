@@ -47,7 +47,6 @@
 #endif
 
 //--------------------------------------
-
 MOTION::MOTION(Stream& serial) : mSerial(serial) {}
 
 void MOTION::init()
@@ -65,12 +64,7 @@ void MOTION::init()
   #endif
 }
 
-void MOTION::printOffsets()
-{
-  mSerial << "Acc Offset: x " << getXAccelOffset() << "\t y " << getYAccelOffset() << "\t z " << getZAccelOffset() << endl;
-  mSerial << "Gyr Offset: x " << getXGyroOffset()  << "\t y " << getYGyroOffset()  << "\t z " << getZGyroOffset()  << endl;
-}
-
+//--------------------------------------
 void MOTION::calibrate()
 {
   CalibrateAccel(CALIBRATION_LOOP);
@@ -91,6 +85,12 @@ bool MOTION::setOffsets()
     printOffsets();
   }
   return gotOffsets;
+}
+
+void MOTION::printOffsets()
+{
+  mSerial << "Acc Offset: x " << getXAccelOffset() << "\t y " << getYAccelOffset() << "\t z " << getZAccelOffset() << endl;
+  mSerial << "Gyr Offset: x " << getXGyroOffset()  << "\t y " << getYGyroOffset()  << "\t z " << getZGyroOffset()  << endl;
 }
 
 //--------------------------------------

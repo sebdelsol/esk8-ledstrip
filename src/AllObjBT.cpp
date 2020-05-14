@@ -2,6 +2,7 @@
 
 AllObjBT::AllObjBT(Stream& dbgSerial) : AllObj(dbgSerial) {}  
 
+//----------------
 void AllObjBT::sendInits(BlueTooth &BT)
 {
   if(BT.isReadyToSend())
@@ -24,6 +25,7 @@ bool AllObjBT::sendUpdate(BlueTooth &BT, MOTION& motion)
   }
 }
 
+//----------------
 bool AllObjBT::receiveUpdate(BlueTooth &BT)
 {
   if (BT.isReadyToReceive())

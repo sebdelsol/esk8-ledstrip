@@ -12,7 +12,6 @@ void TrampCallback(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
   TrampBT->callback(event, param);
 }
 
-//------------------------------------------------------------
 void BlueTooth::callback(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
 {
   if(event == ESP_SPP_SRV_OPEN_EVT)
@@ -31,6 +30,7 @@ void BlueTooth::callback(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
   }
 }
 
+//------------------------------------------------------------
 BlueTooth::BlueTooth(Stream& dbgSerial) : mDbgSerial(dbgSerial) 
 {
   mBTbuf.clear();
@@ -50,7 +50,7 @@ void BlueTooth::init()
   }
 }
 
-// Power management
+//------------------------------------------------------------
 void BlueTooth::start(const bool on)
 {
   if (mON != on)
@@ -80,6 +80,7 @@ void BlueTooth::toggle()
   start(mON ? false : true);
 }
 
+//------------------------------------------------------------
 bool BlueTooth::isReadyToReceive()
 {
   if (mON)

@@ -25,14 +25,17 @@
   #define   Serial  SerialAndTelnet 
 #endif
 
+// --
 #ifdef USE_OTA
   #include  <OTA.h>
   OTA       Ota(Serial);
 #endif
 
+// --
 MOTION  Motion(Serial);
 myWifi  MyWifi(Serial);
 
+// --
 #ifdef USE_BT
   #include  <Bluetooth.h>
   #include  <Button.h>
@@ -46,6 +49,7 @@ myWifi  MyWifi(Serial);
   AllObj    AllObj(Serial);
 #endif
 
+// --
 #include  <Cfg.h> // needs Motion obje & BT obj defined
 CFG       Cfg;
 
