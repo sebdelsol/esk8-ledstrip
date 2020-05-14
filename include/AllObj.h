@@ -46,12 +46,11 @@ class AllObj
   byte mID = 0;
 
   Stream& mDbgSerial;
+  BUF mTmpBuf;
   
   bool spiffsOK = false;
   const char* cfg_fname = FNAME_CURRENT;
   const char* def_fname = FNAME_DEFAULT;
-
-  BUF mTmpBuf;
   
   #ifdef DBG_CMD
     void dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args);
