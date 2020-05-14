@@ -16,6 +16,7 @@
 // The core to run FastLED.show()
 // #define FASTLED_SHOW_CORE 1
 // #define FASTLED_TASK_PRIO 2
+// #define FASTLED_WAIT_TASKSHOW 100 //ms
 
 //--------------------------------------
 class BaseLedStrip
