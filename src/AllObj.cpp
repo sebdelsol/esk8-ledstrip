@@ -88,6 +88,7 @@ void AllObj::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
   }
 
   parsed.obj->set(parsed.var, args, nbArg, change); //set the value from args
+  
   #ifdef DBG_CMD
     dbgCmd(mSetKeyword, parsed , nbArg, args);
   #endif
@@ -108,8 +109,8 @@ void AllObj::handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact)
 
     for (byte i=0; i < nbArg; i++)
       stream << " " << args[i];
-  
     stream << endl;
+    
     #ifdef DBG_CMD
       dbgCmd(mGetKeyword, parsed, nbArg, args);
     #endif
@@ -130,8 +131,8 @@ void AllObj::handleInitCmd(const parsedCmd& parsed, Stream& stream)
 
   for (byte i=0; i < nbArg; i++)
     stream << " " << args[i];
-  
   stream << endl;
+
   #ifdef DBG_CMD
     dbgCmd(mInitKeyword, parsed, nbArg, args);
   #endif
