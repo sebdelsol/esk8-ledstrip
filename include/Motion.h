@@ -41,16 +41,16 @@ struct SensorOutput
 //-----------------------------
 class MOTION : public OBJVar, public MPU6050
 {
+  bool        mDmpReady = false; 
+  uint8_t*    mFifoBuffer; 
   Stream&     mSerial;
-  bool        mDmpReady = false; // if DMP init was successful
-  uint8_t*    mFifoBuffer; // FIFO storage buffer
 
   ulong       mT = 0;
-  Quaternion  mQuat;      // quaternion from fifoBuffer
-  VectorInt16 mW;         // gyro sensor
-  VectorInt16 mAcc;       // accel sensor
+  Quaternion  mQuat;      // quat from dmp fifobuffer
+  VectorInt16 mW;         // gyro 
+  VectorInt16 mAcc;       // accel 
   VectorInt16 mAccReal;   // gravity-free accel
-  VectorFloat mGrav;      // gravity vector
+  VectorFloat mGrav;      // gravity 
 
   int16_t     mXGyroOffset,   mYGyroOffset,   mZGyroOffset;
   int16_t     mXAccelOffset,  mYAccelOffset,  mZAccelOffset;
@@ -61,7 +61,7 @@ class MOTION : public OBJVar, public MPU6050
   bool setOffsets();
 
 public:
-  SensorOutput  mOutput; // useful outpout
+  SensorOutput  mOutput; // public outpout
 
   MOTION(Stream& serial);
   void init();

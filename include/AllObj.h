@@ -5,7 +5,8 @@
 #include <Buf.h>
 #include <SPIFFS.h>
 
-// #define DBG_CMD  // to see what's happening with send & received cmd
+//-------------------------------
+// #define DBG_CMD      // to see what's happening with send & received cmd
 #define ALLOBJ_MAXOBJ    20
 
 #define ALLOBJ_RESERVED   '!'
@@ -13,31 +14,34 @@
 #define ALLOBJ_TERM        '\n' 
 #define ALLOBJ_ALIVE       '~'
 
-#define ALLOBJ_SET     "set"
-#define ALLOBJ_GET     "get"
-#define ALLOBJ_INIT    "init"
+#define ALLOBJ_SET        "set"
+#define ALLOBJ_GET        "get"
+#define ALLOBJ_INIT       "init"
 
-#define FNAME_CURRENT "/config.cfg"
-#define FNAME_DEFAULT "/config.def"
+#define FNAME_CURRENT     "/config.cfg"
+#define FNAME_DEFAULT     "/config.def"
 
 #define FORMAT_SPIFFS_IF_FAILED true
 
 //-------------------------------
+struct parsedCmd 
+{
+  OBJVar* obj;
+  MyVar* var;
+  const char* objName;
+  const char* varName;
+};
+
+struct mRegisteredOBJ
+{
+  char* name;
+  OBJVar* obj;
+};
+
+//-------------------------------
 class AllObj 
 {
-  struct parsedCmd 
-  {
-    OBJVar* obj;
-    MyVar* var;
-    const char* objName;
-    const char* varName;
-  };
-
-  struct mRegisteredOBJ
-  {
-    char* name;
-    OBJVar* obj;
-  } mOBJ[ALLOBJ_MAXOBJ];
+  mRegisteredOBJ mOBJ[ALLOBJ_MAXOBJ];
 
   byte mNOBJ = 0;
   byte mID = 0;
