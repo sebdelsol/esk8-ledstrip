@@ -96,7 +96,7 @@ public:
 
   void getInfo()
   {
-    *mSerial << mName;
+    *mSerial << mName << "(" << NLEDS << ") ";
     for (byte i=0; i < mNFX; i++)
     {
       FX* fx = mFX[i];
