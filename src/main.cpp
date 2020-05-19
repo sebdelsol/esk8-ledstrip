@@ -102,10 +102,10 @@ void setup()
   // -- Leds inits
   #define AddFX(l, fx) l.registerFX(fx)
 
-  AllLeds.init();
   AllLeds.registerStrip(Leds); 
   AllLeds.registerStrip(LedsR); 
   AllLeds.registerStrip(LedsF); 
+  AllLeds.init();
 
   AddFX(Leds, FireRun);   AddFX(Leds, FireTwk); AddFX(Leds, AquaRun);   AddFX(Leds, AquaTwk);   AddFX(Leds, Plasma);
   AddFX(LedsR, TwinkleR); AddFX(LedsR, FireRR); AddFX(LedsR, FireRL);   AddFX(LedsR, RunR);     AddFX(LedsR, CylonR);
