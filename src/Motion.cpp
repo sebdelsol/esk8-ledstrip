@@ -18,16 +18,13 @@
   {
     MOTION*       mpu = (MOTION* )_mpu;
     SensorOutput  taskOutput; //output to store computation
-    long          lastLoop = micros();
+    TickType_t    lastWakeTime = xTaskGetTickCount();
 
-    vTaskDelay( pdMS_TO_TICKS(1000) ); // or issue with offset !?
+    vTaskDelay(pdMS_TO_TICKS(1000)); // or issue with offset !?
 
     for (;;) // forever
     {
-      long ct = micros();
-      long dt = ct - lastLoop; lastLoop = ct;
-      long wait = 10 - (1 + dt / 1000); 
-      vTaskDelay( pdMS_TO_TICKS(wait > 0 ? wait : 0) ); // delay so that sync with a packet every 10ms 
+      vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(10)); // a packet every 10ms 
       
       if(ulTaskNotifyTake(pdTRUE, 0)) // pool the the task semaphore
         mpu->calibrate();
@@ -56,7 +53,8 @@ void MOTION::init()
   REGISTER_MPU(mXGyroOffset);   REGISTER_MPU(mYGyroOffset);  REGISTER_MPU(mZGyroOffset);
   REGISTER_MPU(mXAccelOffset);  REGISTER_MPU(mYAccelOffset); REGISTER_MPU(mZAccelOffset);
   REGISTER_VAR_SIMPLE_NOSHOW(MOTION, "gotOffsets", self->gotOffsets, 0, 1);
-
+  // REGISTER_VAR_SIMPLE(MOTION, "AutoCalibrate", self->mAutoCalibrate, 0, 1);
+  
   #ifdef MPU_GETFIFO_CORE
     REGISTER_CMD(MOTION, "calibrate",  {xTaskNotifyGive(NotifyToCalibrate);} ) // trigger a calibration
   #else
@@ -106,6 +104,7 @@ void MOTION::begin()
   if (devStatus == 0) // did it work ?
   { 
     if(!setOffsets())
+    // if(mAutoCalibrate || !setOffsets())
       calibrate();
 
     setDMPEnabled(true);
