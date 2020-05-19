@@ -1,6 +1,6 @@
 #pragma once
 
-#define FASTLED_ESP32_FLASH_LOCK 1
+#include <FastledCfg.h>
 #include <FastLED.h> // for lerp15by16
 
 #include <Wire.h>
@@ -25,8 +25,8 @@
 #define ACCEL_BASE_FREQ   60. // based on a 60fps measure
 
 //----------------------------- Run in a task
-#define MPU_GETFIFO_CORE 0 // mpu on a task
-#define MPU_GETFIFO_PRIO 1
+#define MPU_GETFIFO_CORE  0 // mpu on a task
+#define MPU_GETFIFO_PRIO  1
 
 //----------------------------- 
 struct SensorOutput 
@@ -55,6 +55,7 @@ class MOTION : public OBJVar, public MPU6050
   int16_t     mXGyroOffset,   mYGyroOffset,   mZGyroOffset;
   int16_t     mXAccelOffset,  mYAccelOffset,  mZAccelOffset;
   bool        gotOffsets  = false;
+  // bool        mAutoCalibrate = false;
 
   void getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q);
   void printOffsets();
