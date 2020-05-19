@@ -1,10 +1,6 @@
 #include <Bluetooth.h>
 
 //------------------------------------------------------------
-#include <rom/rtc.h>
-static __NOINIT_ATTR bool WasOn; // HACK in case of reboot after a crash
-
-//------------------------------------------------------------
 BlueTooth* CurrentBT;
 
 void CallbackWrapper(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
@@ -39,12 +35,6 @@ void BlueTooth::init()
   mBTSerial.register_callback(CallbackWrapper);
 
   pinMode(LIGHT_PIN, OUTPUT); //blue led
-
-  if (rtc_get_reset_reason(0) == 12 && WasOn) // HACK, SW reset is proly crash, so auto restart BT if it was on
-  {
-    mDbgSerial << "Reset detected, relaunch BT " << rtc_get_reset_reason(0) << endl;
-    start(true);
-  }
 }
 
 //------------------------------------------------------------
@@ -66,7 +56,6 @@ void BlueTooth::start(const bool on)
       mBTSerial.end();
     }
 
-    WasOn = mON; //HACK
     mDbgSerial << "BT has " << (mON ? "Started" : "Stopped") << endl;
     digitalWrite(LIGHT_PIN, mON ? HIGH : LOW);
   }
