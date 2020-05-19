@@ -55,3 +55,6 @@
 <sub>*1x*</sub>|<sub>220Ω resistor</sub>| . | .
 <sub>*1x*</sub>|<sub>blue LED</sub>| . | .
 <sub>*1x*</sub>|<sub>12x12 switch</sub>| . | .
+
+# Misc
+* in **I2Cdev.h** add `#define BUFFER_LENGTH 32`
