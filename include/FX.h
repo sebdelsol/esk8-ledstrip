@@ -1,6 +1,6 @@
 #pragma once
 
-#define FASTLED_ESP32_FLASH_LOCK 1
+#include <FastledCfg.h>
 #include <FastLED.h>
 #include <Streaming.h>
 #include <ObjVar.h>

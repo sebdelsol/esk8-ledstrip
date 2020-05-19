@@ -1,6 +1,6 @@
 #pragma once
 
-#define FASTLED_ESP32_FLASH_LOCK 1
+#include <FastledCfg.h>
 #include <FastLED.h>
 #include <Pins.h>
 #include <Streaming.h>
@@ -14,9 +14,9 @@
 
 //--------------------------------------
 // The core to run FastLED.show()
-#define FASTLED_SHOW_CORE 1
-#define FASTLED_TASK_PRIO 2
-#define FASTLED_WAIT_TASKSHOW 100 //ms
+// #define FASTLED_SHOW_CORE 1
+// #define FASTLED_TASK_PRIO 2
+// #define FASTLED_WAIT_TASKSHOW 100 //ms
 
 //--------------------------------------
 class BaseLedStrip
