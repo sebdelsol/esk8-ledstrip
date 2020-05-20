@@ -54,12 +54,14 @@ class MOTION : public OBJVar, public MPU6050
 
   int16_t     mXGyroOffset,   mYGyroOffset,   mZGyroOffset;
   int16_t     mXAccelOffset,  mYAccelOffset,  mZAccelOffset;
-  bool        gotOffsets  = false;
-  // bool        mAutoCalibrate = false;
+  bool        mGotOffset  = false;
+  bool        mAutoCalibrate = false;
 
   void getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q);
-  void printOffsets();
+  void printOffsets(const char* txt);
   bool setOffsets();
+
+  bool mHasBegun = false;
 
 public:
   SensorOutput  mOutput; // public outpout
@@ -68,7 +70,7 @@ public:
   void init();
   void begin();
   void calibrate();
-  bool getFiFoPacket() { return dmpGetCurrentFIFOPacket(mFifoBuffer); };
+  bool getFiFoPacket();
   void compute(SensorOutput& output);
   void update();
 };

@@ -133,9 +133,6 @@ void setup()
     digitalWrite(LIGHT_PIN, LOW); // switch off blue led
     btStop(); // turnoff bt 
   #endif
-
-  // -- Motion
-  Motion.begin();  
   
   // -- Wifi
   #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET)

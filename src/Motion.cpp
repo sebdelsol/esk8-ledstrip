@@ -20,15 +20,12 @@
     SensorOutput  taskOutput; //output to store computation
     TickType_t    lastWakeTime = xTaskGetTickCount();
 
-    vTaskDelay(pdMS_TO_TICKS(1000)); // or issue with offset !?
+    vTaskDelay(pdMS_TO_TICKS(2000)); // or issue with offset !?
 
     for (;;) // forever
     {
       vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(10)); // a packet every 10ms 
       
-      if(ulTaskNotifyTake(pdTRUE, 0)) // pool the the task semaphore
-        mpu->calibrate();
-
       if(mpu->getFiFoPacket())
       {
         mpu->compute(taskOutput);
@@ -39,6 +36,9 @@
 
         xEventGroupSetBits(FlagReady, 1);
       }
+
+      if(ulTaskNotifyTake(pdTRUE, 0)) // pool the the task semaphore
+        mpu->calibrate();
     }
   }
 #endif
@@ -48,17 +48,24 @@ MOTION::MOTION(Stream& serial) : mSerial(serial) {}
 
 void MOTION::init()
 {
-  #define REGISTER_MPU(var) REGISTER_VAR_SIMPLE_NOSHOW(MOTION, #var, self->var, -32768, 32767)
-
-  REGISTER_MPU(mXGyroOffset);   REGISTER_MPU(mYGyroOffset);  REGISTER_MPU(mZGyroOffset);
-  REGISTER_MPU(mXAccelOffset);  REGISTER_MPU(mYAccelOffset); REGISTER_MPU(mZAccelOffset);
-  REGISTER_VAR_SIMPLE_NOSHOW(MOTION, "gotOffsets", self->gotOffsets, 0, 1);
-  // REGISTER_VAR_SIMPLE(MOTION, "AutoCalibrate", self->mAutoCalibrate, 0, 1);
-  
   #ifdef MPU_GETFIFO_CORE
     REGISTER_CMD(MOTION, "calibrate",  {xTaskNotifyGive(NotifyToCalibrate);} ) // trigger a calibration
   #else
     REGISTER_CMD(MOTION, "calibrate",  {self->calibrate();} ) 
+  #endif
+
+  #define REGISTER_MPU(var) REGISTER_VAR_SIMPLE_NOSHOW(MOTION, #var, self->var, -32768, 32767)
+
+  REGISTER_MPU(mXGyroOffset);   REGISTER_MPU(mYGyroOffset);  REGISTER_MPU(mZGyroOffset);
+  REGISTER_MPU(mXAccelOffset);  REGISTER_MPU(mYAccelOffset); REGISTER_MPU(mZAccelOffset);
+  REGISTER_VAR_SIMPLE_NOSHOW(MOTION, "gotOffset", self->mGotOffset, 0, 1);
+  REGISTER_VAR_SIMPLE(MOTION, "auto", self->mAutoCalibrate, 0, 1);
+
+  #ifdef MPU_GETFIFO_CORE
+    OutputMutex = xSemaphoreCreateMutex();
+    FlagReady = xEventGroupCreate();
+    xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", 2048, this, MPU_GETFIFO_PRIO, &NotifyToCalibrate, MPU_GETFIFO_CORE);  
+    mSerial << "Mpu runs on Core " << MPU_GETFIFO_CORE << " with Prio " << MPU_GETFIFO_PRIO << endl;
   #endif
 }
 
@@ -70,57 +77,60 @@ void MOTION::calibrate()
 
   mXGyroOffset = getXGyroOffset();   mYGyroOffset = getYGyroOffset();   mZGyroOffset = getZGyroOffset();
   mXAccelOffset = getXAccelOffset(); mYAccelOffset = getYAccelOffset(); mZAccelOffset = getZAccelOffset();
-  gotOffsets = true;
-  printOffsets();
+  printOffsets("calibrated");
+  mGotOffset = true;
 }
 
 bool MOTION::setOffsets()
 {
-  if (gotOffsets)
+  if (mGotOffset)
   {
     setXGyroOffset(mXGyroOffset);   setYGyroOffset(mYGyroOffset);   setZGyroOffset(mZGyroOffset);
     setXAccelOffset(mXAccelOffset); setYAccelOffset(mYAccelOffset); setZAccelOffset(mZAccelOffset); 
-    printOffsets();
+    printOffsets("internal offsets");
   }
-  return gotOffsets;
+  return mGotOffset;
 }
 
-void MOTION::printOffsets()
+void MOTION::printOffsets(const char* txt)
 {
+  mSerial << txt << endl;
   mSerial << "Acc Offset: x " << getXAccelOffset() << "\t y " << getYAccelOffset() << "\t z " << getZAccelOffset() << endl;
   mSerial << "Gyr Offset: x " << getXGyroOffset()  << "\t y " << getYGyroOffset()  << "\t z " << getZGyroOffset()  << endl;
+}
+
+bool MOTION::getFiFoPacket() 
+{ 
+  if (!mHasBegun)
+    begin();
+
+  return dmpGetCurrentFIFOPacket(mFifoBuffer); 
 }
 
 //--------------------------------------
 void MOTION::begin()
 { 
-  Wire.begin(SDA, SCL);
-  Wire.setClock(I2C_CLOCK); 
+  mHasBegun = true;
+  Wire.begin(SDA, SCL, I2C_CLOCK);
 
+  // mpu
   initialize();
+  reset(); //help startup reliably
+  resetI2CMaster();
+
   mSerial << "MPU connection " << (testConnection() ? "successful" : "failed") << endl;
   uint8_t devStatus = dmpInitialize();
 
   if (devStatus == 0) // did it work ?
   { 
-    if(!setOffsets())
-    // if(mAutoCalibrate || !setOffsets())
+    if(mAutoCalibrate || !setOffsets())
       calibrate();
+
+    mFifoBuffer = (uint8_t* )malloc(dmpGetFIFOPacketSize() * sizeof(uint8_t)); // FIFO storage buffer
+    assert (mFifoBuffer!=NULL);
 
     setDMPEnabled(true);
     mDmpReady = true;
-
-    uint16_t packetSize = dmpGetFIFOPacketSize();
-    mFifoBuffer = (uint8_t* )malloc(packetSize * sizeof(uint8_t)); // FIFO storage buffer
-    assert (mFifoBuffer!=NULL);
-
-    #ifdef MPU_GETFIFO_CORE
-      OutputMutex = xSemaphoreCreateMutex();
-      FlagReady = xEventGroupCreate();
-      xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", 2048, this, MPU_GETFIFO_PRIO, &NotifyToCalibrate, MPU_GETFIFO_CORE);  
-      mSerial << "Mpu runs on Core " << MPU_GETFIFO_CORE << " with Prio " << MPU_GETFIFO_PRIO << endl;
-    #endif
-
     mSerial << "DMP enabled" << endl;
   }
   else // ERROR! 1 = initial memory load failed, 2 = DMP configuration updates failed
