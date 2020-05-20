@@ -40,7 +40,6 @@ myWifi  MyWifi(Serial);
   #include  <Bluetooth.h>
   #include  <Button.h>
   #include  <AllObjBT.h>
-
   Button    Button(BUTTON_PIN);
   BlueTooth BT(Serial);
   AllObjBT  AllObj(Serial);
