@@ -114,9 +114,7 @@ void MOTION::begin()
   mHasBegun = true;
 
   // mpu
-  initialize();
-  reset(); //help startup reliably
-  resetI2CMaster();
+  initialize(); reset(); resetI2CMaster(); //help startup reliably
 
   mSerial << "MPU connection " << (testConnection() ? "successful" : "failed") << endl;
   uint8_t devStatus = dmpInitialize();
