@@ -19,8 +19,7 @@
 
 // ----------------------------------------------------
 #ifdef USE_TELNET
-  #include  <TelnetSpy.h>
-  
+  #include  <TelnetSpy.h>  
   TelnetSpy SerialAndTelnet;  // define first sinc it redefine Serial
   #define   Serial  SerialAndTelnet 
 #endif
