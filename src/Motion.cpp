@@ -110,8 +110,8 @@ bool MOTION::getFiFoPacket()
 //--------------------------------------
 void MOTION::begin()
 { 
-  mHasBegun = true;
   Wire.begin(SDA, SCL, I2C_CLOCK);
+  mHasBegun = true;
 
   // mpu
   initialize();
