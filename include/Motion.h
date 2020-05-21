@@ -56,12 +56,12 @@ class MOTION : public OBJVar, public MPU6050
   int16_t     mXAccelOffset,  mYAccelOffset,  mZAccelOffset;
   bool        mGotOffset  = false;
   bool        mAutoCalibrate = false;
+  
+  bool mHasBegun = false;
 
   void getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q);
   void printOffsets(const char* txt);
   bool setOffsets();
-
-  bool mHasBegun = false;
 
 public:
   SensorOutput  mOutput; // public outpout
