@@ -59,21 +59,21 @@ CFG       Cfg;
 
 AllLedStrips  AllLeds(LED_MAX_MA, Serial);
 
-LedStrip    <NBLEDS_MIDDLE, LED_PIN> Leds("Led");
+LedStrip    <NBLEDS_MIDDLE, LED_PIN> Leds(Serial, "Led");
 RunningFX   FireRun(LUSH_LAVA, 3);     
 RunningFX   AquaRun(AQUA_MENTHE, -3);  
 TwinkleFX   FireTwk(HUE_RED); 
 TwinkleFX   AquaTwk(HUE_AQUA_BLUE);
 PlasmaFX    Plasma;
 
-LedStrip    <NBLEDS_TIPS, LEDR_PIN>  LedsR("LedR");
+LedStrip    <NBLEDS_TIPS, LEDR_PIN>  LedsR(Serial, "LedR");
 DblCylonFX  CylonR(LUSH_LAVA); 
 FireFX      FireRL;
 FireFX      FireRR(true);
 TwinkleFX   TwinkleR(CRGB::Red);
 RunningFX   RunR(CRGB::Gold); 
 
-LedStrip    <NBLEDS_TIPS, LEDF_PIN>  LedsF("LedF");
+LedStrip    <NBLEDS_TIPS, LEDF_PIN>  LedsF(Serial, "LedF");
 DblCylonFX  CylonF(AQUA);   
 PacificaFX  Pacifica;
 TwinkleFX   TwinkleF(HUE_AQUA_BLUE); 

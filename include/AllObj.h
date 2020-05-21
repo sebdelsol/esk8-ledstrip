@@ -75,7 +75,7 @@ protected:
   void emulateCmdForAllVars(const char* cmdKeyword, Stream& stream, OBJVar::ObjTestVarFunc testVar = NULL, bool change = true, bool compact = false);
 
 public:
-  AllObj(Stream& dbgSerial);
+  AllObj(Stream& dbgSerial) : mDbgSerial(dbgSerial) {};
   void init();
   void save(bool isdefault);
   void load(bool isdefault, bool change = true);

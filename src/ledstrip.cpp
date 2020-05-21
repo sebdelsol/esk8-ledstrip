@@ -28,7 +28,7 @@
 #endif
 
 // ----------------------------------------------------
-AllLedStrips::AllLedStrips(const int maxmA, Stream& serial) : mSerial(&serial)
+AllLedStrips::AllLedStrips(const int maxmA, Stream& serial) : mSerial(serial)
 {
   FastLED.setMaxPowerInVoltsAndMilliamps(5, maxmA);
   FastLED.countFPS();
@@ -39,12 +39,9 @@ bool AllLedStrips::registerStrip(BaseLedStrip &strip)
 {
   bool ok = mNStrips < MAXSTRIP;
   if (ok)
-  {
     mStrips[mNStrips++] = &strip;
-    strip.setSerial(mSerial);
-  }
   else
-    *mSerial << ">> ERROR !! Max LedStrips is reached " << MAXSTRIP << endl; 
+    mSerial << ">> ERROR !! Max LedStrips is reached " << MAXSTRIP << endl; 
 
   return ok;
 }
@@ -56,7 +53,7 @@ void AllLedStrips::init()
 
   #ifdef FASTLED_SHOW_CORE
     xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", 2048, NULL, FASTLED_TASK_PRIO, &FastLEDshowTaskHandle, FASTLED_SHOW_CORE);  
-    Serial << "Fastled runs on Core " << FASTLED_SHOW_CORE << " with Prio " << FASTLED_TASK_PRIO << endl;
+    mSerial << "Fastled runs on Core " << FASTLED_SHOW_CORE << " with Prio " << FASTLED_TASK_PRIO << endl;
   #endif
 }
 
@@ -78,7 +75,7 @@ void AllLedStrips::update()
 
 void AllLedStrips::getInfo()
 {
-  *mSerial << "FPS " << FastLED.getFPS() << endl;
+  mSerial << "FPS " << FastLED.getFPS() << endl;
   for (byte i=0; i < mNStrips; i++)
     mStrips[i]->getInfo();
 }

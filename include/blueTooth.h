@@ -17,7 +17,7 @@ class BlueTooth
   BluetoothSerial mBTSerial;
 
 public:
-  BlueTooth(Stream& serial);
+  BlueTooth(Stream& serial) : mDbgSerial(serial) {};
   void init();
   void start(const bool on=true);
   void toggle();

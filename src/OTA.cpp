@@ -1,7 +1,5 @@
 #include <OTA.h>
 
-OTA::OTA(Stream& serial) : mSerial(serial) {}  
-
 void OTA::begin()
 {
   if(WiFi.status() == WL_CONNECTED)

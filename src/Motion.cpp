@@ -44,8 +44,6 @@
 #endif
 
 //--------------------------------------
-MOTION::MOTION(Stream& serial) : mSerial(serial) {}
-
 void MOTION::init()
 {
   #ifdef MPU_GETFIFO_CORE

@@ -27,8 +27,6 @@ void BlueTooth::onEvent(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
 }
 
 //------------------------------------------------------------
-BlueTooth::BlueTooth(Stream& dbgSerial) : mDbgSerial(dbgSerial) {}
-
 void BlueTooth::init()
 {
   CurrentBT = this;

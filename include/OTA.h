@@ -13,6 +13,6 @@ class OTA
     void begin();
 
 public:
-    OTA(Stream& dbgSerial);
+    OTA(Stream& serial) : mSerial(serial) {};
     void update();
 };

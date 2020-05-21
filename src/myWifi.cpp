@@ -1,8 +1,6 @@
 #include <myWifi.h>
 
 // ----------------------------------------------------
-myWifi::myWifi(Stream& serial) : mSerial(serial) {}
-
 void myWifi::stop()
 {
   WiFi.mode(WIFI_OFF);

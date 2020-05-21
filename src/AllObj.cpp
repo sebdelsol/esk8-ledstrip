@@ -1,7 +1,5 @@
 #include <AllObj.h>
 
-AllObj::AllObj(Stream& dbgSerial) : mDbgSerial(dbgSerial) {}  
-
 void AllObj::init()
 {
   mDbgSerial << "mount SPIFFS" << endl;

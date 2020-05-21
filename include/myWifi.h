@@ -35,7 +35,7 @@ class myWifi
   Stream& mSerial;
 
 public:
-  myWifi(Stream &serial);
+  myWifi(Stream &serial) : mSerial(serial) {};
   void start();
   void stop();
   void toggle() { mON ? stop() : start(); };

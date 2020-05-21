@@ -66,7 +66,7 @@ class MOTION : public OBJVar, public MPU6050
 public:
   SensorOutput  mOutput; // public outpout
 
-  MOTION(Stream& serial);
+  MOTION(Stream& serial) : mSerial(serial) {};
   void init();
   void begin();
   void calibrate();

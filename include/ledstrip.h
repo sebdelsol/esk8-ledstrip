@@ -22,14 +22,14 @@
 class BaseLedStrip
 {
 protected:
-  Stream* mSerial;
+  Stream& mSerial;
   
 public:
   virtual void getInfo(); 
   virtual void update(ulong time, ulong dt);  
   virtual void init();
   virtual byte* getData(int& n); // for myWifi
-  void setSerial(Stream* serial) {mSerial = serial;};
+  BaseLedStrip(Stream& serial) : mSerial(serial) {};
 };
 
 //---------
@@ -38,7 +38,7 @@ class AllLedStrips
   BaseLedStrip* mStrips[MAXSTRIP];
   byte mNStrips = 0;
   ulong  mLastT = 0;
-  Stream* mSerial;
+  Stream& mSerial;
 
 public:
   AllLedStrips(const int maxmA, Stream& serial);
@@ -67,7 +67,7 @@ class LedStrip : public BaseLedStrip
 
 public:
 
-  LedStrip(const char* name="")
+  LedStrip(Stream& serial, const char* name="") : BaseLedStrip(serial)
   {
     mName = (char* )malloc(strlen(name) + 1);
     assert (mName!=NULL);
@@ -89,20 +89,20 @@ public:
       fx.init(NLEDS);
     }
     else
-      *mSerial << ">> ERROR !! Max FX is reached " << MAXFX << endl; 
+      mSerial << ">> ERROR !! Max FX is reached " << MAXFX << endl; 
 
     return ok;
   };
 
   void getInfo()
   {
-    *mSerial << mName << "(" << NLEDS << ") ";
+    mSerial << mName << "(" << NLEDS << ") ";
     for (byte i=0; i < mNFX; i++)
     {
       FX* fx = mFX[i];
-      *mSerial << " - " << fx->getName() << "(" << fx->getAlpha() << ")";
+      mSerial << " - " << fx->getName() << "(" << fx->getAlpha() << ")";
     }
-    *mSerial << "                  " << endl;
+    mSerial << "                  " << endl;
   };
 
   byte* getData(int& n)
