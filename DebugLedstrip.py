@@ -20,11 +20,12 @@ with open("./include/wificonfig.h", "r") as f:
                 SOCK_PORT = int(w[2])
 
 #----------------------------------------------------------------
-wPixel = 20
+wPixel = 25
 cPixel = wPixel * .25 
-minPixel = wPixel * .5
-maxPixel = int(round(wPixel * 1.5))
+minPixel = wPixel * .6
+maxPixel = int(round(wPixel * 1.))
 REM = 0.5
+GAMMA = 5
 
 #----------------------------------------------------------------
 class Pixel:
@@ -39,16 +40,20 @@ class Pixel:
         return cd if cd >= c else c * REM + cd * (1 - REM)
 
     def draw(self, color, screen):
+        r, g, b = (e/255. for e in self.color)
+        lum = math.sqrt( 0.299 * r**2 + 0.587 * g**2 + 0.114 * b**2 )
+        mul = 2 * (lum ** ((1./GAMMA) - 1) if lum> 0 else 1)
+        color = (min(color[0] * mul, 255), min(color[1] * mul, 255), min(color[2] * mul, 255))
+
         self.color = (self.remanence(self.color[0], color[0]),
                       self.remanence(self.color[1], color[1]),
                       self.remanence(self.color[2], color[2]))
-        r, g, b = (e/255. for e in self.color)
-        lum = math.sqrt( 0.299 * r**2 + 0.587 * g**2 + 0.114 * b**2 )
-
-        r = int(round(.5 * (minPixel + (maxPixel-minPixel) * lum)))
-        pygame.draw.circle(screen, self.color, self.cpos, r)
 
         color2 = [min(c * 1.5, 255) for c in self.color]
+
+        r = int(round(.5 * (minPixel + (maxPixel - minPixel) * lum)))
+        pygame.draw.circle(screen, self.color, self.cpos, r)
+
         pygame.draw.rect(screen, color2, self.rect)
 
 #----------------------------------------------------------------
