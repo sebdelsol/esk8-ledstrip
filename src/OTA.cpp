@@ -1,5 +1,6 @@
 #include <OTA.h>
 
+//--------------------------------------
 void OTA::begin()
 {
   if(WiFi.status() == WL_CONNECTED)
@@ -33,6 +34,7 @@ void OTA::begin()
   }
 }
 
+//--------------------------------------
 void OTA::update() 
 {
   if (!mBegun)
