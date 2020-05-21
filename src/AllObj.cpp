@@ -1,5 +1,6 @@
 #include <AllObj.h>
 
+//--------------------------------------
 void AllObj::init()
 {
   mDbgSerial << "mount SPIFFS" << endl;
