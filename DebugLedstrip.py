@@ -25,7 +25,7 @@ cPixel = wPixel * .25
 minPixel = wPixel * .6
 maxPixel = int(round(wPixel * 1.))
 REM = 0.5
-GAMMA = 5
+GAMMA = 5.
 
 #----------------------------------------------------------------
 class Pixel:
@@ -42,7 +42,7 @@ class Pixel:
     def draw(self, color, screen):
         r, g, b = (e/255. for e in self.color)
         lum = math.sqrt( 0.299 * r**2 + 0.587 * g**2 + 0.114 * b**2 )
-        mul = 2 * (lum ** ((1./GAMMA) - 1) if lum> 0 else 1)
+        mul = 2 * (lum ** ((1. / GAMMA) - 1) if lum > 0 else 1)
         color = (min(color[0] * mul, 255), min(color[1] * mul, 255), min(color[2] * mul, 255))
 
         self.color = (self.remanence(self.color[0], color[0]),
