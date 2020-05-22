@@ -85,6 +85,8 @@ void AllLedStrips::show()
   #ifdef FASTLED_SHOW_CORE
     TriggerFastLEDShow();
   #else
-    FastLED.show(); 
+    noInterrupts();
+    FastLED.show();
+    interrupts(); 
   #endif
 }
