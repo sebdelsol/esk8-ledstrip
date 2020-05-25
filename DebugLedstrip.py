@@ -37,7 +37,7 @@ class Pixel:
         self.color = (0,0,0)
 
     def remanence(self, c, cd):
-        return cd if cd >= c else c * REM + cd * (1 - REM)
+        return [(c[i] * REM + cd[i] * (1 - REM)) for i in range(3)]
 
     def draw(self, color, screen):
         r, g, b = (e/255. for e in self.color)
@@ -45,10 +45,7 @@ class Pixel:
         mul = 2 * (lum ** ((1. / GAMMA) - 1) if lum > 0 else 1)
         color = (min(color[0] * mul, 255), min(color[1] * mul, 255), min(color[2] * mul, 255))
 
-        self.color = (self.remanence(self.color[0], color[0]),
-                      self.remanence(self.color[1], color[1]),
-                      self.remanence(self.color[2], color[2]))
-
+        self.color = self.remanence(self.color, color)
         color2 = [min(c * 1.5, 255) for c in self.color]
 
         r = int(round(.5 * (minPixel + (maxPixel - minPixel) * lum)))
