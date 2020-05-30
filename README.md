@@ -32,7 +32,7 @@
 # OTA update & logs
 **update *OTA***
 * uncomment `#define USE_OTA` in **[main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)** 
-* uncomment `upload_protocol = espota` & `upload_port = "esk8.local"` in **[platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini)** 
+* uncomment `upload_protocol` & `upload_port` lines in **[platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini)** 
 
 **get *Telnet* logs**
 * uncomment `#define USE_TELNET` in **[main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)** 
