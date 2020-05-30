@@ -17,7 +17,7 @@
 **tweak your setup in real time on your phone**
 * use `REGISTER_VAR` & `REGISTER_CMD` macros to ***create new app's widgets***
 * import [esk8.aia](https://github.com/sebdelsol/Esk8/blob/master/esk8.aia) on [App Inventor](http://ai2.appinventor.mit.edu/)
-* pair your Android phone with the *Esk8* bluetooth device *within 30s after power on*
+* pair your Android phone with the *Esk8* bluetooth device *within 30s after being switched on*
 <p>&nbsp;</p>  <p>&nbsp;</p>  
 
 # LEDstrips debug
