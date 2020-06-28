@@ -20,7 +20,7 @@
 * pair your Android phone with the *Esk8* bluetooth device *within 30s after being switched on*
 <p>&nbsp;</p>  <p>&nbsp;</p>  
 
-# LEDstrips debug
+# Iterate FX
 <img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="215" align="right">
 
 **check your LEDstrips on PC**
