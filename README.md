@@ -7,7 +7,7 @@
 # Build
 [<img src="https://i.imgur.com/fsrZ5Zs.jpg" height="185" align="right">](https://easyeda.com/seb.morin/esk8)[<img src="https://i.imgur.com/bn5Pk2N.jpg" height="185" align="right">](https://easyeda.com/seb.morin/esk8)[<img src="https://image.easyeda.com/histories/aaf838e4a54c468f9502dc529522ac38.png" height="185" align="right">](https://easyeda.com/seb.morin/esk8)
 
-**check [here for PCB & schematic](https://easyeda.com/seb.morin/esk8)**
+**check here [for PCB & schematic](https://easyeda.com/seb.morin/esk8)**
 
 <p>&nbsp;</p> <p>&nbsp;</p> <p>&nbsp;</p>
 
@@ -56,5 +56,5 @@
 <sub>*1x*</sub>|<sub>blue LED</sub>| . | .
 <sub>*1x*</sub>|<sub>12x12 switch</sub>| . | .
 
-# Misc
+# Repear
 * in I2Cdev.h add `#define BUFFER_LENGTH 128` to make I2CDevLib compile on an esp32
