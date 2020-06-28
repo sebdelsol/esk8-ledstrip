@@ -1,7 +1,6 @@
 # eSK8 LedStrips
 <img src="https://media.giphy.com/media/IhCHKo42Hx7WFkRmzQ/giphy.gif" height="225" align="right"><img src="https://media.giphy.com/media/fY5xLxGayUptPZuTfG/giphy.gif" height="225" align="right"><img src="https://media.giphy.com/media/RfYtkG17dUJyVmbPet/giphy.gif" height="225" align="right">
 
-
 **controlled by an [accelerometer](https://github.com/sebdelsol/esk8-ledstrip/blob/master/README.md#bom) with a [phone app](https://github.com/sebdelsol/esk8-ledstrip/blob/master/README.md#android-app)**
 <p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>  <p>&nbsp;</p>
 
@@ -10,7 +9,7 @@
 
 **check [here](https://easyeda.com/seb.morin/esk8)**
 
-<p>&nbsp;</p> <p>&nbsp;</p> <p>&nbsp;</p> <p>&nbsp;</p> <p>&nbsp;</p>  
+<p>&nbsp;</p> <p>&nbsp;</p> <p>&nbsp;</p> <p>&nbsp;</p>
 
 # Customize
 <img src="https://media.giphy.com/media/TfFm0aNsc1LnWPsiab/giphy.gif" height="250" align="right">
