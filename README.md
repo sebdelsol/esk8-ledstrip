@@ -1,5 +1,6 @@
 # eSK8 LedStrips
 <img src="https://media.giphy.com/media/IhCHKo42Hx7WFkRmzQ/giphy.gif" height="225" align="right"><img src="https://media.giphy.com/media/fY5xLxGayUptPZuTfG/giphy.gif" height="225" align="right"><img src="https://media.giphy.com/media/RfYtkG17dUJyVmbPet/giphy.gif" height="225" align="right">
+<p>&nbsp;</p>
 
 **controlled by an [accelerometer](https://github.com/sebdelsol/esk8-ledstrip/blob/master/README.md#bom) with a [phone app](https://github.com/sebdelsol/esk8-ledstrip/blob/master/README.md#android-app)**
 <p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>  <p>&nbsp;</p>
@@ -29,7 +30,7 @@
 
 <p>&nbsp;</p>  <p>&nbsp;</p>
 
-# OTA update & logs
+# Debug
 **update OTA**
 * add `#define USE_OTA` in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)
 * uncomment `upload_protocol` & `upload_port` lines in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini)
