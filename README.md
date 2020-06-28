@@ -14,7 +14,7 @@
 # Customize
 <img src="https://media.giphy.com/media/TfFm0aNsc1LnWPsiab/giphy.gif" height="250" align="right">
 
-**tweak your setup in real time on your phone**
+**tweak in real time**
 * use `REGISTER_VAR` & `REGISTER_CMD` macros to ***create new app's widgets***
 * import [esk8.aia](https://github.com/sebdelsol/Esk8/blob/master/esk8.aia) on [App Inventor](http://ai2.appinventor.mit.edu/)
 * pair your Android phone with the *Esk8* bluetooth device *within 30s after being switched on*
@@ -23,7 +23,7 @@
 # Iterate
 <img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="215" align="right">
 
-**check your LEDstrips on PC**
+**check your Ledstrips on PC**
 * add `#define DEBUG_LED_TOWIFI` in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) 
 * launch [debugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py) - dependencies : [PyGame](https://www.pygame.org) & [SimpleWebsocketServer](https://pypi.org/project/simple-websocket-server) 
 
