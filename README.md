@@ -13,7 +13,6 @@
 
 # Customize
 <img src="https://media.giphy.com/media/TfFm0aNsc1LnWPsiab/giphy.gif" height="250" align="right">
-<p>&nbsp;</p> 
 
 **tweak your setup in real time on your phone**
 * use `REGISTER_VAR` & `REGISTER_CMD` macros to ***create new app's widgets***
