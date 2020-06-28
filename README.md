@@ -9,7 +9,7 @@
 
 **check [here](https://easyeda.com/seb.morin/esk8)**
 
-<p>&nbsp;</p> <p>&nbsp;</p> <p>&nbsp;</p>
+<p>&nbsp;</p> <p>&nbsp;</p>
 
 # Customize
 <img src="https://media.giphy.com/media/TfFm0aNsc1LnWPsiab/giphy.gif" height="250" align="right">
