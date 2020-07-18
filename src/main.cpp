@@ -20,21 +20,21 @@
 // ----------------------------------------------------
 #ifdef USE_TELNET
   #include  <TelnetSpy.h>  
-  TelnetSpy SerialAndTelnet;  // define first sinc it redefine Serial
+  TelnetSpy SerialAndTelnet;  // it redefines Serial
   #define   Serial  SerialAndTelnet 
 #endif
 
-// --
+// -- OTA
 #ifdef USE_OTA
   #include  <OTA.h>
   OTA       Ota(Serial);
 #endif
 
-// --
+// -- Acc & Wifi
 MOTION  Motion(Serial);
 myWifi  MyWifi(Serial);
 
-// --
+// -- BT
 #ifdef USE_BT
   #include  <Bluetooth.h>
   #include  <Button.h>
@@ -47,8 +47,8 @@ myWifi  MyWifi(Serial);
   AllObj    AllObj(Serial);
 #endif
 
-// --
-#include  <Cfg.h> // needs Motion obje & BT obj defined
+// -- Cfg
+#include  <Cfg.h> // needs Motion & BT objs defined
 CFG       Cfg;
 
 // ----------------------------------------------------
