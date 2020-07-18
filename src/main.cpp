@@ -98,21 +98,20 @@ void setup()
   Motion.init();
 
   // -- Leds inits
-  #define AddFX(l, fx) l.registerFX(fx)
-
   AllLeds.registerStrip(Leds); 
   AllLeds.registerStrip(LedsR); 
   AllLeds.registerStrip(LedsF); 
   AllLeds.init();
 
+  #define AddFX(l, fx) l.registerFX(fx)
   AddFX(Leds, FireRun);   AddFX(Leds, FireTwk); AddFX(Leds, AquaRun);   AddFX(Leds, AquaTwk);   AddFX(Leds, Plasma);
   AddFX(LedsR, TwinkleR); AddFX(LedsR, FireRR); AddFX(LedsR, FireRL);   AddFX(LedsR, RunR);     AddFX(LedsR, CylonR);
   AddFX(LedsF, TwinkleF); AddFX(LedsF, RunF);   AddFX(LedsF, Pacifica); AddFX(LedsF, CylonF);
 
   // -- Register AllObj
-  #define AddOBJ(o) AllObj.registerObj(o, #o);
-  
   AllObj.init();
+
+  #define AddOBJ(o) AllObj.registerObj(o, #o);
   AddOBJ(Motion);    AddOBJ(Cfg);            
   AddOBJ(TwinkleF);  AddOBJ(RunF);    AddOBJ(Pacifica); 
   AddOBJ(TwinkleR);  AddOBJ(FireRR);  AddOBJ(FireRL);   AddOBJ(RunR);      AddOBJ(CylonR);
@@ -152,10 +151,6 @@ void loop()
 
   EVERY_N_MILLISECONDS(LED_TICK)
   {
-    // -- Update Motion sensor
-    Motion.update(); 
-    RASTER("Motion");
-
     // -- Master brightness
     if(Cfg.probe)
     {
@@ -165,10 +160,13 @@ void loop()
     Cfg.fade = lerp16by16(Cfg.fade,  65535,  650);
     byte bright = (Cfg.bright * ((Cfg.fade >> 8) + 1)) >> 8; 
     AllLeds.setBrightness(bright);
-    RASTER("probe");
+    RASTER("Light probe");
 
     // -- handle Motion Sensor
+    Motion.update(); 
     SensorOutput& m = Motion.mOutput;
+    RASTER("Motion");
+
     if (m.updated)
     {
       #define MulAlpha(a, b) (((a) * ((b) + 1)) >> 8)
@@ -239,12 +237,13 @@ void loop()
         Serial << "[alpha "  << alpha  << "\tinv "  << invAlpha << "]\t";
         Serial << "[eyeR "   << eyeR   << "\teyeF " << eyeF     << "\talphaR " << alphaR << "\talphaF " << alphaF << "]" << endl;
       #endif
+  
+      RASTER("Leds setup");
     }
-    RASTER("led setup");
 
     // -- Leds actual drawing
     AllLeds.update();
-    RASTER("Led update");
+    RASTER("Leds update");
 
     // -- wifi Update
     #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET)
@@ -258,7 +257,7 @@ void loop()
           Ota.update();
         #endif
       }
-      RASTER("wifi");
+      RASTER("Wifi");
     #endif
   }
 
@@ -271,17 +270,17 @@ void loop()
 
       AllObj.receiveUpdate(BT);
     }
-    RASTER("BT");
+    RASTER("BlueTooth");
   #endif
 
-  // -- Leds dithering
   #ifdef DEBUG_LED_INFO
     EVERY_N_SECONDS(1)
       AllLeds.getInfo();
   #endif
 
+  // -- Leds dithering
   AllLeds.show(); // to be called as much as possible for Fastled brightness dithering
-  RASTER("led show"); 
+  RASTER("Leds show"); 
 
   RASTER_END;
 }
