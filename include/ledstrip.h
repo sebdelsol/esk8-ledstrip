@@ -120,9 +120,10 @@ public:
       if (mFX[i]->drawOn(mDisplay, time, dt))
         break; // now we've to blend
 
-    // some fx left to draw ? draw on mBuffer & blend with mDisplay
+    // something drawn ?
     if (++i <= mNFX)
     { 
+      // some fx left to draw ? draw on mBuffer & blend with mDisplay
       for (; i < mNFX; i++) 
         if (mFX[i]->drawOn(mBuffer, time, dt)) 
             mDisplay |= mBuffer; // get the max of each RGB component
