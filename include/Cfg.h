@@ -7,7 +7,7 @@
 #define   LED_TICK      10      // ms, it's used too  for mpu6050 which is refreshed every 10ms
 #define   BT_TICK       30      // ms
 
-#define   NBLEDS_MIDDLE 30
+#define   NBLEDS_MIDDLE 72
 #define   NBLEDS_TIPS   36
 
 // ----------------------------------------------------
