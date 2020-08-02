@@ -50,16 +50,16 @@ void MOTION::init()
   #define REGISTER_MPU(var) REGISTER_VAR_SIMPLE_NOSHOW(MOTION, #var, self->var, -32768, 32767)
   REGISTER_MPU(mXGyroOffset);   REGISTER_MPU(mYGyroOffset);  REGISTER_MPU(mZGyroOffset);
   REGISTER_MPU(mXAccelOffset);  REGISTER_MPU(mYAccelOffset); REGISTER_MPU(mZAccelOffset);
+  
   REGISTER_VAR_SIMPLE_NOSHOW(MOTION, "gotOffset", self->mGotOffset, 0, 1);
   
   #ifdef MPU_GETFIFO_CORE
-    REGISTER_CMD(MOTION, "calibrate",  {xTaskNotifyGive(NotifyToCalibrate);} ) // trigger a calibration
-
     OutputMutex = xSemaphoreCreateMutex();
     FlagReady = xEventGroupCreate();
     xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", 2048, this, MPU_GETFIFO_PRIO, &NotifyToCalibrate, MPU_GETFIFO_CORE);  
     mSerial << "Mpu runs on Core " << MPU_GETFIFO_CORE << " with Prio " << MPU_GETFIFO_PRIO << endl;
 
+    REGISTER_CMD(MOTION, "calibrate",  {xTaskNotifyGive(NotifyToCalibrate);} ) // trigger a calibration
   #else
     REGISTER_CMD(MOTION, "calibrate",  {self->calibrate();} ) 
   #endif
