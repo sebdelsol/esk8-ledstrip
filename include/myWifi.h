@@ -46,5 +46,5 @@ public:
 //--------------------------------------------
 #include <Tools.h>
 
-#define _AddToWifi(w, l) w.addLeds(l);
-#define AddLeds2Wifi(w, ...) CALL_MACRO_X_FOR_EACH(w, _AddToWifi, __VA_ARGS__)
+#define _AddToWifi(w, l)     w.addLeds(l);
+#define AddLeds2Wifi(w, ...) CallMacroForEach(w, _AddToWifi, __VA_ARGS__)
