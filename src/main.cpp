@@ -57,23 +57,23 @@ CFG       Cfg;
 #define   LUSH_LAVA     CRGB(0xFF4500)
 #define   HUE_AQUA_BLUE 140
 
-AllLedStrips  AllLeds(LED_MAX_MA, Serial);
+AllLedStrips  AllStrips(LED_MAX_MA, Serial);
 
-LedStrip    <NBLEDS_MIDDLE, LED_PIN> Leds(Serial, "Led");
+LedStrip    <NBLEDS_MIDDLE, LEDM_PIN> StripM(Serial, "Mid Strip");
 RunningFX   FireRun(LUSH_LAVA, 3);     
 RunningFX   AquaRun(AQUA_MENTHE, -3);  
 TwinkleFX   FireTwk(HUE_RED); 
 TwinkleFX   AquaTwk(HUE_AQUA_BLUE);
 PlasmaFX    Plasma;
 
-LedStrip    <NBLEDS_TIPS, LEDR_PIN>  LedsR(Serial, "LedR");
+LedStrip    <NBLEDS_TIPS, LEDR_PIN>  StripR(Serial, "Rear Strip");
 DblCylonFX  CylonR(LUSH_LAVA); 
 FireFX      FireRL;
 FireFX      FireRR(true);
 TwinkleFX   TwinkleR(CRGB::Red);
 RunningFX   RunR(CRGB::Gold); 
 
-LedStrip    <NBLEDS_TIPS, LEDF_PIN>  LedsF(Serial, "LedF");
+LedStrip    <NBLEDS_TIPS, LEDF_PIN>  StripF(Serial, "Front Strip");
 DblCylonFX  CylonF(AQUA);   
 PacificaFX  Pacifica;
 TwinkleFX   TwinkleF(HUE_AQUA_BLUE); 
@@ -83,8 +83,8 @@ RunningFX   RunF(CRGB::Gold);
 void setup()
 {
   // -- switch off all leds
-  AllLeds.setBrightness(0);
-  AllLeds.clearAndShow();
+  AllStrips.setBrightness(0);
+  AllStrips.clearAndShow();
 
   // -- main inits
   Serial.begin(SERIAL_BAUD);
@@ -97,21 +97,21 @@ void setup()
   Cfg.init();
   Motion.init();
 
-  // -- Leds inits
-  RegisterLEDS(AllLeds, Leds, LedsR, LedsF)
-  AllLeds.init();
+  // -- Strip inits
+  RegisterSTRIPS(AllStrips, StripM, StripR, StripF)
+  AllStrips.init();
   
-  RegisterFXS(Leds,   FireRun,  FireTwk, AquaRun,  AquaTwk, Plasma);
-  RegisterFXS(LedsR,  TwinkleR, FireRR,  FireRL,   RunR,    CylonR);
-  RegisterFXS(LedsF,  TwinkleF, RunF,    Pacifica, CylonF);
+  RegisterFXS(StripM,  FireRun,  FireTwk, AquaRun,  AquaTwk, Plasma);
+  RegisterFXS(StripR,  TwinkleR, FireRR,  FireRL,   RunR,    CylonR);
+  RegisterFXS(StripF,  TwinkleF, RunF,    Pacifica, CylonF);
 
   // -- Register AllObj
   AllObj.init();
 
-  RegisterOBJS("",       Motion,   Cfg);            
-  RegisterOBJS("mid.",   FireRun,  FireTwk, AquaRun,  AquaTwk,  Plasma);
-  RegisterOBJS("rear.",  TwinkleR, FireRR,  FireRL,   RunR,     CylonR);
-  RegisterOBJS("front.", TwinkleF, RunF,    Pacifica, CylonF);
+  RegisterOBJS(AllObj, "",       Motion,   Cfg);            
+  RegisterOBJS(AllObj, "mid.",   FireRun,  FireTwk, AquaRun,  AquaTwk,  Plasma);
+  RegisterOBJS(AllObj, "rear.",  TwinkleR, FireRR,  FireRL,   RunR,     CylonR);
+  RegisterOBJS(AllObj, "front.", TwinkleF, RunF,    Pacifica, CylonF);
 
   AllObj.save(true); // save default
   AllObj.load(false, false); // load not default, do not send change to BT
@@ -131,7 +131,7 @@ void setup()
   #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET)
     MyWifi.start();
     #ifdef DEBUG_LED_TOWIFI
-      AddLeds2Wifi(MyWifi, Leds, LedsR, LedsF)
+      AddStripsToWifi(MyWifi, StripM, StripR, StripF)
     #endif
   #else
     MyWifi.stop();
@@ -153,7 +153,7 @@ void loop()
     }
     Cfg.fade = lerp16by16(Cfg.fade,  65535,  650);
     byte bright = (Cfg.bright * ((Cfg.fade >> 8) + 1)) >> 8; 
-    AllLeds.setBrightness(bright);
+    AllStrips.setBrightness(bright);
     RASTER("Light probe");
 
     // -- handle Motion Sensor
@@ -215,7 +215,7 @@ void loop()
         TwinkleR.setAlpha(MulAlpha(max(Cfg.minTwkR, alphaR), invAlpha)); 
       }
 
-      // -- Central Leds
+      // -- Central Strip
       if (Cfg.led)
       {
         AquaRun.setAlpha(alphaF);
@@ -236,7 +236,7 @@ void loop()
     }
 
     // -- Leds actual drawing
-    AllLeds.update();
+    AllStrips.update();
     RASTER("Leds update");
 
     // -- wifi Update
@@ -269,11 +269,11 @@ void loop()
 
   #ifdef DEBUG_LED_INFO
     EVERY_N_SECONDS(1)
-      AllLeds.getInfo();
+      AllStrips.getInfo();
   #endif
 
   // -- Leds dithering
-  AllLeds.show(); // to be called as much as possible for Fastled brightness dithering
+  AllStrips.show(); // to be called as much as possible for Fastled brightness dithering
   RASTER("Leds show"); 
 
   RASTER_END;

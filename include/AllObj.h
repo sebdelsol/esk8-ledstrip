@@ -85,5 +85,5 @@ public:
 //--------------------------------------------
 #include <Tools.h>
 
-#define _registerObj(cat, o)    AllObj.registerObj(o, cat#o);
-#define RegisterOBJS(cat, ...)  CallMacroForEach(cat, _registerObj, __VA_ARGS__)
+#define _registerObj(allObjs, cat, obj)  allObjs.registerObj(obj, cat#obj);
+#define RegisterOBJS(allObjs, cat, ...)  CallMacroForEach(allObjs, cat, _registerObj, __VA_ARGS__)

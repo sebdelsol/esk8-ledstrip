@@ -138,9 +138,9 @@ public:
 //--------------------------------------------
 #include <Tools.h>
 
-#define _AddFX(l, fx)       l.registerFX(fx);
-#define RegisterFXS(l, ...) CallMacroForEach(l, _AddFX, __VA_ARGS__)
+#define _AddFX(__, strip, fx)           strip.registerFX(fx);
+#define RegisterFXS(strip, ...)         CallMacroForEach(__, strip, _AddFX, __VA_ARGS__)
 
-#define _AddStrip(all, l)       all.registerStrip(l);
-#define RegisterLEDS(all, ...)  CallMacroForEach(all, _AddStrip, __VA_ARGS__)
+#define _AddStrip(__, allStrips, strip) allStrips.registerStrip(strip);
+#define RegisterSTRIPS(allStrips, ...)    CallMacroForEach(__, allStrips, _AddStrip, __VA_ARGS__)
 
