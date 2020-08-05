@@ -5,7 +5,7 @@
 #define   LED_MAX_MA    800     // mA, please check Cfg.bright to avoid reaching this value
 
 #define   LED_TICK      10      // ms, it's used too  for mpu6050 which is refreshed every 10ms
-#define   BT_TICK       30      // ms
+#define   BT_TICK       30      // ms, bluetooth updates
 
 #define   NBLEDS_MIDDLE 72
 #define   NBLEDS_TIPS   36
@@ -62,9 +62,9 @@ public:
       REGISTER_CMD_NOSHOW(CFG, "getUpdate", {AllObj.sendUpdate(BT, Motion);} )  // answer with all updates
     #endif
 
-    REGISTER_CFG(stripMid,        0, 1);
-    REGISTER_CFG(stripRear,       0, 1);
-    REGISTER_CFG(stripFront,       0, 1);
+    REGISTER_CFG(stripMid,   0, 1);
+    REGISTER_CFG(stripRear,  0, 1);
+    REGISTER_CFG(stripFront, 0, 1);
 
     REGISTER_CFG(probe,      0, 1);
     REGISTER_CFG(minProbe,   1, MaxProbe);
