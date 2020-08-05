@@ -46,5 +46,5 @@ public:
 //--------------------------------------------
 #include <Tools.h>
 
-#define _AddToWifi(__, wifi, strip)   wifi.addLeds(strip);
-#define AddStripsToWifi(wifi, ...)       CallMacroForEach(__, wifi, _AddToWifi, __VA_ARGS__)
+#define _AddToWifi(__, wifi, strip) wifi.addLeds(strip);
+#define AddStripsToWifi(wifi, ...)  CallMacroForEach(__, wifi, _AddToWifi, __VA_ARGS__)
