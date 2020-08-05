@@ -111,13 +111,13 @@ public:
     return (byte* ) mDisplay.leds;
   };
 
-  void update(ulong time, ulong dt)
+  void update(ulong t, ulong dt)
   {
     byte i = 0; // fx count
 
     // 1st fx is drawn on mDisplay
     for (; i < mNFX; i++) 
-      if (mFX[i]->drawOn(mDisplay, time, dt))
+      if (mFX[i]->drawOn(mDisplay, t, dt))
         break; // now we've to blend
 
     // something drawn ?
@@ -125,7 +125,7 @@ public:
     { 
       // some fx left to draw ? draw on mBuffer & blend with mDisplay
       for (; i < mNFX; i++) 
-        if (mFX[i]->drawOn(mBuffer, time, dt)) 
+        if (mFX[i]->drawOn(mBuffer, t, dt)) 
             mDisplay |= mBuffer; // get the max of each RGB component
     }
     // if no fx drawn, clear the ledstrip
