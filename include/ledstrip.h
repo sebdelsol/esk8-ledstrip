@@ -142,5 +142,5 @@ public:
 #define RegisterFXS(strip, ...)         CallMacroForEach(__, strip, _AddFX, __VA_ARGS__)
 
 #define _AddStrip(__, allStrips, strip) allStrips.registerStrip(strip);
-#define RegisterSTRIPS(allStrips, ...)    CallMacroForEach(__, allStrips, _AddStrip, __VA_ARGS__)
+#define RegisterSTRIPS(allStrips, ...)  CallMacroForEach(__, allStrips, _AddStrip, __VA_ARGS__)
 
