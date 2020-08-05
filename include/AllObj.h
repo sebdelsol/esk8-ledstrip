@@ -81,3 +81,9 @@ public:
   void load(bool isdefault, bool change = true);
   bool registerObj(OBJVar& obj, const char* name);
 };
+
+//--------------------------------------------
+#include <Tools.h>
+
+#define _registerObj(cat, o) AllObj.registerObj(o, cat#o);
+#define RegisterOBJS(cat, ...) CALL_MACRO_X_FOR_EACH(cat, _registerObj, __VA_ARGS__)

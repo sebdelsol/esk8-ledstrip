@@ -25,7 +25,7 @@ bool AllObjBT::sendUpdate(BlueTooth &BT, MOTION& motion)
 
     SensorOutput& m = motion.mOutput;
     if(m.updated)
-      BT.getSerial() << ALLOBJ_MOTION_CMD << " " << m.axis.x << " " << m.axis.y << " " << m.axis.z << " " << m.angle << " " << m.accY << " " << m.wZ << endl;
+      BT.getSerial() << SEPbySPACE(ALLOBJ_MOTION_CMD, m.axis.x, m.axis.y, m.axis.z, m.angle, m.accY, m.wZ) << endl;
   }
 }
 

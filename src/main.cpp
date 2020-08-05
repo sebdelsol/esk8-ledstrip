@@ -98,24 +98,20 @@ void setup()
   Motion.init();
 
   // -- Leds inits
-  AllLeds.registerStrip(Leds); 
-  AllLeds.registerStrip(LedsR); 
-  AllLeds.registerStrip(LedsF); 
+  RegisterLEDS(AllLeds, Leds, LedsR, LedsF)
   AllLeds.init();
-
-  #define AddFX(l, fx) l.registerFX(fx)
-  AddFX(Leds, FireRun);   AddFX(Leds, FireTwk); AddFX(Leds, AquaRun);   AddFX(Leds, AquaTwk);   AddFX(Leds, Plasma);
-  AddFX(LedsR, TwinkleR); AddFX(LedsR, FireRR); AddFX(LedsR, FireRL);   AddFX(LedsR, RunR);     AddFX(LedsR, CylonR);
-  AddFX(LedsF, TwinkleF); AddFX(LedsF, RunF);   AddFX(LedsF, Pacifica); AddFX(LedsF, CylonF);
+  
+  RegisterFXS(Leds,   FireRun,  FireTwk, AquaRun,  AquaTwk, Plasma);
+  RegisterFXS(LedsR,  TwinkleR, FireRR,  FireRL,   RunR,    CylonR);
+  RegisterFXS(LedsF,  TwinkleF, RunF,    Pacifica, CylonF);
 
   // -- Register AllObj
   AllObj.init();
 
-  #define AddOBJ(o) AllObj.registerObj(o, #o);
-  AddOBJ(Motion);    AddOBJ(Cfg);            
-  AddOBJ(TwinkleF);  AddOBJ(RunF);    AddOBJ(Pacifica); 
-  AddOBJ(TwinkleR);  AddOBJ(FireRR);  AddOBJ(FireRL);   AddOBJ(RunR);      AddOBJ(CylonR);
-  AddOBJ(FireRun);   AddOBJ(FireTwk); AddOBJ(AquaRun);  AddOBJ(AquaTwk);   AddOBJ(Plasma);  AddOBJ(CylonF);
+  RegisterOBJS("",       Motion,   Cfg);            
+  RegisterOBJS("mid.",   FireRun,  FireTwk, AquaRun,  AquaTwk,  Plasma);
+  RegisterOBJS("rear.",  TwinkleR, FireRR,  FireRL,   RunR,     CylonR);
+  RegisterOBJS("front.", TwinkleF, RunF,    Pacifica, CylonF);
 
   AllObj.save(true); // save default
   AllObj.load(false, false); // load not default, do not send change to BT
@@ -135,9 +131,7 @@ void setup()
   #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET)
     MyWifi.start();
     #ifdef DEBUG_LED_TOWIFI
-      MyWifi.addLeds(Leds);   
-      MyWifi.addLeds(LedsR);  
-      MyWifi.addLeds(LedsF);
+      AddLeds2Wifi(MyWifi, Leds, LedsR, LedsF)
     #endif
   #else
     MyWifi.stop();

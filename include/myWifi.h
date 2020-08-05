@@ -42,3 +42,9 @@ public:
   void addLeds(const BaseLedStrip &leds);
   bool update();
 };
+
+//--------------------------------------------
+#include <Tools.h>
+
+#define _AddToWifi(w, l) w.addLeds(l);
+#define AddLeds2Wifi(w, ...) CALL_MACRO_X_FOR_EACH(w, _AddToWifi, __VA_ARGS__)
