@@ -175,7 +175,7 @@ void loop()
       #define MAXACC 256
       int acc = constrain(m.accY / Cfg.divAcc, -MAXACC, MAXACC) << 8;
 
-      // -- Fwd leds
+      // -- Front strip
       static int FWD = 0;
       int fwd = constrain(acc, 0, 65535);
       FWD = fwd > FWD ? fwd : lerp16by16(FWD, fwd, Cfg.smoothAcc);
@@ -183,7 +183,7 @@ void loop()
       int alphaF = constrain((FWD - (Cfg.thresAcc << 8))/(MAXACC - Cfg.thresAcc), 0, 255);
       int eyeF = Cfg.minEye + (((Cfg.maxEye - Cfg.minEye) * alphaF) >> 8);
 
-      if (Cfg.ledF)
+      if (Cfg.stripF)
       { 
         RunF.setSpeed(runSpeed);
         RunF.setAlpha(alpha);
@@ -193,7 +193,7 @@ void loop()
         TwinkleF.setAlpha(MulAlpha(alphaF, invAlpha)); 
       }
 
-      // -- Rwd Led
+      // -- Rear Strip
       static int RWD = 0;
       int rwd = constrain(-acc, 0, 65535);
       RWD = rwd > RWD ? rwd : lerp16by16(RWD, rwd, Cfg.smoothAcc);
@@ -202,7 +202,7 @@ void loop()
       int eyeR = Cfg.minEye + (((Cfg.maxEye - Cfg.minEye) * alphaR) >> 8);
       int dim = Cfg.minDim + (((Cfg.maxDim - Cfg.minDim) * alphaR) >> 8);
 
-      if (Cfg.ledR)
+      if (Cfg.stripR)
       { 
         RunR.setSpeed(runSpeed);
         RunR.setAlpha(alpha);
@@ -216,7 +216,7 @@ void loop()
       }
 
       // -- Central Strip
-      if (Cfg.led)
+      if (Cfg.stripM)
       {
         AquaRun.setAlpha(alphaF);
         AquaTwk.setAlpha(alphaF);
