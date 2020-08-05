@@ -17,7 +17,7 @@
 #include <myWifi.h>
 #include <Raster.h>
 
-// ----------------------------------------------------
+// -- Telnet Serial dbg
 #ifdef USE_TELNET
   #include  <TelnetSpy.h>  
   TelnetSpy SerialAndTelnet;  // it redefines Serial
@@ -51,7 +51,7 @@ myWifi  MyWifi(Serial);
 #include  <Cfg.h> // needs Motion & BT objs defined
 CFG       Cfg;
 
-// ----------------------------------------------------
+// --- Strips
 #define   AQUA          CRGB(0x00FFFF)
 #define   AQUA_MENTHE   CRGB(0x7FFFD4)
 #define   LUSH_LAVA     CRGB(0xFF4500)
@@ -69,7 +69,7 @@ PlasmaFX    Plasma;
 LedStrip    <NBLEDS_TIPS, LEDR_PIN>  StripR(Serial, "Rear Strip");
 DblCylonFX  CylonR(LUSH_LAVA); 
 FireFX      FireRL;
-FireFX      FireRR(true);
+FireFX      FireRR(true); // reverse
 TwinkleFX   TwinkleR(CRGB::Red);
 RunningFX   RunR(CRGB::Gold); 
 
@@ -108,10 +108,10 @@ void setup()
   // -- Register AllObj
   AllObj.init();
 
-  RegisterOBJS(AllObj, "",       Motion,   Cfg);            
-  RegisterOBJS(AllObj, "mid.",   FireRun,  FireTwk, AquaRun,  AquaTwk,  Plasma);
-  RegisterOBJS(AllObj, "rear.",  TwinkleR, FireRR,  FireRL,   RunR,     CylonR);
-  RegisterOBJS(AllObj, "front.", TwinkleF, RunF,    Pacifica, CylonF);
+  RegisterOBJS(AllObj, "",        Motion,   Cfg);            
+  RegisterOBJS(AllObj, "mid.",    FireRun,  FireTwk, AquaRun,  AquaTwk,  Plasma);
+  RegisterOBJS(AllObj, "rear.",   TwinkleR, FireRR,  FireRL,   RunR,     CylonR);
+  RegisterOBJS(AllObj, "front.",  TwinkleF, RunF,    Pacifica, CylonF);
 
   AllObj.save(true); // save default
   AllObj.load(false, false); // load not default, do not send change to BT
@@ -215,7 +215,7 @@ void loop()
         TwinkleR.setAlpha(MulAlpha(max(Cfg.minTwkR, alphaR), invAlpha)); 
       }
 
-      // -- Central Strip
+      // -- Middle Strip
       if (Cfg.stripM)
       {
         AquaRun.setAlpha(alphaF);
