@@ -183,7 +183,7 @@ void loop()
       int alphaF = constrain((FWD - (Cfg.thresAcc << 8))/(MAXACC - Cfg.thresAcc), 0, 255);
       int eyeF = Cfg.minEye + (((Cfg.maxEye - Cfg.minEye) * alphaF) >> 8);
 
-      if (Cfg.stripF)
+      if (Cfg.stripFront)
       { 
         RunF.setSpeed(runSpeed);
         RunF.setAlpha(alpha);
@@ -202,7 +202,7 @@ void loop()
       int eyeR = Cfg.minEye + (((Cfg.maxEye - Cfg.minEye) * alphaR) >> 8);
       int dim = Cfg.minDim + (((Cfg.maxDim - Cfg.minDim) * alphaR) >> 8);
 
-      if (Cfg.stripR)
+      if (Cfg.stripRear)
       { 
         RunR.setSpeed(runSpeed);
         RunR.setAlpha(alpha);
@@ -216,7 +216,7 @@ void loop()
       }
 
       // -- Middle Strip
-      if (Cfg.stripM)
+      if (Cfg.stripMid)
       {
         AquaRun.setAlpha(alphaF);
         AquaTwk.setAlpha(alphaF);

@@ -15,9 +15,9 @@ class CFG : public OBJVar
 {
 public:
   // update ?
-  bool stripR       = true;
-  bool stripF       = true;
-  bool stripM        = true;
+  bool stripMid   = true;
+  bool stripRear  = true;
+  bool stripFront = true;
 
   // brightness ?
   byte bright     = 128;  // half brightness is enough to avoid reaching LED_MAX_MA
@@ -62,9 +62,9 @@ public:
       REGISTER_CMD_NOSHOW(CFG, "getUpdate", {AllObj.sendUpdate(BT, Motion);} )  // answer with all updates
     #endif
 
-    REGISTER_CFG(stripR,       0, 1);
-    REGISTER_CFG(stripF,       0, 1);
-    REGISTER_CFG(stripM,        0, 1);
+    REGISTER_CFG(stripMid,        0, 1);
+    REGISTER_CFG(stripRear,       0, 1);
+    REGISTER_CFG(stripFront,       0, 1);
 
     REGISTER_CFG(probe,      0, 1);
     REGISTER_CFG(minProbe,   1, MaxProbe);
