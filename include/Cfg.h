@@ -20,15 +20,15 @@ public:
   bool stripFront = true;
 
   // brightness ?
-  byte bright     = 128;  // half brightness is enough to avoid reaching LED_MAX_MA
+  byte bright     = 255;  // half brightness is enough to avoid reaching LED_MAX_MA
   int fade        = 0;    // for the fade in
   
   #define MaxProbe 4095
   int  minProbe   = 400;
   bool probe      = false;
 
-  byte pacifica   = 255;
-  byte fire       = 0;
+  byte pacifica   = 158;
+  byte fire       = 128;
 
   // for rotation
   byte runSpeed    = 3;
@@ -48,7 +48,7 @@ public:
   int  maxDim     = 10;
 
   //twinkleR
-  int minTwkR     = 128;
+  int minTwkR     = 54;
 
   void init()
   {
