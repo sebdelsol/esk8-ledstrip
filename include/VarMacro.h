@@ -17,6 +17,6 @@
 #define CallMacroForEach(_G, _G2, _f, ...)       _GetF(__VA_ARGS__)(_G, _G2, _f, _f, __VA_ARGS__)
 
 // -----------------------------------------------------
-#define _AddSep(__, sep, txt)   txt << sep <<
-#define _AddSepL(__, sep, txt)  txt
-#define SEPbySPACE(...)         CallMacroForEachL(__, " ", _AddSep, _AddSepL, __VA_ARGS__)
+#define JoinSep(__, sep, txt)     txt << sep <<
+#define JoinSepLast(__, sep, txt) txt
+#define JoinbySpace(...)           CallMacroForEachL(__, " ", JoinSep, JoinSepLast, __VA_ARGS__)

@@ -83,7 +83,7 @@ public:
 };
 
 //--------------------------------------------
-#include <Tools.h>
+#include <VarMacro.h>
 
 #define _registerObj(allObjs, cat, obj)  allObjs.registerObj(obj, cat#obj);
 #define RegisterOBJS(allObjs, cat, ...)  CallMacroForEach(allObjs, cat, _registerObj, __VA_ARGS__)

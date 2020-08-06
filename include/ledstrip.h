@@ -136,7 +136,7 @@ public:
 };
 
 //--------------------------------------------
-#include <Tools.h>
+#include <VarMacro.h>
 
 #define _AddFX(__, strip, fx)           strip.registerFX(fx);
 #define RegisterFXS(strip, ...)         CallMacroForEach(__, strip, _AddFX, __VA_ARGS__)
