@@ -107,8 +107,8 @@ void setup()
 
   // -- Register AllObj
   AllObj.init();
-
   #define RegisterAllOBJS(...) RegisterOBJS(AllObj, __VA_ARGS__)
+  
   RegisterAllOBJS("",        Motion,   Cfg);            
   RegisterAllOBJS("mid.",    FireRun,  FireTwk, AquaRun,  AquaTwk,  Plasma);
   RegisterAllOBJS("rear.",   TwinkleR, FireRR,  FireRL,   RunR,     CylonR);
