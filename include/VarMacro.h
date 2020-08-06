@@ -1,20 +1,21 @@
 #pragma once
 
-#define _f1(_G, _G2, _f, _lf, x)      _lf(_G, _G2, x)
-#define _f2(_G, _G2, _f, _lf, x, ...) _f(_G, _G2, x) _f1(_G, _G2, _f, _lf, __VA_ARGS__)
-#define _f3(_G, _G2, _f, _lf, x, ...) _f(_G, _G2, x) _f2(_G, _G2, _f, _lf, __VA_ARGS__)
-#define _f4(_G, _G2, _f, _lf, x, ...) _f(_G, _G2, x) _f3(_G, _G2, _f, _lf, __VA_ARGS__)
-#define _f5(_G, _G2, _f, _lf, x, ...) _f(_G, _G2, x) _f4(_G, _G2, _f, _lf, __VA_ARGS__)
-#define _f6(_G, _G2, _f, _lf, x, ...) _f(_G, _G2, x) _f5(_G, _G2, _f, _lf, __VA_ARGS__)
-#define _f7(_G, _G2, _f, _lf, x, ...) _f(_G, _G2, x) _f6(_G, _G2, _f, _lf, __VA_ARGS__)
-#define _f8(_G, _G2, _f, _lf, x, ...) _f(_G, _G2, x) _f7(_G, _G2, _f, _lf, __VA_ARGS__)
-#define _f9(_G, _G2, _f, _lf, x, ...) _f(_G, _G2, x) _f8(_G, _G2, _f, _lf, __VA_ARGS__)
+#define _m1(_p, _p2, _m, _lm, x)        _lm(_p, _p2, x)
+#define _m2(_p, _p2, _m, _lm, x, ...)   _m(_p, _p2, x) _m1(_p, _p2, _m, _lm, __VA_ARGS__)
+#define _m3(_p, _p2, _m, _lm, x, ...)   _m(_p, _p2, x) _m2(_p, _p2, _m, _lm, __VA_ARGS__)
+#define _m4(_p, _p2, _m, _lm, x, ...)   _m(_p, _p2, x) _m3(_p, _p2, _m, _lm, __VA_ARGS__)
+#define _m5(_p, _p2, _m, _lm, x, ...)   _m(_p, _p2, x) _m4(_p, _p2, _m, _lm, __VA_ARGS__)
+#define _m6(_p, _p2, _m, _lm, x, ...)   _m(_p, _p2, x) _m5(_p, _p2, _m, _lm, __VA_ARGS__)
+#define _m7(_p, _p2, _m, _lm, x, ...)   _m(_p, _p2, x) _m6(_p, _p2, _m, _lm, __VA_ARGS__)
+#define _m8(_p, _p2, _m, _lm, x, ...)   _m(_p, _p2, x) _m7(_p, _p2, _m, _lm, __VA_ARGS__)
+#define _m9(_p, _p2, _m, _lm, x, ...)   _m(_p, _p2, x) _m8(_p, _p2, _m, _lm, __VA_ARGS__)
+#define _m10(_p, _p2, _m, _lm, x, ...)  _m(_p, _p2, x) _m9(_p, _p2, _m, _lm, __VA_ARGS__)
 
-#define _GetNthArg(_1, _2, _3, _4, _5, _6, _7, _8, _9, N, ...) N
-#define _GetF(...) _GetNthArg( __VA_ARGS__, _f9, _f8, _f7, _f6, _f5, _f4, _f3, _f2, _f1)
+#define _GetNthArg(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
+#define _GetM(...) _GetNthArg( __VA_ARGS__, _m10, _m9, _m8, _m7, _m6, _m5, _m4, _m3, _m2, _m1)
 
-#define CallMacroForEachL(_G, _G2, _f, _lf, ...) _GetF(__VA_ARGS__)(_G, _G2, _f, _lf, __VA_ARGS__)
-#define CallMacroForEach(_G, _G2, _f, ...)       _GetF(__VA_ARGS__)(_G, _G2, _f, _f, __VA_ARGS__)
+#define CallMacroForEachL(_p, _p2, _m, _lm, ...) _GetM(__VA_ARGS__)(_p, _p2, _m, _lm, __VA_ARGS__)
+#define CallMacroForEach(_p, _p2, _m, ...)       _GetM(__VA_ARGS__)(_p, _p2, _m, _m, __VA_ARGS__)
 
 // -----------------------------------------------------
 #define _Join(__, sep, txt)     txt << sep <<
