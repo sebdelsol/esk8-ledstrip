@@ -47,4 +47,5 @@ public:
 #include <VarMacro.h>
 
 #define _AddToWifi(__, wifi, strip) wifi.addLeds(strip);
-#define AddStripsToWifi(wifi, ...)  CallMacroForEach(__, wifi, _AddToWifi, __VA_ARGS__)
+#define AddStripsToWifi(wifi, ...)  CallMacroForEach(_AddToWifi, __, wifi, __VA_ARGS__)
+#define _AddToWifiLast              _AddToWifi

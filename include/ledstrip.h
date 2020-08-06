@@ -139,8 +139,10 @@ public:
 #include <VarMacro.h>
 
 #define _AddFX(__, strip, fx)           strip.registerFX(fx);
-#define RegisterFXS(strip, ...)         CallMacroForEach(__, strip, _AddFX, __VA_ARGS__)
+#define RegisterFXS(strip, ...)         CallMacroForEach(_AddFX, __, strip, __VA_ARGS__)
+#define _AddFXLast                      _AddFX
 
 #define _AddStrip(__, allStrips, strip) allStrips.registerStrip(strip);
-#define RegisterSTRIPS(allStrips, ...)  CallMacroForEach(__, allStrips, _AddStrip, __VA_ARGS__)
+#define RegisterSTRIPS(allStrips, ...)  CallMacroForEach(_AddStrip, __, allStrips, __VA_ARGS__)
+#define _AddStripLast                   _AddStrip
 
