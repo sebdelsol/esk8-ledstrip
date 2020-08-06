@@ -108,10 +108,11 @@ void setup()
   // -- Register AllObj
   AllObj.init();
 
-  RegisterOBJS(AllObj, "",        Motion,   Cfg);            
-  RegisterOBJS(AllObj, "mid.",    FireRun,  FireTwk, AquaRun,  AquaTwk,  Plasma);
-  RegisterOBJS(AllObj, "rear.",   TwinkleR, FireRR,  FireRL,   RunR,     CylonR);
-  RegisterOBJS(AllObj, "front.",  TwinkleF, RunF,    Pacifica, CylonF);
+  #define RegisterAllOBJS(...) RegisterOBJS(AllObj, __VA_ARGS__)
+  RegisterAllOBJS("",        Motion,   Cfg);            
+  RegisterAllOBJS("mid.",    FireRun,  FireTwk, AquaRun,  AquaTwk,  Plasma);
+  RegisterAllOBJS("rear.",   TwinkleR, FireRR,  FireRL,   RunR,     CylonR);
+  RegisterAllOBJS("front.",  TwinkleF, RunF,    Pacifica, CylonF);
 
   AllObj.save(true); // save default
   AllObj.load(false, false); // load not default, do not send change to BT
