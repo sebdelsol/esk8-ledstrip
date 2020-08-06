@@ -47,6 +47,8 @@ myWifi  MyWifi(Serial);
   AllObj    AllObj(Serial);
 #endif
 
+#define RegisterAllObjs(...) RegisterOBJS(AllObj, __VA_ARGS__)
+
 // -- Cfg
 #include  <Cfg.h> // needs Motion & BT objs defined
 CFG       Cfg;
@@ -107,12 +109,11 @@ void setup()
 
   // -- Register AllObj
   AllObj.init();
-  #define RegisterAllOBJS(...) RegisterOBJS(AllObj, __VA_ARGS__)
   
-  RegisterAllOBJS("",        Motion,   Cfg);            
-  RegisterAllOBJS("mid.",    FireRun,  FireTwk, AquaRun,  AquaTwk,  Plasma);
-  RegisterAllOBJS("rear.",   TwinkleR, FireRR,  FireRL,   RunR,     CylonR);
-  RegisterAllOBJS("front.",  TwinkleF, RunF,    Pacifica, CylonF);
+  RegisterAllObjs("",        Motion,   Cfg);            
+  RegisterAllObjs("mid.",    FireRun,  FireTwk, AquaRun,  AquaTwk,  Plasma);
+  RegisterAllObjs("rear.",   TwinkleR, FireRR,  FireRL,   RunR,     CylonR);
+  RegisterAllObjs("front.",  TwinkleF, RunF,    Pacifica, CylonF);
 
   AllObj.save(true); // save default
   AllObj.load(false, false); // load not default, do not send change to BT
