@@ -49,5 +49,5 @@ template<class T, class... Args> inline Print& JoinbySpace(Print& stream, T firs
   template<typename P, typename T, typename... Args> void _##_name(P& p, T& first, Args&... args)   \
   {                                                                                                 \
     _func(p, first);                                                                                \
-    _##_Name(p, args...);                                                                           \
+    _##_name(p, args...);                                                                           \
   }
