@@ -1,4 +1,5 @@
 #pragma once
+#include <Streaming.h>
 
 #define  _M1(_m, _p, _p2, x)        _m##Last(_p, _p2, x)
 #define  _M2(_m, _p, _p2, x, ...)   _m(_p, _p2, x)    _M1(_m, _p, _p2, __VA_ARGS__)
@@ -17,6 +18,37 @@
 #define CallMacroForEach(_m, _p, _p2, ...) _Mn(__VA_ARGS__)(_m, _p, _p2, __VA_ARGS__)
 
 // -----------------------------------------------------
-#define _Join(__, sep, txt)     txt << sep <<
-#define JoinbySpace(...)        CallMacroForEach(_Join, __, " ", __VA_ARGS__)
-#define _JoinLast(__, sep, txt) txt
+// #define _Join(__, sep, txt)     txt << sep <<
+// #define JoinbySpace(...)        CallMacroForEach(_Join, __, " ", __VA_ARGS__)
+// #define _JoinLast(__, sep, txt) txt
+
+
+// void JoinbySpace() {}
+// template<typename T, typename... Args> void JoinbySpace(T& first, Args&... args) 
+// { 
+//   Serial << first << " "; 
+//   JoinbySpace(args...); 
+// }
+
+inline Print& JoinbySpace(Print& stream) { return stream; }
+
+template<class T, class... Args> 
+inline Print& JoinbySpace(Print& stream, T first, Args... args) 
+{ 
+  stream << first;
+  if (sizeof...(Args) > 0)
+  {
+    stream << " "; 
+    return JoinbySpace(stream, args...); 
+  }
+  return stream;
+}
+
+// -----------------------------------------------------
+#define _MAPFUNC(_Name, _func)                                                                     \
+  template<typename P> void _##_Name(P& p) {}                                                      \
+  template<typename P, typename T, typename... Args> void _##_Name(P& p, T& first, Args&... args)  \
+  {                                                                                                \
+    _func(p, first);                                                                               \
+    _##_Name(p, args...);                                                                          \
+  }

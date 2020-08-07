@@ -88,3 +88,6 @@ public:
 #define _registerObj(allObjs, cat, obj) allObjs.registerObj(obj, cat#obj);
 #define RegisterOBJS(allObjs, cat, ...) CallMacroForEach(_registerObj, allObjs, cat, __VA_ARGS__)
 #define _registerObjLast                _registerObj
+
+// #define _registerObj(allObjs, cat, obj) allObjs.registerObj(obj, cat##obj);
+// _MAPFUNC2(RegisterOBJS, _registerObj)

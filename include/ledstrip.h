@@ -138,11 +138,39 @@ public:
 //--------------------------------------------
 #include <VarMacro.h>
 
-#define _AddFX(__, strip, fx)           strip.registerFX(fx);
-#define RegisterFXS(strip, ...)         CallMacroForEach(_AddFX, __, strip, __VA_ARGS__)
-#define _AddFXLast                      _AddFX
+// #define _AddFX(__, strip, fx)           strip.registerFX(fx);
+// #define RegisterFXS(strip, ...)         CallMacroForEach(_AddFX, __, strip, __VA_ARGS__)
+// #define _AddFXLast                      _AddFX
 
-#define _AddStrip(__, allStrips, strip) allStrips.registerStrip(strip);
-#define RegisterSTRIPS(allStrips, ...)  CallMacroForEach(_AddStrip, __, allStrips, __VA_ARGS__)
-#define _AddStripLast                   _AddStrip
+// #define _AddStrip(__, allStrips, strip) allStrips.registerStrip(strip);
+// #define RegisterSTRIPS(allStrips, ...)  CallMacroForEach(_AddStrip, __, allStrips, __VA_ARGS__)
+// #define _AddStripLast                   _AddStrip
 
+
+// template <typename First, typename... Rest>
+// void RegisterSTRIPS(AllLedStrips& allstrips)
+// {
+//     if (sizeof...(Rest)==0)
+//       allstrips.registerStrip(&First);
+//     else
+//       RegisterSTRIPS<Rest...>(allstrips);
+// }
+
+// template<typename P, typename T>
+// void RegisterSTRIPS(P& allstrips, T& v) 
+// {
+//    allstrips.registerStrip(v);
+// }
+
+// template<typename P, typename T, typename... Args>
+// void RegisterSTRIPS(P& allstrips, T& first, Args&... args) 
+// {
+//   allstrips.registerStrip(first);
+//   RegisterSTRIPS(allstrips, args...);
+// }
+
+#define _AddFX(strip, fx) strip.registerFX(fx);
+_MAPFUNC(RegisterFXS, _AddFX)
+
+#define _AddStrip(allStrips, strip) allStrips.registerStrip(strip);
+_MAPFUNC(RegisterSTRIPS, _AddStrip)
