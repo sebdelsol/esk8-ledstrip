@@ -45,9 +45,9 @@ inline Print& JoinbySpace(Print& stream, T first, Args... args)
 }
 
 // -----------------------------------------------------
-#define _MAP(_Name, _func)                                                                          \
-  template<typename P> void _##_Name(P& p) {}                                                       \
-  template<typename P, typename T, typename... Args> void _##_Name(P& p, T& first, Args&... args)   \
+#define _MAP(_name, _func)                                                                          \
+  template<typename P> void _##_name(P& p) {}                                                       \
+  template<typename P, typename T, typename... Args> void _##_name(P& p, T& first, Args&... args)   \
   {                                                                                                 \
     _func(p, first);                                                                                \
     _##_Name(p, args...);                                                                           \
