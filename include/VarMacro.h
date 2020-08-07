@@ -30,10 +30,9 @@
 //   JoinbySpace(args...); 
 // }
 
+// -----------------------------------------------------
 inline Print& JoinbySpace(Print& stream) { return stream; }
-
-template<class T, class... Args> 
-inline Print& JoinbySpace(Print& stream, T first, Args... args) 
+template<class T, class... Args> inline Print& JoinbySpace(Print& stream, T first, Args... args) 
 { 
   stream << first;
   if (sizeof...(Args) > 0)
