@@ -101,8 +101,7 @@ void setup()
 
   // -- Strip inits
   _RegisterSTRIPS(AllStrips, StripM, StripR, StripF);
-  // RegisterSTRIPS<StripM, StripR, StripF>(AllStrips)
-
+  
   AllStrips.init();
   
   _RegisterFXS(StripM,  FireRun,  FireTwk, AquaRun,  AquaTwk, Plasma);
