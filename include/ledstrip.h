@@ -170,7 +170,7 @@ public:
 // }
 
 #define _AddFX(strip, fx) strip.registerFX(fx);
-_MAPFUNC(RegisterFXS, _AddFX)
+_MAP(RegisterFXS, _AddFX)
 
 #define _AddStrip(allStrips, strip) allStrips.registerStrip(strip);
-_MAPFUNC(RegisterSTRIPS, _AddStrip)
+_MAP(RegisterSTRIPS, _AddStrip)

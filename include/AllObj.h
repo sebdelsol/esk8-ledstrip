@@ -90,4 +90,4 @@ public:
 #define _registerObjLast                _registerObj
 
 // #define _registerObj(allObjs, cat, obj) allObjs.registerObj(obj, cat##obj);
-// _MAPFUNC2(RegisterOBJS, _registerObj)
+// _MAP2(RegisterOBJS, _registerObj)
