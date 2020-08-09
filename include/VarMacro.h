@@ -35,8 +35,7 @@ inline Print& JoinbySpace(Print& stream) { return stream; }
 inline Print& JoinbySpace(Print& stream, T arg) { return stream << arg; }
 template<class T, class... Args> inline Print& JoinbySpace(Print& stream, T first, Args... args) 
 { 
-  stream << first << " ";
-  return JoinbySpace(stream, args...); 
+  return stream << first << " " << JoinbySpace(stream, args...); 
 }
 
 // -----------------------------------------------------
