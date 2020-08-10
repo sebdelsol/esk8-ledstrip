@@ -100,8 +100,7 @@ void setup()
   Motion.init();
 
   // -- Strip inits
-  AllStrips._RegisterSTRIPS(StripM, StripR, StripF);
-  
+  AllStrips._RegisterSTRIPS(StripM, StripR, StripF); 
   AllStrips.init();
   
   StripM._RegisterFXS(FireRun,  FireTwk, AquaRun,  AquaTwk, Plasma);
