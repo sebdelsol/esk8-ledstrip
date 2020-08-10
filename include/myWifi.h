@@ -43,7 +43,7 @@ public:
   bool update();
 
   #define _AddToWifi(strip) addLeds(strip)
-  _MAP(AddStripsToWifi, _AddToWifi);
+  _MAP(AddStrips, _AddToWifi);
 
 };
 
