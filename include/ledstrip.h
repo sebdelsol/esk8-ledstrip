@@ -50,6 +50,9 @@ public:
   bool registerStrip(BaseLedStrip& strip);
   void getInfo();
   void update();
+
+  #define _AddStrip(strip) registerStrip(strip)
+  _MAP(RegisterSTRIPS, _AddStrip);
 };
 
 //--------------------------------------
@@ -93,6 +96,9 @@ public:
 
     return ok;
   };
+
+  #define _AddFX(fx) registerFX(fx);
+  _MAP(RegisterFXS, _AddFX);
 
   void getInfo()
   {
@@ -145,9 +151,6 @@ public:
 // #define _AddStrip(__, allStrips, strip) allStrips.registerStrip(strip);
 // #define RegisterSTRIPS(allStrips, ...)  CallMacroForEach(_AddStrip, __, allStrips, __VA_ARGS__)
 // #define _AddStripLast                   _AddStrip
-
-#define _AddFX(strip, fx) strip.registerFX(fx);
-_MAP(RegisterFXS, _AddFX)
 
 #define _AddStrip(allStrips, strip) allStrips.registerStrip(strip);
 _MAP(RegisterSTRIPS, _AddStrip)
