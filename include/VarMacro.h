@@ -1,6 +1,6 @@
 #pragma once
 #include <Streaming.h>
-/*
+
 #define  _M1(_m, _p, _p2, x)        _m##Last(_p, _p2, x)
 #define  _M2(_m, _p, _p2, x, ...)   _m(_p, _p2, x)    _M1(_m, _p, _p2, __VA_ARGS__)
 #define  _M3(_m, _p, _p2, x, ...)   _m(_p, _p2, x)    _M2(_m, _p, _p2, __VA_ARGS__)
@@ -16,7 +16,7 @@
 #define _Mn(...) _MNth(__VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
 
 #define CallMacroForEach(_m, _p, _p2, ...) _Mn(__VA_ARGS__)(_m, _p, _p2, __VA_ARGS__)
-*/
+
 // -----------------------------------------------------
 // #define _Join(__, sep, txt)     txt << sep <<
 // #define JoinbySpace(...)        CallMacroForEach(_Join, __, " ", __VA_ARGS__)
@@ -33,7 +33,9 @@
 // -----------------------------------------------------
 inline Print& JoinbySpace(Print& stream) { return stream; }
 inline Print& JoinbySpace(Print& stream, T arg) { return stream << arg; }
-template<class T, class... Args> inline Print& JoinbySpace(Print& stream, T first, Args... args) 
+
+template<class T, class... Args> 
+inline Print& JoinbySpace(Print& stream, T first, Args... args) 
 { 
   return stream << first << " " << JoinbySpace(stream, args...); 
 }
@@ -48,18 +50,24 @@ template<class T, class... Args> inline Print& JoinbySpace(Print& stream, T firs
 //  }
 // -----------------------------------------------------
 #define _MAP(_name, _func)                                                                       \
-  inline void _##_name() {}                                                \
-  template<class First, class... Args> inline void _##_name(First& first, Args&... args)  \
+  inline void _##_name() {};  
+                                            \
+  template<class First, class... Args> \
+  inline void _##_name(First& first, Args&... args)  \
   {                                                                                              \
     _func(first);                                                                             \
     _##_name(args...);                                                                        \
-  }
+  };
 
 // -----------------------------------------------------
+/*
 #define _MAP_P(_name, _func, _P)                                                                       \
-  inline void _##_name() {}                                                \
-  template<class First, class... Args> inline void _##_name(First& first, Args&... args)  \
+  inline void _##_name() {};   
+                                            \
+  template<class First, class... Args> \
+  inline void _##_name(First& first, Args&... args)  \
   {                                                                                              \
     _func(_P, first);                                                                             \
     _##_name(args...);                                                                        \
-  }
+  };
+*/
