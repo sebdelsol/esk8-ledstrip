@@ -152,5 +152,3 @@ public:
 // #define RegisterSTRIPS(allStrips, ...)  CallMacroForEach(_AddStrip, __, allStrips, __VA_ARGS__)
 // #define _AddStripLast                   _AddStrip
 
-#define _AddStrip(allStrips, strip) allStrips.registerStrip(strip);
-_MAP(RegisterSTRIPS, _AddStrip)
