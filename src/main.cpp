@@ -100,12 +100,12 @@ void setup()
   Motion.init();
 
   // -- Strip inits
-  AllStrips._RegisterSTRIPS(StripM, StripR, StripF); 
+  AllStrips._AddStrips(StripM, StripR, StripF); 
   AllStrips.init();
   
-  StripM._RegisterFXS(FireRun,  FireTwk, AquaRun,  AquaTwk, Plasma);
-  StripR._RegisterFXS(TwinkleR, FireRR,  FireRL,   RunR,    CylonR);
-  StripF._RegisterFXS(TwinkleF, RunF,    Pacifica, CylonF);
+  StripM._AddFxs(FireRun,  FireTwk, AquaRun,  AquaTwk, Plasma);
+  StripR._AddFxs(TwinkleR, FireRR,  FireRL,   RunR,    CylonR);
+  StripF._AddFxs(TwinkleF, RunF,    Pacifica, CylonF);
 
   // -- Register AllObj
   AllObj.init();
@@ -133,7 +133,7 @@ void setup()
   #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET)
     MyWifi.start();
     #ifdef DEBUG_LED_TOWIFI
-      MyWifi._AddStripsToWifi(StripM, StripR, StripF)
+      MyWifi._AddStrips(StripM, StripR, StripF)
     #endif
   #else
     MyWifi.stop();
