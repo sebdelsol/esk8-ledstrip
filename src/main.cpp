@@ -109,7 +109,12 @@ void setup()
 
   // -- Register AllObj
   AllObj.init();
-  
+  /*
+  AllObj._AddObjs("",        Motion,   Cfg);            
+  AllObj._AddObjs("mid.",    FireRun,  FireTwk, AquaRun,  AquaTwk,  Plasma);
+  AllObj._AddObjs("rear.",   TwinkleR, FireRR,  FireRL,   RunR,     CylonR);
+  AllObj._AddObjs("front.",  TwinkleF, RunF,    Pacifica, CylonF);
+  */
   RegisterAllObjs("",        Motion,   Cfg);            
   RegisterAllObjs("mid.",    FireRun,  FireTwk, AquaRun,  AquaTwk,  Plasma);
   RegisterAllObjs("rear.",   TwinkleR, FireRR,  FireRL,   RunR,     CylonR);
