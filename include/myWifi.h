@@ -41,6 +41,10 @@ public:
   void toggle() { mON ? stop() : start(); };
   void addLeds(const BaseLedStrip &leds);
   bool update();
+
+  #define _AddToWifi(strip) addLeds(strip)
+  _MAP(AddStripsToWifi, _AddToWifi);
+
 };
 
 //--------------------------------------------
@@ -50,5 +54,3 @@ public:
 // #define AddStripsToWifi(wifi, ...)  CallMacroForEach(_AddToWifi, __, wifi, __VA_ARGS__)
 // #define _AddToWifiLast              _AddToWifi
 
-#define _AddToWifi(wifi, strip) wifi.addLeds(strip);
-_MAP(AddStripsToWifi, _AddToWifi)
