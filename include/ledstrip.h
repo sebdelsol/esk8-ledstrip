@@ -52,7 +52,7 @@ public:
   void update();
 
   #define _AddStrip(strip) registerStrip(strip)
-  _MAP(RegisterSTRIPS, _AddStrip);
+  _MAP(AddStrips, _AddStrip);
 };
 
 //--------------------------------------
@@ -98,7 +98,7 @@ public:
   };
 
   #define _AddFX(fx) registerFX(fx);
-  _MAP(RegisterFXS, _AddFX);
+  _MAP(AddFxs, _AddFX);
 
   void getInfo()
   {
