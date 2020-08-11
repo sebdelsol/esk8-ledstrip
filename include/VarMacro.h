@@ -36,11 +36,12 @@
 // }
 
 // -----------------------------------------------------
-#define _MAP(_fname, _method)                      \
-  inline void _fname() {};                         \
-  template<class First, class... Rest>             \
-  inline void _fname(First& first, Rest&... rest)  \
-  {                                                \
-    _method(first);                                \
-    _fname(rest...);                               \
+// create the  _forEach(...) method that calls _method(arg) for each arg
+#define _MAP(_forEach, _method)                     \
+  inline void _forEach() {};                        \
+  template<class First, class... Rest>              \
+  inline void _forEach(First& first, Rest&... rest) \
+  {                                                 \
+    _method(first);                                 \
+    _forEach(rest...);                              \
   };
