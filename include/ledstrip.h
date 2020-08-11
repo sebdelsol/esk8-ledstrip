@@ -49,7 +49,7 @@ public:
   void init();
 
   bool addStrip(BaseLedStrip& strip);
-  _MAP(addStrips, addStrip); // create method addStrips(...) that calls addStrip on all parameters
+  _MAP(addStrips, addStrip); // create method addStrips(...) that calls addStrip on all args
 
   void getInfo();
   void update();
@@ -97,7 +97,7 @@ public:
     return ok;
   };
 
-  _MAP(addFXs, addFX);   // create method AddFxs(...) that calls addFX on all parameters
+  _MAP(addFXs, addFX);   // create method AddFxs(...) that calls addFX on all args
 
   void getInfo()
   {
