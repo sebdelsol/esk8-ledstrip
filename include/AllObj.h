@@ -4,6 +4,7 @@
 #include <ObjVar.h>
 #include <Buf.h>
 #include <SPIFFS.h>
+#include <VarMacro.h>
 
 //-------------------------------
 // #define DBG_CMD      // to see what's happening with send & received cmd
@@ -81,13 +82,3 @@ public:
   void load(bool isdefault, bool change = true);
   bool registerObj(OBJVar& obj, const char* name);
 };
-
-//--------------------------------------------
-#include <VarMacro.h>
-
-#define _registerObj(allObjs, cat, obj) allObjs.registerObj(obj, cat#obj);
-#define RegisterOBJS(allObjs, cat, ...) CallMacroForEach(_registerObj, allObjs, cat, __VA_ARGS__)
-#define _registerObjLast                _registerObj
-
-// #define _registerObj(allObjs, cat, obj) allObjs.registerObj(obj, cat##obj);
-// _MAP2(RegisterOBJS, _registerObj)

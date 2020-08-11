@@ -39,18 +39,10 @@ public:
   void start();
   void stop();
   void toggle() { mON ? stop() : start(); };
+  
   void addLeds(const BaseLedStrip &leds);
+  _MAP(AddStrips, addLeds); // create method AddStrips(...) that calls addLeds on all parameter
+
   bool update();
-
-  #define _AddToWifi(strip) addLeds(strip)
-  _MAP(AddStrips, _AddToWifi);
-
 };
-
-//--------------------------------------------
-#include <VarMacro.h>
-
-// #define _AddToWifi(__, wifi, strip) wifi.addLeds(strip);
-// #define AddStripsToWifi(wifi, ...)  CallMacroForEach(_AddToWifi, __, wifi, __VA_ARGS__)
-// #define _AddToWifiLast              _AddToWifi
 

@@ -6,6 +6,7 @@
 #include <Streaming.h>
 #include <ObjVar.h>
 #include <FX.h>
+#include <VarMacro.h>
 
 #define COLOR_ORDER     GRB
 #define CHIPSET         WS2812B
@@ -48,11 +49,10 @@ public:
   void init();
 
   bool registerStrip(BaseLedStrip& strip);
+  _MAP(AddStrips, registerStrip); // create method AddStrips(...) that calls registerStrip on all parameter
+
   void getInfo();
   void update();
-
-  #define _AddStrip(strip) registerStrip(strip)
-  _MAP(AddStrips, _AddStrip);
 };
 
 //--------------------------------------
@@ -97,8 +97,7 @@ public:
     return ok;
   };
 
-  #define _AddFX(fx) registerFX(fx);
-  _MAP(AddFxs, _AddFX);
+  _MAP(AddFxs, registerFX);   // create method AddFxs(...) that calls registerFX on all parameter
 
   void getInfo()
   {
@@ -140,15 +139,3 @@ public:
   };
 
 };
-
-//--------------------------------------------
-#include <VarMacro.h>
-
-// #define _AddFX(__, strip, fx)           strip.registerFX(fx);
-// #define RegisterFXS(strip, ...)         CallMacroForEach(_AddFX, __, strip, __VA_ARGS__)
-// #define _AddFXLast                      _AddFX
-
-// #define _AddStrip(__, allStrips, strip) allStrips.registerStrip(strip);
-// #define RegisterSTRIPS(allStrips, ...)  CallMacroForEach(_AddStrip, __, allStrips, __VA_ARGS__)
-// #define _AddStripLast                   _AddStrip
-
