@@ -26,14 +26,10 @@
 #define _JoinLast(sep, txt) txt
 #define JoinbySpace(...)    CallMacroForEach(_Join, " ", __VA_ARGS__)
 
-// -----------------------------------------------------
+// template version
 // inline Print& JoinbySpace(Print& stream) { return stream; }
-
-// template<class T> 
-// inline Print& JoinbySpace(Print& stream, T arg) { return stream << arg; }
-
-// template<class T, class... Args> 
-// inline Print& JoinbySpace(Print& stream, T first, Args... args) 
+// template<class T> inline Print& JoinbySpace(Print& stream, T arg) { return stream << arg; }
+// template<class T, class... Args> inline Print& JoinbySpace(Print& stream, T first, Args... args) 
 // { 
 //   stream << first << " ";
 //   return JoinbySpace(stream, args...); 
