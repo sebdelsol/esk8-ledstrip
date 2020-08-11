@@ -40,8 +40,8 @@ public:
   void stop();
   void toggle() { mON ? stop() : start(); };
   
-  void addLeds(const BaseLedStrip &leds);
-  _MAP(AddStrips, addLeds); // create method AddStrips(...) that calls addLeds on all parameter
+  void addStrip(const BaseLedStrip &leds);
+  _MAP(addStrips, addStrip); // create method addStrips(...) that calls addStrip on all parameter
 
   bool update();
 };

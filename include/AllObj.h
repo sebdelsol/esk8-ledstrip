@@ -80,5 +80,5 @@ public:
   void init();
   void save(bool isdefault);
   void load(bool isdefault, bool change = true);
-  bool registerObj(OBJVar& obj, const char* name);
+  bool addObj(OBJVar& obj, const char* name);
 };

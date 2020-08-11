@@ -24,7 +24,7 @@ void myWifi::start()
 }
 
 // ----------------------------------------------------
-void myWifi::addLeds(const BaseLedStrip &leds)
+void myWifi::addStrip(const BaseLedStrip &leds)
 {
   mIsSocket = true;
 

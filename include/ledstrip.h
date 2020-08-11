@@ -48,8 +48,8 @@ public:
   void clearAndShow();
   void init();
 
-  bool registerStrip(BaseLedStrip& strip);
-  _MAP(AddStrips, registerStrip); // create method AddStrips(...) that calls registerStrip on all parameter
+  bool addStrip(BaseLedStrip& strip);
+  _MAP(addStrips, addStrip); // create method addStrips(...) that calls addStrip on all parameter
 
   void getInfo();
   void update();
@@ -83,7 +83,7 @@ public:
     mController->setCorrection(TypicalSMD5050); // = TypicalLEDStrip
   };
 
-  bool registerFX(FX& fx)
+  bool addFX(FX& fx)
   {
     bool ok = mNFX < MAXFX;
     if (ok)
@@ -97,7 +97,7 @@ public:
     return ok;
   };
 
-  _MAP(AddFxs, registerFX);   // create method AddFxs(...) that calls registerFX on all parameter
+  _MAP(addFXs, addFX);   // create method AddFxs(...) that calls addFX on all parameter
 
   void getInfo()
   {

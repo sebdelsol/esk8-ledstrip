@@ -35,7 +35,7 @@ AllLedStrips::AllLedStrips(const int maxmA, Stream& serial) : mSerial(serial)
   FastLED.setDither(BINARY_DITHER);
 }
 
-bool AllLedStrips::registerStrip(BaseLedStrip &strip)
+bool AllLedStrips::addStrip(BaseLedStrip &strip)
 {
   bool ok = mNStrips < MAXSTRIP;
   if (ok)

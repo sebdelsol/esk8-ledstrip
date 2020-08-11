@@ -20,7 +20,7 @@ OBJVar* AllObj::getObjFromName(const char* name)
 }
 
 //----------------
-bool AllObj::registerObj(OBJVar& obj, const char* name)
+bool AllObj::addObj(OBJVar& obj, const char* name)
 {
   bool ok = mNOBJ < ALLOBJ_MAXOBJ;
   if (ok)

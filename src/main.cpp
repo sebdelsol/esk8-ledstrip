@@ -47,9 +47,9 @@ myWifi  MyWifi(Serial);
   AllObj    AllObj(Serial);
 #endif
 
-#define _registerObj(cat, obj)  AllObj.registerObj(obj, cat#obj);
-#define _registerObjLast        _registerObj
-#define RegisterOBJS(cat, ...)  CallMacroForEach(_registerObj, cat, __VA_ARGS__)
+#define _addObj(cat, obj)  AllObj.addObj(obj, cat#obj);
+#define _addObjLast        _addObj
+#define AddObjs(cat, ...)  CallMacroForEach(_addObj, cat, __VA_ARGS__)
 
 // -- Cfg
 #include  <Cfg.h> // needs Motion & BT objs defined
@@ -102,20 +102,20 @@ void setup()
   Motion.init();
 
   // -- Strip inits
-  AllStrips.AddStrips(StripM, StripR, StripF); 
+  AllStrips.addStrips(StripM, StripR, StripF); 
   AllStrips.init();
   
-  StripM.AddFxs(FireRun,  FireTwk, AquaRun,  AquaTwk, Plasma);
-  StripR.AddFxs(TwinkleR, FireRR,  FireRL,   RunR,    CylonR);
-  StripF.AddFxs(TwinkleF, RunF,    Pacifica, CylonF);
+  StripM.addFXs(FireRun,  FireTwk, AquaRun,  AquaTwk, Plasma);
+  StripR.addFXs(TwinkleR, FireRR,  FireRL,   RunR,    CylonR);
+  StripF.addFXs(TwinkleF, RunF,    Pacifica, CylonF);
 
   // -- Register AllObj
   AllObj.init();
 
-  RegisterOBJS("",        Motion,   Cfg);            
-  RegisterOBJS("mid.",    FireRun,  FireTwk, AquaRun,  AquaTwk,  Plasma);
-  RegisterOBJS("rear.",   TwinkleR, FireRR,  FireRL,   RunR,     CylonR);
-  RegisterOBJS("front.",  TwinkleF, RunF,    Pacifica, CylonF);
+  AddObjs("",        Motion,   Cfg);            
+  AddObjs("mid.",    FireRun,  FireTwk, AquaRun,  AquaTwk,  Plasma);
+  AddObjs("rear.",   TwinkleR, FireRR,  FireRL,   RunR,     CylonR);
+  AddObjs("front.",  TwinkleF, RunF,    Pacifica, CylonF);
 
   AllObj.save(true); // save default
   AllObj.load(false, false); // load not default, do not send change to BT
@@ -134,7 +134,7 @@ void setup()
   #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET)
     MyWifi.start();
     #ifdef DEBUG_LED_TOWIFI
-      MyWifi.AddStrips(StripM, StripR, StripF)
+      MyWifi.addStrips(StripM, StripR, StripF)
     #endif
   #else
     MyWifi.stop();
