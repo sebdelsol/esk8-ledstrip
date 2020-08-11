@@ -18,7 +18,7 @@ class BlueTooth
 
 public:
   BlueTooth(Stream& serial) : mDbgSerial(serial) {};
-  void init();
+  void init(const bool on=true);
   void start(const bool on=true);
   void toggle();
   void onEvent(esp_spp_cb_event_t event, esp_spp_cb_param_t* param); 

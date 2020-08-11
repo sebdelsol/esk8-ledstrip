@@ -122,8 +122,7 @@ void setup()
 
   // -- BlueTooth
   #ifdef USE_BT
-    BT.init();
-    BT.start();
+    BT.init(); // and start
     Button.begin();
   #else   
     pinMode(LIGHT_PIN, OUTPUT); //blue led

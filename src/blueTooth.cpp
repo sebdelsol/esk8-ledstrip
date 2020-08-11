@@ -27,10 +27,11 @@ void BlueTooth::onEvent(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
 }
 
 //------------------------------------------------------------
-void BlueTooth::init()
+void BlueTooth::init(const bool on)
 {
   CurrentBT = this;
   mBTSerial.register_callback(CallbackWrapper);
+  start(on);
 
   pinMode(LIGHT_PIN, OUTPUT); //blue led
 }
