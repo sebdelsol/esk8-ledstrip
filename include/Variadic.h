@@ -17,14 +17,14 @@
 #define _MNth(n1, n2, n3, n4, n5, n6, n7, n8, n9, n10, N, ...) _M##N
 #define _Mn(...) _MNth(__VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
 
-#define CallMacroForEach(_m, _p, ...) _Mn(__VA_ARGS__)(_m, _p, __VA_ARGS__)
+#define MacroForEach(_m, _p, ...) _Mn(__VA_ARGS__)(_m, _p, __VA_ARGS__)
 
 // -----------------------------------------------------
 // create a join by separator
 #include <Streaming.h>
 #define _Join(sep, txt)     txt << sep <<
 #define _JoinLast(sep, txt) txt
-#define JoinbySpace(...)    CallMacroForEach(_Join, " ", __VA_ARGS__)
+#define JoinbySpace(...)    MacroForEach(_Join, " ", __VA_ARGS__)
 
 // template version
 // inline Print& JoinbySpace(Print& stream) { return stream; }

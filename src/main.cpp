@@ -49,7 +49,7 @@ myWifi  MyWifi(Serial);
 
 #define _addObj(cat, obj)  AllObj.addObj(obj, cat#obj);
 #define _addObjLast        _addObj
-#define AddObjs(cat, ...)  CallMacroForEach(_addObj, cat, __VA_ARGS__)
+#define AddObjs(cat, ...)  MacroForEach(_addObj, cat, __VA_ARGS__)
 
 // -- Cfg
 #include  <Cfg.h> // needs Motion & BT objs defined
