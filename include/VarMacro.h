@@ -1,5 +1,7 @@
 #pragma once
-#include <Streaming.h>
+
+// call a macro that calls a _m macro for each arg (max 9), 
+// and _mLast for the last arg
 
 #define  _M1(_m, _p, x)        _m##Last(_p, x)
 #define  _M2(_m, _p, x, ...)   _m(_p, x)    _M1(_m, _p, __VA_ARGS__)
@@ -18,6 +20,8 @@
 #define CallMacroForEach(_m, _p, ...) _Mn(__VA_ARGS__)(_m, _p, __VA_ARGS__)
 
 // -----------------------------------------------------
+// create a join by separator
+#include <Streaming.h>
 #define _Join(sep, txt)     txt << sep <<
 #define _JoinLast(sep, txt) txt
 #define JoinbySpace(...)    CallMacroForEach(_Join, " ", __VA_ARGS__)
