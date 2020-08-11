@@ -84,20 +84,25 @@ TwinkleFX   TwinkleF(HUE_AQUA_BLUE);
 RunningFX   RunF(CRGB::Gold);
 
 // ----------------------------------------------------
+void startLog()
+{
+  Serial.begin(SERIAL_BAUD);
+  Serial << "\n---------\n- START -\n---------\n";
+  Serial << "ESP32 " << esp_get_idf_version() << endl;
+  Serial << "CPU runs @ " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
+  Serial << "Main runs on Core " << xPortGetCoreID() << endl;
+}
+
 void setup()
 {
   // -- switch off all leds
   AllStrips.setBrightness(0);
   AllStrips.clearAndShow();
 
+  // -- log
+  startLog();
+
   // -- main inits
-  Serial.begin(SERIAL_BAUD);
-
-  Serial << endl << "---------" << endl;
-  Serial << "ESP32 " << esp_get_idf_version() << endl;
-  Serial << "CPU runs @ " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
-  Serial << "Main runs on Core " << xPortGetCoreID() << endl;
-
   Cfg.init();
   Motion.init();
 
