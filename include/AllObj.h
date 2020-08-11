@@ -4,7 +4,7 @@
 #include <ObjVar.h>
 #include <Buf.h>
 #include <SPIFFS.h>
-#include <VarMacro.h>
+#include <Variadic.h>
 
 //-------------------------------
 // #define DBG_CMD      // to see what's happening with send & received cmd

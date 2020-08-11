@@ -6,7 +6,7 @@
 #include <Streaming.h>
 #include <ObjVar.h>
 #include <FX.h>
-#include <VarMacro.h>
+#include <Variadic.h>
 
 #define COLOR_ORDER     GRB
 #define CHIPSET         WS2812B
