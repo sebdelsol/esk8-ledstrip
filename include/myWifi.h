@@ -41,7 +41,7 @@ public:
   void toggle() { mON ? stop() : start(); };
   
   void addStrip(const BaseLedStrip &leds);
-  _MAP(addStrips, addStrip); // create method addStrips(...) that calls addStrip on all args
+  ForEachMethod(addStrip); // create method addStrips(...) that calls addStrip on all args
 
   bool update();
 };
