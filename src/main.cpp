@@ -43,12 +43,10 @@ myWifi  MyWifi(Serial);
   BlueTooth BT(Serial);
   AllObjBT  AllObj(Serial);
 #else
+  #include  <NoBluetooth.h>
   #include  <AllObj.h>
   AllObj    AllObj(Serial);
 #endif
-
-#define _addObj(cat, obj)  AllObj.addObj(obj, cat#obj);
-#define AddObjs(cat, ...)  ForEachMacro(_addObj, cat, __VA_ARGS__)
 
 // -- Cfg
 #include  <Cfg.h> // needs Motion & BT objs defined
@@ -114,6 +112,9 @@ void setup()
   StripF.addFXs(TwinkleF, RunF,    Pacifica, CylonF);
 
   // -- Register AllObj
+  #define _addObj(cat, obj)  AllObj.addObj(obj, cat#obj);
+  #define AddObjs(cat, ...)  ForEachMacro(_addObj, cat, __VA_ARGS__)
+
   AllObj.init();
 
   AddObjs("",        Motion,   Cfg);            
@@ -129,9 +130,7 @@ void setup()
     BT.init(); // and start
     Button.begin();
   #else   
-    pinMode(LIGHT_PIN, OUTPUT); //blue led
-    digitalWrite(LIGHT_PIN, LOW); // switch off blue led
-    btStop(); // turnoff bt 
+    NoBT();
   #endif
   
   // -- Wifi
