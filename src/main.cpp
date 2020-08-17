@@ -137,7 +137,7 @@ void setup()
 // ----------------------------------------------------
 void loop()
 {
-  RASTER_BEGIN(20);
+  RASTER_BEGIN;
 
   EVERY_N_MILLISECONDS(LED_TICK)
   {

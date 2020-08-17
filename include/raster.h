@@ -1,18 +1,19 @@
 #pragma once
 
+#define MAX_RASTER 20
+
 #ifdef DEBUG_RASTER
-  #define RASTER_BEGIN(nb)                                                                                                      \
+  #define RASTER_BEGIN                                                                                                          \
     struct Raster                                                                                                               \
     {                                                                                                                           \
       const __FlashStringHelper* name;                                                                                          \
       long time;                                                                                                                \
-    } _rasters[nb];                                                                                                             \
-    int _rasterMax = nb;                                                                                                        \
+    } _rasters[MAX_RASTER];                                                                                                     \
     int _rasterCount = 0;                                                                                                       \
     long _startTime = micros();         
 
   #define RASTER(txt)                                                                                                           \
-    if (_rasterCount < _rasterMax)                                                                                              \
+    if (_rasterCount < MAX_RASTER)                                                                                              \
     {                                                                                                                           \
       _rasters[_rasterCount].time = micros();                                                                                   \
       _rasters[_rasterCount++].name = F(txt);                                                                                   \
