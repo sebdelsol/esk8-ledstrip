@@ -11,6 +11,12 @@
 #define   NBLEDS_TIPS   36
 
 // ----------------------------------------------------
+#define   AQUA          CRGB(0x00FFFF)
+#define   AQUA_MENTHE   CRGB(0x7FFFD4)
+#define   LUSH_LAVA     CRGB(0xFF4500)
+#define   HUE_AQUA_BLUE 140
+
+// ----------------------------------------------------
 class CFG : public OBJVar
 {
 public:

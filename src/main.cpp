@@ -52,12 +52,7 @@ myWifi  MyWifi(Serial);
 #include  <Cfg.h> // needs Motion & BT objs defined
 CFG       Cfg;
 
-// --- Strips
-#define   AQUA          CRGB(0x00FFFF)
-#define   AQUA_MENTHE   CRGB(0x7FFFD4)
-#define   LUSH_LAVA     CRGB(0xFF4500)
-#define   HUE_AQUA_BLUE 140
-
+// --- Strips & Fxs
 AllLedStrips  AllStrips(LED_MAX_MA, Serial);
 
 LedStrip    <NBLEDS_MIDDLE, LEDM_PIN> StripM(Serial, "Mid Strip");
@@ -103,7 +98,7 @@ void setup()
   Cfg.init();
   Motion.init();
 
-  // -- Strip inits
+  // -- Strip inits & register FXs
   AllStrips.addStrips(StripM, StripR, StripF); 
   AllStrips.init();
   
