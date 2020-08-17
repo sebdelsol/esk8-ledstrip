@@ -169,12 +169,10 @@ void loop()
 
     if (m.updated)
     {
-      #define MulAlpha(a, b) (((a) * ((b) + 1)) >> 8)
-
       // -- Gyro
       int runSpeed =  ((m.wZ > 0) - (m.wZ < 0)) * Cfg.runSpeed;
-      int _WZ = abs(m.wZ);
-      byte alpha = _WZ > Cfg.neutralWZ ? min((_WZ - Cfg.neutralWZ) * 255 / Cfg.maxWZ, 255) : 0;
+      int WZ = abs(m.wZ);
+      byte alpha = WZ > Cfg.neutralWZ ? min((WZ - Cfg.neutralWZ) * 255 / Cfg.maxWZ, 255) : 0;
       byte invAlpha = 255 - alpha;
 
       // -- Acc
@@ -182,11 +180,10 @@ void loop()
       int acc = constrain(m.accY / Cfg.divAcc, -MAXACC, MAXACC) << 8;
 
       // -- Front strip
-      static int FWD = 0;
       int fwd = constrain(acc, 0, 65535);
-      FWD = fwd > FWD ? fwd : lerp16by16(FWD, fwd, Cfg.smoothAcc);
+      Cfg.FWD = fwd > Cfg.FWD ? fwd : lerp16by16(Cfg.FWD, fwd, Cfg.smoothAcc);
 
-      int alphaF = constrain((FWD - (Cfg.thresAcc << 8))/(MAXACC - Cfg.thresAcc), 0, 255);
+      int alphaF = constrain((Cfg.FWD - (Cfg.thresAcc << 8))/(MAXACC - Cfg.thresAcc), 0, 255);
       int eyeF = Cfg.minEye + (((Cfg.maxEye - Cfg.minEye) * alphaF) >> 8);
 
       if (Cfg.stripFront)
@@ -194,17 +191,16 @@ void loop()
         RunF.setSpeed(runSpeed);
         RunF.setAlpha(alpha);
         CylonF.setEyeSize(eyeF);
-        CylonF.setAlpha(MulAlpha(255 - Cfg.pacifica, invAlpha)); 
-        Pacifica.setAlpha(MulAlpha(Cfg.pacifica, invAlpha)); 
-        TwinkleF.setAlpha(MulAlpha(alphaF, invAlpha)); 
+        CylonF.setAlphaMul(255 - Cfg.pacifica, invAlpha); 
+        Pacifica.setAlphaMul(Cfg.pacifica, invAlpha); 
+        TwinkleF.setAlphaMul(alphaF, invAlpha); 
       }
 
       // -- Rear Strip
-      static int RWD = 0;
       int rwd = constrain(-acc, 0, 65535);
-      RWD = rwd > RWD ? rwd : lerp16by16(RWD, rwd, Cfg.smoothAcc);
+      Cfg.RWD = rwd > Cfg.RWD ? rwd : lerp16by16(Cfg.RWD, rwd, Cfg.smoothAcc);
 
-      int alphaR = constrain((RWD - (Cfg.thresAcc << 8))/(MAXACC - Cfg.thresAcc), 0, 255);
+      int alphaR = constrain((Cfg.RWD - (Cfg.thresAcc << 8))/(MAXACC - Cfg.thresAcc), 0, 255);
       int eyeR = Cfg.minEye + (((Cfg.maxEye - Cfg.minEye) * alphaR) >> 8);
       int dim = Cfg.minDim + (((Cfg.maxDim - Cfg.minDim) * alphaR) >> 8);
 
@@ -213,12 +209,12 @@ void loop()
         RunR.setSpeed(runSpeed);
         RunR.setAlpha(alpha);
         CylonR.setEyeSize(eyeR);
-        CylonR.setAlpha(MulAlpha(255 - Cfg.fire, invAlpha)); 
-        FireRR.setAlpha(MulAlpha(Cfg.fire, invAlpha)); 
-        FireRL.setAlpha(MulAlpha(Cfg.fire, invAlpha));
+        CylonR.setAlphaMul(255 - Cfg.fire, invAlpha); 
+        FireRR.setAlphaMul(Cfg.fire, invAlpha); 
+        FireRL.setAlphaMul(Cfg.fire, invAlpha);
         FireRR.setDimRatio(dim); 
         FireRL.setDimRatio(dim); 
-        TwinkleR.setAlpha(MulAlpha(max(Cfg.minTwkR, alphaR), invAlpha)); 
+        TwinkleR.setAlphaMul(max(Cfg.minTwkR, alphaR), invAlpha); 
       }
 
       // -- Middle Strip

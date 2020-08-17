@@ -50,6 +50,10 @@ public:
   //twinkleR
   int minTwkR     = 54;
 
+  // for lerp
+  int FWD = 0;
+  int RWD = 0;
+
   void init()
   {
     #define REGISTER_CFG(var, min, max) REGISTER_VAR_SIMPLE(CFG, #var, self->var, min, max)

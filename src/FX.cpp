@@ -21,6 +21,11 @@ void FX::setAlpha(const byte alpha)
   mLinearAlpha = alpha; 
 }
 
+void FX::setAlphaMul(const byte a1, const byte a2)
+{
+  setAlpha( (a1 * (a2 + 1)) >> 8 );
+}
+
 byte FX::getAlpha() 
 { 
   return mLinearAlpha; 

@@ -21,6 +21,7 @@ protected:
 public:
   void init(int nLeds);
   void setAlpha(const byte alpha);
+  void setAlphaMul(const byte a1, const byte a2);
   byte getAlpha();
   bool drawOn(CRGBSet dst, ulong time, ulong dt);
   
