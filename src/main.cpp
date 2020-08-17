@@ -10,7 +10,6 @@
 // ----------------------------------------------------
 #include <Streaming.h>
 #include <soc/rtc.h> // cpu freq
-
 #include <Pins.h>
 #include <Ledstrip.h>
 #include <Motion.h>
