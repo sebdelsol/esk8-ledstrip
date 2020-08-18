@@ -1,7 +1,7 @@
 # Show
 <img src="https://media.giphy.com/media/IhCHKo42Hx7WFkRmzQ/giphy.gif" height="225" align="right"><img src="https://media.giphy.com/media/fY5xLxGayUptPZuTfG/giphy.gif" height="225" align="right"><img src="https://media.giphy.com/media/RfYtkG17dUJyVmbPet/giphy.gif" height="225" align="right">
 
-**FX controlled by an [accelerometer](https://github.com/sebdelsol/esk8-ledstrip/blob/master/README.md#bom) & a [phone app](https://github.com/sebdelsol/esk8-ledstrip/blob/master/README.md#Iterate)**
+**FX controlled by an [accelerometer](https://github.com/sebdelsol/esk8-ledstrip/blob/master/README.md#Shop) & a [phone app](https://github.com/sebdelsol/esk8-ledstrip/blob/master/README.md#Customize)**
 <p>&nbsp;</p>  <p>&nbsp;</p>   <p>&nbsp;</p>  <p>&nbsp;</p> <p>&nbsp;</p>
 
 # Build
