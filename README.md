@@ -23,18 +23,18 @@
 <img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="215" align="right">
 
 **Check Ledstrips on PC**
-* add `#define DEBUG_LED_TOWIFI` in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) 
+* uncomment `#define DEBUG_LED_TOWIFI` in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) 
 * launch [debugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py) - dependencies : [PyGame](https://www.pygame.org) & [SimpleWebsocketServer](https://pypi.org/project/simple-websocket-server) 
 
 <p>&nbsp;</p>  <p>&nbsp;</p> <p>&nbsp;</p>
 
 # Debug
 **Update OTA**
-* add `#define USE_OTA` in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)
+* uncomment `#define USE_OTA` in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)
 * uncomment `upload_protocol` & `upload_port` lines in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini)
 
 **Get Telnet logs**
-* add `#define USE_TELNET` in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)
+* uncomment `#define USE_TELNET` in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)
 * launch a `telnet` session & `open esk8.local`
 
 # Shop
