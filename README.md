@@ -57,4 +57,4 @@
 <sub>*1x*</sub>|<sub>12x12 switch</sub>| . | .
 
 # Repear
-* in I2Cdev.h add `#define BUFFER_LENGTH 128` to make I2CDevLib compile on an esp32
+* in I2Cdev.h add `#define BUFFER_LENGTH 128` to have I2CDevLib compile on an esp32
