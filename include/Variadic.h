@@ -39,9 +39,9 @@ template<class First, class... Args>
 
 #define _forEach(_method) _method##s
 
-#define ForEachMethod(_method)                                \
-  inline void _forEach(_method)() {};                         \
-  template<class First, class... Args>                        \
+#define ForEachMethod(_method)                                  \
+  inline void _forEach(_method)() {};                           \
+  template<class First, class... Args>                          \
     inline void _forEach(_method)(First& first, Args&... args)  \
     {                                                           \
       _method(first);                                           \
