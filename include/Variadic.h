@@ -40,9 +40,7 @@ inline Print& JoinbySpace(Print& stream, First first, Args... args)
 #define _forEach(_method) _method##s
 
 #define ForEachMethod(_method)                                \
-                                                              \
   inline void _forEach(_method)() {};                         \
-                                                              \
   template<class First, class... Args>                        \
   inline void _forEach(_method)(First& first, Args&... args)  \
   {                                                           \
