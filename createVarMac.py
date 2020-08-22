@@ -1,4 +1,5 @@
 N = 20
+fName = './include/varMac.h'
 
 ''' 
 
@@ -12,7 +13,7 @@ N = 20
 
 '''
 
-with open('./include/varMac.h', 'w') as f:  
+with open(fName, 'w') as f:  
     def addLine(txt = ""): 
         f.write("%s\n" % txt)
 
