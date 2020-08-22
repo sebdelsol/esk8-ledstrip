@@ -1,24 +1,30 @@
 N = 20
 
-''' for N = 2
+''' 
 
-#define  _M1(_m, _p, x)        _m(_p, x)
-#define  _M2(_m, _p, x, ...)   _m(_p, x)    _M1(_m, _p, __VA_ARGS__)
+// for N = 2
+
+#define _M1(_m, _p, x)        _m(_p, x)
+#define _M2(_m, _p, x, ...)   _m(_p, x)    _M1(_m, _p, __VA_ARGS__)
+
 #define _MNth(n1, n2, N, ...) _M##N
 #define _Mn(...) _MNth(__VA_ARGS__, 2, 1)
+
 '''
 
 with open('./include/varMac.h', 'w') as f:  
-    for i in range(1, N+1):
-        if i == 1:
-            f.write("#define _M%d(_m, _p, x) \t\t\t\t _m(_p, x)\n" %i)
-        else:
-            f.write("#define _M%d(_m, _p, x, ...) \t _m(_p, x)  _M%d(_m, _p, __VA_ARGS__)\n" %(i, i-1))
+    def addLine(txt = ""): 
+        f.write("%s\n" % txt)
 
-    f.write("\n")
+    addLine("#define _M1(_m, _p, x) \t\t\t\t _m(_p, x)")
     
-    args = ", ".join(("n%d"%i for i in range(1, N+1)))
-    f.write("#define _MNth(%s, N, ...) _M##N\n" %(args))
+    for i in range(2, N+1):
+        addLine("#define _M%d(_m, _p, x, ...) \t _m(_p, x)  _M%d(_m, _p, __VA_ARGS__)" % (i, i-1))
 
-    args = ", ".join(("%d"%i for i in range(N, 0, -1)))
-    f.write("#define _Mn(...) _MNth(__VA_ARGS__, %s)\n" %(args))
+    addLine()
+    
+    args = ", ".join(("n%d" % i for i in range(1, N+1)))
+    addLine("#define _MNth(%s, N, ...) _M##N" % args)
+
+    args = ", ".join(("%d" % i for i in range(N, 0, -1)))
+    addLine("#define _Mn(...) _MNth(__VA_ARGS__, %s)" % args)
