@@ -1,9 +1,9 @@
 #pragma once
 
 // -----------------------------------------------------
-// create a macro that calls a _m macro for each arg (max 9)
+// create a macro that calls a _m macro for each arg (max : see N in createVarMac.py)
 
-#include <varMac.h> // use createVarMac.py to create all _Mn(_m, _p, x) macros
+#include <varMac.h> // run createVarMac.py to create all _Mn(_m, _p, x) macros
 #define ForEachMacro(_m, _p, ...) _Mn(__VA_ARGS__)(_m, _p, __VA_ARGS__)
 
 // -----------------------------------------------------
