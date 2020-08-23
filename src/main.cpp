@@ -31,10 +31,6 @@
   OTA       Ota(Serial);
 #endif
 
-// -- Acc & Wifi
-MOTION  Motion(Serial);
-myWifi  MyWifi(Serial);
-
 // -- BT
 #ifdef USE_BT
   #include  <Bluetooth.h>
@@ -49,8 +45,12 @@ myWifi  MyWifi(Serial);
   AllObj    AllObj(Serial);
 #endif
 
+// -- Acc & Wifi
+myWifi  MyWifi(Serial);
+MOTION  Motion(Serial);
+
 // -- Cfg
-#include  <Cfg.h> // needs Motion & BT objs defined
+#include  <Cfg.h> // needs Motion, BT & AllObj defined
 CFG       Cfg;
 
 // --- Strips & Fxs
