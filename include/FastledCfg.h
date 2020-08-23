@@ -1,3 +1,4 @@
+#define FASTLED_INTERNAL // remove #pragma msg
 #define FASTLED_ESP32_FLASH_LOCK 1
 // #define FASTLED_RMT_BUILTIN_DRIVER 1
 // #define FASTLED_ESP32_I2S
