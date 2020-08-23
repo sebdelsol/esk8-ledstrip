@@ -262,7 +262,7 @@ void loop()
 
   #ifdef DEBUG_LED_INFO
     EVERY_N_SECONDS(1)
-      AllStrips.getInfo();
+      AllStrips.showInfo();
   #endif
 
   // -- Leds dithering

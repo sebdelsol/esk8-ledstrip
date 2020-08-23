@@ -26,7 +26,7 @@ protected:
   Stream& mSerial;
   
 public:
-  virtual void getInfo(); 
+  virtual void showInfo(); 
   virtual void update(ulong time, ulong dt);  
   virtual void init();
   virtual byte* getData(int& n); // for myWifi
@@ -52,7 +52,7 @@ public:
   bool addStrip(BaseLedStrip& strip);
   ForEachMethod(addStrip); // create method addStrips(...) that calls addStrip on all args
 
-  void getInfo();
+  void showInfo();
   void update();
 };
 
@@ -100,7 +100,7 @@ public:
 
   ForEachMethod(addFX);   // create method AddFxs(...) that calls addFX on all args
 
-  void getInfo()
+  void showInfo()
   {
     mSerial << mName << "(" << NLEDS << ") ";
     for (byte i=0; i < mNFX; i++)

@@ -73,11 +73,11 @@ void AllLedStrips::update()
     mStrips[i]->update(t, dt);
 }
 
-void AllLedStrips::getInfo()
+void AllLedStrips::showInfo()
 {
   mSerial << "FPS " << FastLED.getFPS() << endl;
   for (byte i=0; i < mNStrips; i++)
-    mStrips[i]->getInfo();
+    mStrips[i]->showInfo();
 }
 
 void AllLedStrips::show() 
