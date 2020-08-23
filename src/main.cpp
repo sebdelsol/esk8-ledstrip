@@ -7,6 +7,8 @@
 // #define DEBUG_LED_INFO
 // #define DEBUG_ACC
 
+#define USE_WIFI defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET)
+
 // ----------------------------------------------------
 #include <Streaming.h>
 #include <soc/rtc.h> // cpu freq
@@ -123,7 +125,7 @@ void setup()
   #endif
   
   // -- Wifi
-  #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET)
+  #if USE_WIFI
     MyWifi.start();
     #ifdef DEBUG_LED_TOWIFI
       MyWifi.addStrips(StripM, StripR, StripF);
@@ -231,7 +233,7 @@ void loop()
     RASTER("Leds update");
 
     // -- wifi Update
-    #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET)
+    #if USE_WIFI
       if(MyWifi.update())
       {
         #ifdef USE_TELNET
