@@ -31,6 +31,10 @@
   OTA       Ota(Serial);
 #endif
 
+// -- Acc & Wifi
+myWifi  MyWifi(Serial);
+MOTION  Motion(Serial);
+
 // -- BT
 #ifdef USE_BT
   #include  <Bluetooth.h>
@@ -39,19 +43,17 @@
   Button    Button(BUTTON_PIN);
   BlueTooth BT(Serial);
   AllObjBT  AllObj(Serial);
+  #define   newCfg Cfg(AllObj, BT, Motion);
 #else
   #include  <NoBluetooth.h>
   #include  <AllObj.h>
   AllObj    AllObj(Serial);
+  #define   newCfg Cfg;
 #endif
 
-// -- Acc & Wifi
-myWifi  MyWifi(Serial);
-MOTION  Motion(Serial);
-
 // -- Cfg
-#include  <Cfg.h> // needs Motion, BT & AllObj defined
-CFG       Cfg;
+#include  <Cfg.h> 
+CFG       newCfg;
 
 // --- Strips & Fxs
 AllLedStrips  AllStrips(LED_MAX_MA, Serial);

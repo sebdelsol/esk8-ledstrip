@@ -60,17 +60,25 @@ public:
   int FWD = 0;
   int RWD = 0;
 
+  #ifdef USE_BT
+    AllObjBT&     mAllObj; 
+    BlueTooth&    mBT; 
+    MOTION&       mMotion;
+
+    CFG(AllObjBT& allObj, BlueTooth& bt, MOTION& motion) : mAllObj(allObj), mBT(bt), mMotion(motion) {};
+  #endif
+
   void init()
   {
-    #define REGISTER_CFG(var, min, max) REGISTER_VAR_SIMPLE(CFG, #var, self->var, min, max)
-
     #ifdef USE_BT
-      REGISTER_CMD(CFG,        "save",      {AllObj.save(false);} )             // save not default
-      REGISTER_CMD(CFG,        "load",      {AllObj.load(false);} )             // load not default
-      REGISTER_CMD(CFG,        "default",   {AllObj.load(true);}  )             // load default
-      REGISTER_CMD_NOSHOW(CFG, "getInits",  {AllObj.sendInits(BT);} )           // answer with all vars init (min, max, value)
-      REGISTER_CMD_NOSHOW(CFG, "getUpdate", {AllObj.sendUpdate(BT, Motion);} )  // answer with all updates
+      REGISTER_CMD(CFG,        "save",      {self->mAllObj.save(false);} )                          // save not default
+      REGISTER_CMD(CFG,        "load",      {self->mAllObj.load(false);} )                          // load not default
+      REGISTER_CMD(CFG,        "default",   {self->mAllObj.load(true);}  )                          // load default
+      REGISTER_CMD_NOSHOW(CFG, "getInits",  {self->mAllObj.sendInits(self->mBT);} )                 // answer with all vars init (min, max, value)
+      REGISTER_CMD_NOSHOW(CFG, "getUpdate", {self->mAllObj.sendUpdate(self->mBT, self->mMotion);} ) // answer with all updates
     #endif
+
+    #define REGISTER_CFG(var, min, max) REGISTER_VAR_SIMPLE(CFG, #var, self->var, min, max)
 
     REGISTER_CFG(stripMid,   0, 1);
     REGISTER_CFG(stripRear,  0, 1);
