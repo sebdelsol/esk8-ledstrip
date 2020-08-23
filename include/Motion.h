@@ -2,10 +2,10 @@
 
 #include <FastledCfg.h>
 #include <FastLED.h> // for lerp15by16
-
 #include <Wire.h>
 #include <helper_3dmath.h>  // vector & quaternion 
 #include <Streaming.h>
+
 #include <Pins.h>
 #include <ObjVar.h>
 

@@ -2,8 +2,9 @@
 
 #include <FastledCfg.h>
 #include <FastLED.h>
-#include <Pins.h>
 #include <Streaming.h>
+
+#include <Pins.h>
 #include <ObjVar.h>
 #include <FX.h>
 #include <Variadic.h>

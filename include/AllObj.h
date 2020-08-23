@@ -1,10 +1,11 @@
 #pragma once
 
 #include <Streaming.h>
+#include <SPIFFS.h>
+
+#include <Variadic.h>
 #include <ObjVar.h>
 #include <Buf.h>
-#include <SPIFFS.h>
-#include <Variadic.h>
 
 //-------------------------------
 // #define DBG_CMD      // to see what's happening with send & received cmd
