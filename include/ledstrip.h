@@ -10,7 +10,7 @@
 
 #define COLOR_ORDER     GRB
 #define CHIPSET         WS2812B
-#define MAXFX           6
+#define MAXFX           5
 #define MAXSTRIP        3
 
 //--------------------------------------
@@ -43,10 +43,11 @@ class AllLedStrips
 
 public:
   AllLedStrips(const int maxmA, Stream& serial);
+  void init();
+
   void setBrightness(const byte scale) { FastLED.setBrightness(scale); };
   void show();
   void clearAndShow();
-  void init();
 
   bool addStrip(BaseLedStrip& strip);
   ForEachMethod(addStrip); // create method addStrips(...) that calls addStrip on all args

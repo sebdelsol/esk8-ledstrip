@@ -35,26 +35,26 @@ AllLedStrips::AllLedStrips(const int maxmA, Stream& serial) : mSerial(serial)
   FastLED.setDither(BINARY_DITHER);
 }
 
-bool AllLedStrips::addStrip(BaseLedStrip &strip)
-{
-  bool ok = mNStrips < MAXSTRIP;
-  if (ok)
-    mStrips[mNStrips++] = &strip;
-  else
-    mSerial << ">> ERROR !! Max LedStrips is reached " << MAXSTRIP << endl; 
-
-  return ok;
-}
-
 void AllLedStrips::init() 
 {
-  for (byte i=0; i < mNStrips; i++)
-    mStrips[i]->init();
-
   #ifdef FASTLED_SHOW_CORE
     xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", 2048, NULL, FASTLED_TASK_PRIO, &FastLEDshowTaskHandle, FASTLED_SHOW_CORE);  
     mSerial << "Fastled runs on Core " << FASTLED_SHOW_CORE << " with Prio " << FASTLED_TASK_PRIO << endl;
   #endif
+}
+
+bool AllLedStrips::addStrip(BaseLedStrip &strip)
+{
+  bool ok = mNStrips < MAXSTRIP;
+  if (ok)
+  {
+    mStrips[mNStrips++] = &strip;
+    strip.init();
+  }
+  else
+    mSerial << ">> ERROR !! Max LedStrips is reached " << MAXSTRIP << endl; 
+
+  return ok;
 }
 
 void AllLedStrips::clearAndShow() 

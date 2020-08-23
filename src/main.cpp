@@ -93,18 +93,18 @@ void setup()
   Motion.init();
 
   // -- Strip inits & register FXs
-  AllStrips.addStrips(StripM, StripR, StripF); 
   AllStrips.init();
+  AllStrips.addStrips(StripM, StripR, StripF); 
   
   StripM.addFXs(FireRun,  FireTwk, AquaRun,  AquaTwk, Plasma);
   StripR.addFXs(TwinkleR, FireRR,  FireRL,   RunR,    CylonR);
   StripF.addFXs(TwinkleF, RunF,    Pacifica, CylonF);
 
   // -- Register AllObj
+  AllObj.init();
+
   #define _addObj(cat, obj)  AllObj.addObj(obj, cat#obj);
   #define AddObjs(cat, ...)  ForEachMacro(_addObj, cat, __VA_ARGS__)
-
-  AllObj.init();
 
   AddObjs("",        Motion,   Cfg);            
   AddObjs("mid.",    FireRun,  FireTwk, AquaRun,  AquaTwk,  Plasma);
@@ -126,7 +126,7 @@ void setup()
   #if defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET)
     MyWifi.start();
     #ifdef DEBUG_LED_TOWIFI
-      MyWifi.addStrips(StripM, StripR, StripF)
+      MyWifi.addStrips(StripM, StripR, StripF);
     #endif
   #else
     MyWifi.stop();
