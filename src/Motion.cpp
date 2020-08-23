@@ -75,17 +75,19 @@ void MOTION::calibrate()
 
   mXGyroOffset = getXGyroOffset();   mYGyroOffset = getYGyroOffset();   mZGyroOffset = getZGyroOffset();
   mXAccelOffset = getXAccelOffset(); mYAccelOffset = getYAccelOffset(); mZAccelOffset = getZAccelOffset();
-  printOffsets("calibrated");
+  printOffsets("auto calibrated");
   mGotOffset = true;
 }
 
 bool MOTION::setOffsets()
 {
+  Serial << "Try to get Offset..." << endl;
+
   if (mGotOffset)
   {
     setXGyroOffset(mXGyroOffset);   setYGyroOffset(mYGyroOffset);   setZGyroOffset(mZGyroOffset);
     setXAccelOffset(mXAccelOffset); setYAccelOffset(mYAccelOffset); setZAccelOffset(mZAccelOffset); 
-    printOffsets("internal offsets");
+    printOffsets("Got internal offsets");
   }
   return mGotOffset;
 }
@@ -119,7 +121,7 @@ void MOTION::begin()
 
   if (devStatus == 0) // did it work ?
   { 
-    if(mAutoCalibrate || !setOffsets())
+    if(!mAutoCalibrate || !setOffsets())
       calibrate();
 
     mFifoBuffer = (uint8_t* )malloc(dmpGetFIFOPacketSize() * sizeof(uint8_t)); // FIFO storage buffer
