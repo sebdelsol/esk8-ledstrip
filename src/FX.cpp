@@ -157,7 +157,7 @@ void CylonFX::showEye(int p)
   int pos = pos16 >> FRAC_SHIFT;
   byte frac = (pos16 & 0x0F) << FRAC_SHIFT;
 
-  mLeds[pos] = mColor % (255 - frac);
+  mLeds[pos] = mColor % (byte)(255 - frac); // cast to avoid warning
   for(byte j = 0; j < mEyeSize; j++)
     mLeds[++pos] = mColor;
   if (pos < mNLEDS-1)
