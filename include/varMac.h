@@ -1,3 +1,6 @@
+// created by createVarMac.py with N=20
+#pragma once
+
 #define _M1(_m, _p, x) 				 _m(_p, x)
 #define _M2(_m, _p, x, ...) 	 _m(_p, x)  _M1(_m, _p, __VA_ARGS__)
 #define _M3(_m, _p, x, ...) 	 _m(_p, x)  _M2(_m, _p, __VA_ARGS__)

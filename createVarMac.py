@@ -1,3 +1,5 @@
+import os 
+
 N = 20
 fName = './include/varMac.h'
 
@@ -16,6 +18,10 @@ fName = './include/varMac.h'
 with open(fName, 'w') as f:  
     def addLine(txt = ""): 
         f.write("%s\n" % txt)
+
+    addLine("// created by %s with N=%d" % (os.path.basename(__file__), N))
+    addLine("#pragma once")
+    addLine()
 
     addLine("#define _M1(_m, _p, x) \t\t\t\t _m(_p, x)")
     
