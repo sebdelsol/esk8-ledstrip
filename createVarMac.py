@@ -19,7 +19,10 @@ with open(fName, 'w') as f:
     def addLine(txt = ""): 
         f.write("%s\n" % txt)
 
-    addLine("// created by %s with N=%d" % (os.path.basename(__file__), N))
+    addLine("// created by %s " % os.path.basename(__file__))
+    addLine("// for N=%d" % N)
+
+    addLine()
     addLine("#pragma once")
     addLine()
 

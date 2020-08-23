@@ -1,4 +1,6 @@
-// created by createVarMac.py with N=20
+// created by createVarMac.py 
+// for N=20
+
 #pragma once
 
 #define _M1(_m, _p, x) 				 _m(_p, x)
