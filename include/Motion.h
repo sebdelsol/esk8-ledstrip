@@ -25,7 +25,7 @@
 #define ACCEL_BASE_FREQ   60. // based on a 60fps measure
 
 //----------------------------- Run in a task
-#define MPU_GETFIFO_CORE  0 // mpu on a task
+#define MPU_GETFIFO_CORE  1 // mpu on a task
 #define MPU_GETFIFO_PRIO  1
 
 //----------------------------- 
@@ -42,6 +42,8 @@ struct SensorOutput
 class MOTION : public OBJVar, public MPU6050
 {
   bool        mDmpReady = false; 
+  bool        mHasBegun = false;
+
   uint8_t*    mFifoBuffer; 
   Stream&     mSerial;
 
@@ -56,8 +58,6 @@ class MOTION : public OBJVar, public MPU6050
   int16_t     mXAccelOffset,  mYAccelOffset,  mZAccelOffset;
   bool        mGotOffset  = false;
   bool        mAutoCalibrate = false;
-  
-  bool        mHasBegun = false;
 
   void getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q);
   void printOffsets(const char* txt);
