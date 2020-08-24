@@ -18,9 +18,9 @@
   {
     MOTION*       mpu = (MOTION* )_mpu;
     SensorOutput  taskOutput; //output to store computation
-    TickType_t    lastWakeTime = xTaskGetTickCount();
 
-    vTaskDelay(pdMS_TO_TICKS(2000)); // or issue with offset !?
+    vTaskDelay(pdMS_TO_TICKS(2000)); // or issue with offset 
+    TickType_t    lastWakeTime = xTaskGetTickCount();
 
     for (;;) // forever
     {
@@ -35,10 +35,10 @@
         xSemaphoreGive(OutputMutex);
 
         xEventGroupSetBits(FlagReady, 1);
-      }
 
-      if(ulTaskNotifyTake(pdTRUE, 0)) // pool the the task semaphore
-        mpu->calibrate();
+        if(ulTaskNotifyTake(pdTRUE, 0)) // pool the the task semaphore
+          mpu->calibrate();
+      }
     }
   }
 #endif
@@ -75,13 +75,13 @@ void MOTION::calibrate()
 
   mXGyroOffset = getXGyroOffset();   mYGyroOffset = getYGyroOffset();   mZGyroOffset = getZGyroOffset();
   mXAccelOffset = getXAccelOffset(); mYAccelOffset = getYAccelOffset(); mZAccelOffset = getZAccelOffset();
-  printOffsets("auto calibrated");
+  printOffsets("MPU calibrated");
   mGotOffset = true;
 }
 
 bool MOTION::setOffsets()
 {
-  Serial << "Try to get Offset..." << endl;
+  Serial << "Try to get Offset...";
 
   if (mGotOffset)
   {
@@ -89,6 +89,9 @@ bool MOTION::setOffsets()
     setXAccelOffset(mXAccelOffset); setYAccelOffset(mYAccelOffset); setZAccelOffset(mZAccelOffset); 
     printOffsets("Got internal offsets");
   }
+  else 
+    Serial << endl;
+
   return mGotOffset;
 }
 
@@ -101,10 +104,10 @@ void MOTION::printOffsets(const char* txt)
 
 bool MOTION::getFiFoPacket() 
 { 
-  if (!mHasBegun)
+  if (!mDmpReady && !mHasBegun)
     begin();
 
-  return dmpGetCurrentFIFOPacket(mFifoBuffer); 
+  return mDmpReady && dmpGetCurrentFIFOPacket(mFifoBuffer); 
 }
 
 //--------------------------------------
@@ -202,17 +205,14 @@ void MOTION::compute(SensorOutput& output)
 //--------------------------------------
 void MOTION::update()
 {
-  if (mDmpReady)
-  {
-    #ifdef MPU_GETFIFO_CORE
-      if (xEventGroupGetBits(FlagReady) && xSemaphoreTake(OutputMutex, 0) == pdTRUE) // pool the mpuTask
-      {
-        memcpy(&mOutput, &SharedOutput, sizeof(SensorOutput)); 
-        xSemaphoreGive(OutputMutex); // release the mutex after measures have been copied
-      }
-    #else
-      if (getFiFoPacket())
-        compute(mOutput);
-    #endif
-  }
+  #ifdef MPU_GETFIFO_CORE
+    if (xEventGroupGetBits(FlagReady) && xSemaphoreTake(OutputMutex, 0) == pdTRUE) // pool the mpuTask
+    {
+      memcpy(&mOutput, &SharedOutput, sizeof(SensorOutput)); 
+      xSemaphoreGive(OutputMutex); // release the mutex after measures have been copied
+    }
+  #else
+    if (getFiFoPacket())
+      compute(mOutput);
+  #endif
 }
