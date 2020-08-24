@@ -18,11 +18,11 @@
 #include <myWifi.h>
 #include <Raster.h>
 
-// -- Telnet Serial dbg
+// -- Telnet Serial 
 #ifdef USE_TELNET
   #include  <TelnetSpy.h>  
-  TelnetSpy SerialAndTelnet;  // it redefines Serial
-  #define   Serial  SerialAndTelnet 
+  TelnetSpy SerialAndTelnet;  
+  #define   Serial  SerialAndTelnet // redefine Serial
 #endif
 
 // -- OTA
@@ -35,7 +35,7 @@
 myWifi  MyWifi(Serial);
 MOTION  Motion(Serial);
 
-// -- BT
+// -- BT & Cfg
 #ifdef USE_BT
   #include  <Bluetooth.h>
   #include  <Button.h>
@@ -43,17 +43,18 @@ MOTION  Motion(Serial);
   Button    Button(BUTTON_PIN);
   BlueTooth BT(Serial);
   AllObjBT  AllObj(Serial);
-  #define   newCfg Cfg(AllObj, BT, Motion);
+
+  #include  <Cfg.h>
+  CFG       Cfg(AllObj, BT, Motion);
+
 #else
   #include  <NoBluetooth.h>
   #include  <AllObj.h>
   AllObj    AllObj(Serial);
-  #define   newCfg Cfg;
-#endif
 
-// -- Cfg
-#include  <Cfg.h> 
-CFG       newCfg;
+  #include  <Cfg.h> 
+  CFG       Cfg;
+#endif
 
 // --- Strips & Fxs
 AllLedStrips  AllStrips(LED_MAX_MA, Serial);
