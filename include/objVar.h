@@ -89,3 +89,7 @@ public:
 #define AddVar(var, min, max)                              _AddVar(1, #var, min, max, true,  var = args[0], var) 
 #define AddVarHid(var, min, max)                           _AddVar(1, #var, min, max, false, var = args[0], var) 
 #define AddVarCode3(name, set, get0, get1, get2, min, max) _AddVar(3, name, min, max, true,  set,           get0, get1, get2) 
+
+#define AddBool(var)              AddVar(var, 0, 1)
+#define AddBoolName(name, var)    AddVarName(name, var, 0, 1)
+#define AddBoolNameHid(name, var) AddVarNameHid(name, var, 0, 1)

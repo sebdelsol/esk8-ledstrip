@@ -49,7 +49,7 @@ void MOTION::init()
   AddOffset(mXGyroOffset);   AddOffset(mYGyroOffset);  AddOffset(mZGyroOffset);
   AddOffset(mXAccelOffset);  AddOffset(mYAccelOffset); AddOffset(mZAccelOffset);
   
-  AddVarNameHid("gotOffset", mGotOffset,     0, 1);
+  AddBoolNameHid("gotOffset", mGotOffset);
   
   #ifdef MPU_GETFIFO_CORE
     OutputMutex = xSemaphoreCreateMutex();
@@ -62,7 +62,7 @@ void MOTION::init()
     AddCmd("calibrate",  calibrate() ) 
   #endif
 
-  AddVarName("auto",      mAutoCalibrate, 0, 1);
+  AddBoolName("auto", mAutoCalibrate);
 }
 
 //--------------------------------------

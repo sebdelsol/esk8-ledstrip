@@ -74,11 +74,11 @@ struct CFG : public OBJVar
       AddCmdHid("getUpdate", allObj.sendUpdate(bt, motion) ) // answer with all updates
     #endif
 
-    AddVar(stripMid,   0, 1);
-    AddVar(stripRear,  0, 1);
-    AddVar(stripFront, 0, 1);
+    AddBool(stripMid);
+    AddBool(stripRear);
+    AddBool(stripFront);
 
-    AddVar(probe,      0, 1);
+    AddBool(probe);
     AddVar(minProbe,   1, MaxProbe);
     AddVar(bright,     1, 255);
 
