@@ -1,6 +1,6 @@
 #pragma once
 
-// ----------------------------------------------------
+// -------------------- main cfg
 #define   SERIAL_BAUD   115200  // ms
 #define   LED_MAX_MA    800     // mA, please check Cfg.bright to avoid reaching this value
 
@@ -10,13 +10,13 @@
 #define   NBLEDS_MIDDLE 72
 #define   NBLEDS_TIPS   36
 
-// ----------------------------------------------------
+// --------------------- colors
 #define   AQUA          CRGB(0x00FFFF)
 #define   AQUA_MENTHE   CRGB(0x7FFFD4)
 #define   LUSH_LAVA     CRGB(0xFF4500)
 #define   HUE_AQUA_BLUE 140
 
-// ----------------------------------------------------
+// --------------------- saved cfg
 struct CFG : public OBJVar
 {
   // update ?
@@ -36,9 +36,9 @@ struct CFG : public OBJVar
   byte fire       = 128;
 
   // for rotation
-  byte runSpeed    = 3;
-  int  neutralWZ   = 3000;
-  int  maxWZ       = 7000; 
+  byte runSpeed   = 3;
+  int  neutralWZ  = 3000;
+  int  maxWZ      = 7000; 
 
   // for acc
   byte divAcc     = 2;
