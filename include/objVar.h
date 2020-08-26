@@ -4,6 +4,7 @@
 #define MAX_VAR 25
 #define MAX_ARGS 3
 
+
 //--------------------------------- 
 // virtual functors class to hide lambda capture
 template <class Ret, class...Args>
@@ -101,14 +102,14 @@ public:
     registerVar(name, setF, getF, min, max, show); \
   }
 
-#define REGISTER_VAR(name, setCode, toGet0, min, max)        _REGISTER_VAR(name, setCode, toGet0, min, max, true) 
-#define REGISTER_VAR_NOSHOW(name, setCode, toGet0, min, max) _REGISTER_VAR(name, setCode, toGet0, min, max, false) 
+#define REGISTER_VAR(name, setCode, toGet0, min, max)        _REGISTER_VAR(name, setCode,         toGet0, min, max, true) 
+#define REGISTER_VAR_NOSHOW(name, setCode, toGet0, min, max) _REGISTER_VAR(name, setCode,         toGet0, min, max, false) 
 
-#define REGISTER_VAR_SIMPLE(name, var, min, max)             _REGISTER_VAR(name, { var = arg0; }, var, min, max, true) 
-#define REGISTER_VAR_SIMPLE_NOSHOW(name, var, min, max)      _REGISTER_VAR(name, { var = arg0; }, var, min, max, false) 
+#define REGISTER_VAR_SIMPLE(name, var, min, max)             _REGISTER_VAR(name, { var = arg0; }, var,    min, max, true) 
+#define REGISTER_VAR_SIMPLE_NOSHOW(name, var, min, max)      _REGISTER_VAR(name, { var = arg0; }, var,    min, max, false) 
 
-#define REGISTER_VAR_SIMPLE_NAME(var, min, max)             _REGISTER_VAR(#var, { var = arg0; }, var, min, max, true) 
-#define REGISTER_VAR_SIMPLE_NAME_NOSHOW(var, min, max)      _REGISTER_VAR(#var, { var = arg0; }, var, min, max, false) 
+#define REGISTER_VAR_NAME(var, min, max)                     _REGISTER_VAR(#var,  { var = arg0; }, var,    min, max, true) 
+#define REGISTER_VAR_NAME_NOSHOW(var, min, max)              _REGISTER_VAR(#var,  { var = arg0; }, var,    min, max, false) 
 
 #define REGISTER_VAR3(name, setCode, toGet0, toGet1, toGet2, min, max) \
   { \

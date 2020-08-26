@@ -78,30 +78,30 @@ public:
       REGISTER_CMD_NOSHOW("getUpdate",  { mAllObj.sendUpdate(mBT, mMotion); } ) // answer with all updates
     #endif
 
-    REGISTER_VAR_SIMPLE_NAME(stripMid,   0, 1);
-    REGISTER_VAR_SIMPLE_NAME(stripRear,  0, 1);
-    REGISTER_VAR_SIMPLE_NAME(stripFront, 0, 1);
+    REGISTER_VAR_NAME(stripMid,   0, 1);
+    REGISTER_VAR_NAME(stripRear,  0, 1);
+    REGISTER_VAR_NAME(stripFront, 0, 1);
 
-    REGISTER_VAR_SIMPLE_NAME(probe,      0, 1);
-    REGISTER_VAR_SIMPLE_NAME(minProbe,   1, MaxProbe);
-    REGISTER_VAR_SIMPLE_NAME(bright,     1, 255);
+    REGISTER_VAR_NAME(probe,      0, 1);
+    REGISTER_VAR_NAME(minProbe,   1, MaxProbe);
+    REGISTER_VAR_NAME(bright,     1, 255);
 
-    REGISTER_VAR_SIMPLE_NAME(pacifica,   0, 255);
-    REGISTER_VAR_SIMPLE_NAME(fire,       0, 255);
+    REGISTER_VAR_NAME(pacifica,   0, 255);
+    REGISTER_VAR_NAME(fire,       0, 255);
 
-    REGISTER_VAR_SIMPLE_NAME(runSpeed,   0, 10);
-    REGISTER_VAR_SIMPLE_NAME(neutralWZ,  0, 32768);
-    REGISTER_VAR_SIMPLE_NAME(maxWZ,      0, 32768);
+    REGISTER_VAR_NAME(runSpeed,   0, 10);
+    REGISTER_VAR_NAME(neutralWZ,  0, 32768);
+    REGISTER_VAR_NAME(maxWZ,      0, 32768);
 
-    REGISTER_VAR_SIMPLE_NAME(divAcc,     1, 10);
-    REGISTER_VAR_SIMPLE_NAME(smoothAcc,  1, 32768);
-    REGISTER_VAR_SIMPLE_NAME(thresAcc,   0, 255);
+    REGISTER_VAR_NAME(divAcc,     1, 10);
+    REGISTER_VAR_NAME(smoothAcc,  1, 32768);
+    REGISTER_VAR_NAME(thresAcc,   0, 255);
 
-    REGISTER_VAR_SIMPLE_NAME(minEye,     1, (NBLEDS_TIPS>>1));
-    REGISTER_VAR_SIMPLE_NAME(maxEye,     1, (NBLEDS_TIPS>>1));
+    REGISTER_VAR_NAME(minEye,     1, (NBLEDS_TIPS>>1));
+    REGISTER_VAR_NAME(maxEye,     1, (NBLEDS_TIPS>>1));
 
-    REGISTER_VAR_SIMPLE_NAME(minDim,     1, 10);
-    REGISTER_VAR_SIMPLE_NAME(maxDim,     1, 10);
-    REGISTER_VAR_SIMPLE_NAME(minTwkR,    0, 255);
+    REGISTER_VAR_NAME(minDim,     1, 10);
+    REGISTER_VAR_NAME(maxDim,     1, 10);
+    REGISTER_VAR_NAME(minTwkR,    0, 255);
   };
 };

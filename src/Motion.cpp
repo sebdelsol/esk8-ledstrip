@@ -47,11 +47,12 @@
 void MOTION::init()
 {
   // save calibration
-  #define REGISTER_MPU(var)     REGISTER_VAR_SIMPLE_NAME_NOSHOW(var, -32768, 32767)
+  #define REGISTER_MPU(var)     REGISTER_VAR_NAME_NOSHOW(var, -32768, 32767)
   REGISTER_MPU(mXGyroOffset);   REGISTER_MPU(mYGyroOffset);  REGISTER_MPU(mZGyroOffset);
   REGISTER_MPU(mXAccelOffset);  REGISTER_MPU(mYAccelOffset); REGISTER_MPU(mZAccelOffset);
   
   REGISTER_VAR_SIMPLE_NOSHOW("gotOffset", mGotOffset, 0, 1);
+  REGISTER_VAR_SIMPLE("auto", mAutoCalibrate, 0, 1);
   
   #ifdef MPU_GETFIFO_CORE
     OutputMutex = xSemaphoreCreateMutex();
@@ -63,8 +64,6 @@ void MOTION::init()
   #else
     REGISTER_CMD("calibrate",  { calibrate(); } ) 
   #endif
-
-  REGISTER_VAR_SIMPLE("auto", mAutoCalibrate, 0, 1);
 }
 
 //--------------------------------------
