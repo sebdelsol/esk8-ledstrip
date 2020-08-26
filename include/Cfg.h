@@ -59,23 +59,23 @@ struct CFG : public OBJVar
   int FWD = 0;
   int RWD = 0;
 
-#ifdef USE_BT
-  AllObjBT&     mAllObj; 
-  BlueTooth&    mBT; 
-  MOTION&       mMotion;
+  #ifdef USE_BT
+    AllObjBT&     mAllObj; 
+    BlueTooth&    mBT; 
+    MOTION&       mMotion;
 
-  CFG(AllObjBT& allObj, BlueTooth& bt, MOTION& motion) : mAllObj(allObj), mBT(bt), mMotion(motion) {};
-#endif
+    CFG(AllObjBT& allObj, BlueTooth& bt, MOTION& motion) : mAllObj(allObj), mBT(bt), mMotion(motion) {};
+  #endif
 
   void init()
   {
-  #ifdef USE_BT
-    AddCmd   ("save",      mAllObj.save(false)              ) // save not default
-    AddCmd   ("load",      mAllObj.load(false)              ) // load not default
-    AddCmd   ("default",   mAllObj.load(true)               ) // load default
-    AddCmdHid("getInits",  mAllObj.sendInits(mBT)           ) // answer with all vars init (min, max, value)
-    AddCmdHid("getUpdate", mAllObj.sendUpdate(mBT, mMotion) ) // answer with all updates
-  #endif
+    #ifdef USE_BT
+      AddCmd   ("save",      mAllObj.save(false)              ) // save not default
+      AddCmd   ("load",      mAllObj.load(false)              ) // load not default
+      AddCmd   ("default",   mAllObj.load(true)               ) // load default
+      AddCmdHid("getInits",  mAllObj.sendInits(mBT)           ) // answer with all vars init (min, max, value)
+      AddCmdHid("getUpdate", mAllObj.sendUpdate(mBT, mMotion) ) // answer with all updates
+    #endif
 
     AddVar(stripMid,   0, 1);
     AddVar(stripRear,  0, 1);
