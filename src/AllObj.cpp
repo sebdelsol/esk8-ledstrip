@@ -254,8 +254,9 @@ void AllObj::load(bool isdefault, bool change)
     mTmpBuf.clear(); // might not be cleared by readCmdFromStream
     readCmdFromStream((Stream& )f, mTmpBuf, change); // should be a succession of set cmd
     f.close();
+    mDbgSerial << "loaded";
   }
-  mDbgSerial << (f ? "loaded" : "") << endl;
+  mDbgSerial << endl;
 }
 
 //----------------
@@ -266,6 +267,7 @@ void AllObj::save(bool isdefault)
   {
     emulateCmdForAllVars(mGetKeyword, (Stream& )f); //for all vars, emulate a get cmd and send the result to file stream
     f.close();
+    mDbgSerial << "saved";
   }
-  mDbgSerial << (f ? "saved" : "") << endl;
+  mDbgSerial << endl;
 }
