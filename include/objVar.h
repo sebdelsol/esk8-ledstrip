@@ -35,8 +35,7 @@ struct MyVar
   SetFunc*  set;
   GetFunc*  get;
   char*     name;
-  int       min;
-  int       max;
+  int       min, max;
   bool      show;
   byte      ID;
   int       last[MAX_ARGS];
