@@ -41,7 +41,7 @@ void BlueTooth::start(const bool on)
 {
   if (mON != on)
   {
-    mDbgSerial << "BT " << (on ? "Starting" : "Stopping") << endl;
+    mDbgSerial << "BT " << (on ? "Starting" : "Stopping") << "...";
     mConnected = false;
   
     digitalWrite(LIGHT_PIN, on ? HIGH : LOW); // faster feedbcack might be false
@@ -57,7 +57,7 @@ void BlueTooth::start(const bool on)
     }
     digitalWrite(LIGHT_PIN, mON ? HIGH : LOW); // actual feedback
 
-    mDbgSerial << "BT has " << (mON ? "Started" : "Stopped") << endl;
+    mDbgSerial << (mON ? "Started" : "Stopped") << endl;
   }
 }
 

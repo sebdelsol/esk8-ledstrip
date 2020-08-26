@@ -97,8 +97,8 @@ bool MOTION::setOffsets()
 void MOTION::printOffsets(const char* txt)
 {
   mSerial << txt << endl;
-  mSerial << "Acc Offset: x " << getXAccelOffset() << "\t y " << getYAccelOffset() << "\t z " << getZAccelOffset() << endl;
-  mSerial << "Gyr Offset: x " << getXGyroOffset()  << "\t y " << getYGyroOffset()  << "\t z " << getZGyroOffset()  << endl;
+  mSerial << "Acc Offset: \tx " << getXAccelOffset() << "\ty " << getYAccelOffset() << "\tz " << getZAccelOffset() << endl;
+  mSerial << "Gyr Offset: \tx " << getXGyroOffset()  << "\ty " << getYGyroOffset()  << "\tz " << getZGyroOffset()  << endl;
 }
 
 bool MOTION::getFiFoPacket() 
@@ -109,11 +109,10 @@ bool MOTION::getFiFoPacket()
 //--------------------------------------
 void MOTION::begin()
 { 
-  Wire.begin(SDA, SCL, I2C_CLOCK);
   mHasBegun = true;
+  Wire.begin(SDA, SCL, I2C_CLOCK);
 
-  // mpu
-  initialize(); reset(); resetI2CMaster(); //help startup reliably
+  initialize(); reset(); resetI2CMaster(); //help with startup reliabilily
 
   mSerial << "MPU connection " << (testConnection() ? "successful" : "failed") << endl;
   uint8_t devStatus = dmpInitialize();
@@ -127,7 +126,6 @@ void MOTION::begin()
     assert (mFifoBuffer!=nullptr);
 
     setDMPEnabled(true);
-    mSerial << "DMP enabled" << endl;
     mDmpReady = true;
   }
   else // ERROR! 1 = initial memory load failed, 2 = DMP configuration updates failed
