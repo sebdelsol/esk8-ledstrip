@@ -209,8 +209,17 @@ TwinkleFX::TwinkleFX(const CRGB color, const byte hueDiv, const byte div) : mHue
   setHue(color);
 }
 
-void TwinkleFX::setHue(const CRGB color)  {  mHSV = rgb2hsv_approximate(color); mColor = color; }
-void TwinkleFX::setHue(const byte hue)    {  mHSV = CHSV(hue, 0xff, 0xff);      mColor = mHSV; }
+void TwinkleFX::setHue(const CRGB color)  
+{  
+  mHSV = rgb2hsv_approximate(color); 
+  mColor = color; 
+}
+
+void TwinkleFX::setHue(const byte hue)    
+{  
+  mHSV = CHSV(hue, 0xff, 0xff);      
+  mColor = mHSV; 
+}
 
 void TwinkleFX::initFX()
 {
