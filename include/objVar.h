@@ -74,20 +74,18 @@ public:
 #define _Store1(args, arg0)             args[0] = arg0;
 #define _Store3(args, arg0, arg1, arg2) args[0] = arg0; args[1] = arg1; args[2] = arg2;
 
-#define _AddVar(nArg, name, min, max, show, setCode, ...)                                                  \
-{                                                                                                          \
-  SetFunc* setF = newSetFunc([this](int* args, byte n) { if (n==nArg) { setCode; }                     }); \
-  GetFunc* getF = newGetFunc([this](int* args) -> byte { _Store##nArg(args, __VA_ARGS__); return nArg; }); \
-  registerVar(name, setF, getF, min, max, show);                                                           \
+#define _AddVar(N, name, min, max, show, set, ...)                                                   \
+{                                                                                                    \
+  SetFunc* setF = newSetFunc([this](int* args, byte n) { if (n==N) { set; }                      }); \
+  GetFunc* getF = newGetFunc([this](int* args) -> byte { _Store##N(args, __VA_ARGS__); return N; }); \
+  registerVar(name, setF, getF, min, max, show);                                                     \
 }
 
-#define AddCmd(name, cmdCode)                           _AddVar(0, name, 0,   0,   true,  cmdCode)
-#define AddCmdHid(name, cmdCode)                        _AddVar(0, name, 0,   0,   false, cmdCode)
-
-#define AddVarCode(name, setCode, getExpr, min, max)    _AddVar(1, name, min, max, true,  setCode,       getExpr) 
-#define AddVarName(name, var, min, max)                 _AddVar(1, name, min, max, true,  var = args[0], var) 
-#define AddVarNameHid(name, var, min, max)              _AddVar(1, name, min, max, false, var = args[0], var) 
-#define AddVar(var, min, max)                           _AddVar(1, #var, min, max, true,  var = args[0], var) 
-#define AddVarHid(var, min, max)                        _AddVar(1, #var, min, max, false, var = args[0], var) 
-
-#define AddVarCode3(name, setCode, getExpr0, getExpr1, getExpr2, min, max) _AddVar(3, name, min, max, true,  setCode,       getExpr0, getExpr1, getExpr2) 
+#define AddCmd(name, cmd)                                  _AddVar(0, name, 0,   0,   true,  cmd)
+#define AddCmdHid(name, cmd)                               _AddVar(0, name, 0,   0,   false, cmd)
+#define AddVarCode(name, set, get, min, max)               _AddVar(1, name, min, max, true,  set,           get) 
+#define AddVarName(name, var, min, max)                    _AddVar(1, name, min, max, true,  var = args[0], var) 
+#define AddVarNameHid(name, var, min, max)                 _AddVar(1, name, min, max, false, var = args[0], var) 
+#define AddVar(var, min, max)                              _AddVar(1, #var, min, max, true,  var = args[0], var) 
+#define AddVarHid(var, min, max)                           _AddVar(1, #var, min, max, false, var = args[0], var) 
+#define AddVarCode3(name, set, get0, get1, get2, min, max) _AddVar(3, name, min, max, true,  set,           get0, get1, get2) 
