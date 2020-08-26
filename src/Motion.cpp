@@ -46,6 +46,7 @@ void MOTION::init()
 {
   // save calibration
   #define AddOffset(var)     AddVarHid(var, -32768, 32767)
+  
   AddOffset(mXGyroOffset);   AddOffset(mYGyroOffset);  AddOffset(mZGyroOffset);
   AddOffset(mXAccelOffset);  AddOffset(mYAccelOffset); AddOffset(mZAccelOffset);
   
@@ -200,7 +201,7 @@ void MOTION::compute(SensorOutput& output)
 //--------------------------------------
 void MOTION::update()
 {
-  if (!mDmpReady && !mHasBegun)
+  if (!mHasBegun)
     begin();
 
   #ifdef MPU_GETFIFO_CORE
