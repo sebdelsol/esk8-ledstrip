@@ -26,10 +26,9 @@ public:
   byte getAlpha();
   bool drawOn(CRGBSet dst, ulong time, ulong dt);
   
-  virtual void specialInit(int nLeds) {};
   virtual const char* getName()=0;
   virtual void update(ulong time, ulong dt)=0;
-  virtual void registerVars()=0;
+  virtual void initFX()=0;
 };
 
 //--------------------------------------
@@ -46,8 +45,7 @@ protected:
 public:
   FireFX(const bool reverse = false, const byte speed = 27, const int dimRatio = 4);
   void setDimRatio(const int dimRatio) { mDimRatio = dimRatio; };
-  void specialInit(int nLeds);
-  void registerVars();
+  void initFX();
   void update(ulong time, ulong dt);
   SetFxNAME("Fire");
 };
@@ -67,7 +65,7 @@ class PlasmaFX : public FX
 
 public:
   PlasmaFX(const byte wavelenght = 5, const byte period1 = 3, const byte period2 = 5);
-  void registerVars();
+  void initFX();
   void update(ulong time, ulong dt);
   SetFxNAME("Plasma");
 };
@@ -85,7 +83,7 @@ protected:
 public:
   CylonFX(const CRGB color=0x0000FF, const int eyeSize = 3, const int speed = 3<<3);
   void setEyeSize(const int eyeSize) {mEyeSize = eyeSize;};
-  void registerVars();
+  void initFX();
   void update(ulong time, ulong dt);
   SetFxNAME("Cylon");
 };
@@ -109,7 +107,7 @@ protected:
 public:
   RunningFX(const CRGB color=0x0000FF, const int speed = 2, const int width = 10);
   void setSpeed(const int speed) {mSpeed = speed;};
-  void registerVars();
+  void initFX();
   void update(ulong time, ulong dt);
   SetFxNAME("Running");
 };
@@ -127,7 +125,7 @@ class TwinkleFX : public FX
 public: 
   TwinkleFX(const byte hue=0, const byte hueDiv=5, const byte div=5);
   TwinkleFX(const CRGB color=0xff0000, const byte hueDiv=5, const byte div=5);
-  void registerVars();
+  void initFX();
   void update(ulong time, ulong dt);
   SetFxNAME("Twinkle");
 };
@@ -143,7 +141,7 @@ class PacificaFX : public FX
   
 public: 
   PacificaFX(const byte speed = 4);
-  void registerVars();
+  void initFX();
   void update(ulong time, ulong dt);
   SetFxNAME("Pacifica");
 };

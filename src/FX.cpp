@@ -8,11 +8,9 @@ void FX::init(int nLeds)
   assert (mLeds!=nullptr);
   ClearLeds(mLeds, nLeds);
 
-  specialInit(nLeds);
-
   // better for startup, no blinking, strips is initialized before to 0 brightness
   AddVarCode("alpha", setAlpha(args[0]),  getAlpha(), 0, 255)
-  registerVars();
+  initFX();
 }
 
 void FX::setAlpha(const byte alpha) 
@@ -52,16 +50,13 @@ FireFX::FireFX(const bool reverse, const byte speed, const int dimRatio) : mReve
   mPal = HeatColors_p;
 }
 
-void FireFX::registerVars()
+void FireFX::initFX()
 {
+  mHeat = (ushort *) malloc(mNLEDS * sizeof(ushort));
+  assert (mHeat!=nullptr);
+
   AddVarName("speed",  mSpeed,     1, 255)
   AddVarName("dim",    mDimRatio,  1, 10)
-}
-
-void FireFX::specialInit(int nLeds)
-{
-  mHeat = (ushort *) malloc(nLeds * sizeof(ushort));
-  assert (mHeat!=nullptr);
 }
 
 void FireFX::update(ulong time, ulong dt)
@@ -105,7 +100,7 @@ AquaFX::AquaFX(const bool reverse, const byte speed, const float dimRatio) : Fir
 // ----------------------------------------------------
 PlasmaFX::PlasmaFX(const byte wavelenght, const byte period1, const byte period2) : mK(wavelenght), mP1(period1), mP2(period2) {}
 
-void PlasmaFX::registerVars()
+void PlasmaFX::initFX()
 {
   AddVarName("p1",    mP1, 1, 20)
   AddVarName("p2",    mP2, 1, 20)
@@ -138,7 +133,7 @@ void PlasmaFX::update(ulong time, ulong dt)
 // ----------------------------------------------------
 CylonFX::CylonFX(const CRGB color, const int eyeSize, const int speed) : mEyeSize(eyeSize), mSpeed(speed), mColor(color) {}
 
-void CylonFX::registerVars()
+void CylonFX::initFX()
 {
   AddVarCode3("color",   mColor = CRGB(args[0], args[1], args[2]), mColor.r,   mColor.g,   mColor.b,  0, 255)
   AddVarCode ("eyeSize", setEyeSize(args[0] * (mNLEDS - 1) / 255), mEyeSize * 255 / (mNLEDS - 1),     1, 255)
@@ -182,7 +177,7 @@ void DblCylonFX::update(ulong time, ulong dt)
 // ----------------------------------------------------
 RunningFX::RunningFX(const CRGB color, const int speed, const int width) : mWidth(width), mSpeed(speed), mColor(color) {}
 
-void RunningFX::registerVars()
+void RunningFX::initFX()
 {
   AddVarCode3("color", mColor = CRGB(args[0], args[1], args[2]), mColor.r, mColor.g, mColor.b, 0, 255)
   AddVarName ("speed", mSpeed, -10, 10)
@@ -217,7 +212,7 @@ TwinkleFX::TwinkleFX(const CRGB color, const byte hueDiv, const byte div) : mHue
 void TwinkleFX::setHue(const CRGB color)  {  mHSV = rgb2hsv_approximate(color); mColor = color; }
 void TwinkleFX::setHue(const byte hue)    {  mHSV = CHSV(hue, 0xff, 0xff);      mColor = mHSV; }
 
-void TwinkleFX::registerVars()
+void TwinkleFX::initFX()
 {
   AddVarCode3("color", setHue(CRGB(args[0], args[1], args[2])), mColor.r, mColor.g, mColor.b, 0, 255)
   AddVarName ("div",   mDiv, 1, 20)
@@ -245,7 +240,7 @@ PacificaFX::PacificaFX(const byte speed) : mSpeed(speed)
   mPal3 = {0x000208, 0x00030E, 0x000514, 0x00061A, 0x000820, 0x000927, 0x000B2D, 0x000C33, 0x000E39, 0x001040, 0x001450, 0x001860, 0x001C70, 0x002080, 0x1040BF, 0x2060FF};
 }
 
-void PacificaFX::registerVars()
+void PacificaFX::initFX()
 {
   AddVarName("speed", mSpeed, 1, 7)
 }
