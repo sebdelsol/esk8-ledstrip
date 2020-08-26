@@ -4,57 +4,46 @@
 #define MAX_VAR 25
 #define MAX_ARGS 3
 
+
 //--------------------------------- 
-//setVarFunc functors class to hide lambda capture
-class setVarFunc
-{
-public:
-  virtual void operator()(int* toSet, byte n) = 0;
+// virtual functors class to hide lambda capture
+template <class Ret, class...Args>
+struct _Functor 
+{ 
+  virtual Ret operator()(Args... args) = 0; 
 };
 
-template <class Func>
-class setVarFuncF : public setVarFunc
+// actual implementation 
+template <class Func, class Ret, class...Args>
+class _FunctorImplement : public _Functor<Ret, Args...>
 {
-    Func func_;
+  Func func;
 public:
-    setVarFuncF(Func func) : func_(func) {}
-    inline void operator()(int* toSet, byte n) { func_(toSet, n); };
+  _FunctorImplement(Func func) : func(func) {};
+  inline Ret operator()(Args... args) { return func(args...); };
 };
 
-template <class Func>
-setVarFuncF<Func>* newSetVarFunc(Func func) { return new setVarFuncF<Func>(func); }
+// define newSetFunc & SetFunc of type : void SetFunc(int*, byte)
+typedef _Functor<void, int*, byte> SetFunc; 
+template <class Func> using SetFuncImplement = _FunctorImplement<Func, void, int*, byte>;  
+template <class Func> inline SetFuncImplement<Func>* newSetFunc(Func func) { return new SetFuncImplement<Func>(func); }
 
-//-------------- 
-// getVarFunc functors class to hide lambda capture
-class getVarFunc
-{
-public:
-  virtual byte operator()(int* toSet) = 0;
-};
-
-template <class Func>
-class getVarFuncF : public getVarFunc
-{
-    Func func_;
-public:
-    getVarFuncF(Func func) : func_(func) {}
-    inline byte operator()(int* toSet) { return func_(toSet); };
-};
-
-template <class Func>
-getVarFuncF<Func>* newGetVarFunc(Func func) { return new getVarFuncF<Func>(func); }
+// define newGetFunc & GetFunc of type : byte GetFunc(int*)
+typedef _Functor<byte, int*> GetFunc; 
+template <class Func> using GetFuncImplement = _FunctorImplement<Func, byte, int*>; 
+template <class Func> inline GetFuncImplement<Func>* newGetFunc(Func func) { return new GetFuncImplement<Func>(func); }
 
 //---------------------------------
 struct MyVar 
 {
-  char*       name;
-  setVarFunc* set;
-  getVarFunc* get;
-  int         min;
-  int         max;
-  bool        show;
-  byte        ID;
-  int         last[MAX_ARGS];
+  SetFunc*  set;
+  GetFunc*  get;
+  char*     name;
+  int       min;
+  int       max;
+  bool      show;
+  byte      ID;
+  int       last[MAX_ARGS];
 };
 
 //---------------------------------
@@ -64,7 +53,7 @@ class OBJVar
   byte mNVAR = 0;
 
 public:  
-  bool registerVar(const char* name, setVarFunc* set, getVarFunc* get, int min = 0, int max = 0, bool show = true);
+  bool registerVar(const char* name, SetFunc* set, GetFunc* get, int min = 0, int max = 0, bool show = true);
   MyVar* getVarFromName(const char* name);
   MyVar* getVar(byte i) { return mVar[i]; };
 
@@ -87,8 +76,8 @@ public:
 //---------------------------------
 #define _REGISTER_CMD(name, doCode, show) \
   { \
-    setVarFunc* setF = newSetVarFunc([this](int* toSet, byte n) { if (n==0) { doCode; } }); \
-    getVarFunc* getF = newGetVarFunc([](int* toGet) -> byte { return 0; }); \
+    SetFunc* setF = newSetFunc([this](int* toSet, byte n) { if (n==0) { doCode; } }); \
+    GetFunc* getF = newGetFunc([](int* toGet) -> byte { return 0; }); \
     registerVar(name, setF, getF, 0, 0, show); \
   }
 
@@ -97,7 +86,7 @@ public:
 
 #define _REGISTER_VAR(name, setCode, toGet0, min, max, show) \
   { \
-    setVarFunc* setF = newSetVarFunc([this](int* toSet, byte n) \
+    SetFunc* setF = newSetFunc([this](int* toSet, byte n) \
     { \
       if (n==1) \
       { \
@@ -105,7 +94,7 @@ public:
         setCode; \
       } \
     }); \
-    getVarFunc* getF = newGetVarFunc([this](int* toGet) -> byte \
+    GetFunc* getF = newGetFunc([this](int* toGet) -> byte \
     { \
       toGet[0] = toGet0; \
       return 1; \
@@ -124,7 +113,7 @@ public:
 
 #define REGISTER_VAR3(name, setCode, toGet0, toGet1, toGet2, min, max) \
   { \
-    setVarFunc* setF = newSetVarFunc([this](int* toSet, byte n) \
+    SetFunc* setF = newSetFunc([this](int* toSet, byte n) \
     { \
       if (n==3) \
       { \
@@ -134,7 +123,7 @@ public:
         setCode; \
       } \
     }); \
-    getVarFunc* getF = newGetVarFunc([this](int* toGet) -> byte \
+    GetFunc* getF = newGetFunc([this](int* toGet) -> byte \
     { \
       toGet[0] = toGet0; \
       toGet[1] = toGet1; \

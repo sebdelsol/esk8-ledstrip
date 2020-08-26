@@ -1,7 +1,7 @@
 #include <ObjVar.h>
 
 // ----------------------------------------------------
-bool OBJVar::registerVar(const char* name, setVarFunc* set, getVarFunc* get, int min, int max, bool show)
+bool OBJVar::registerVar(const char* name, SetFunc* set, GetFunc* get, int min, int max, bool show)
 {
   bool ok = mNVAR < MAX_VAR;
   if (ok)
