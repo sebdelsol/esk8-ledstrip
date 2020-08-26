@@ -60,21 +60,18 @@ struct CFG : public OBJVar
   int RWD = 0;
 
   #ifdef USE_BT
-    AllObjBT&     mAllObj; 
-    BlueTooth&    mBT; 
-    MOTION&       mMotion;
-
-    CFG(AllObjBT& allObj, BlueTooth& bt, MOTION& motion) : mAllObj(allObj), mBT(bt), mMotion(motion) {};
+        AllObjBT& allObj; BlueTooth& bt; MOTION& motion;
+    CFG(AllObjBT& allObj, BlueTooth& bt, MOTION& motion) : allObj(allObj), bt(bt), motion(motion) {};
   #endif
 
   void init()
   {
     #ifdef USE_BT
-      AddCmd   ("save",      mAllObj.save(false)              ) // save not default
-      AddCmd   ("load",      mAllObj.load(false)              ) // load not default
-      AddCmd   ("default",   mAllObj.load(true)               ) // load default
-      AddCmdHid("getInits",  mAllObj.sendInits(mBT)           ) // answer with all vars init (min, max, value)
-      AddCmdHid("getUpdate", mAllObj.sendUpdate(mBT, mMotion) ) // answer with all updates
+      AddCmd   ("save",      allObj.save(false)            ) // save not default
+      AddCmd   ("load",      allObj.load(false)            ) // load not default
+      AddCmd   ("default",   allObj.load(true)             ) // load default
+      AddCmdHid("getInits",  allObj.sendInits(bt)          ) // answer with all vars init (min, max, value)
+      AddCmdHid("getUpdate", allObj.sendUpdate(bt, motion) ) // answer with all updates
     #endif
 
     AddVar(stripMid,   0, 1);
