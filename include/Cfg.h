@@ -79,25 +79,25 @@ struct CFG : public OBJVar
     AddBool(stripFront);
 
     AddBool(probe);
-    AddVar(minProbe,   1, MaxProbe);
-    AddVar(bright,     1, 255);
+    AddVar (minProbe,   1, MaxProbe);
+    AddVar (bright,     1, 255);
 
-    AddVar(pacifica,   0, 255);
-    AddVar(fire,       0, 255);
+    AddVar (pacifica,   0, 255);
+    AddVar (fire,       0, 255);
 
-    AddVar(runSpeed,   0, 10);
-    AddVar(neutralWZ,  0, 32768);
-    AddVar(maxWZ,      0, 32768);
+    AddVar (runSpeed,   0, 10);
+    AddVar (neutralWZ,  0, 32768);
+    AddVar (maxWZ,      0, 32768);
 
-    AddVar(divAcc,     1, 10);
-    AddVar(smoothAcc,  1, 32768);
-    AddVar(thresAcc,   0, 255);
+    AddVar (divAcc,     1, 10);
+    AddVar (smoothAcc,  1, 32768);
+    AddVar (thresAcc,   0, 255);
 
-    AddVar(minEye,     1, (NBLEDS_TIPS>>1));
-    AddVar(maxEye,     1, (NBLEDS_TIPS>>1));
+    AddVar (minEye,     1, (NBLEDS_TIPS>>1));
+    AddVar (maxEye,     1, (NBLEDS_TIPS>>1));
 
-    AddVar(minDim,     1, 10);
-    AddVar(maxDim,     1, 10);
-    AddVar(minTwkR,    0, 255);
+    AddVar (minDim,     1, 10);
+    AddVar (maxDim,     1, 10);
+    AddVar (minTwkR,    0, 255);
   };
 };
