@@ -16,7 +16,7 @@ OBJVar* AllObj::getObjFromName(const char* name)
     if (strcmp(name, mOBJ[i].name)==0)
       return mOBJ[i].obj;
   
-  return NULL;
+  return nullptr;
 }
 
 //----------------
@@ -28,7 +28,7 @@ bool AllObj::addObj(OBJVar& obj, const char* name)
     mOBJ[mNOBJ].obj = (OBJVar* )&obj;
     
     char* str = (char* )malloc(strlen(name) + 1);
-    assert (str!=NULL);
+    assert (str!=nullptr);
     strcpy(str, name);
     mOBJ[mNOBJ++].name = str;
 
@@ -81,8 +81,8 @@ void AllObj::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
   for (; nbArg < MAX_ARGS; nbArg++) // get the args
   {
     const char* a = buf.next();
-    if (a!=NULL && isNumber(a))
-      args[nbArg] = constrain(strtol(a, NULL, 10), min, max);
+    if (a!=nullptr && isNumber(a))
+      args[nbArg] = constrain(strtol(a, nullptr, 10), min, max);
     else 
       break;
   }
@@ -142,16 +142,16 @@ void AllObj::handleInitCmd(const parsedCmd& parsed, Stream& stream)
 bool AllObj::getObjVar(parsedCmd& parsed, BUF& buf)
 {
   parsed.objName = buf.next();
-  if (parsed.objName != NULL)
+  if (parsed.objName != nullptr)
   {
     parsed.obj = getObjFromName(parsed.objName);
-    if(parsed.obj != NULL)
+    if(parsed.obj != nullptr)
     {
       parsed.varName = buf.next();
-      if (parsed.varName != NULL)
+      if (parsed.varName != nullptr)
       { 
         parsed.var = parsed.obj->getVarFromName(parsed.varName);
-        if (parsed.var != NULL)
+        if (parsed.var != nullptr)
           return true;
       }
     }
@@ -163,7 +163,7 @@ bool AllObj::getObjVar(parsedCmd& parsed, BUF& buf)
 void AllObj::handleCmd(Stream& stream, BUF& buf, bool change, bool compact)
 {
   const char* cmd = buf.first();
-  if (cmd!=NULL)
+  if (cmd!=nullptr)
   {
     if (strcmp(cmd, "U")==0) // shortcut for update
     {
@@ -220,7 +220,7 @@ void AllObj::emulateCmdForAllVars(const char* cmdKeyword, Stream& stream, OBJVar
     byte nbVar = obj->getNbVar();
     for (byte j = 0; j < nbVar; j++)
     {
-      if(testVar == NULL || (obj->*testVar)(j))
+      if(testVar == nullptr || (obj->*testVar)(j))
       {
         char* varName = obj->getVarName(j);
         snprintf(mTmpBuf.getBuf(), mTmpBuf.getLen(), "%s %s %s", cmdKeyword, objName, varName); // emulate a cmd
