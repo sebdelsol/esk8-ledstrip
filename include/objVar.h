@@ -76,7 +76,7 @@ public:
 
 #define _AddVar(nArg, name, min, max, show, setCode, ...)                                                  \
 {                                                                                                          \
-  SetFunc* setF = newSetFunc([this](int* args, byte n) { if (n==nArg) { setCode; } });                     \
+  SetFunc* setF = newSetFunc([this](int* args, byte n) { if (n==nArg) { setCode; }                     }); \
   GetFunc* getF = newGetFunc([this](int* args) -> byte { _Store##nArg(args, __VA_ARGS__); return nArg; }); \
   registerVar(name, setF, getF, min, max, show);                                                           \
 }
