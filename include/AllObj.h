@@ -74,7 +74,7 @@ protected:
   const char* mInitKeyword = ALLOBJ_INIT;
 
   void readCmdFromStream(Stream& stream, BUF& buf, bool change = true, bool compact = false);
-  void emulateCmdForAllVars(const char* cmdKeyword, Stream& stream, OBJVar::ObjTestVarFunc testVar = NULL, bool change = true, bool compact = false);
+  void emulateCmdForAllVars(const char* cmdKeyword, Stream& stream, OBJVar::ObjTestVarFunc testVar = nullptr, bool change = true, bool compact = false);
 
 public:
   AllObj(Stream& dbgSerial) : mDbgSerial(dbgSerial) {};

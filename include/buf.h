@@ -14,7 +14,7 @@ public:
   char* getBuf() { return mBuf; };
   int   getLen() { return BUFF_SIZE; };
   const char* first() { return strtok_r(mBuf, mDelim, &mLast); };
-  const char* next()  { return strtok_r(NULL, mDelim, &mLast); };
+  const char* next()  { return strtok_r(nullptr, mDelim, &mLast); };
 
   void clear()
   {

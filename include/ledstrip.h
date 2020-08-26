@@ -75,7 +75,7 @@ public:
   LedStrip(Stream& serial, const char* name="") : BaseLedStrip(serial)
   {
     mName = (char* )malloc(strlen(name) + 1);
-    assert (mName!=NULL);
+    assert (mName!=nullptr);
     sprintf(mName, "%s", name);
   };
 
