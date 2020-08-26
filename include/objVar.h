@@ -74,61 +74,30 @@ public:
 };
 
 //---------------------------------
-#define _REGISTER_CMD(name, doCode, show) \
+#define _Store0(args, dummy)         	
+#define _Store1(args, arg0)             args[0] = arg0;
+#define _Store3(args, arg0, arg1, arg2) args[0] = arg0; args[1] = arg1; args[2] = arg2;
+
+#define _REGISTER_VAR(nArg, name, min, max, show, setCode, ...) \
+{ \
+  SetFunc* setF = newSetFunc([this](int* args, byte n) \
   { \
-    SetFunc* setF = newSetFunc([this](int* toSet, byte n) { if (n==0) { doCode; } }); \
-    GetFunc* getF = newGetFunc([](int* toGet) -> byte { return 0; }); \
-    registerVar(name, setF, getF, 0, 0, show); \
-  }
-
-#define REGISTER_CMD(name, doCode)         _REGISTER_CMD(name, doCode, true)
-#define REGISTER_CMD_NOSHOW(name, doCode)  _REGISTER_CMD(name, doCode, false)
-
-#define _REGISTER_VAR(name, setCode, toGet0, min, max, show) \
+    if (n==nArg) { setCode; } \
+  }); \
+  GetFunc* getF = newGetFunc([this](int* args) -> byte \
   { \
-    SetFunc* setF = newSetFunc([this](int* toSet, byte n) \
-    { \
-      if (n==1) \
-      { \
-        int arg0 = toSet[0]; \
-        setCode; \
-      } \
-    }); \
-    GetFunc* getF = newGetFunc([this](int* toGet) -> byte \
-    { \
-      toGet[0] = toGet0; \
-      return 1; \
-    }); \
-    registerVar(name, setF, getF, min, max, show); \
-  }
+    _Store##nArg(args, __VA_ARGS__); \
+    return nArg; \
+  }); \
+  registerVar(name, setF, getF, min, max, show); \
+}
 
-#define REGISTER_VAR(name, setCode, toGet0, min, max)        _REGISTER_VAR(name, setCode,         toGet0, min, max, true) 
-#define REGISTER_VAR_NOSHOW(name, setCode, toGet0, min, max) _REGISTER_VAR(name, setCode,         toGet0, min, max, false) 
-
-#define REGISTER_VAR_SIMPLE(name, var, min, max)             _REGISTER_VAR(name, { var = arg0; }, var,    min, max, true) 
-#define REGISTER_VAR_SIMPLE_NOSHOW(name, var, min, max)      _REGISTER_VAR(name, { var = arg0; }, var,    min, max, false) 
-
-#define REGISTER_VAR_NAME(var, min, max)                     _REGISTER_VAR(#var,  { var = arg0; }, var,    min, max, true) 
-#define REGISTER_VAR_NAME_NOSHOW(var, min, max)              _REGISTER_VAR(#var,  { var = arg0; }, var,    min, max, false) 
-
-#define REGISTER_VAR3(name, setCode, toGet0, toGet1, toGet2, min, max) \
-  { \
-    SetFunc* setF = newSetFunc([this](int* toSet, byte n) \
-    { \
-      if (n==3) \
-      { \
-        int arg0 = toSet[0]; \
-        int arg1 = toSet[1]; \
-        int arg2 = toSet[2]; \
-        setCode; \
-      } \
-    }); \
-    GetFunc* getF = newGetFunc([this](int* toGet) -> byte \
-    { \
-      toGet[0] = toGet0; \
-      toGet[1] = toGet1; \
-      toGet[2] = toGet2; \
-      return 3; \
-    }); \
-    registerVar(name, setF, getF, min, max); \
-  }
+#define REGISTER_CMD(name, cmdCode)                                          _REGISTER_VAR(0, name, 0,   0,   true,  cmdCode)
+#define REGISTER_CMD_NOSHOW(name, cmdCode)                                   _REGISTER_VAR(0, name, 0,   0,   false, cmdCode)
+#define REGISTER_VAR(name, setCode, getExpr, min, max)                       _REGISTER_VAR(1, name, min, max, true,  setCode,       getExpr) 
+#define REGISTER_VAR_NOSHOW(name, setCode, getExpr, min, max)                _REGISTER_VAR(1, name, min, max, false, setCode,       getExpr) 
+#define REGISTER_VAR_SIMPLE(name, var, min, max)                             _REGISTER_VAR(1, name, min, max, true,  var = args[0], var) 
+#define REGISTER_VAR_SIMPLE_NOSHOW(name, var, min, max)                      _REGISTER_VAR(1, name, min, max, false, var = args[0], var) 
+#define REGISTER_VAR_NAME(var, min, max)                                     _REGISTER_VAR(1, #var, min, max, true,  var = args[0], var) 
+#define REGISTER_VAR_NAME_NOSHOW(var, min, max)                              _REGISTER_VAR(1, #var, min, max, false, var = args[0], var) 
+#define REGISTER_VAR3(name, setCode, getExpr0, getExpr1, getExpr2, min, max) _REGISTER_VAR(3, name, min, max, true,  setCode,       getExpr0, getExpr1, getExpr2) 
