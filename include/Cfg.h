@@ -60,23 +60,23 @@ public:
   int FWD = 0;
   int RWD = 0;
 
-  #ifdef USE_BT
-    AllObjBT&     mAllObj; 
-    BlueTooth&    mBT; 
-    MOTION&       mMotion;
+#ifdef USE_BT
+  AllObjBT&     mAllObj; 
+  BlueTooth&    mBT; 
+  MOTION&       mMotion;
 
-    CFG(AllObjBT& allObj, BlueTooth& bt, MOTION& motion) : mAllObj(allObj), mBT(bt), mMotion(motion) {};
-  #endif
+  CFG(AllObjBT& allObj, BlueTooth& bt, MOTION& motion) : mAllObj(allObj), mBT(bt), mMotion(motion) {};
+#endif
 
   void init()
   {
-    #ifdef USE_BT
-      REGISTER_CMD("save",              { mAllObj.save(false); }              ) // save not default
-      REGISTER_CMD("load",              { mAllObj.load(false); }              ) // load not default
-      REGISTER_CMD("default",           { mAllObj.load(true); }               ) // load default
-      REGISTER_CMD_NOSHOW("getInits",   { mAllObj.sendInits(mBT); }           ) // answer with all vars init (min, max, value)
-      REGISTER_CMD_NOSHOW("getUpdate",  { mAllObj.sendUpdate(mBT, mMotion); } ) // answer with all updates
-    #endif
+  #ifdef USE_BT
+    REGISTER_CMD       ("save",      mAllObj.save(false)              ) // save not default
+    REGISTER_CMD       ("load",      mAllObj.load(false)              ) // load not default
+    REGISTER_CMD       ("default",   mAllObj.load(true)               ) // load default
+    REGISTER_CMD_NOSHOW("getInits",  mAllObj.sendInits(mBT)           ) // answer with all vars init (min, max, value)
+    REGISTER_CMD_NOSHOW("getUpdate", mAllObj.sendUpdate(mBT, mMotion) ) // answer with all updates
+  #endif
 
     REGISTER_VAR_NAME(stripMid,   0, 1);
     REGISTER_VAR_NAME(stripRear,  0, 1);
