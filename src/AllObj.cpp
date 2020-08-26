@@ -238,9 +238,9 @@ File AllObj::getFile(bool isdefault, const char* mode)
   bool isLoading = strcmp(mode, "r")==0;
 
   if (f)
-    mDbgSerial << (isLoading ? "loading from " : "saving to ") << fname << endl;
+    mDbgSerial << (isLoading ? "loading from " : "saving to ") << fname << "...";
   else
-    mDbgSerial << "FAIL to " << (isLoading ? "load from " : "save to ") << fname << endl;
+    mDbgSerial << "FAIL to " << (isLoading ? "load from " : "save to ") << fname;
   
   return f;
 }
@@ -255,6 +255,7 @@ void AllObj::load(bool isdefault, bool change)
     readCmdFromStream((Stream& )f, mTmpBuf, change); // should be a succession of set cmd
     f.close();
   }
+  mDbgSerial << (f ? "loaded" : "") << endl;
 }
 
 //----------------
@@ -266,4 +267,5 @@ void AllObj::save(bool isdefault)
     emulateCmdForAllVars(mGetKeyword, (Stream& )f); //for all vars, emulate a get cmd and send the result to file stream
     f.close();
   }
+  mDbgSerial << (f ? "saved" : "") << endl;
 }
