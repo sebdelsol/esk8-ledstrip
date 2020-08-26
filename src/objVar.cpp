@@ -6,6 +6,14 @@ bool OBJVar::registerVar(const char* name, SetFunc* set, GetFunc* get, int min, 
   bool ok = mNVAR < MAX_VAR;
   if (ok)
   {
+    // check the name already exists
+    for (byte i = 0; i < mNVAR; i++) //look for the cmd
+      if (strcmp(name, mVar[i]->name)==0)
+      {
+        Serial << ">> ERROR !! name already exists: " << name << endl; 
+        return false;
+      }
+
     MyVar* var = (MyVar* )malloc(sizeof(MyVar));
     assert (var!=nullptr);
     mVar[mNVAR++] = var;
@@ -15,10 +23,10 @@ bool OBJVar::registerVar(const char* name, SetFunc* set, GetFunc* get, int min, 
     strcpy(str, name);
     var->name = str;
 
-    var->set = set;
-    var->get = get;
-    var->min = min;
-    var->max = max;
+    var->set =  set;
+    var->get =  get;
+    var->min =  min;
+    var->max =  max;
     var->show = show;
   }
   else
