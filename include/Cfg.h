@@ -28,7 +28,7 @@ struct CFG : public OBJVar
   byte bright     = 255;  // half brightness is enough to avoid reaching LED_MAX_MA
   int fade        = 0;    // for the fade in
   
-  #define MaxProbe 4095
+  #define MaxProbe  4095
   int  minProbe   = 400;
   bool probe      = false;
 
