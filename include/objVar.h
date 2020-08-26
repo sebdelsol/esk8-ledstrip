@@ -69,7 +69,7 @@ public:
 };
 
 //---------------------------------
-#define _Stor0(args, _)         	
+#define _Stor0(args, _dummy)         	
 #define _Stor1(args, _0)         args[0] = _0;
 #define _Stor3(args, _0, _1, _2) args[0] = _0; args[1] = _1; args[2] = _2;
 
