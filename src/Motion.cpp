@@ -18,8 +18,6 @@
   {
     MOTION*       mpu = (MOTION* )_mpu;
     SensorOutput  taskOutput; //output to store computation
-
-    vTaskDelay(pdMS_TO_TICKS(2000)); // or issue with offset 
     TickType_t    lastWakeTime = xTaskGetTickCount();
 
     for (;;) // forever
@@ -103,9 +101,6 @@ void MOTION::printOffsets(const char* txt)
 
 bool MOTION::getFiFoPacket() 
 { 
-  if (!mDmpReady && !mHasBegun)
-    begin();
-
   return mDmpReady && dmpGetCurrentFIFOPacket(mFifoBuffer); 
 }
 
@@ -130,8 +125,8 @@ void MOTION::begin()
     assert (mFifoBuffer!=nullptr);
 
     setDMPEnabled(true);
-    mDmpReady = true;
     mSerial << "DMP enabled" << endl;
+    mDmpReady = true;
   }
   else // ERROR! 1 = initial memory load failed, 2 = DMP configuration updates failed
     mSerial << "DMP Initialization failed (" << devStatus << ")" << endl;
@@ -204,6 +199,9 @@ void MOTION::compute(SensorOutput& output)
 //--------------------------------------
 void MOTION::update()
 {
+  if (!mDmpReady && !mHasBegun)
+    begin();
+
   #ifdef MPU_GETFIFO_CORE
     if (xEventGroupGetBits(FlagReady) && xSemaphoreTake(OutputMutex, 0) == pdTRUE) // pool the mpuTask
     {
