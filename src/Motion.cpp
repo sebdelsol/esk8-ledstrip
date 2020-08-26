@@ -114,7 +114,7 @@ void MOTION::begin()
 
   initialize(); reset(); resetI2CMaster(); //help with startup reliabilily
 
-  mSerial << "MPU connection " << (testConnection() ? "successful" : "failed") << endl;
+  mSerial << "MPU connection..." << (testConnection() ? "successful" : "failed") << endl;
   uint8_t devStatus = dmpInitialize();
 
   if (devStatus == 0) // did it work ?
@@ -128,8 +128,11 @@ void MOTION::begin()
     setDMPEnabled(true);
     mDmpReady = true;
   }
-  else // ERROR! 1 = initial memory load failed, 2 = DMP configuration updates failed
-    mSerial << "DMP Initialization failed (" << devStatus << ")" << endl;
+  else // error
+  {
+    const char* error =  devStatus == 1 ? "initial memory load" : (devStatus == 2 ? "DMP configuration updates" : "unknown");
+    mSerial << "DMP ERROR #" << devStatus << " : " << error << " failure" << endl;
+  }
 }
 
 //--------------------------------------
