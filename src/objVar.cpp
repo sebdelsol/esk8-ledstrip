@@ -1,21 +1,20 @@
 #include <ObjVar.h>
 
 // ----------------------------------------------------
-bool OBJVar::registerVar(void* obj, const char* name, setVarFunc set, getVarFunc get, int min, int max, bool show)
+bool OBJVar::registerVar(const char* name, setVarFunc* set, getVarFunc* get, int min, int max, bool show)
 {
   bool ok = mNVAR < MAX_VAR;
   if (ok)
   {
     MyVar* var = (MyVar* )malloc(sizeof(MyVar));
-    assert (var!=NULL);
+    assert (var!=nullptr);
     mVar[mNVAR++] = var;
 
     char* str = (char* )malloc(strlen(name) + 1);
-    assert (str!=NULL);
+    assert (str!=nullptr);
     strcpy(str, name);
     var->name = str;
 
-    var->obj = obj;
     var->set = set;
     var->get = get;
     var->min = min;
@@ -35,7 +34,7 @@ MyVar* OBJVar::getVarFromName(const char* name)
     if (strcmp(name, mVar[i]->name)==0)
       return mVar[i];
 
-  return NULL;
+  return nullptr;
 }
 
 void OBJVar::getMinMax(MyVar* var, int* min, int* max)
@@ -46,7 +45,7 @@ void OBJVar::getMinMax(MyVar* var, int* min, int* max)
 
 void OBJVar::set(MyVar* var, int* toSet, byte n, bool change)
 {
-  (*var->set)(var->obj, toSet, n);
+  (*var->set)(toSet, n);
 
   if (!change) // handled as nothing as changed... so
     get(var, var->last); //update value in var->last
@@ -54,7 +53,7 @@ void OBJVar::set(MyVar* var, int* toSet, byte n, bool change)
 
 byte OBJVar::get(MyVar* var, int* toGet)
 {
-  return (*var->get)(var->obj, toGet);
+  return (*var->get)(toGet);
 }
 
 // ----------------------------------------------------

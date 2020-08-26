@@ -1,20 +1,53 @@
 #pragma once
-#include <Arduino.h.>
 #include <Streaming.h>
 
 #define MAX_VAR 25
 #define MAX_ARGS 3
 
 //---------------------------------
-typedef void (*setVarFunc)(void* obj, int* toSet, byte n);
-typedef byte (*getVarFunc)(void* obj, int* toGet);
+class setVarFunc
+{
+public:
+  virtual void operator()(int* toSet, byte n) = 0;
+};
 
+template <class Func>
+class setVarFuncF : public setVarFunc
+{
+    Func func_;
+public:
+    setVarFuncF(Func func) : func_(func) {}
+    inline void operator()(int* toSet, byte n) { func_(toSet, n); };
+};
+
+template <class Func>
+setVarFuncF<Func>* newSetVarFunc(Func func) { return new setVarFuncF<Func>(func); }
+
+//--------------
+class getVarFunc
+{
+public:
+  virtual byte operator()(int* toSet) = 0;
+};
+
+template <class Func>
+class getVarFuncF : public getVarFunc
+{
+    Func func_;
+public:
+    getVarFuncF(Func func) : func_(func) {}
+    inline byte operator()(int* toSet) { return func_(toSet); };
+};
+
+template <class Func>
+getVarFuncF<Func>* newGetVarFunc(Func func) { return new getVarFuncF<Func>(func); }
+
+//---------------------------------
 struct MyVar 
 {
   char*       name;
-  void*       obj;
-  setVarFunc  set;
-  getVarFunc  get;
+  setVarFunc* set;
+  getVarFunc* get;
   int         min;
   int         max;
   bool        show;
@@ -29,7 +62,7 @@ class OBJVar
   byte mNVAR = 0;
 
 public:  
-  bool registerVar(void* obj, const char* name, setVarFunc set, getVarFunc get, int min = 0, int max = 0, bool show = true);
+  bool registerVar(const char* name, setVarFunc* set, getVarFunc* get, int min = 0, int max = 0, bool show = true);
   MyVar* getVarFromName(const char* name);
   MyVar* getVar(byte i) { return mVar[i]; };
 
@@ -50,72 +83,61 @@ public:
 };
 
 //---------------------------------
-#define _REGISTER_CMD(class, name, doCode, show) \
-    registerVar(this, name, \
-      [](void* obj, int* toSet, byte n) \
+#define _REGISTER_CMD(name, doCode, show) \
+  { \
+    setVarFunc* setF = newSetVarFunc([this](int* toSet, byte n) { if (n==0) { doCode; } }); \
+    getVarFunc* getF = newGetVarFunc([](int* toGet) -> byte { return 0; }); \
+    registerVar(name, setF, getF, 0, 0, show); \
+  }
+
+#define REGISTER_CMD(name, doCode)         _REGISTER_CMD(name, doCode, true)
+#define REGISTER_CMD_NOSHOW(name, doCode)  _REGISTER_CMD(name, doCode, false)
+
+#define _REGISTER_VAR(name, setCode, toGet0, min, max, show) \
+  { \
+    setVarFunc* setF = newSetVarFunc([this](int* toSet, byte n) \
+    { \
+      if (n==1) \
       { \
-        if (n==0) \
-        { \
-          class* self = (class* )obj; \
-          doCode; \
-        } \
-      }, \
-      [](void* obj, int* toGet) -> byte { \
-        return 0; \
-      }, \
-      0, 0, show \
-    );
+        int arg0 = toSet[0]; \
+        setCode; \
+      } \
+    }); \
+    getVarFunc* getF = newGetVarFunc([this](int* toGet) -> byte \
+    { \
+      toGet[0] = toGet0; \
+      return 1; \
+    }); \
+    registerVar(name, setF, getF, min, max, show); \
+  }
 
-#define REGISTER_CMD(class, name, doCode)         _REGISTER_CMD(class, name, doCode, true)
-#define REGISTER_CMD_NOSHOW(class, name, doCode)  _REGISTER_CMD(class, name, doCode, false)
+#define REGISTER_VAR(name, setCode, toGet0, min, max)        _REGISTER_VAR(name, setCode, toGet0, min, max, true) 
+#define REGISTER_VAR_NOSHOW(name, setCode, toGet0, min, max) _REGISTER_VAR(name, setCode, toGet0, min, max, false) 
 
-#define _REGISTER_VAR(class, name, setCode, toGet0, min, max, show) \
-    registerVar(this, name, \
-      [](void* obj, int* toSet, byte n) \
+#define REGISTER_VAR_SIMPLE(name, var, min, max)             _REGISTER_VAR(name, { var = arg0; }, var, min, max, true) 
+#define REGISTER_VAR_SIMPLE_NOSHOW(name, var, min, max)      _REGISTER_VAR(name, { var = arg0; }, var, min, max, false) 
+
+#define REGISTER_VAR_SIMPLE_NAME(var, min, max)             _REGISTER_VAR(#var, { var = arg0; }, var, min, max, true) 
+#define REGISTER_VAR_SIMPLE_NAME_NOSHOW(var, min, max)      _REGISTER_VAR(#var, { var = arg0; }, var, min, max, false) 
+
+#define REGISTER_VAR3(name, setCode, toGet0, toGet1, toGet2, min, max) \
+  { \
+    setVarFunc* setF = newSetVarFunc([this](int* toSet, byte n) \
+    { \
+      if (n==3) \
       { \
-        if (n==1) \
-        { \
-          class* self = (class *)obj; \
-          int arg0 = toSet[0]; \
-          setCode; \
-        } \
-      }, \
-      [](void* obj, int* toGet) -> byte \
-      { \
-        class* self = (class* )obj; \
-        toGet[0] = toGet0; \
-        return 1; \
-      }, \
-      min, max, show \
-    );
-
-#define REGISTER_VAR(class, name, setCode, toGet0, min, max)        _REGISTER_VAR(class, name, setCode, toGet0, min, max, true) 
-#define REGISTER_VAR_NOSHOW(class, name, setCode, toGet0, min, max) _REGISTER_VAR(class, name, setCode, toGet0, min, max, false) 
-
-#define REGISTER_VAR_SIMPLE(class, name, var, min, max)             _REGISTER_VAR(class, name, { var = arg0; }, var, min, max, true) 
-#define REGISTER_VAR_SIMPLE_NOSHOW(class, name, var, min, max)      _REGISTER_VAR(class, name, { var = arg0; }, var, min, max, false) 
-
-#define REGISTER_VAR3(class, name, setCode, toGet0, toGet1, toGet2, min, max) \
-    registerVar(this, name, \
-      [](void* obj, int* toSet, byte n) \
-      { \
-        if (n==3) \
-        { \
-          class* self = (class* )obj; \
-          int arg0 = toSet[0]; \
-          int arg1 = toSet[1]; \
-          int arg2 = toSet[2]; \
-          setCode; \
-        } \
-      }, \
-      [](void* obj, int* toGet) -> byte  \
-      { \
-        class* self = (class* )obj; \
-        toGet[0] = toGet0; \
-        toGet[1] = toGet1; \
-        toGet[2] = toGet2; \
-        return 3; \
-      }, \
-      min, max \
-    );
-
+        int arg0 = toSet[0]; \
+        int arg1 = toSet[1]; \
+        int arg2 = toSet[2]; \
+        setCode; \
+      } \
+    }); \
+    getVarFunc* getF = newGetVarFunc([this](int* toGet) -> byte \
+    { \
+      toGet[0] = toGet0; \
+      toGet[1] = toGet1; \
+      toGet[2] = toGet2; \
+      return 3; \
+    }); \
+    registerVar(name, setF, getF, min, max); \
+  }

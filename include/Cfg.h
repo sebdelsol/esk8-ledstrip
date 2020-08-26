@@ -71,39 +71,37 @@ public:
   void init()
   {
     #ifdef USE_BT
-      REGISTER_CMD(CFG,        "save",      { self->mAllObj.save(false); }                          ) // save not default
-      REGISTER_CMD(CFG,        "load",      { self->mAllObj.load(false); }                          ) // load not default
-      REGISTER_CMD(CFG,        "default",   { self->mAllObj.load(true); }                           ) // load default
-      REGISTER_CMD_NOSHOW(CFG, "getInits",  { self->mAllObj.sendInits(self->mBT); }                 ) // answer with all vars init (min, max, value)
-      REGISTER_CMD_NOSHOW(CFG, "getUpdate", { self->mAllObj.sendUpdate(self->mBT, self->mMotion); } ) // answer with all updates
+      REGISTER_CMD("save",              { mAllObj.save(false); }              ) // save not default
+      REGISTER_CMD("load",              { mAllObj.load(false); }              ) // load not default
+      REGISTER_CMD("default",           { mAllObj.load(true); }               ) // load default
+      REGISTER_CMD_NOSHOW("getInits",   { mAllObj.sendInits(mBT); }           ) // answer with all vars init (min, max, value)
+      REGISTER_CMD_NOSHOW("getUpdate",  { mAllObj.sendUpdate(mBT, mMotion); } ) // answer with all updates
     #endif
 
-    #define REGISTER_CFG(var, min, max) REGISTER_VAR_SIMPLE(CFG, #var, self->var, min, max)
+    REGISTER_VAR_SIMPLE_NAME(stripMid,   0, 1);
+    REGISTER_VAR_SIMPLE_NAME(stripRear,  0, 1);
+    REGISTER_VAR_SIMPLE_NAME(stripFront, 0, 1);
 
-    REGISTER_CFG(stripMid,   0, 1);
-    REGISTER_CFG(stripRear,  0, 1);
-    REGISTER_CFG(stripFront, 0, 1);
+    REGISTER_VAR_SIMPLE_NAME(probe,      0, 1);
+    REGISTER_VAR_SIMPLE_NAME(minProbe,   1, MaxProbe);
+    REGISTER_VAR_SIMPLE_NAME(bright,     1, 255);
 
-    REGISTER_CFG(probe,      0, 1);
-    REGISTER_CFG(minProbe,   1, MaxProbe);
-    REGISTER_CFG(bright,     1, 255);
+    REGISTER_VAR_SIMPLE_NAME(pacifica,   0, 255);
+    REGISTER_VAR_SIMPLE_NAME(fire,       0, 255);
 
-    REGISTER_CFG(pacifica,   0, 255);
-    REGISTER_CFG(fire,       0, 255);
+    REGISTER_VAR_SIMPLE_NAME(runSpeed,   0, 10);
+    REGISTER_VAR_SIMPLE_NAME(neutralWZ,  0, 32768);
+    REGISTER_VAR_SIMPLE_NAME(maxWZ,      0, 32768);
 
-    REGISTER_CFG(runSpeed,   0, 10);
-    REGISTER_CFG(neutralWZ,  0, 32768);
-    REGISTER_CFG(maxWZ,      0, 32768);
+    REGISTER_VAR_SIMPLE_NAME(divAcc,     1, 10);
+    REGISTER_VAR_SIMPLE_NAME(smoothAcc,  1, 32768);
+    REGISTER_VAR_SIMPLE_NAME(thresAcc,   0, 255);
 
-    REGISTER_CFG(divAcc,     1, 10);
-    REGISTER_CFG(smoothAcc,  1, 32768);
-    REGISTER_CFG(thresAcc,   0, 255);
+    REGISTER_VAR_SIMPLE_NAME(minEye,     1, (NBLEDS_TIPS>>1));
+    REGISTER_VAR_SIMPLE_NAME(maxEye,     1, (NBLEDS_TIPS>>1));
 
-    REGISTER_CFG(minEye,     1, (NBLEDS_TIPS>>1));
-    REGISTER_CFG(maxEye,     1, (NBLEDS_TIPS>>1));
-
-    REGISTER_CFG(minDim,     1, 10);
-    REGISTER_CFG(maxDim,     1, 10);
-    REGISTER_CFG(minTwkR,    0, 255);
+    REGISTER_VAR_SIMPLE_NAME(minDim,     1, 10);
+    REGISTER_VAR_SIMPLE_NAME(maxDim,     1, 10);
+    REGISTER_VAR_SIMPLE_NAME(minTwkR,    0, 255);
   };
 };
