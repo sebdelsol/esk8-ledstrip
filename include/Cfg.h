@@ -17,9 +17,8 @@
 #define   HUE_AQUA_BLUE 140
 
 // ----------------------------------------------------
-class CFG : public OBJVar
+struct CFG : public OBJVar
 {
-public:
   // update ?
   bool stripMid   = true;
   bool stripRear  = true;
