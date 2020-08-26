@@ -11,7 +11,7 @@ void FX::init(int nLeds)
   specialInit(nLeds);
 
   // better for startup, no blinking, strips is initialized before to 0 brightness
-  REGISTER_VAR("alpha", setAlpha(args[0]),  getAlpha(), 0, 255)
+  AddVarCode("alpha", setAlpha(args[0]),  getAlpha(), 0, 255)
   registerVars();
 }
 
@@ -54,8 +54,8 @@ FireFX::FireFX(const bool reverse, const byte speed, const int dimRatio) : mReve
 
 void FireFX::registerVars()
 {
-  REGISTER_VAR_SIMPLE("speed",  mSpeed,     1, 255)
-  REGISTER_VAR_SIMPLE("dim",    mDimRatio,  1, 10)
+  AddVarName("speed",  mSpeed,     1, 255)
+  AddVarName("dim",    mDimRatio,  1, 10)
 }
 
 void FireFX::specialInit(int nLeds)
@@ -107,9 +107,9 @@ PlasmaFX::PlasmaFX(const byte wavelenght, const byte period1, const byte period2
 
 void PlasmaFX::registerVars()
 {
-  REGISTER_VAR_SIMPLE("p1",    mP1, 1, 20)
-  REGISTER_VAR_SIMPLE("p2",    mP2, 1, 20)
-  REGISTER_VAR_SIMPLE("freq",  mK,  1, 20)
+  AddVarName("p1",    mP1, 1, 20)
+  AddVarName("p2",    mP2, 1, 20)
+  AddVarName("freq",  mK,  1, 20)
 }
 
 void PlasmaFX::update(ulong time, ulong dt)
@@ -140,9 +140,9 @@ CylonFX::CylonFX(const CRGB color, const int eyeSize, const int speed) : mEyeSiz
 
 void CylonFX::registerVars()
 {
-  REGISTER_VAR3("color",   mColor = CRGB(args[0], args[1], args[2]), mColor.r,   mColor.g,   mColor.b,  0, 255)
-  REGISTER_VAR ("eyeSize", setEyeSize(args[0] * (mNLEDS - 1) / 255), mEyeSize * 255 / (mNLEDS - 1),     1, 255)
-  REGISTER_VAR ("speed",   mSpeed = args[0] << 3,                    mSpeed>>3,                         0, 10)
+  AddVarCode3("color",   mColor = CRGB(args[0], args[1], args[2]), mColor.r,   mColor.g,   mColor.b,  0, 255)
+  AddVarCode ("eyeSize", setEyeSize(args[0] * (mNLEDS - 1) / 255), mEyeSize * 255 / (mNLEDS - 1),     1, 255)
+  AddVarCode ("speed",   mSpeed = args[0] << 3,                    mSpeed>>3,                         0, 10)
 }
 
 int CylonFX::getPos(ulong time) 
@@ -184,9 +184,9 @@ RunningFX::RunningFX(const CRGB color, const int speed, const int width) : mWidt
 
 void RunningFX::registerVars()
 {
-  REGISTER_VAR3      ("color", mColor = CRGB(args[0], args[1], args[2]), mColor.r, mColor.g, mColor.b, 0, 255)
-  REGISTER_VAR_SIMPLE("speed", mSpeed, -10, 10)
-  REGISTER_VAR_SIMPLE("width", mWidth, 1, 30)
+  AddVarCode3("color", mColor = CRGB(args[0], args[1], args[2]), mColor.r, mColor.g, mColor.b, 0, 255)
+  AddVarName ("speed", mSpeed, -10, 10)
+  AddVarName ("width", mWidth, 1, 30)
 }
 
 void RunningFX::update(ulong time, ulong dt)
@@ -219,8 +219,8 @@ void TwinkleFX::setHue(const byte hue)    {  mHSV = CHSV(hue, 0xff, 0xff);      
 
 void TwinkleFX::registerVars()
 {
-  REGISTER_VAR3      ("color", setHue(CRGB(args[0], args[1], args[2])), mColor.r, mColor.g, mColor.b, 0, 255)
-  REGISTER_VAR_SIMPLE("div",   mDiv, 1, 20)
+  AddVarCode3("color", setHue(CRGB(args[0], args[1], args[2])), mColor.r, mColor.g, mColor.b, 0, 255)
+  AddVarName ("div",   mDiv, 1, 20)
 }
 
 void TwinkleFX::update(ulong time, ulong dt)
@@ -247,7 +247,7 @@ PacificaFX::PacificaFX(const byte speed) : mSpeed(speed)
 
 void PacificaFX::registerVars()
 {
-  REGISTER_VAR_SIMPLE("speed", mSpeed, 1, 7)
+  AddVarName("speed", mSpeed, 1, 7)
 }
 
 void PacificaFX::update(ulong time, ulong dt)

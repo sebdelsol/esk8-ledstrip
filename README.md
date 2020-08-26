@@ -14,7 +14,7 @@
 <img src="https://media.giphy.com/media/TfFm0aNsc1LnWPsiab/giphy.gif" height="250" align="right">
 
 **Tweak in real time on Android**
-* use `REGISTER_VAR` & `REGISTER_CMD` macros to ***create new app's widgets***
+* use `AddVar` & `AddCmd` macros to ***create new app's widgets***
 * import [esk8.aia](https://github.com/sebdelsol/Esk8/blob/master/Esk8.aia) on [App Inventor](http://ai2.appinventor.mit.edu/)
 * pair your Android phone with the *Esk8* bluetooth device *within 30s after being switched on*
 <p>&nbsp;</p>  <p>&nbsp;</p>  <p>&nbsp;</p>

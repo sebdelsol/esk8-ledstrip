@@ -71,37 +71,37 @@ public:
   void init()
   {
   #ifdef USE_BT
-    REGISTER_CMD       ("save",      mAllObj.save(false)              ) // save not default
-    REGISTER_CMD       ("load",      mAllObj.load(false)              ) // load not default
-    REGISTER_CMD       ("default",   mAllObj.load(true)               ) // load default
-    REGISTER_CMD_NOSHOW("getInits",  mAllObj.sendInits(mBT)           ) // answer with all vars init (min, max, value)
-    REGISTER_CMD_NOSHOW("getUpdate", mAllObj.sendUpdate(mBT, mMotion) ) // answer with all updates
+    AddCmd   ("save",      mAllObj.save(false)              ) // save not default
+    AddCmd   ("load",      mAllObj.load(false)              ) // load not default
+    AddCmd   ("default",   mAllObj.load(true)               ) // load default
+    AddCmdHid("getInits",  mAllObj.sendInits(mBT)           ) // answer with all vars init (min, max, value)
+    AddCmdHid("getUpdate", mAllObj.sendUpdate(mBT, mMotion) ) // answer with all updates
   #endif
 
-    REGISTER_VAR_NAME(stripMid,   0, 1);
-    REGISTER_VAR_NAME(stripRear,  0, 1);
-    REGISTER_VAR_NAME(stripFront, 0, 1);
+    AddVar(stripMid,   0, 1);
+    AddVar(stripRear,  0, 1);
+    AddVar(stripFront, 0, 1);
 
-    REGISTER_VAR_NAME(probe,      0, 1);
-    REGISTER_VAR_NAME(minProbe,   1, MaxProbe);
-    REGISTER_VAR_NAME(bright,     1, 255);
+    AddVar(probe,      0, 1);
+    AddVar(minProbe,   1, MaxProbe);
+    AddVar(bright,     1, 255);
 
-    REGISTER_VAR_NAME(pacifica,   0, 255);
-    REGISTER_VAR_NAME(fire,       0, 255);
+    AddVar(pacifica,   0, 255);
+    AddVar(fire,       0, 255);
 
-    REGISTER_VAR_NAME(runSpeed,   0, 10);
-    REGISTER_VAR_NAME(neutralWZ,  0, 32768);
-    REGISTER_VAR_NAME(maxWZ,      0, 32768);
+    AddVar(runSpeed,   0, 10);
+    AddVar(neutralWZ,  0, 32768);
+    AddVar(maxWZ,      0, 32768);
 
-    REGISTER_VAR_NAME(divAcc,     1, 10);
-    REGISTER_VAR_NAME(smoothAcc,  1, 32768);
-    REGISTER_VAR_NAME(thresAcc,   0, 255);
+    AddVar(divAcc,     1, 10);
+    AddVar(smoothAcc,  1, 32768);
+    AddVar(thresAcc,   0, 255);
 
-    REGISTER_VAR_NAME(minEye,     1, (NBLEDS_TIPS>>1));
-    REGISTER_VAR_NAME(maxEye,     1, (NBLEDS_TIPS>>1));
+    AddVar(minEye,     1, (NBLEDS_TIPS>>1));
+    AddVar(maxEye,     1, (NBLEDS_TIPS>>1));
 
-    REGISTER_VAR_NAME(minDim,     1, 10);
-    REGISTER_VAR_NAME(maxDim,     1, 10);
-    REGISTER_VAR_NAME(minTwkR,    0, 255);
+    AddVar(minDim,     1, 10);
+    AddVar(maxDim,     1, 10);
+    AddVar(minTwkR,    0, 255);
   };
 };
