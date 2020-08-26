@@ -149,7 +149,7 @@ void loop()
     if(Cfg.probe)
     {
       int light = analogRead(LDR_PIN);
-      Cfg.bright = map(light, Cfg.minProbe, MaxProbe, 255, 0); // the darker the light, the brighter the leds
+      Cfg.bright = map(light, Cfg.minProbe, MAX_probe, 255, 0); // the darker the light, the brighter the leds
     }
     Cfg.fade = lerp16by16(Cfg.fade,  65535,  650);
     byte bright = (Cfg.bright * ((Cfg.fade >> 8) + 1)) >> 8; 

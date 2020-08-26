@@ -1,11 +1,11 @@
 #pragma once
 
 // -------------------- main cfg
-#define   SERIAL_BAUD   115200  // ms
-#define   LED_MAX_MA    800     // mA, please check Cfg.bright to avoid reaching this value
+#define   SERIAL_BAUD   115200  // Hz
+#define   LED_MAX_MA    800     // mA, lower Cfg.bright to avoid reaching this value
 
-#define   LED_TICK      10      // ms, it's used too  for mpu6050 which is refreshed every 10ms
-#define   BT_TICK       30      // ms, bluetooth updates
+#define   LED_TICK      10      // ms, leds update
+#define   BT_TICK       30      // ms, bluetooth update
 
 #define   NBLEDS_MIDDLE 72
 #define   NBLEDS_TIPS   36
@@ -16,6 +16,11 @@
 #define   LUSH_LAVA     CRGB(0xFF4500)
 #define   HUE_AQUA_BLUE 140
 
+// --------------------- maxs
+#define   MAX_uint8     255
+#define   MAX_probe     4095
+#define   MAX_int16     32767
+
 // --------------------- saved cfg
 struct CFG : public OBJVar
 {
@@ -25,10 +30,9 @@ struct CFG : public OBJVar
   bool stripFront = true;
 
   // brightness ?
-  byte bright     = 255;  // half brightness is enough to avoid reaching LED_MAX_MA
+  byte bright     = 255;  // half brightness is enough tho to avoid reaching LED_MAX_MA
   int fade        = 0;    // for the fade in
   
-  #define MaxProbe  4095
   int  minProbe   = 400;
   bool probe      = false;
 
@@ -44,20 +48,21 @@ struct CFG : public OBJVar
   byte divAcc     = 2;
   int  smoothAcc  = 1600;
   byte thresAcc   = 30;
-  
+
+  // for acc lerping
+  int FWD         = 0;
+  int RWD         = 0;
+
+  // front & rear Cylons
   byte minEye     = 5;
   byte maxEye     = 10;
 
-  // Fire
+  // rear Fire
   int  minDim     = 4;
   int  maxDim     = 10;
 
-  //twinkleR
+  // rear twinkle
   int minTwkR     = 54;
-
-  // for lerp
-  int FWD = 0;
-  int RWD = 0;
 
   #ifdef USE_BT
         AllObjBT& allObj; BlueTooth& bt; MOTION& motion;
@@ -79,25 +84,25 @@ struct CFG : public OBJVar
     AddBool(stripFront);
 
     AddBool(probe);
-    AddVar (minProbe,   1, MaxProbe);
-    AddVar (bright,     1, 255);
+    AddVar (minProbe,   1, MAX_probe);
+    AddVar (bright,     1, MAX_uint8);
 
-    AddVar (pacifica,   0, 255);
-    AddVar (fire,       0, 255);
+    AddVar (pacifica,   0, MAX_uint8);
+    AddVar (fire,       0, MAX_uint8);
 
     AddVar (runSpeed,   0, 10);
-    AddVar (neutralWZ,  0, 32768);
-    AddVar (maxWZ,      0, 32768);
+    AddVar (neutralWZ,  0, MAX_int16);
+    AddVar (maxWZ,      0, MAX_int16);
 
     AddVar (divAcc,     1, 10);
-    AddVar (smoothAcc,  1, 32768);
-    AddVar (thresAcc,   0, 255);
+    AddVar (smoothAcc,  1, MAX_int16);
+    AddVar (thresAcc,   0, MAX_uint8);
 
     AddVar (minEye,     1, (NBLEDS_TIPS>>1));
     AddVar (maxEye,     1, (NBLEDS_TIPS>>1));
 
     AddVar (minDim,     1, 10);
     AddVar (maxDim,     1, 10);
-    AddVar (minTwkR,    0, 255);
+    AddVar (minTwkR,    0, MAX_uint8);
   };
 };
