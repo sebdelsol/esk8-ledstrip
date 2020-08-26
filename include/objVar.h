@@ -4,7 +4,6 @@
 #define MAX_VAR 25
 #define MAX_ARGS 3
 
-
 //--------------------------------- 
 // virtual functors class to hide lambda capture
 template <class Ret, class...Args>
