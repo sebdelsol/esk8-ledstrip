@@ -70,15 +70,15 @@ public:
 };
 
 //---------------------------------
-#define _Store0(args, dummy)         	
-#define _Store1(args, arg0)             args[0] = arg0;
-#define _Store3(args, arg0, arg1, arg2) args[0] = arg0; args[1] = arg1; args[2] = arg2;
+#define _Stor0(args, _)         	
+#define _Stor1(args, _0)         args[0] = _0;
+#define _Stor3(args, _0, _1, _2) args[0] = _0; args[1] = _1; args[2] = _2;
 
-#define _AddVar(N, name, min, max, show, set, ...)                                                   \
-{                                                                                                    \
-  SetFunc* setF = newSetFunc([this](int* args, byte n) { if (n==N) { set; }                      }); \
-  GetFunc* getF = newGetFunc([this](int* args) -> byte { _Store##N(args, __VA_ARGS__); return N; }); \
-  registerVar(name, setF, getF, min, max, show);                                                     \
+#define _AddVar(N, name, min, max, show, set, ...)                                                  \
+{                                                                                                   \
+  SetFunc* setF = newSetFunc([this](int* args, byte n) { if (n==N) { set; }                     }); \
+  GetFunc* getF = newGetFunc([this](int* args) -> byte { _Stor##N(args, __VA_ARGS__); return N; }); \
+  registerVar(name, setF, getF, min, max, show);                                                    \
 }
 
 #define AddCmd(name, cmd)                                  _AddVar(0, name, 0,   0,   true,  cmd)
