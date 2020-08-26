@@ -4,7 +4,8 @@
 #define MAX_VAR 25
 #define MAX_ARGS 3
 
-//---------------------------------
+//--------------------------------- 
+//setVarFunc functors class to hide lambda capture
 class setVarFunc
 {
 public:
@@ -23,7 +24,8 @@ public:
 template <class Func>
 setVarFuncF<Func>* newSetVarFunc(Func func) { return new setVarFuncF<Func>(func); }
 
-//--------------
+//-------------- 
+// getVarFunc functors class to hide lambda capture
 class getVarFunc
 {
 public:
