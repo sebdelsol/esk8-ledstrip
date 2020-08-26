@@ -62,7 +62,7 @@ void MOTION::init()
     AddCmd("calibrate",  calibrate() ) 
   #endif
 
-  AddVarName   ("auto",      mAutoCalibrate, 0, 1);
+  AddVarName("auto",      mAutoCalibrate, 0, 1);
 }
 
 //--------------------------------------
