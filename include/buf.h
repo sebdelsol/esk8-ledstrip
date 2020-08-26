@@ -11,10 +11,10 @@ class BUF
   const char* mDelim = BUFF_DELIM; // strtok_r needs a /0 terminated string
   
 public:
-  char* getBuf() { return mBuf; };
-  int   getLen() { return BUFF_SIZE; };
-  const char* first() { return strtok_r(mBuf, mDelim, &mLast); };
-  const char* next()  { return strtok_r(nullptr, mDelim, &mLast); };
+  char*       getBuf() { return mBuf; };
+  int         getLen() { return BUFF_SIZE; };
+  const char* first()  { return strtok_r(mBuf, mDelim, &mLast); };
+  const char* next()   { return strtok_r(nullptr, mDelim, &mLast); };
 
   void clear()
   {
@@ -30,5 +30,4 @@ public:
       mBuf[mBufPos] = '\0'; // Null terminate
     }
   };
-  
 };
