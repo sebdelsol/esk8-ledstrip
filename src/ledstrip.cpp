@@ -38,7 +38,7 @@ AllLedStrips::AllLedStrips(const int maxmA, Stream& serial) : mSerial(serial)
 void AllLedStrips::init() 
 {
   #ifdef FASTLED_SHOW_CORE
-    xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", 2048, NULL, FASTLED_TASK_PRIO, &FastLEDshowTaskHandle, FASTLED_SHOW_CORE);  
+    xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", 2048, nullptr, FASTLED_TASK_PRIO, &FastLEDshowTaskHandle, FASTLED_SHOW_CORE);  
     mSerial << "Fastled runs on Core " << FASTLED_SHOW_CORE << " with Prio " << FASTLED_TASK_PRIO << endl;
   #endif
 }
