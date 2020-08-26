@@ -74,7 +74,7 @@ public:
 #define _Store1(args, arg0)             args[0] = arg0;
 #define _Store3(args, arg0, arg1, arg2) args[0] = arg0; args[1] = arg1; args[2] = arg2;
 
-#define _AddVar(nArg, name, min, max, show, setCode, ...)                                            \
+#define _AddVar(nArg, name, min, max, show, setCode, ...)                                                  \
 {                                                                                                          \
   SetFunc* setF = newSetFunc([this](int* args, byte n) { if (n==nArg) { setCode; } });                     \
   GetFunc* getF = newGetFunc([this](int* args) -> byte { _Store##nArg(args, __VA_ARGS__); return nArg; }); \
