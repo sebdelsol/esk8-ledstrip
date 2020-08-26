@@ -11,23 +11,23 @@ struct _Functor { virtual Ret operator()(Args... args) = 0; };
 
 // actual implementation 
 template <class Func, class Ret, class...Args>
-class _FunctorImplement : public _Functor<Ret, Args...>
+class _FunctorImpl : public _Functor<Ret, Args...>
 {
   Func func;
 public:
-  _FunctorImplement(Func func) : func(func) {};
+  _FunctorImpl(Func func) : func(func) {};
   inline Ret operator()(Args... args) { return func(args...); };
 };
 
 // define newSetFunc & SetFunc of type : void SetFunc(int*, byte)
 typedef _Functor<void, int*, byte> SetFunc; 
-template <class Func> using SetFuncImplement = _FunctorImplement<Func, void, int*, byte>;  
-template <class Func> inline SetFuncImplement<Func>* newSetFunc(Func func) { return new SetFuncImplement<Func>(func); }
+template <class Func> using SetFuncImpl = _FunctorImpl<Func, void, int*, byte>;  
+template <class Func> inline SetFuncImpl<Func>* newSetFunc(Func func) { return new SetFuncImpl<Func>(func); }
 
 // define newGetFunc & GetFunc of type : byte GetFunc(int*)
 typedef _Functor<byte, int*> GetFunc; 
-template <class Func> using GetFuncImplement = _FunctorImplement<Func, byte, int*>; 
-template <class Func> inline GetFuncImplement<Func>* newGetFunc(Func func) { return new GetFuncImplement<Func>(func); }
+template <class Func> using GetFuncImpl = _FunctorImpl<Func, byte, int*>; 
+template <class Func> inline GetFuncImpl<Func>* newGetFunc(Func func) { return new GetFuncImpl<Func>(func); }
 
 //---------------------------------
 struct MyVar 
