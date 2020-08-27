@@ -35,11 +35,11 @@
 # Debug
 * check [myWifi.h](https://github.com/sebdelsol/esk8-ledstrip/blob/fed4b2dac2e1fe955d3d43a7b7f73ea413290fed/include/myWifi.h#L11) how to create `Wificonfig.h` 
 
-**Update OTA**
+**OTA**
 * uncomment `#define USE_OTA` in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) 
 * uncomment`upload_protocol` & `upload_port` in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini)
 
-**Get Telnet logs**
+**Telnet logs**
 * uncomment `#define USE_TELNET` in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) 
 * launch a `telnet` session & `open esk8.local`
 
