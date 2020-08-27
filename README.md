@@ -21,7 +21,7 @@
 * use `AddVar` & `AddCmd` macros to ***create new app's widgets***, check [objVar.h](https://github.com/sebdelsol/esk8-ledstrip/blob/e3f43bdf868395875970e63024d04a82ad06267d/include/objVar.h#L83-93) for all macros
 * import [esk8.aia](https://github.com/sebdelsol/Esk8/blob/master/Esk8.aia) on [App Inventor](http://ai2.appinventor.mit.edu/)
 * pair your Android phone with the *Esk8* bluetooth device *within 30s after being switched on*
-<p>&nbsp;</p>  <p>&nbsp;</p>  <p>&nbsp;</p>
+<p>&nbsp;</p>  <p>&nbsp;</p>  
 
 # Iterate
 <img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="215" align="right">
@@ -30,7 +30,7 @@
 * uncomment `#define DEBUG_LED_TOWIFI` in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) 
 * launch [debugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py) - dependencies : [PyGame](https://www.pygame.org) & [SimpleWebsocketServer](https://pypi.org/project/simple-websocket-server) 
 
-<p>&nbsp;</p>  <p>&nbsp;</p> <p>&nbsp;</p>
+<p>&nbsp;</p>  <p>&nbsp;</p> 
 
 # Debug
 **Define your wifi Config**
