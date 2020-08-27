@@ -34,8 +34,7 @@
 
 # Debug
 **Create a wifiConfig**
-* create `Wificonfig.h` in [include](https://github.com/sebdelsol/Esk8/blob/master/include/) dir
-* check [myWifi.h](https://github.com/sebdelsol/esk8-ledstrip/blob/fed4b2dac2e1fe955d3d43a7b7f73ea413290fed/include/myWifi.h#L11) how to define it
+* create `Wificonfig.h` in [include](https://github.com/sebdelsol/Esk8/blob/master/include/) dir & check [myWifi.h](https://github.com/sebdelsol/esk8-ledstrip/blob/fed4b2dac2e1fe955d3d43a7b7f73ea413290fed/include/myWifi.h#L11) how to define it
 
 **Update OTA**
 * uncomment `#define USE_OTA` in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)
