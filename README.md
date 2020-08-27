@@ -34,11 +34,11 @@
 
 # Debug
 **Create wifiConfig**
-* create `Wificonfig.h` in [include](https://github.com/sebdelsol/Esk8/blob/master/include/) dir & check [myWifi.h](https://github.com/sebdelsol/esk8-ledstrip/blob/fed4b2dac2e1fe955d3d43a7b7f73ea413290fed/include/myWifi.h#L11) how to define it
+* create `Wificonfig.h` in [include](https://github.com/sebdelsol/Esk8/blob/master/include/) dir & check [myWifi.h](https://github.com/sebdelsol/esk8-ledstrip/blob/fed4b2dac2e1fe955d3d43a7b7f73ea413290fed/include/myWifi.h#L11)
 
 **Update OTA**
 * uncomment `#define USE_OTA` in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)
-* uncomment `upload_protocol` & `upload_port` lines in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini)
+* uncomment `upload_protocol` & `upload_port` in [platformio.ini](https://github.com/sebdelsol/Esk8/blob/master/platformio.ini)
 
 **Get Telnet logs**
 * uncomment `#define USE_TELNET` in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)
