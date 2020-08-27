@@ -27,7 +27,7 @@
 <img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="215" align="right">
 
 **Check Ledstrips on PC**
-* uncomment `#define DEBUG_LED_TOWIFI` in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp) 
+* uncomment `#define DEBUG_LED_TOWIFI` in [main.cpp](https://github.com/sebdelsol/esk8-ledstrip/blob/82ecda3be91b94f26fb60965aa64fff2283162f5/src/main.cpp#L6) 
 * launch [debugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py) w/ dependencies : [PyGame](https://www.pygame.org) & [SimpleWebsocketServer](https://pypi.org/project/simple-websocket-server) 
 
 <p>&nbsp;</p>  <p>&nbsp;</p> 
