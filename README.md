@@ -40,9 +40,6 @@
 * uncomment `#define USE_TELNET` in [main.cpp](https://github.com/sebdelsol/Esk8/blob/master/src/main.cpp)
 * launch a `telnet` session & `open esk8.local`
 
-# Repear
-* in `I2Cdev.h` add `#define BUFFER_LENGTH 128` to compile I2CDevLib on an esp32
-
 # Shop
 *Components* | *20€* | *Shop*
 :---| ---: | :---:
@@ -52,3 +49,6 @@
 <sub> InvenSense **[MPU-6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/)** </sub>| <sub>1€</sub> | [ⓘ](https://www.aliexpress.com/wholesale?catId=0&SearchText=mpu-6050)
 <sub>1.5m IP65 **[WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)** w/144 leds/m </sub>| <sub>12€</sub> | [ⓘ](https://www.aliexpress.com/wholesale?catId=0&SearchText=ws2812b+ip67)
 <sub>3x 470Ω R, 1000μF C, 10kΩ R, LDR, 220Ω R, blue LED, 12x12 switch</sub>| <sub>50c</sub> | .
+
+# Repear
+* in `I2Cdev.h` add `#define BUFFER_LENGTH 128` to compile I2CDevLib on an esp32
