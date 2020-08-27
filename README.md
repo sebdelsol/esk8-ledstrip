@@ -6,6 +6,8 @@
 
 # Build
 [<img src="https://i.imgur.com/fsrZ5Zs.jpg" height="185" align="right">](https://easyeda.com/seb.morin/esk8)[<img src="https://i.imgur.com/bn5Pk2N.jpg" height="185" align="right">](https://easyeda.com/seb.morin/esk8)[<img src="https://image.easyeda.com/histories/aaf838e4a54c468f9502dc529522ac38.png" height="185" align="right">](https://easyeda.com/seb.morin/esk8)
+**Check the [PCB & schematic](https://easyeda.com/seb.morin/esk8)**
+<p>&nbsp;</p> <p>&nbsp;</p> <p>&nbsp;</p> <p>&nbsp;</p>
 
 # Shop
 *Components* | *20€* | *Shop*
@@ -16,9 +18,6 @@
 <sub> InvenSense **[MPU-6050](https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/)** </sub>| <sub>1€</sub> | [ⓘ](https://www.aliexpress.com/wholesale?catId=0&SearchText=mpu-6050)
 <sub>1.5m IP65 **[WS2812B](https://cdn-shop.adafruit.com/datasheets/WS2812B.pdf)** w/144 leds/m </sub>| <sub>12€</sub> | [ⓘ](https://www.aliexpress.com/wholesale?catId=0&SearchText=ws2812b+ip67)
 <sub>3x 470Ω R, 1000μF C, 10kΩ R, LDR, 220Ω R, blue LED, 12x12 switch</sub>| <sub>50c</sub> | .
-
-**Check the [PCB & schematic](https://easyeda.com/seb.morin/esk8)**
-<p>&nbsp;</p> <p>&nbsp;</p> <p>&nbsp;</p> <p>&nbsp;</p>
 
 # Customize
 <img src="https://media.giphy.com/media/TfFm0aNsc1LnWPsiab/giphy.gif" height="250" align="right">
