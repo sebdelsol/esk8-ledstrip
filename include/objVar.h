@@ -5,29 +5,29 @@
 #define MAX_ARGS 3
 
 //--------------------------------- 
-// virtual functors class to hide lambda capture
+// abstract functor class to hide a lambda capture
 template <class Ret, class...Args>
-struct _Functor { virtual Ret operator()(Args... args) = 0; };
-
-// actual implementation 
-template <class Func, class Ret, class...Args>
-class _FunctorImpl : public _Functor<Ret, Args...>
-{
-  Func func;
-public:
-  _FunctorImpl(Func func) : func(func) {};
-  inline Ret operator()(Args... args) { return func(args...); };
+struct Fctor
+{ 
+  virtual Ret operator()(Args... args) = 0; 
 };
 
-// define newSetFunc & SetFunc of type : void SetFunc(int*, byte)
-typedef _Functor<void, int*, byte> SetFunc; 
-template <class Func> using SetFuncImpl = _FunctorImpl<Func, void, int*, byte>;  
-template <class Func> inline SetFuncImpl<Func>* newSetFunc(Func func) { return new SetFuncImpl<Func>(func); }
+// actual functor class implementation 
+template <class F, class Ret, class...Args>
+struct FctorI : Fctor<Ret, Args...>
+{
+  F f;
+  FctorI(F f) : f(f) {};
+  inline Ret operator()(Args... args) { return f(args...); };
+};
 
-// define newGetFunc & GetFunc of type : byte GetFunc(int*)
-typedef _Functor<byte, int*> GetFunc; 
-template <class Func> using GetFuncImpl = _FunctorImpl<Func, byte, int*>; 
-template <class Func> inline GetFuncImpl<Func>* newGetFunc(Func func) { return new GetFuncImpl<Func>(func); }
+#define NewFunctor(ftr, ...)                                                     /* __VA_ARGS__ gives Ret & Args...      */ \
+typedef Fctor<__VA_ARGS__> ftr;                                                  /* ftr     is a Fctor<Ret, Args...>     */ \                      
+template <class F>   using ftr##I = FctorI<F, __VA_ARGS__>;                      /* ftrI<F> is a FctorI<F, Ret, Args...> */ \
+template <class F>  inline ftr##I<F>* new##ftr(F f) { return new ftr##I<F>(f); } // newftr<F>(f) returns a ftrI<F>* that stores Ret f(Args...){} 
+
+NewFunctor(SetFunc, void, int*, byte)  // newSetFunc(f) returns a SetFunc* that stores void f(int*, byte){}
+NewFunctor(GetFunc, byte, int*)        // newGetFunc(f) returns a GetFunc* that stores byte f(int*){} 
 
 //---------------------------------
 struct MyVar 
@@ -69,15 +69,15 @@ public:
 };
 
 //---------------------------------
-#define _Stor0(args, _dummy)         	
-#define _Stor1(args, _0)         args[0] = _0;
-#define _Stor3(args, _0, _1, _2) args[0] = _0; args[1] = _1; args[2] = _2;
+#define _Stor0(args)         	                                             return 0 
+#define _Stor1(args, _0)         args[0] = _0;                             return 1
+#define _Stor3(args, _0, _1, _2) args[0] = _0; args[1] = _1; args[2] = _2; return 3
 
-#define _AddVar(N, name, min, max, show, set, ...)                                                  \
-{                                                                                                   \
-  SetFunc* setF = newSetFunc([this](int* args, byte n) { if (n==N) { set; }                     }); \
-  GetFunc* getF = newGetFunc([this](int* args) -> byte { _Stor##N(args, __VA_ARGS__); return N; }); \
-  registerVar(name, setF, getF, min, max, show);                                                    \
+#define _AddVar(N, name, min, max, show, set, ...) /* ... gives optional get expressions */ \
+{                                                                                           \
+  SetFunc* setF = newSetFunc([this](int* args, byte n) { if (n==N) { set; }             }); \
+  GetFunc* getF = newGetFunc([this](int* args) -> byte { _Stor##N(args, ##__VA_ARGS__); }); \
+  registerVar(name, setF, getF, min, max, show);                                            \
 }
 
 #define AddCmd(name, cmd)                                  _AddVar(0, name, 0,   0,   true,  cmd)
