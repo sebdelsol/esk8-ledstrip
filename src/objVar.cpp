@@ -7,12 +7,11 @@ bool OBJVar::registerVar(const char* name, SetFunc* set, GetFunc* get, int min, 
   if (ok)
   {
     // check the name already exists
-    for (byte i = 0; i < mNVAR; i++) //look for the cmd
-      if (strcmp(name, mVar[i]->name)==0)
-      {
-        Serial << ">> ERROR !! name already exists: " << name << endl; 
-        return false;
-      }
+    if (getVarFromName(name))
+    {
+      Serial << ">> ERROR !! name already exists: " << name << endl; 
+      return false;
+    }
 
     MyVar* var = (MyVar* )malloc(sizeof(MyVar));
     assert (var!=nullptr);
@@ -38,7 +37,7 @@ bool OBJVar::registerVar(const char* name, SetFunc* set, GetFunc* get, int min, 
 // ----------------------------------------------------
 MyVar* OBJVar::getVarFromName(const char* name)
 {
-  for (byte i = 0; i < mNVAR; i++) //look for the cmd
+  for (byte i = 0; i < mNVAR; i++) 
     if (strcmp(name, mVar[i]->name)==0)
       return mVar[i];
 

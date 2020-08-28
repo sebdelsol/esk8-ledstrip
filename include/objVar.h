@@ -48,7 +48,7 @@ class OBJVar
   byte mNVAR = 0;
 
 public:  
-  bool registerVar(const char* name, SetFunc* set, GetFunc* get, int min = 0, int max = 0, bool show = true);
+  bool   registerVar(const char* name, SetFunc* set, GetFunc* get, int min = 0, int max = 0, bool show = true);
   MyVar* getVarFromName(const char* name);
   MyVar* getVar(byte i) { return mVar[i]; };
 
@@ -59,25 +59,26 @@ public:
   byte getID(MyVar* var) { return var->ID; };
   void setID(MyVar* var, byte id) const { var->ID = id; };
 
-  byte getNbVar() { return mNVAR;};
+  byte  getNbVar() { return mNVAR;};
   char* getVarName(byte i) { return mVar[i]->name; };
 
   // ------ ObjTestVarFunc 
   typedef bool (OBJVar::*ObjTestVarFunc)(byte i);
+  
   bool isVarShown(byte i) { return mVar[i]->show; };
   bool hasVarChanged(byte i);
 };
 
 //---------------------------------
-#define _Stor0(args)         	                                             return 0 
-#define _Stor1(args, _0)         args[0] = _0;                             return 1
-#define _Stor3(args, _0, _1, _2) args[0] = _0; args[1] = _1; args[2] = _2; return 3
+#define _Stor0(args)                                                        return 0 
+#define _Stor1(args, _0)         args[0] = _0;                              return 1
+#define _Stor3(args, _0, _1, _2) args[0] = _0; args[1] = _1; args[2] = _2;  return 3
 
-#define _AddVar(N, name, min, max, show, set, ...) /* ... gives optional get expressions */ \
-{                                                                                           \
-  SetFunc* setF = newSetFunc([this](int* args, byte n) { if (n==N) { set; }             }); \
-  GetFunc* getF = newGetFunc([this](int* args) -> byte { _Stor##N(args, ##__VA_ARGS__); }); \
-  registerVar(name, setF, getF, min, max, show);                                            \
+#define _AddVar(N, name, min, max, show, set, ...) /* __VA_ARGS__ gives optional get expressions */ \
+{                                                                                                   \
+  SetFunc* setF = newSetFunc([this](int* args, byte n) { if (n==N) { set; }             });         \
+  GetFunc* getF = newGetFunc([this](int* args) -> byte { _Stor##N(args, ##__VA_ARGS__); });         \
+  registerVar(name, setF, getF, min, max, show);                                                    \
 }
 
 #define AddCmd(name, cmd)                                  _AddVar(0, name, 0,   0,   true,  cmd)
