@@ -12,25 +12,26 @@
 inline Print& JoinbySpace(Print& stream) {}
 
 template<class Last> 
-  inline Print& JoinbySpace(Print& stream, Last last) { return stream << last; }
+inline Print& JoinbySpace(Print& stream, Last last) { return stream << last; }
 
 template<class First, class... Args> 
-  inline Print& JoinbySpace(Print& stream, First first, Args... args) 
-  { 
-    stream << first << " ";
-    return JoinbySpace(stream, args...); 
-  }
+inline Print& JoinbySpace(Print& stream, First first, Args... args) 
+{ 
+  stream << first << " ";
+  return JoinbySpace(stream, args...); 
+}
 
 // -----------------------------------------------------
 // create the _methods(...) that calls _method(arg) for each arg
 
 #define _forEach(_method) _method##s
 
-#define ForEachMethod(_method)                                  \
-  inline void _forEach(_method)() {};                           \
-  template<class First, class... Args>                          \
-    inline void _forEach(_method)(First& first, Args&... args)  \
-    {                                                           \
-      _method(first);                                           \
-      _forEach(_method)(args...);                               \
-    };
+#define ForEachMethod(_method)                              \
+inline void _forEach(_method)() {};                         \
+                                                            \
+template<class First, class... Args>                        \
+inline void _forEach(_method)(First& first, Args&... args)  \
+{                                                           \
+  _method(first);                                           \
+  _forEach(_method)(args...);                               \
+};
