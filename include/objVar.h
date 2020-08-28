@@ -21,10 +21,10 @@ struct FctorI : Fctor<Ret, Args...>
   inline Ret operator()(Args... args) { return f(args...); };
 };
 
-#define NewFunctor(ftr, ...)                                                     /* __VA_ARGS__ gives Ret & Args...                                       */ \
-typedef Fctor<__VA_ARGS__> ftr;                                                  /* ftr     is a Fctor<Ret, Args...>                                      */ \                      
-template <class F>   using ftr##I = FctorI<F, __VA_ARGS__>;                      /* ftrI<F> is a FctorI<F, Ret, Args...> implementing Fctor<Ret, Args...> */ \
-template <class F>  inline ftr##I<F>* new##ftr(F f) { return new ftr##I<F>(f); } // newftr<F>(f) returns a ftrI<F>* that stores Ret f(Args...){} 
+#define NewFunctor(ftr, ...)                                                    /* __VA_ARGS__ gives Ret & Args...                                       */ \
+typedef Fctor<__VA_ARGS__> ftr;                                                 /* ftr     is a Fctor<Ret, Args...>                                      */ \                      
+template <class F>  using ftr##I = FctorI<F, __VA_ARGS__>;                      /* ftrI<F> is a FctorI<F, Ret, Args...> implementing Fctor<Ret, Args...> */ \
+template <class F> inline ftr##I<F>* new##ftr(F f) { return new ftr##I<F>(f); } // newftr<F>(f) returns a ftrI<F>* that stores Ret f(Args...){} 
 
 NewFunctor(SetFunc, void, int*, byte)  // newSetFunc(f) returns a SetFunc* that stores void f(int*, byte){}
 NewFunctor(GetFunc, byte, int*)        // newGetFunc(f) returns a GetFunc* that stores byte f(int*){} 
