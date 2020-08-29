@@ -9,7 +9,7 @@
 
 //-------------------------------
 // #define DBG_CMD      // to see what's happening with send & received cmd
-#define ALLOBJ_MAXOBJ    20
+#define ALLOBJ_MAXOBJ     20
 
 #define ALLOBJ_RESERVED   '!'
 #define ALLOBJ_1ST_ID      (ALLOBJ_RESERVED + 1)
@@ -47,6 +47,8 @@ class AllObj
   byte mNOBJ = 0;
   byte mID = 0;
 
+  HashName<ALLOBJ_MAXOBJ, OBJVar> mHash;
+
   Stream& mDbgSerial;
   BUF mTmpBuf;
   
@@ -58,8 +60,8 @@ class AllObj
     void dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args);
   #endif
 
-  bool isNumber(const char* txt);
-  OBJVar* getObjFromName(const char* name); 
+  bool    isNumber(const char* txt);
+  OBJVar* getObjFromName(const char* name) { return mHash.get(name); };
 
   void handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change);
   void handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact);

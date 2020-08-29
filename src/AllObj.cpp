@@ -10,22 +10,13 @@ void AllObj::init()
 }
 
 //--------------------------------------
-OBJVar* AllObj::getObjFromName(const char* name)
-{
-  for (byte i = 0; i < mNOBJ; i++) //look for the obj
-    if (strcmp(name, mOBJ[i].name)==0)
-      return mOBJ[i].obj;
-  
-  return nullptr;
-}
-
-//----------------
 bool AllObj::addObj(OBJVar& obj, const char* name)
 {
   bool ok = mNOBJ < ALLOBJ_MAXOBJ;
   if (ok)
   {
-    mOBJ[mNOBJ].obj = (OBJVar* )&obj;
+    mOBJ[mNOBJ].obj = &obj;
+    mHash.add(name, &obj);
     
     char* str = (char* )malloc(strlen(name) + 1);
     assert (str!=nullptr);

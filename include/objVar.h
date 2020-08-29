@@ -1,6 +1,8 @@
 #pragma once
 #include <Streaming.h>
 
+#include <HashName.h>
+
 #define MAX_VAR  25
 #define MAX_ARGS 3
 
@@ -47,10 +49,15 @@ class OBJVar
   MyVar* mVar[MAX_VAR];
   byte   mNVAR = 0;
 
+  HashName<MAX_VAR, MyVar> mHash;
+
 public:  
   bool   registerVar(const char* name, SetFunc* set, GetFunc* get, int min = 0, int max = 0, bool show = true);
-  MyVar* getVarFromName(const char* name);
-  MyVar* getVar(byte i) { return mVar[i]; };
+  byte   getNbVar()                       { return mNVAR;};
+  char*  getVarName(byte i)               { return mVar[i]->name; };
+  MyVar* getVar(byte i)                   { return mVar[i]; };
+  MyVar* getVarFromName(const char* name) { return mHash.get(name); };
+
 
   void set(MyVar* var, int* toSet, byte n, bool change = false);
   byte get(MyVar* var, int* toGet);
@@ -58,9 +65,6 @@ public:
 
   byte getID(MyVar* var) { return var->ID; };
   void setID(MyVar* var, byte id) const { var->ID = id; };
-
-  byte  getNbVar() { return mNVAR;};
-  char* getVarName(byte i) { return mVar[i]->name; };
 
   // ------ ObjTestVarFunc 
   using ObjTestVarFunc = bool (OBJVar::*)(byte i);

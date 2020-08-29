@@ -15,12 +15,13 @@ bool OBJVar::registerVar(const char* name, SetFunc* set, GetFunc* get, int min, 
 
     MyVar* var = (MyVar* )malloc(sizeof(MyVar));
     assert (var!=nullptr);
+
+    mHash.add(name, var);
     mVar[mNVAR++] = var;
 
-    char* str = (char* )malloc(strlen(name) + 1);
-    assert (str!=nullptr);
-    strcpy(str, name);
-    var->name = str;
+    var->name = (char* )malloc(strlen(name) + 1);
+    assert (var->name!=nullptr);
+    strcpy(var->name, name);
 
     var->set =  set;
     var->get =  get;
@@ -35,15 +36,6 @@ bool OBJVar::registerVar(const char* name, SetFunc* set, GetFunc* get, int min, 
 }
 
 // ----------------------------------------------------
-MyVar* OBJVar::getVarFromName(const char* name)
-{
-  for (byte i = 0; i < mNVAR; i++) 
-    if (strcmp(name, mVar[i]->name)==0)
-      return mVar[i];
-
-  return nullptr;
-}
-
 void OBJVar::getMinMax(MyVar* var, int* min, int* max)
 {
   *min = var->min;
