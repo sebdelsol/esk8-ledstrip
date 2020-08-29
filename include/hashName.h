@@ -25,6 +25,7 @@ public:
   
   void add(const char *key, Class* value)
   {
+    assert (key!=nullptr);
     uint8_t col = 0;
     uint8_t i = _hash(key);
     while(_values[i] != nullptr)
@@ -43,6 +44,7 @@ public:
 
   Class* get(const char *key)
   {
+    assert (key!=nullptr);
     uint8_t col = 0;
     uint8_t i = _hash(key);
     while(_values[i] != nullptr && strcmp(key, _keys[i]) != 0 ) 
