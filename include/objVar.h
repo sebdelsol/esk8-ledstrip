@@ -1,7 +1,7 @@
 #pragma once
 #include <Streaming.h>
 
-#define MAX_VAR 25
+#define MAX_VAR  25
 #define MAX_ARGS 3
 
 //--------------------------------- 
@@ -30,7 +30,7 @@ NewFunctor(SetFunc, void, int*, byte)  // newSetFunc(f) returns a SetFunc* that 
 NewFunctor(GetFunc, byte, int*)        // newGetFunc(f) returns a GetFunc* that stores byte f(int*){} 
 
 //---------------------------------
-struct MyVar 
+typedef struct  
 {
   SetFunc*  set;
   GetFunc*  get;
@@ -39,13 +39,13 @@ struct MyVar
   bool      show;
   byte      ID;
   int       last[MAX_ARGS];
-};
+} MyVar;
 
 //---------------------------------
 class OBJVar
 {
   MyVar* mVar[MAX_VAR];
-  byte mNVAR = 0;
+  byte   mNVAR = 0;
 
 public:  
   bool   registerVar(const char* name, SetFunc* set, GetFunc* get, int min = 0, int max = 0, bool show = true);
