@@ -18,7 +18,7 @@ class HashName
     return h % getN(N);
   };
 
-  inline uint8_t _getNext(uint8_t i) { return (i+1) % getN(N); };
+  inline uint8_t _next(uint8_t i) { return (i+1) % getN(N); };
 
 public:
   HashName() { memset( _values, NULL, getN(N) ); };
@@ -26,11 +26,12 @@ public:
   void add(const char *key, Class* value)
   {
     assert (key!=nullptr);
+    
     uint8_t col = 0;
     uint8_t i = _hash(key);
     while(_values[i] != nullptr)
     {
-      i = _getNext(i);
+      i = _next(i);
       col++;
     }
     maxCol = col > maxCol ? col : maxCol;
@@ -45,12 +46,13 @@ public:
   Class* get(const char *key)
   {
     assert (key!=nullptr);
+    
     uint8_t col = 0;
     uint8_t i = _hash(key);
     while(_values[i] != nullptr && strcmp(key, _keys[i]) != 0 ) 
     {
       if (++col > maxCol) return nullptr; // failed
-      i = _getNext(i);
+      i = _next(i);
     }
     
     // Serial << "got " << key << " stored@" << i << endl;
