@@ -22,15 +22,15 @@ struct FctorI : Fctor<Ret, Args...>
 };
 
 #define NewFunctor(ftr, ...)                                                    /* __VA_ARGS__ gives Ret & Args...                                       */ \
-typedef Fctor<__VA_ARGS__> ftr;                                                 /* ftr     is a Fctor<Ret, Args...>                                      */ \                      
-template <class F>  using ftr##I = FctorI<F, __VA_ARGS__>;                      /* ftrI<F> is a FctorI<F, Ret, Args...> implementing Fctor<Ret, Args...> */ \
+using ftr = Fctor<__VA_ARGS__>;                                                 /* ftr     is a Fctor<Ret, Args...>                                      */ \                      
+template <class F> using ftr##I = FctorI<F, __VA_ARGS__>;                       /* ftrI<F> is a FctorI<F, Ret, Args...> implementing Fctor<Ret, Args...> */ \
 template <class F> inline ftr##I<F>* new##ftr(F f) { return new ftr##I<F>(f); } // newftr<F>(f) returns a ftrI<F>* that stores Ret f(Args...){} 
 
 NewFunctor(SetFunc, void, int*, byte)  // newSetFunc(f) returns a SetFunc* that stores void f(int*, byte){}
 NewFunctor(GetFunc, byte, int*)        // newGetFunc(f) returns a GetFunc* that stores byte f(int*){} 
 
 //---------------------------------
-typedef struct  
+using MyVar = struct MyVar 
 {
   SetFunc*  set;
   GetFunc*  get;
@@ -39,7 +39,7 @@ typedef struct
   bool      show;
   byte      ID;
   int       last[MAX_ARGS];
-} MyVar;
+};
 
 //---------------------------------
 class OBJVar
@@ -63,7 +63,7 @@ public:
   char* getVarName(byte i) { return mVar[i]->name; };
 
   // ------ ObjTestVarFunc 
-  typedef bool (OBJVar::*ObjTestVarFunc)(byte i);
+  using ObjTestVarFunc = bool (OBJVar::*)(byte i);
   
   bool isVarShown(byte i) { return mVar[i]->show; };
   bool hasVarChanged(byte i);
