@@ -32,7 +32,7 @@ NewFunctor(SetFunc, void, int*, byte)  // newSetFunc(f) returns a SetFunc* that 
 NewFunctor(GetFunc, byte, int*)        // newGetFunc(f) returns a GetFunc* that stores byte f(int*){} 
 
 //---------------------------------
-using MyVar = struct MyVar 
+struct MyVar 
 {
   SetFunc*  set;
   GetFunc*  get;
