@@ -29,7 +29,7 @@
     Serial << " \t TOTAL " << (_endTime - _startTime) << "µs";                                                                  \
     for(byte i=0; i < _rasterCount; i++)                                                                                        \
       Serial << " \t - " << _rasters[i].name << " " << (_rasters[i].time - (i==0 ? _startTime : _rasters[i-1].time)) << "µs  "; \
-    Serial << endl;
+    Serial << "\t free Heap - " << ESP.getFreeHeap() << endl;
 
 #else
   #define RASTER_BEGIN
