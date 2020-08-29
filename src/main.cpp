@@ -7,7 +7,7 @@
 // #define DEBUG_LED_INFO
 // #define DEBUG_ACC
 
-#define USE_WIFI defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET)
+#define USE_WIFI (defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET))
 
 // ----------------------------------------------------
 #include <Streaming.h>
@@ -234,9 +234,12 @@ void loop()
     // -- Leds actual drawing
     AllStrips.update();
     RASTER("Leds update");
+  }
 
-    // -- wifi Update
-    #if USE_WIFI
+  // -- wifi Update
+  #if USE_WIFI
+    EVERY_N_MILLISECONDS(WIFI_TICK)
+    {
       if(MyWifi.update())
       {
         #ifdef USE_TELNET
@@ -247,9 +250,9 @@ void loop()
           Ota.update();
         #endif
       }
-      RASTER("Wifi");
-    #endif
-  }
+    }
+    RASTER("Wifi");
+  #endif
 
   // -- Bluetooth Update
   #ifdef USE_BT

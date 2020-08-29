@@ -6,6 +6,7 @@
 
 #define   LED_TICK      10      // ms, leds update
 #define   BT_TICK       30      // ms, bluetooth update
+#define   WIFI_TICK     15      // ms, wifi update for OTA, telnet & led debug
 
 #define   NBLEDS_MIDDLE 72
 #define   NBLEDS_TIPS   36
