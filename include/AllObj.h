@@ -55,10 +55,7 @@ class AllObj
   const char* cfg_fname = FNAME_CURRENT;
   const char* def_fname = FNAME_DEFAULT;
   
-  #ifdef DBG_CMD
-    void dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args);
-  #endif
-
+  void    dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args);
   bool    isNumber(const char* txt);
   OBJVar* getObjFromName(const char* name) { return mHash.get(name); };
 

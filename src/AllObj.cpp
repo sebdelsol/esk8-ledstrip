@@ -49,16 +49,16 @@ bool AllObj::isNumber(const char* txt)
   return true; 
 } 
 
-#ifdef DBG_CMD
-  void AllObj::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args)
-  {
+void AllObj::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args)
+{
+  #ifdef DBG_CMD
     JoinbySpace(mDbgSerial, cmdKeyword, parsed.objName, parsed.varName);
     
     for (byte i=0; i < nbArg; i++) 
       mDbgSerial << " " << args[i];
     mDbgSerial << endl;
-  }
-#endif
+  #endif
+}
 
 //--------------------------------------
 void AllObj::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
@@ -80,9 +80,7 @@ void AllObj::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
 
   parsed.obj->set(parsed.var, args, nbArg, change); //set the value from args
   
-  #ifdef DBG_CMD
-    dbgCmd(mSetKeyword, parsed , nbArg, args);
-  #endif
+  dbgCmd(mSetKeyword, parsed , nbArg, args);
 }
 
 //----------------
@@ -102,9 +100,7 @@ void AllObj::handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact)
       stream << " " << args[i];
     stream << endl;
     
-    #ifdef DBG_CMD
-      dbgCmd(mGetKeyword, parsed, nbArg, args);
-    #endif
+    dbgCmd(mGetKeyword, parsed, nbArg, args);
   }
 }
 
@@ -124,9 +120,7 @@ void AllObj::handleInitCmd(const parsedCmd& parsed, Stream& stream)
     stream << " " << args[i];
   stream << endl;
 
-  #ifdef DBG_CMD
-    dbgCmd(mInitKeyword, parsed, nbArg, args);
-  #endif
+  dbgCmd(mInitKeyword, parsed, nbArg, args);
 }
 
 //--------------------------------------
