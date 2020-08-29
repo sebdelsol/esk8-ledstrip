@@ -49,7 +49,6 @@ class AllObj
 
   HashName<ALLOBJ_MAXOBJ, OBJVar> mHash;
 
-  Stream& mDbgSerial;
   BUF mTmpBuf;
   
   bool spiffsOK = false;
@@ -71,6 +70,8 @@ class AllObj
   File getFile(bool isdefault, const char* mode);
 
 protected:
+  Stream& mDbgSerial;
+
   const char* mSetKeyword = ALLOBJ_SET;
   const char* mGetKeyword = ALLOBJ_GET;
   const char* mInitKeyword = ALLOBJ_INIT;
