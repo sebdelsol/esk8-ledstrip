@@ -30,6 +30,7 @@
 // ----------------------------------------------------
 AllLedStrips::AllLedStrips(Stream& serial) : mSerial(serial)
 {
+  FastLED.setMaxPowerInVoltsAndMilliamps(5, 0); // no spike 
   FastLED.countFPS();
 }
 
