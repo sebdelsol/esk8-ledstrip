@@ -31,7 +31,7 @@ public:
     
     uint8_t col = 0;
     uint8_t i = hash(name);
-    while(values[i] != nullptr)
+    while(values[i] != nullptr) // something already there ?
     {
       i = next(i);
       col++;
@@ -44,7 +44,7 @@ public:
     values[i] = value;
   };
 
-  inline bool hasAlreadyAnotherName(Class* v, const char* name)
+  inline bool valueHasNotMyName(Class* v, const char* name) 
   {
     const char* vname = v->getname();
     return vname != nullptr && strcmp(vname, name) != 0 ? true : false;
@@ -56,7 +56,7 @@ public:
     
     uint8_t col = 0;
     uint8_t i = hash(name);
-    while(values[i] != nullptr && hasAlreadyAnotherName(values[i], name) ) 
+    while(values[i] != nullptr && valueHasNotMyName(values[i], name) ) 
     {
       if (++col > maxCol) return nullptr; // failed
       i = next(i);
