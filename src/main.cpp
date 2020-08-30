@@ -5,7 +5,6 @@
 // #define DEBUG_RASTER
 // #define DEBUG_LED_TOWIFI
 // #define DEBUG_LED_INFO
-// #define DEBUG_ACC
 
 #define USE_WIFI (defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET))
 
@@ -142,6 +141,45 @@ void loop()
 {
   RASTER_BEGIN;
 
+  // -- motion Sensor update
+  SensorOutput& m = Motion.mOutput;
+  EVERY_N_MILLISECONDS(MOTION_TICK)
+  {
+    Motion.update(); 
+    RASTER("Motion");
+  }
+
+  // -- wifi Update
+  #if USE_WIFI
+    EVERY_N_MILLISECONDS(WIFI_TICK)
+    {
+      if(MyWifi.update())
+      {
+        #ifdef USE_TELNET
+          SerialAndTelnet.handle();
+        #endif
+
+        #ifdef USE_OTA
+          Ota.update();
+        #endif
+      }
+    }
+    RASTER("Wifi");
+  #endif
+
+  // -- Bluetooth Update
+  #ifdef USE_BT
+    EVERY_N_MILLISECONDS(BT_TICK)
+    {
+      if (Button.pressed())
+        BT.toggle();
+
+      AllObj.receiveUpdate(BT);
+    }
+    RASTER("BlueTooth");
+  #endif
+
+  // -- Led update
   EVERY_N_MILLISECONDS(LED_TICK)
   {
     // -- Master brightness
@@ -154,11 +192,6 @@ void loop()
     byte bright = (Cfg.bright * ((Cfg.fade >> 8) + 1)) >> 8; 
     AllStrips.setBrightness(bright);
     RASTER("Light probe");
-
-    // -- handle Motion Sensor
-    Motion.update(); 
-    SensorOutput& m = Motion.mOutput;
-    RASTER("Motion");
 
     if (m.updated)
     {
@@ -219,56 +252,16 @@ void loop()
         FireTwk.setAlpha(alphaR);
         Plasma.setAlpha(max(0, 255 - max(alphaR, alphaF)));
       }
-
-      #ifdef DEBUG_ACC
-        Serial << "[areal  " << m.accX << "\t"      << m.accY   << "\t"        << m.accZ << "]\t";
-        Serial << "[fwd "    << fwd    << "\trwd "  << rwd      << "\tACC "    << acc << "]\t";
-        Serial << "[alpha "  << alpha  << "\tinv "  << invAlpha << "]\t";
-        Serial << "[eyeR "   << eyeR   << "\teyeF " << eyeF     << "\talphaR " << alphaR << "\talphaF " << alphaF << "]" << endl;
-      #endif
   
       RASTER("Leds setup");
     }
 
-    // -- Leds actual drawing
+    // -- update ... and showing if dithering is off
     AllStrips.update();
+    if (!LED_DITHERING) AllStrips.show(); 
+    
     RASTER("Leds update");
   }
-
-  // -- wifi Update
-  #if USE_WIFI
-    EVERY_N_MILLISECONDS(WIFI_TICK)
-    {
-      if(MyWifi.update())
-      {
-        #ifdef USE_TELNET
-          SerialAndTelnet.handle();
-        #endif
-
-        #ifdef USE_OTA
-          Ota.update();
-        #endif
-      }
-    }
-    RASTER("Wifi");
-  #endif
-
-  // -- Bluetooth Update
-  #ifdef USE_BT
-    EVERY_N_MILLISECONDS(BT_TICK)
-    {
-      if (Button.pressed())
-        BT.toggle();
-
-      AllObj.receiveUpdate(BT);
-    }
-    RASTER("BlueTooth");
-  #endif
-
-  #ifdef DEBUG_LED_INFO
-    EVERY_N_SECONDS(1)
-      AllStrips.showInfo();
-  #endif
 
   // -- Leds dithering
   if (LED_DITHERING)
@@ -276,6 +269,11 @@ void loop()
     AllStrips.show(); // to be called as much as possible for Fastled brightness dithering
     RASTER("Leds dither"); 
   }
+
+  #ifdef DEBUG_LED_INFO
+    EVERY_N_SECONDS(1)
+      AllStrips.showInfo();
+  #endif
 
   RASTER_END;
 }
