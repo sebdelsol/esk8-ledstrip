@@ -50,9 +50,9 @@ struct Raster
   };
 
 #else
-  Raster(Stream& serial){};
+  Raster(Stream&){};
   inline void begin(){};       
-  inline void add(const char* name){};
+  inline void add(const char*){};
   inline void end(){};
 #endif
 };
