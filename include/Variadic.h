@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Streaming.h>
+
 // -----------------------------------------------------
 // create a macro that calls a _m macro for each arg (max : see N in createVarMac.py)
 
@@ -7,9 +9,7 @@
 #define ForEachMacro(_m, _p, ...) _Mn(__VA_ARGS__)(_m, _p, __VA_ARGS__)
 
 // -----------------------------------------------------
-// create JoinbySpace(stream, ...) 
-
-inline Print& JoinbySpace(Print& stream) {}
+// create JoinbySpace(stream, ...) // neeed @least one args...
 
 template<class Last> 
 inline Print& JoinbySpace(Print& stream, Last last) { return stream << last; }
