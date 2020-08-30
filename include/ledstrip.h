@@ -38,13 +38,13 @@ public:
 class AllLedStrips
 {
   BaseLedStrip* mStrips[MAXSTRIP];
-  byte mNStrips = 0;
-  ulong  mLastT = 0;
+  byte    mNStrips = 0;
+  ulong   mLastT = 0;
   Stream& mSerial;
 
 public:
-  AllLedStrips(const int maxmA, Stream& serial);
-  void init();
+  AllLedStrips(Stream& serial);
+  void init(const int maxmA, bool dither);
 
   void setBrightness(const byte scale) { FastLED.setBrightness(scale); };
   void show();

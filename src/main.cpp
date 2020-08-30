@@ -56,7 +56,7 @@ MOTION  Motion(Serial);
 #endif
 
 // --- Strips & Fxs
-AllLedStrips  AllStrips(LED_MAX_MA, Serial);
+AllLedStrips  AllStrips(Serial);
 
 LedStrip    <NBLEDS_MIDDLE, LEDM_PIN> StripM(Serial, "Mid");
 RunningFX   FireRun(LUSH_LAVA, 3);     
@@ -97,7 +97,7 @@ void setup()
   Motion.init();
 
   // -- Strip inits & register FXs
-  AllStrips.init();
+  AllStrips.init(LED_MAX_MA, LED_DITHERING);
   AllStrips.addStrips(StripM, StripR, StripF); 
   
   StripM.addFXs(FireRun,  FireTwk, AquaRun,  AquaTwk, Plasma);
@@ -271,8 +271,11 @@ void loop()
   #endif
 
   // -- Leds dithering
-  AllStrips.show(); // to be called as much as possible for Fastled brightness dithering
-  RASTER("Leds show"); 
+  if (LED_DITHERING)
+  {
+    AllStrips.show(); // to be called as much as possible for Fastled brightness dithering
+    RASTER("Leds dither"); 
+  }
 
   RASTER_END;
 }

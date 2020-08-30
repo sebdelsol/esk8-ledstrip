@@ -2,7 +2,9 @@
 
 // -------------------- main cfg
 #define   SERIAL_BAUD   115200  // Hz
+
 #define   LED_MAX_MA    800     // mA, lower Cfg.bright to avoid reaching this value
+#define   LED_DITHERING false
 
 #define   LED_TICK      10      // ms, leds update
 #define   BT_TICK       30      // ms, bluetooth update

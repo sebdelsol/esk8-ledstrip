@@ -28,15 +28,17 @@
 #endif
 
 // ----------------------------------------------------
-AllLedStrips::AllLedStrips(const int maxmA, Stream& serial) : mSerial(serial)
+AllLedStrips::AllLedStrips(Stream& serial) : mSerial(serial)
 {
-  FastLED.setMaxPowerInVoltsAndMilliamps(5, maxmA);
   FastLED.countFPS();
-  FastLED.setDither(BINARY_DITHER);
 }
 
-void AllLedStrips::init() 
+void AllLedStrips::init(const int maxmA, bool dither) 
 {
+  FastLED.setMaxPowerInVoltsAndMilliamps(5, maxmA);
+  FastLED.setDither(dither ? BINARY_DITHER : DISABLE_DITHER);
+  mSerial << "Leds - Max " << maxmA/1000. << "A - Dither " << (dither ? "on" : "off") << endl;
+
   #ifdef FASTLED_SHOW_CORE
     xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", 2048, nullptr, FASTLED_TASK_PRIO, &FastLEDshowTaskHandle, FASTLED_SHOW_CORE);  
     mSerial << "Fastled runs on Core " << FASTLED_SHOW_CORE << " with Prio " << FASTLED_TASK_PRIO << endl;
