@@ -3,13 +3,13 @@
 // -------------------- main cfg
 #define   SERIAL_BAUD   115200  // Hz
 
-#define   LED_MAX_MA    800     // mA, lower Cfg.bright to avoid reaching this value
-#define   LED_DITHERING false
+#define   LED_MAX_MA    900     // mA, lower Cfg.bright to avoid reaching this value
+#define   LED_DITHERING true
 
 #define   LED_TICK      10      // ms, leds update
 #define   BT_TICK       30      // ms, bluetooth update
-#define   WIFI_TICK     15      // ms, wifi update for OTA, telnet & led debug
-#define   MOTION_TICK   10      // ms, MPU internaly update every 10ms
+#define   WIFI_TICK     30      // ms, wifi update for OTA, telnet & led debug
+#define   MOTION_TICK   10      // ms, MPU internaly updates every 10ms
 
 #define   NBLEDS_MIDDLE 72
 #define   NBLEDS_TIPS   36

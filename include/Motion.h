@@ -26,7 +26,7 @@
 
 //----------------------------- Run in a task
 #define MPU_GET_CORE  1 // mpu on core 1 to prevent ISR hanging
-#define MPU_GET_PRIO  1
+#define MPU_GET_PRIO  0 // enough & more stable with every other ISR
 #define MPU_GET_STACK 2048
 
 //----------------------------- 
