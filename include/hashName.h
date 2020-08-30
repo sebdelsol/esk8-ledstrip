@@ -37,7 +37,7 @@ public:
     maxCol = col > maxCol ? col : maxCol;
 
     if (col > 0)
-      Serial << ">> hash of [" << key << "] has " << col << " collisions" << endl;
+      Serial << "! hash of [" << key << "] has " << col << " collisions" << endl;
 
     _values[i] = value;
     _keys[i] = key;
