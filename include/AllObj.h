@@ -30,28 +30,27 @@ class AllObj
 {
   struct parsedCmd 
   {
-    OBJVar* obj;
-    MyVar* var;
+    OBJVar*     obj;
+    MyVar*      var;
     const char* objName;
     const char* varName;
   };
 
-  struct mRegisteredOBJ
+  struct mOBJ
   {
-    char* name;
+    char*   name;
     OBJVar* obj;
-    char* getname() { return name; };
+    char*   getname() { return name; };
   };
 
-  mRegisteredOBJ mOBJS[ALLOBJ_MAXOBJ];
+  HashName<ALLOBJ_MAXOBJ, mOBJ> mHash;
+  mOBJ mOBJS[ALLOBJ_MAXOBJ];
   byte mNOBJ = 0;
   byte mID = 0;
 
-  HashName<ALLOBJ_MAXOBJ, mRegisteredOBJ> mHash;
-
-  BUF mTmpBuf;
+  BUF         mTmpBuf;
   
-  bool spiffsOK = false;
+  bool        spiffsOK = false;
   const char* cfg_fname = FNAME_CURRENT;
   const char* def_fname = FNAME_DEFAULT;
   

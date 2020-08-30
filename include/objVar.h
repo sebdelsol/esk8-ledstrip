@@ -48,10 +48,9 @@ struct MyVar
 //---------------------------------
 class OBJVar
 {
+  HashName<MAX_VAR, MyVar> mHash;
   MyVar* mVar[MAX_VAR];
   byte   mNVAR = 0;
-
-  HashName<MAX_VAR, MyVar> mHash;
 
 public:  
   bool   addVar(const char* name, SetFunc* set, GetFunc* get, int min = 0, int max = 0, bool show = true);
