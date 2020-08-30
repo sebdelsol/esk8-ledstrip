@@ -14,7 +14,7 @@ class AllObjBT : public AllObj
 public:
   AllObjBT(Stream& dbgSerial);
   
-  bool receiveUpdate(BlueTooth& BT);
-  bool sendUpdate(BlueTooth& BT, MOTION& motion);
+  void receiveUpdate(BlueTooth& BT);
+  void sendUpdate(BlueTooth& BT, MOTION& motion);
   void sendInits(BlueTooth& BT);
 };

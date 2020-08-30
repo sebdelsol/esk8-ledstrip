@@ -17,7 +17,7 @@ void AllObjBT::sendInits(BlueTooth &BT)
 }
 
 //----------------
-bool AllObjBT::sendUpdate(BlueTooth &BT, MOTION& motion)
+void AllObjBT::sendUpdate(BlueTooth &BT, MOTION& motion)
 {
   if(BT.isReadyToSend())
   {
@@ -30,7 +30,7 @@ bool AllObjBT::sendUpdate(BlueTooth &BT, MOTION& motion)
 }
 
 //----------------
-bool AllObjBT::receiveUpdate(BlueTooth &BT)
+void AllObjBT::receiveUpdate(BlueTooth &BT)
 {
   if (BT.isReadyToReceive())
     readCmdFromStream(BT.getSerial(), mBTbuf, false, true);

@@ -24,7 +24,7 @@ struct FctorI : Fctor<Ret, Args...>
 };
 
 #define NewFunctor(ftr, ...)                                                    /* __VA_ARGS__ gives Ret & Args...                                       */ \
-using ftr = Fctor<__VA_ARGS__>;                                                 /* ftr     is a Fctor<Ret, Args...>                                      */ \                      
+using ftr = Fctor<__VA_ARGS__>;                                                 /* ftr     is a Fctor<Ret, Args...>                                      */ \
 template <class F> using ftr##I = FctorI<F, __VA_ARGS__>;                       /* ftrI<F> is a FctorI<F, Ret, Args...> implementing Fctor<Ret, Args...> */ \
 template <class F> inline ftr##I<F>* new##ftr(F f) { return new ftr##I<F>(f); } // newftr<F>(f) returns a ftrI<F>* that stores Ret f(Args...){} 
 

@@ -13,7 +13,7 @@
 #include <MPU6050.h>
 
 //----------------------------- dmp Version & Debug
-// #define USE_V6.12
+// #define USE_V6_12
 // #define MPU_DBG
 
 //----------------------------- calibration & I2c clock

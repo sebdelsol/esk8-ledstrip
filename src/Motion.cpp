@@ -1,7 +1,7 @@
 #include <Motion.h>
 
 #define __PGMSPACE_H_ 1 // pgmsplace.h define PGMSPACE_INCLUDE instead of __PGMSPACE_H
-#ifdef USE_V6.12
+#ifdef USE_V6_12
   #include <MPU6050_6Axis_MotionApps_V6_12.h> // longer to init & bug with sensitivity
 #else
   #include <MPU6050_6Axis_MotionApps20.h>
@@ -165,7 +165,7 @@ void MOTION::compute(SensorOutput& output)
 
   dmpGetQuaternion(&mQuat, mFifoBuffer);
   dmpGetGyro(&mW, mFifoBuffer);
-  #ifdef USE_V6.12
+  #ifdef USE_V6_12
     SHIFTR_VECTOR(mW, 2) // fix sensibility bug in MPU6050_6Axis_MotionApps_V6_12.h
   #endif 
 
@@ -175,7 +175,7 @@ void MOTION::compute(SensorOutput& output)
 
   // real acceleration, adjusted to remove gravity
   dmpGetAccel(&mAcc, mFifoBuffer);
-  #ifdef USE_V6.12 
+  #ifdef USE_V6_12 
     SHIFTR_VECTOR(mAcc, 1) // fix sensibility bug in MPU6050_6Axis_MotionApps_V6_12.h
   #endif
   dmpGetLinearAccel(&mAccReal, &mAcc, &mGrav);

@@ -21,7 +21,7 @@ class HashName
   inline uint8_t _next(uint8_t i) { return (i+1) % getN(N); };
 
 public:
-  HashName() { memset( _values, NULL, getN(N) ); };
+  HashName() { memset( _values, 0, getN(N) ); };
   
   void add(const char *key, Class* value)
   {
