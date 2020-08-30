@@ -137,50 +137,55 @@ void setup()
 }
 
 // ----------------------------------------------------
-void loop()
+Raster Raster(Serial);
+
+// --------------
+void loopMotion()
 {
-  RASTER_BEGIN;
+  EVERY_N_MILLISECONDS(MOTION_TICK) Motion.update(); 
+  Raster.add("Motion");
+}
 
-  // -- motion Sensor update
-  SensorOutput& m = Motion.mOutput;
-  EVERY_N_MILLISECONDS(MOTION_TICK)
+// ------------
+void loopWifi()
+{
+#if USE_WIFI
+  EVERY_N_MILLISECONDS(WIFI_TICK)
   {
-    Motion.update(); 
-    RASTER("Motion");
+    if(MyWifi.update())
+    {
+      #ifdef USE_TELNET
+        SerialAndTelnet.handle();
+      #endif
+
+      #ifdef USE_OTA
+        if (!MyWifi.isWSConnected()) // concurrency issue with WSockets
+          Ota.update();
+      #endif
+    }
   }
+  Raster.add("Wifi");
+#endif
+}
 
-  // -- wifi Update
-  #if USE_WIFI
-    EVERY_N_MILLISECONDS(WIFI_TICK)
-    {
-      if(MyWifi.update())
-      {
-        #ifdef USE_TELNET
-          SerialAndTelnet.handle();
-        #endif
+// ----------
+void loopBT()
+{
+#ifdef USE_BT
+  EVERY_N_MILLISECONDS(BT_TICK)
+  {
+    if (Button.pressed())
+      BT.toggle();
 
-        #ifdef USE_OTA
-          if (!MyWifi.isWSConnected()) // concurrency issue with WSockets
-            Ota.update();
-        #endif
-      }
-    }
-    RASTER("Wifi");
-  #endif
+    AllObj.receiveUpdate(BT);
+  }
+  Raster.add("BlueTooth");
+#endif
+}
 
-  // -- Bluetooth Update
-  #ifdef USE_BT
-    EVERY_N_MILLISECONDS(BT_TICK)
-    {
-      if (Button.pressed())
-        BT.toggle();
-
-      AllObj.receiveUpdate(BT);
-    }
-    RASTER("BlueTooth");
-  #endif
-
-  // -- Led update
+// ------------
+void loopLeds()
+{
   EVERY_N_MILLISECONDS(LED_TICK)
   {
     // -- Master brightness
@@ -192,8 +197,10 @@ void loop()
     Cfg.fade = lerp16by16(Cfg.fade,  65535,  650);
     byte bright = (Cfg.bright * ((Cfg.fade >> 8) + 1)) >> 8; 
     AllStrips.setBrightness(bright);
-    RASTER("Light probe");
+    Raster.add("Light probe");
 
+    // led setup modified by MPU
+    SensorOutput& m = Motion.mOutput;
     if (m.updated)
     {
       // -- Gyro
@@ -254,27 +261,38 @@ void loop()
         Plasma.setAlpha(max(0, 255 - max(alphaR, alphaF)));
       }
   
-      RASTER("Leds setup");
+      Raster.add("Leds setup");
     }
 
     // -- update ... and showing if dithering is off
     AllStrips.update();
     if (!LED_DITHERING) AllStrips.show(); 
     
-    RASTER("Leds update");
+    Raster.add("Leds update");
   }
 
   // -- Leds dithering
   if (LED_DITHERING)
   {
     AllStrips.show(); // to be called as much as possible for Fastled brightness dithering
-    RASTER("Leds dither"); 
+    Raster.add("Leds dither"); 
   }
 
   #ifdef DEBUG_LED_INFO
     EVERY_N_SECONDS(1)
       AllStrips.showInfo();
   #endif
+}
 
-  RASTER_END;
+// --------
+void loop()
+{
+  Raster.begin();
+
+  loopMotion();
+  loopWifi();
+  loopBT();
+  loopLeds();
+
+  Raster.show();
 }
