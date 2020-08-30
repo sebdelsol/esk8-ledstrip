@@ -19,13 +19,13 @@ struct Raster
 
   Raster(Stream& serial) : mSerial(serial) {};
 
-  void begin()
+  inline void begin()
   {
     n = 0;                                                                                                           
     start = micros();
   };       
 
-  void add(const char* name)
+  inline void add(const char* name)
   {
     if (n < max)                                                                                              
     {                                                                                                                           
@@ -36,7 +36,7 @@ struct Raster
       mSerial << ">> ERROR !! Max Raster reached "  << n << endl;
   };
 
-  void show()
+  inline void end()
   {
     long end = micros();                                                                                                   
     mSerial << "LOOP "  << (end - lastEnd) << "µs";                                                                    
@@ -51,8 +51,8 @@ struct Raster
 
 #else
   Raster(Stream& serial){};
-  void begin(){};       
-  void add(const char* name){};
-  void show(){};
+  inline void begin(){};       
+  inline void add(const char* name){};
+  inline void end(){};
 #endif
 };

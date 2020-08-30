@@ -140,14 +140,14 @@ void setup()
 Raster Raster(Serial);
 
 // --------------
-void loopMotion()
+inline void loopMotion()
 {
   EVERY_N_MILLISECONDS(MOTION_TICK) Motion.update(); 
   Raster.add("Motion");
 }
 
 // ------------
-void loopWifi()
+inline void loopWifi()
 {
 #if USE_WIFI
   EVERY_N_MILLISECONDS(WIFI_TICK)
@@ -169,7 +169,7 @@ void loopWifi()
 }
 
 // ----------
-void loopBT()
+inline void loopBT()
 {
 #ifdef USE_BT
   EVERY_N_MILLISECONDS(BT_TICK)
@@ -184,7 +184,7 @@ void loopBT()
 }
 
 // ------------
-void loopLeds()
+inline void loopLeds()
 {
   EVERY_N_MILLISECONDS(LED_TICK)
   {
@@ -288,11 +288,9 @@ void loopLeds()
 void loop()
 {
   Raster.begin();
-
   loopMotion();
   loopWifi();
   loopBT();
   loopLeds();
-
-  Raster.show();
+  Raster.end();
 }
