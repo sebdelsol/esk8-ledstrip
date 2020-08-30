@@ -8,7 +8,7 @@
 #endif
 
 //--------------------------------------
-#ifdef MPU_GETFIFO_CORE
+#ifdef MPU_GET_CORE
   SemaphoreHandle_t   OutputMutex;
   EventGroupHandle_t  FlagReady;
   TaskHandle_t        NotifyToCalibrate;
@@ -52,11 +52,11 @@ void MOTION::init()
   
   AddBoolNameHid("gotOffset", mGotOffset);
   
-  #ifdef MPU_GETFIFO_CORE
+  #ifdef MPU_GET_CORE
     OutputMutex = xSemaphoreCreateMutex();
     FlagReady = xEventGroupCreate();
-    xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", 2048, this, MPU_GETFIFO_PRIO, &NotifyToCalibrate, MPU_GETFIFO_CORE);  
-    mSerial << "Mpu runs on Core " << MPU_GETFIFO_CORE << " with Prio " << MPU_GETFIFO_PRIO << endl;
+    xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", MPU_GET_STACK, this, MPU_GET_PRIO, &NotifyToCalibrate, MPU_GET_CORE);  
+    mSerial << "Mpu runs on Core " << MPU_GET_CORE << " with Prio " << MPU_GET_PRIO << endl;
 
     AddCmd("calibrate",  xTaskNotifyGive(NotifyToCalibrate) ) // trigger a calibration
   #else
@@ -205,7 +205,7 @@ void MOTION::update()
   if (!mHasBegun)
     begin();
 
-  #ifdef MPU_GETFIFO_CORE
+  #ifdef MPU_GET_CORE
     if (xEventGroupGetBits(FlagReady) && xSemaphoreTake(OutputMutex, 0) == pdTRUE) // pool the mpuTask
     {
       memcpy(&mOutput, &SharedOutput, sizeof(SensorOutput)); 

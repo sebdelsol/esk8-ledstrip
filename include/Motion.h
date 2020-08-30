@@ -25,8 +25,9 @@
 #define ACCEL_BASE_FREQ   60. // based on a 60fps measure
 
 //----------------------------- Run in a task
-#define MPU_GETFIFO_CORE  1 // mpu on core 1 to prevent BT ISR collision
-#define MPU_GETFIFO_PRIO  1
+#define MPU_GET_CORE  1 // mpu on core 1 to prevent BT ISR collision
+#define MPU_GET_PRIO  1
+#define MPU_GET_STACK 2048
 
 //----------------------------- 
 struct SensorOutput 
