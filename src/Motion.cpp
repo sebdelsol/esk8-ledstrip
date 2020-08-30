@@ -74,19 +74,19 @@ void MOTION::calibrate()
 
   mXGyroOffset = getXGyroOffset();   mYGyroOffset = getYGyroOffset();   mZGyroOffset = getZGyroOffset();
   mXAccelOffset = getXAccelOffset(); mYAccelOffset = getYAccelOffset(); mZAccelOffset = getZAccelOffset();
-  printOffsets("MPU calibrated");
+  printOffsets(F("MPU calibrated"));
   mGotOffset = true;
 }
 
 bool MOTION::setOffsets()
 {
-  Serial << "Try to get Offset...";
+  Serial << F("Try to get Offset...");
 
   if (mGotOffset)
   {
     setXGyroOffset(mXGyroOffset);   setYGyroOffset(mYGyroOffset);   setZGyroOffset(mZGyroOffset);
     setXAccelOffset(mXAccelOffset); setYAccelOffset(mYAccelOffset); setZAccelOffset(mZAccelOffset); 
-    printOffsets("Got internal offsets");
+    printOffsets(F("Got internal offsets"));
   }
   else 
     Serial << endl;
@@ -94,11 +94,11 @@ bool MOTION::setOffsets()
   return mGotOffset;
 }
 
-void MOTION::printOffsets(const char* txt)
+void MOTION::printOffsets(const __FlashStringHelper* txt)
 {
   mSerial << txt << endl;
-  mSerial << "Acc Offset: \tx " << getXAccelOffset() << "\ty " << getYAccelOffset() << "\tz " << getZAccelOffset() << endl;
-  mSerial << "Gyr Offset: \tx " << getXGyroOffset()  << "\ty " << getYGyroOffset()  << "\tz " << getZGyroOffset()  << endl;
+  mSerial << F("Acc Offset: \tx ") << getXAccelOffset() << F("\ty ") << getYAccelOffset() << F("\tz ") << getZAccelOffset() << endl;
+  mSerial << F("Gyr Offset: \tx ") << getXGyroOffset()  << F("\ty ") << getYGyroOffset()  << F("\tz ") << getZGyroOffset()  << endl;
 }
 
 bool MOTION::getFiFoPacket() 
@@ -114,7 +114,7 @@ void MOTION::begin()
 
   initialize(); reset(); resetI2CMaster(); //help with startup reliabilily
 
-  mSerial << "MPU connection..." << (testConnection() ? "successful" : "failed") << endl;
+  mSerial << F("MPU connection...") << (testConnection() ? F("successful") : F("failed")) << endl;
   uint8_t devStatus = dmpInitialize();
 
   if (devStatus == 0) // did it work ?
@@ -130,8 +130,8 @@ void MOTION::begin()
   }
   else // error
   {
-    const char* error =  devStatus == 1 ? "initial memory load" : (devStatus == 2 ? "DMP configuration updates" : "unknown");
-    mSerial << "DMP ERROR #" << devStatus << " : " << error << " failure" << endl;
+    const __FlashStringHelper* error =  devStatus == 1 ? F("initial memory load") : (devStatus == 2 ? F("DMP configuration updates") : F("unknown"));
+    mSerial << F("DMP ERROR #") << devStatus << F(" : ") << error << F(" failure") << endl;
   }
 }
 

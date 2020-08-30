@@ -25,7 +25,7 @@
 #define ACCEL_BASE_FREQ   60. // based on a 60fps measure
 
 //----------------------------- Run in a task
-#define MPU_GET_CORE  1 // mpu on core 1 to prevent BT ISR collision
+#define MPU_GET_CORE  1 // mpu on core 1 to prevent ISR hanging
 #define MPU_GET_PRIO  1
 #define MPU_GET_STACK 2048
 
@@ -61,7 +61,7 @@ class MOTION : public OBJVar, public MPU6050
   bool        mAutoCalibrate = false;
 
   void getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q);
-  void printOffsets(const char* txt);
+  void printOffsets(const __FlashStringHelper* txt);
   bool setOffsets();
 
 public:
