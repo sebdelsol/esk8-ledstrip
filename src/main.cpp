@@ -11,7 +11,6 @@
 
 // ----------------------------------------------------
 #include <Streaming.h>
-#include <soc/rtc.h> // cpu freq
 #include <Pins.h>
 #include <ledstrip.h>
 #include <Motion.h>
@@ -90,7 +89,7 @@ void setup()
   Serial.begin(SERIAL_BAUD);
   Serial << "\n---------\n- START -\n---------\n";
   Serial << "ESP32 " << esp_get_idf_version() << endl;
-  Serial << "CPU runs @ " << rtc_clk_cpu_freq_get() * 80 << "MHz" << endl;
+  Serial << "CPU runs @ " << getCpuFrequencyMhz() << "MHz" << endl;
   Serial << "Main runs on Core " << xPortGetCoreID() << endl;
 
   // -- main inits
