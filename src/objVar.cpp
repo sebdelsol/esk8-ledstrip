@@ -1,7 +1,7 @@
 #include <ObjVar.h>
 
 // ----------------------------------------------------
-bool OBJVar::registerVar(const char* name, SetFunc* set, GetFunc* get, int min, int max, bool show)
+bool OBJVar::addVar(const char* name, SetFunc* set, GetFunc* get, int min, int max, bool show)
 {
   bool ok = mNVAR < MAX_VAR;
   if (ok)
@@ -16,12 +16,12 @@ bool OBJVar::registerVar(const char* name, SetFunc* set, GetFunc* get, int min, 
     MyVar* var = (MyVar* )malloc(sizeof(MyVar));
     assert (var!=nullptr);
 
-    mHash.add(name, var);
-    mVar[mNVAR++] = var;
-
     var->name = (char* )malloc(strlen(name) + 1);
     assert (var->name!=nullptr);
     strcpy(var->name, name);
+
+    mVar[mNVAR++] = var;
+    mHash.add(var);
 
     var->set =  set;
     var->get =  get;

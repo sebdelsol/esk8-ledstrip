@@ -41,6 +41,7 @@ struct MyVar
   bool      show;
   byte      ID;
   int       last[MAX_ARGS];
+  char*     getname() { return name; };
 };
 
 //---------------------------------
@@ -52,12 +53,11 @@ class OBJVar
   HashName<MAX_VAR, MyVar> mHash;
 
 public:  
-  bool   registerVar(const char* name, SetFunc* set, GetFunc* get, int min = 0, int max = 0, bool show = true);
+  bool   addVar(const char* name, SetFunc* set, GetFunc* get, int min = 0, int max = 0, bool show = true);
   byte   getNbVar()                       { return mNVAR;};
   char*  getVarName(byte i)               { return mVar[i]->name; };
   MyVar* getVar(byte i)                   { return mVar[i]; };
   MyVar* getVarFromName(const char* name) { return mHash.get(name); };
-
 
   void set(MyVar* var, int* toSet, byte n, bool change = false);
   byte get(MyVar* var, int* toGet);
@@ -82,7 +82,7 @@ public:
 {                                                                                                   \
   SetFunc* setF = newSetFunc([this](int* args, byte n) { if (n==N) { set; }             });         \
   GetFunc* getF = newGetFunc([this](int* args) -> byte { _Stor##N(args, ##__VA_ARGS__); });         \
-  registerVar(name, setF, getF, min, max, show);                                                    \
+  addVar(name, setF, getF, min, max, show);                                                    \
 }
 
 #define AddCmd(name, cmd)                                  _AddVar(0, name, 0,   0,   true,  cmd)

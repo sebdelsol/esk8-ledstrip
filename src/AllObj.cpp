@@ -15,13 +15,14 @@ bool AllObj::addObj(OBJVar& obj, const char* name)
   bool ok = mNOBJ < ALLOBJ_MAXOBJ;
   if (ok)
   {
-    mOBJ[mNOBJ].obj = &obj;
-    mHash.add(name, &obj);
-    
     char* str = (char* )malloc(strlen(name) + 1);
     assert (str!=nullptr);
     strcpy(str, name);
-    mOBJ[mNOBJ++].name = str;
+
+    mRegisteredOBJ& mobj = mOBJS[mNOBJ++];
+    mobj.name = str;
+    mobj.obj = &obj;
+    mHash.add(&mobj);
 
     // create IDs
     byte nbVar = obj.getNbVar();
@@ -199,8 +200,8 @@ void AllObj::emulateCmdForAllVars(const char* cmdKeyword, Stream& stream, OBJVar
 {
   for (byte i = 0; i < mNOBJ; i++)
   {
-    char* objName = mOBJ[i].name;
-    OBJVar* obj = mOBJ[i].obj;
+    char* objName = mOBJS[i].name;
+    OBJVar* obj = mOBJS[i].obj;
     
     byte nbVar = obj->getNbVar();
     for (byte j = 0; j < nbVar; j++)

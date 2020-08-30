@@ -2,60 +2,67 @@
 #include <Streaming.h>
 
 // linear Probe hash for [name] => Class*
+// Class needs to store its name and implement a getname() method 
 template <int N, class Class>
 class HashName 
 {
   static constexpr int getN(uint8_t n) { return n * 2; }; // bigger but less long collisions
 
-  const char* _keys[getN(N)];
-  Class*      _values[getN(N)];
+  Class*      values[getN(N)];
   uint8_t     maxCol = 0;
 
-  inline uint8_t _hash(const char *key) // naive hash, works ok with N*2
+  inline uint8_t hash(const char *name) // naive hash, works ok with N*2
   {
     uint8_t h = 0;
-    while (*key) h += *key++;
+    while (*name) h += *name++;
     return h % getN(N);
   };
 
-  inline uint8_t _next(uint8_t i) { return (i+1) % getN(N); };
+  inline uint8_t next(uint8_t i) { return (i+1) % getN(N); };
 
 public:
-  HashName() { memset( _values, 0, getN(N) ); };
+  HashName() { memset( values, 0, getN(N) ); };
   
-  void add(const char *key, Class* value)
+  void add(Class* value)
   {
-    assert (key!=nullptr);
+    assert (value!=nullptr);
+    const char *name = value->getname();
+    assert (name!=nullptr);
     
     uint8_t col = 0;
-    uint8_t i = _hash(key);
-    while(_values[i] != nullptr)
+    uint8_t i = hash(name);
+    while(values[i] != nullptr)
     {
-      i = _next(i);
+      i = next(i);
       col++;
     }
     maxCol = col > maxCol ? col : maxCol;
 
     if (col > 0)
-      Serial << "! hash of [" << key << "] has " << col << " collisions" << endl;
+      Serial << "! hash of [" << name << "] has " << col << " collisions" << endl;
 
-    _values[i] = value;
-    _keys[i] = key;
+    values[i] = value;
   };
 
-  Class* get(const char *key)
+  inline bool hasAlreadyAnotherName(Class* v, const char* name)
   {
-    assert (key!=nullptr);
+    const char* vname = v->getname();
+    return vname != nullptr && strcmp(vname, name) != 0 ? true : false;
+  };
+
+  Class* get(const char *name)
+  {
+    assert (name!=nullptr);
     
     uint8_t col = 0;
-    uint8_t i = _hash(key);
-    while(_values[i] != nullptr && strcmp(key, _keys[i]) != 0 ) 
+    uint8_t i = hash(name);
+    while(values[i] != nullptr && hasAlreadyAnotherName(values[i], name) ) 
     {
       if (++col > maxCol) return nullptr; // failed
-      i = _next(i);
+      i = next(i);
     }
     
-    // Serial << "got " << key << " stored@" << i << endl;
-    return _values[i];
+    // Serial << "got " << name << " stored@" << i << endl;
+    return values[i];
   };
 };

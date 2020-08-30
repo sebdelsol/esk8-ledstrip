@@ -26,28 +26,28 @@
 #define FORMAT_SPIFFS_IF_FAILED true
 
 //-------------------------------
-struct parsedCmd 
-{
-  OBJVar* obj;
-  MyVar* var;
-  const char* objName;
-  const char* varName;
-};
-
-struct mRegisteredOBJ
-{
-  char* name;
-  OBJVar* obj;
-};
-
-//-------------------------------
 class AllObj 
 {
-  mRegisteredOBJ mOBJ[ALLOBJ_MAXOBJ];
+  struct parsedCmd 
+  {
+    OBJVar* obj;
+    MyVar* var;
+    const char* objName;
+    const char* varName;
+  };
+
+  struct mRegisteredOBJ
+  {
+    char* name;
+    OBJVar* obj;
+    char* getname() { return name; };
+  };
+
+  mRegisteredOBJ mOBJS[ALLOBJ_MAXOBJ];
   byte mNOBJ = 0;
   byte mID = 0;
 
-  HashName<ALLOBJ_MAXOBJ, OBJVar> mHash;
+  HashName<ALLOBJ_MAXOBJ, mRegisteredOBJ> mHash;
 
   BUF mTmpBuf;
   
@@ -57,7 +57,7 @@ class AllObj
   
   void    dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args);
   bool    isNumber(const char* txt);
-  OBJVar* getObjFromName(const char* name) { return mHash.get(name); };
+  OBJVar* getObjFromName(const char* name) { return mHash.get(name)->obj; };
 
   void handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change);
   void handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact);
