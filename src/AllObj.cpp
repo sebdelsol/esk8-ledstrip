@@ -15,12 +15,11 @@ bool AllObj::addObj(OBJVar& obj, const char* name)
   bool ok = mNOBJ < ALLOBJ_MAXOBJ;
   if (ok)
   {
-    char* str = (char* )malloc(strlen(name) + 1);
-    assert (str!=nullptr);
-    strcpy(str, name);
+    char* namecpy = strdup(name);
+    assert (namecpy!=nullptr);
 
-    mRegisteredOBJ& mobj = mOBJS[mNOBJ++];
-    mobj.name = str;
+    mOBJ& mobj = mOBJS[mNOBJ++];
+    mobj.name = namecpy;
     mobj.obj = &obj;
     mHash.add(&mobj);
 

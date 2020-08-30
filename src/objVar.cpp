@@ -16,9 +16,8 @@ bool OBJVar::addVar(const char* name, SetFunc* set, GetFunc* get, int min, int m
     MyVar* var = (MyVar* )malloc(sizeof(MyVar));
     assert (var!=nullptr);
 
-    var->name = (char* )malloc(strlen(name) + 1);
+    var->name = strdup(name);
     assert (var->name!=nullptr);
-    strcpy(var->name, name);
 
     mVar[mNVAR++] = var;
     mHash.add(var);
