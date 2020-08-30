@@ -160,7 +160,8 @@ void loop()
         #endif
 
         #ifdef USE_OTA
-          Ota.update();
+          if (!MyWifi.isWSConnected()) // concurrency issue with WSockets
+            Ota.update();
         #endif
       }
     }

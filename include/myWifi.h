@@ -19,11 +19,12 @@
 
 class myWifi
 {
-  int mBegunOn;
+  int  mBegunOn;
   bool mON = false;
   bool mWantON = false;
 
   bool mIsSocket = false;
+  bool mWSConnected = false; 
   WebSocketsClient webSocket;
 
   BaseLedStrip* mLeds[MAXSTRIPS];
@@ -39,6 +40,9 @@ public:
   void start();
   void stop();
   void toggle() { mON ? stop() : start(); };
+  
+  void onWSEvent(WStype_t type, uint8_t * payload, size_t length);
+  bool isWSConnected() { return mIsSocket && mWSConnected; };
   
   void addStrip(const BaseLedStrip &leds);
   ForEachMethod(addStrip); // create method addStrips(...) that calls addStrip on all args

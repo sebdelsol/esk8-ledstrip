@@ -1,5 +1,28 @@
 #include <myWifi.h>
 
+//------------------------------------------------------------
+myWifi* CurrentMyWifi;
+
+void CallbackWrapper(WStype_t type, uint8_t * payload, size_t length)
+{
+  CurrentMyWifi->onWSEvent(type, payload, length);
+}
+
+void myWifi::onWSEvent(WStype_t type, uint8_t * payload, size_t length)
+{
+	switch(type)
+  {
+		case WStype_DISCONNECTED:
+			mWSConnected = false;
+      mSerial << "Socket client disconnected" << endl;
+			break;
+		case WStype_CONNECTED:
+			mWSConnected = true;
+      mSerial << "Socket client connected" << endl;
+			break;
+	}
+}
+
 // ----------------------------------------------------
 void myWifi::stop()
 {
@@ -50,6 +73,8 @@ bool myWifi::update()
           if (mIsSocket)
           {
             mSerial << "Socket client started" << endl;
+            CurrentMyWifi = this;
+            webSocket.onEvent(CallbackWrapper);
             webSocket.begin(SOCK_ADDR, SOCK_PORT);
           }
         }
