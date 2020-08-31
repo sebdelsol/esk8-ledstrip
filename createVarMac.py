@@ -5,7 +5,6 @@ fName = './include/varMac.h'
 
 ''' 
 // for N = 2
-
 #define _M1(_m, _p, x)        _m(_p, x)
 #define _M2(_m, _p, x, ...)   _m(_p, x)    _M1(_m, _p, __VA_ARGS__)
 
