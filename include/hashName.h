@@ -2,24 +2,27 @@
 
 #include <log.h>
 
-// linear Probe hash for [name] => Class* obj
-// Class needs to store its name and got a member: const char* name
+// hash for [name] => Class* obj
+// obj->name needs to be defined
 template <int N, class Class>
 class HashName 
 {
-  static constexpr int getN(uint8_t n) { return n * 2; }; // bigger but less long collisions
+  static constexpr int getN(uint8_t n) { return n * 2; }; // the bigger the less collisions
 
   Class*      objs[getN(N)];
   uint8_t     maxCol = 0;
 
-  inline uint8_t hash(const char *name) // naive hash, works ok with N*2
+  inline uint8_t hash(const char *name) // djb2: http://www.cse.yorku.ca/~oz/hash.html
   {
-    uint8_t h = 0;
-    while (*name) h += *name++;
-    return h % getN(N);
-  };
+    unsigned long hash = 5381;
+    int c;
+    while (c = *name++)
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    return hash % getN(N);;
+  }
 
-  inline uint8_t next(uint8_t i) { return (i+1) % getN(N); };
+  // quadratic probing
+  inline uint8_t next(uint8_t i, uint8_t col) { return (i + col * col) % getN(N); };
 
 public:
   HashName() { memset( objs, 0, getN(N) ); };
@@ -33,17 +36,12 @@ public:
     uint8_t col = 0;
     uint8_t i = hash(name);
     
-    // linear probe lookup for an empty slot
+    // lookup for an empty slot
     while(objs[i] != nullptr) 
-    { 
-      i = next(i);
-      col++;
-    }
+      i = next(i, ++col);
+
     maxCol = col > maxCol ? col : maxCol;
-
-    if (col > 0)
-      _log << "[" << name << "]: +" << col << " lookup" << (col > 1 ? "s" : "") << endl;
-
+    if (col > 0) _log << " [" << name << "]: +" << col << " lookup" << (col > 1 ? "s" : "") << endl;
     objs[i] = obj;
   };
 
@@ -60,13 +58,12 @@ public:
     uint8_t col = 0;
     uint8_t i = hash(name);
     
-    // linear probe lookup for an obj named name
+    // lookup for an obj named name
     while(objs[i] != nullptr && objHasNotMyName(objs[i], name) ) 
-    { 
+    {
       if (++col > maxCol) return nullptr; // failed
-      i = next(i);
+      i = next(i, col);
     }
-    
     return objs[i];
   };
 };
