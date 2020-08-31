@@ -38,19 +38,21 @@ NewFunctor(GetFunc, byte, GetArgs)        // newGetFunc(f) returns a GetFunc* th
 //---------------------------------
 struct MyVar 
 {
-  SetFunc*     set;
-  GetFunc*     get;
-  char*        name;
-  int          min, max;
-  bool         show;
-  byte         ID;
-  int          last[MAX_ARGS];
-  inline char* getname() { return name; };
+  SetFunc*       set;
+  GetFunc*       get;
+  char*          name;
+  int            min, max;
+  bool           show;
+  byte           ID;
+  int            last[MAX_ARGS];
+  static Stream& mSerial;
 };
 
 //---------------------------------
 class OBJVar
 {
+  static Stream& mSerial; 
+
   HashName<MAX_VAR, MyVar> mHash;
   MyVar* mVar[MAX_VAR];
   byte   mNVAR = 0;
@@ -58,7 +60,7 @@ class OBJVar
 public:  
   bool   addVar(const char* name, SetFunc* set, GetFunc* get, int min = 0, int max = 0, bool show = true);
   byte   getNbVar()                       { return mNVAR; };
-  char*  getVarName(byte i)               { return mVar[i]->getname(); };
+  char*  getVarName(byte i)               { return mVar[i]->name; };
   MyVar* getVar(byte i)                   { return mVar[i]; };
   MyVar* getVarFromName(const char* name) { return mHash.get(name); };
 

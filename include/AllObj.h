@@ -37,9 +37,9 @@ class AllObj
 
   struct mOBJ
   {
-    char*        name;
-    OBJVar*      obj;
-    inline char* getname() { return name; };
+    char*          name;
+    OBJVar*        obj;
+    static Stream& mSerial;
   };
 
   HashName<ALLOBJ_MAXOBJ, mOBJ> mHash;
@@ -64,7 +64,7 @@ class AllObj
   File    getFile(bool isdefault, const char* mode);
 
 protected:
-  Stream&     mDbgSerial;
+  Stream&    mDbgSerial;
 
   const char* mSetKeyword = ALLOBJ_SET;
   const char* mGetKeyword = ALLOBJ_GET;

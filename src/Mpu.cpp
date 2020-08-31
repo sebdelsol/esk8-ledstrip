@@ -80,7 +80,7 @@ void MPU::calibrate()
 
 bool MPU::setOffsets()
 {
-  Serial << F("Try to get Offset...");
+  mSerial << F("Try to get Offset...");
 
   if (mGotOffset)
   {
@@ -89,7 +89,7 @@ bool MPU::setOffsets()
     printOffsets(F("Got internal offsets"));
   }
   else 
-    Serial << endl;
+    mSerial << endl;
 
   return mGotOffset;
 }

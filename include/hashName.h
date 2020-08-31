@@ -3,7 +3,7 @@
 #include <Streaming.h>
 
 // linear Probe hash for [name] => Class* obj
-// Class needs to store its name and implement a getname() method 
+// Class needs to store its name and implement a name() member
 template <int N, class Class>
 class HashName 
 {
@@ -27,7 +27,7 @@ public:
   void add(Class* obj)
   {
     assert (obj!=nullptr);
-    const char *name = obj->getname();
+    const char *name = obj->name;
     assert (name!=nullptr);
     
     uint8_t col = 0;
@@ -49,7 +49,7 @@ public:
 
   inline bool objHasNotMyName(Class* obj, const char* name) 
   {
-    const char* oname = obj->getname();
+    const char* oname = obj->name;
     return oname != nullptr && strcmp(oname, name) != 0 ? true : false;
   };
 
