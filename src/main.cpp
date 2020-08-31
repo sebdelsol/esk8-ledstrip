@@ -9,7 +9,6 @@
 #define USE_WIFI (defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET))
 
 // ----------------------------------------------------
-// #include <Streaming.h>
 #include <Pins.h>
 #include <ledstrip.h>
 #include <mpu.h>
@@ -23,7 +22,7 @@
   #define   Serial  SerialAndTelnet // redefine Serial
 #endif
 
-// -- log, depends on Serial possible redifinition 
+// -- log, depends on Serial possible redefinition 
 #include <log.h>
 Stream& _log = Serial;
 
