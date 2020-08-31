@@ -84,8 +84,8 @@ public:
 
 #define _AddVar(N, name, min, max, show, set, ...)                                              \
 { /* __VA_ARGS__ gives optional get expressions */                                              \
-  SetFunc* setF = newSetFunc([this](SetArgs args, byte n) { if (n==N) { set; } });              \
-  GetFunc* getF = newGetFunc([this](GetArgs args) -> byte { _Stor##N(args, ##__VA_ARGS__); });  \
+  SetFunc* setF = newSetFunc( [this](SetArgs args, byte n) { if (n==N) { set; } });             \
+  GetFunc* getF = newGetFunc( [this](GetArgs args) -> byte { _Stor##N(args, ##__VA_ARGS__); }); \
   addVar(name, setF, getF, min, max, show);                                                     \
 }
 
