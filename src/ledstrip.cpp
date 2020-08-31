@@ -1,7 +1,7 @@
 #include <ledstrip.h>
 
 // ----------------------------------------------------
-#ifdef FASTLED_SHOW_CORE
+#ifdef FASTLED_CORE
   TaskHandle_t FastLEDshowTaskHandle;
   TaskHandle_t userTaskHandle = 0;
 
@@ -11,7 +11,7 @@
     {
       userTaskHandle = xTaskGetCurrentTaskHandle(); //so that the show task can notify when it's done
       xTaskNotifyGive(FastLEDshowTaskHandle); // trigger fastled show task
-      ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(FASTLED_WAIT_TASKSHOW)); // Wait to be notified that it's done
+      ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(FASTLED_WAIT)); // Wait to be notified that it's done
       userTaskHandle = 0;
     }
   }
@@ -40,9 +40,9 @@ void AllLedStrips::init(const int maxmA, bool dither)
   FastLED.setDither(dither ? BINARY_DITHER : DISABLE_DITHER);
   mSerial << "Leds - Max " << maxmA/1000. << "A - Dither " << (dither ? "on" : "off") << endl;
 
-  #ifdef FASTLED_SHOW_CORE
-    xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", 2048, nullptr, FASTLED_TASK_PRIO, &FastLEDshowTaskHandle, FASTLED_SHOW_CORE);  
-    mSerial << "Fastled runs on Core " << FASTLED_SHOW_CORE << " with Prio " << FASTLED_TASK_PRIO << endl;
+  #ifdef FASTLED_CORE
+    xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", FASTLED_STACK, nullptr, FASTLED_PRIO, &FastLEDshowTaskHandle, FASTLED_CORE);  
+    mSerial << "Fastled runs on Core " << FASTLED_CORE << " with Prio " << FASTLED_PRIO << endl;
   #endif
 }
 
@@ -85,7 +85,7 @@ void AllLedStrips::showInfo()
 
 void AllLedStrips::show() 
 { 
-  #ifdef FASTLED_SHOW_CORE
+  #ifdef FASTLED_CORE
     TriggerFastLEDShow();
   #else
     noInterrupts();

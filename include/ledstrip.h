@@ -13,11 +13,11 @@
 #define MAXFX           5
 #define MAXSTRIP        3
 
-//--------------------------------------
-// The core to run FastLED.show()
-// #define FASTLED_SHOW_CORE 1
-// #define FASTLED_TASK_PRIO (configMAX_PRIORITIES - 1)
-// #define FASTLED_WAIT_TASKSHOW 100 //ms
+//------------------- FastLED.show() run in a task
+// #define FASTLED_CORE  1
+// #define FASTLED_PRIO  (configMAX_PRIORITIES - 1)
+// #define FASTLED_WAIT  100 //ms
+// #define FASTLED_STACK 2048
 
 //--------------------------------------
 class BaseLedStrip
