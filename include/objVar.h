@@ -34,7 +34,7 @@ using SetArgs = const int (&)[MAX_ARGS];  // ref on int[MAX_ARGS] non mutable
 using GetArgs = int (&)[MAX_ARGS];        // ref on int[MAX_ARGS] mutable 
 
 NewFunctor(SetFunc, void, SetArgs, byte)  // newSetFunc(f) returns a SetFunc* that stores void f(SetArg, byte){}
-NewFunctor(GetFunc, byte, GetArgs)        // newGetFunc(f) returns a GetFunc* that stores     byte f(GetArgs){} 
+NewFunctor(GetFunc, byte, GetArgs)        // newGetFunc(f) returns a GetFunc* that stores byte f(GetArgs){} 
 
 //---------------------------------
 struct MyVar 
