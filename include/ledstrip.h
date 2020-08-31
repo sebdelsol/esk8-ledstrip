@@ -2,7 +2,7 @@
 
 #include <FastledCfg.h>
 #include <FastLED.h>
-#include <Streaming.h>
+#include <log.h>
 #include <Pins.h>
 #include <ObjVar.h>
 #include <FX.h>
@@ -22,15 +22,11 @@
 //--------------------------------------
 class BaseLedStrip
 {
-protected:
-  Stream& mSerial;
-  
 public:
   virtual void showInfo(); 
   virtual void update(ulong time, ulong dt);  
   virtual void init();
   virtual byte* getData(int& n); // for myWifi
-  BaseLedStrip(Stream& serial) : mSerial(serial) {};
 };
 
 //---------
@@ -39,10 +35,9 @@ class AllLedStrips
   BaseLedStrip* mStrips[MAXSTRIP];
   byte    mNStrips = 0;
   ulong   mLastT = 0;
-  Stream& mSerial;
 
 public:
-  AllLedStrips(Stream& serial);
+  AllLedStrips();
   void init(const int maxmA, bool dither);
 
   void setBrightness(const byte scale) { FastLED.setBrightness(scale); };
@@ -71,7 +66,7 @@ class LedStrip : public BaseLedStrip
 
 public:
 
-  LedStrip(Stream& serial, const char* name="") : BaseLedStrip(serial)
+  LedStrip(const char* name="")
   {
     mName = (char* )malloc(strlen(name) + 1);
     assert (mName!=nullptr);
@@ -93,7 +88,7 @@ public:
       fx.init(NLEDS);
     }
     else
-      mSerial << ">> ERROR !! Max FX is reached " << MAXFX << endl; 
+      _log << ">> ERROR !! Max FX is reached " << MAXFX << endl; 
 
     return ok;
   };
@@ -102,13 +97,13 @@ public:
 
   void showInfo()
   {
-    mSerial << mName << "(" << NLEDS << ") ";
+    _log << mName << "(" << NLEDS << ") ";
     for (byte i=0; i < mNFX; i++)
     {
       FX* fx = mFX[i];
-      mSerial << " - " << fx->getName() << "(" << fx->getAlpha() << ")";
+      _log << " - " << fx->getName() << "(" << fx->getAlpha() << ")";
     }
-    mSerial << "                  " << endl;
+    _log << "                  " << endl;
   };
 
   byte* getData(int& n)

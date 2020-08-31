@@ -56,7 +56,7 @@ void MPU::init()
     OutputMutex = xSemaphoreCreateMutex();
     FlagReady = xEventGroupCreate();
     xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", MPU_GET_STACK, this, MPU_GET_PRIO, &NotifyToCalibrate, MPU_GET_CORE);  
-    mSerial << "Mpu runs on Core " << MPU_GET_CORE << " with Prio " << MPU_GET_PRIO << endl;
+    _log << "Mpu runs on Core " << MPU_GET_CORE << " with Prio " << MPU_GET_PRIO << endl;
 
     AddCmd("calibrate",  xTaskNotifyGive(NotifyToCalibrate) ) // trigger a calibration
   #else
@@ -80,7 +80,7 @@ void MPU::calibrate()
 
 bool MPU::setOffsets()
 {
-  mSerial << F("Try to get Offset...");
+  _log << F("Try to get Offset...");
 
   if (mGotOffset)
   {
@@ -89,16 +89,16 @@ bool MPU::setOffsets()
     printOffsets(F("Got internal offsets"));
   }
   else 
-    mSerial << endl;
+    _log << endl;
 
   return mGotOffset;
 }
 
 void MPU::printOffsets(const __FlashStringHelper* txt)
 {
-  mSerial << txt << endl;
-  mSerial << F("Acc Offset: \tx ") << getXAccelOffset() << F("\ty ") << getYAccelOffset() << F("\tz ") << getZAccelOffset() << endl;
-  mSerial << F("Gyr Offset: \tx ") << getXGyroOffset()  << F("\ty ") << getYGyroOffset()  << F("\tz ") << getZGyroOffset()  << endl;
+  _log << txt << endl;
+  _log << F("Acc Offset: \tx ") << getXAccelOffset() << F("\ty ") << getYAccelOffset() << F("\tz ") << getZAccelOffset() << endl;
+  _log << F("Gyr Offset: \tx ") << getXGyroOffset()  << F("\ty ") << getYGyroOffset()  << F("\tz ") << getZGyroOffset()  << endl;
 }
 
 bool MPU::getFiFoPacket() 
@@ -114,7 +114,7 @@ void MPU::begin()
 
   initialize(); reset(); resetI2CMaster(); //help with startup reliabilily
 
-  mSerial << F("MPU connection...") << (testConnection() ? F("successful") : F("failed")) << endl;
+  _log << F("MPU connection...") << (testConnection() ? F("successful") : F("failed")) << endl;
   uint8_t devStatus = dmpInitialize();
 
   if (devStatus == 0) // did it work ?
@@ -131,7 +131,7 @@ void MPU::begin()
   else // error
   {
     const __FlashStringHelper* error =  devStatus == 1 ? F("initial memory load") : (devStatus == 2 ? F("DMP configuration updates") : F("unknown"));
-    mSerial << F("DMP ERROR #") << devStatus << F(" : ") << error << F(" failure") << endl;
+    _log << F("DMP ERROR #") << devStatus << F(" : ") << error << F(" failure") << endl;
   }
 }
 
@@ -189,13 +189,13 @@ void MPU::compute(SensorOutput& output)
   output.updated = true;
 
   #ifdef MPU_DBG
-    mSerial << "[ dt "   << dt*.001 << "ms\t smooth" << smooth/65536. << "\t Wz "  << output.wZ  << "]\t ";
-    mSerial << "[ gyr "  << mW.x << "\t "            << mW.y << "\t "              << mW.z << "\t ";
-    mSerial << "[ grav " << mGrav.x << "\t "         << mGrav.y << "\t "           << mGrav.z << "]\t ";
-    mSerial << "[ avg "  << output.accX << "\t "     << output.accY << "\t "       << output.accZ << "]\t ";
-    mSerial << "[ acc "  << mAcc.x << "\t "          << mAcc.y << "\t "            << mAcc.z << "]\t ";
-    mSerial << "[ real " << mAccReal.x << "\t "      << mAccReal.y << "\t "        << mAccReal.z << "]\t ";
-    mSerial << endl;
+    _log << "[ dt "   << dt*.001 << "ms\t smooth" << smooth/65536. << "\t Wz "  << output.wZ  << "]\t ";
+    _log << "[ gyr "  << mW.x << "\t "            << mW.y << "\t "              << mW.z << "\t ";
+    _log << "[ grav " << mGrav.x << "\t "         << mGrav.y << "\t "           << mGrav.z << "]\t ";
+    _log << "[ avg "  << output.accX << "\t "     << output.accY << "\t "       << output.accZ << "]\t ";
+    _log << "[ acc "  << mAcc.x << "\t "          << mAcc.y << "\t "            << mAcc.z << "]\t ";
+    _log << "[ real " << mAccReal.x << "\t "      << mAccReal.y << "\t "        << mAccReal.z << "]\t ";
+    _log << endl;
   #endif
 }
 

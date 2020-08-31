@@ -12,7 +12,7 @@ class AllObjBT : public AllObj
   BUF mBTbuf;
 
 public:
-  AllObjBT(Stream& dbgSerial);
+  AllObjBT() { mBTbuf.clear(); };
   
   void receiveUpdate(BlueTooth& BT);
   void sendUpdate(BlueTooth& BT, MPU& mpu);

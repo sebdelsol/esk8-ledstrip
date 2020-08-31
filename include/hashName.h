@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Streaming.h>
+#include <log.h>
 
 // linear Probe hash for [name] => Class* obj
 // Class needs to store its name and implement a name() member
@@ -42,7 +42,7 @@ public:
     maxCol = col > maxCol ? col : maxCol;
 
     if (col > 0)
-      obj->mSerial << "[" << name << "]: +" << col << " lookup" << (col > 1 ? "s" : "") << endl;
+      _log << "[" << name << "]: +" << col << " lookup" << (col > 1 ? "s" : "") << endl;
 
     objs[i] = obj;
   };

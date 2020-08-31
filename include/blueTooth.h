@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Streaming.h>
 #include <BluetoothSerial.h>
+#include <log.h>
 #include <Pins.h>
 
 #define BT_TERMINAL_NAME "Esk8"
@@ -13,11 +13,9 @@ class BlueTooth
   bool mON = false;
   bool mConnected = false;
 
-  Stream& mDbgSerial;
   BluetoothSerial mBTSerial;
 
 public:
-  BlueTooth(Stream& serial) : mDbgSerial(serial) {};
   void init(const bool on=true);
   void start(const bool on=true);
   void toggle();

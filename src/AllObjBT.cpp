@@ -1,12 +1,6 @@
 #include <AllObjBT.h>
 
 //----------------
-AllObjBT::AllObjBT(Stream& dbgSerial) : AllObj(dbgSerial) 
-{
-  mBTbuf.clear();
-}  
-
-//----------------
 void AllObjBT::sendInits(BlueTooth &BT)
 {
   if(BT.isReadyToSend())

@@ -9,7 +9,7 @@ bool OBJVar::addVar(const char* name, SetFunc* set, GetFunc* get, int min, int m
     // check the name already exists
     if (getVarFromName(name))
     {
-      mSerial << ">> ERROR !! name already exists: " << name << endl; 
+      _log << ">> ERROR !! name already exists: " << name << endl; 
       return false;
     }
 
@@ -29,7 +29,7 @@ bool OBJVar::addVar(const char* name, SetFunc* set, GetFunc* get, int min, int m
     var->show = show;
   }
   else
-    mSerial << ">> ERROR !! Max var is reached " << MAX_VAR << endl; 
+    _log << ">> ERROR !! Max var is reached " << MAX_VAR << endl; 
     
   return ok;
 }

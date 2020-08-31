@@ -1,7 +1,5 @@
 #pragma once
 
-#define SDA           21
-#define SCL           22
 #define LDR_PIN       35
 #define LEDM_PIN      14
 #define LEDR_PIN      12

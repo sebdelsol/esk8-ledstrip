@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Streaming.h>
 #include <HashName.h>
 
 #define MAX_VAR  25
@@ -38,21 +37,18 @@ NewFunctor(GetFunc, byte, GetArgs)        // newGetFunc(f) returns a GetFunc* th
 //---------------------------------
 struct MyVar 
 {
-  SetFunc*       set;
-  GetFunc*       get;
-  char*          name;
-  int            min, max;
-  bool           show;
-  byte           ID;
-  int            last[MAX_ARGS];
-  static Stream& mSerial;
+  SetFunc*  set;
+  GetFunc*  get;
+  char*     name;
+  int       min, max;
+  bool      show;
+  byte      ID;
+  int       last[MAX_ARGS];
 };
 
 //---------------------------------
 class OBJVar
 {
-  static Stream& mSerial; 
-
   HashName<MAX_VAR, MyVar> mHash;
   MyVar* mVar[MAX_VAR];
   byte   mNVAR = 0;
@@ -75,9 +71,6 @@ public:
   bool   isVarShown(byte i) { return mVar[i]->show; };
   bool   hasVarChanged(byte i);
 };
-
-#define SetOBJVarSerial(serial) Stream& OBJVar::mSerial = serial;
-#define SetMyVarSerial(serial)  Stream& MyVar::mSerial = serial;
 
 //---------------------------------
 #define _Stor0(args)                                                        return 0 

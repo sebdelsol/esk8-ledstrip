@@ -14,11 +14,11 @@ void myWifi::onWSEvent(WStype_t type, uint8_t * payload, size_t length)
   {
 		case WStype_DISCONNECTED:
 			mWSConnected = false;
-      mSerial << "Socket client Disconnected" << endl;
+      _log << "Socket client Disconnected" << endl;
 			break;
 		case WStype_CONNECTED:
 			mWSConnected = true;
-      mSerial << "Socket client Connected" << endl;
+      _log << "Socket client Connected" << endl;
 			break;
 	}
 }
@@ -31,7 +31,7 @@ void myWifi::stop()
 
   mWantON = false;
   mON = false;
-  mSerial << "Wifi off" << endl;
+  _log << "Wifi off" << endl;
 }
 
 void myWifi::start()
@@ -43,7 +43,7 @@ void myWifi::start()
   mON = false;
   mWantON = true;
 
-  mSerial << "Wifi Connecting" << endl;
+  _log << "Wifi Connecting" << endl;
 }
 
 // ----------------------------------------------------
@@ -66,13 +66,13 @@ bool myWifi::update()
       {
         if(WiFi.status() == WL_CONNECTED)
         {
-          mSerial << "Wifi Connected @ " << WiFi.localIP() << endl;
+          _log << "Wifi Connected @ " << WiFi.localIP() << endl;
           digitalWrite(BUILTIN_LED, LOW); // led on
           mON = true;
 
           if (mIsSocket)
           {
-            mSerial << "Socket client Started" << endl;
+            _log << "Socket client Started" << endl;
             CurrentMyWifi = this;
             webSocket.onEvent(CallbackWrapper);
             webSocket.begin(SOCK_ADDR, SOCK_PORT);

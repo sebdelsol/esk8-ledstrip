@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Streaming.h>
+#include <log.h>
 #include <SPIFFS.h>
 #include <Variadic.h>
 #include <ObjVar.h>
@@ -39,7 +39,6 @@ class AllObj
   {
     char*          name;
     OBJVar*        obj;
-    static Stream& mSerial;
   };
 
   HashName<ALLOBJ_MAXOBJ, mOBJ> mHash;
@@ -64,8 +63,6 @@ class AllObj
   File    getFile(bool isdefault, const char* mode);
 
 protected:
-  Stream&    mDbgSerial;
-
   const char* mSetKeyword = ALLOBJ_SET;
   const char* mGetKeyword = ALLOBJ_GET;
   const char* mInitKeyword = ALLOBJ_INIT;
@@ -74,11 +71,8 @@ protected:
   void emulateCmdForAllVars(const char* cmdKeyword, Stream& stream, OBJVar::ObjTestVarFunc testVar = nullptr, bool change = true, bool compact = false);
 
 public:
-  AllObj(Stream& dbgSerial) : mDbgSerial(dbgSerial) {};
   void init();
   void save(bool isdefault);
   void load(bool isdefault, bool change = true);
   bool addObj(OBJVar& obj, const char* name);
 };
-
-#define SetmOBJSerial(serial)  Stream& AllObj::mOBJ::mSerial = serial;

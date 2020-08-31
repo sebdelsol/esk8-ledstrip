@@ -5,28 +5,28 @@ void OTA::begin()
 {
   if(WiFi.status() == WL_CONNECTED)
   {
-    mSerial << "OTA  Connected @ " << WiFi.localIP() << endl;
+    _log << "OTA  Connected @ " << WiFi.localIP() << endl;
     ArduinoOTA.setHostname(OTA_HOSTNAME);
 
     ArduinoOTA
       .onStart( [this]()
       {
-        mSerial << "Start updating " << (ArduinoOTA.getCommand() == U_FLASH ? "sketch" : "filesystem") << endl;
+        _log << "Start updating " << (ArduinoOTA.getCommand() == U_FLASH ? "sketch" : "filesystem") << endl;
       })
       
       .onEnd( [this]()
       {
-        mSerial << "\nEnd\n";
+        _log << "\nEnd\n";
       })
       
       .onProgress( [this](unsigned int progress, unsigned int total)
       {
-        mSerial << "Progress: " << (progress / (total / 100)) << "%\r";
+        _log << "Progress: " << (progress / (total / 100)) << "%\r";
       })
       
       .onError( [this](ota_error_t error)
       {
-        mSerial << "Error " << error << endl; // check ArduinoOTA.h for errors
+        _log << "Error " << error << endl; // check ArduinoOTA.h for errors
       });
 
     ArduinoOTA.begin();

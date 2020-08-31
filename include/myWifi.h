@@ -3,8 +3,8 @@
 #define NODEBUG_WEBSOCKETS
 
 #include <WiFi.h>//<ESP8266WiFi.h>
-#include <Streaming.h>
 #include <WebSocketsClient.h>
+#include <log.h>
 #include <ledstrip.h>
 #include <wificonfig.h>  
 // wificonfig.h needs to define :
@@ -32,10 +32,7 @@ class myWifi
   #define INFO_LEN 15
   char mInfo[INFO_LEN];
 
-  Stream& mSerial;
-
 public:
-  myWifi(Stream &serial) : mSerial(serial) {};
   void start();
   void stop();
   void toggle() { mON ? stop() : start(); };

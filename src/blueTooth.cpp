@@ -12,16 +12,16 @@ void BlueTooth::onEvent(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
 {
   if(event == ESP_SPP_SRV_OPEN_EVT)
   {
-    mDbgSerial << "BT client Connected @ ";
+    _log << "BT client Connected @ ";
     for (int i = 0; i < 6; i++)
-      mDbgSerial << _HEX(param->srv_open.rem_bda[i]) << (i < 5 ? ":" : "");
-    mDbgSerial << endl;
+      _log << _HEX(param->srv_open.rem_bda[i]) << (i < 5 ? ":" : "");
+    _log << endl;
 
     mConnected = true;
   }
   else if(event == ESP_SPP_CLOSE_EVT)
   {
-    mDbgSerial << "BT client DisConnected" << endl;
+    _log << "BT client DisConnected" << endl;
     mConnected = false;
   }
 }
@@ -41,7 +41,7 @@ void BlueTooth::start(const bool on)
 {
   if (mON != on)
   {
-    mDbgSerial << "BT " << (on ? "Starting" : "Stopping") << "...";
+    _log << "BT " << (on ? "Starting" : "Stopping") << "...";
     mConnected = false;
   
     digitalWrite(LIGHT_PIN, on ? HIGH : LOW); // faster feedbcack might be false
@@ -57,7 +57,7 @@ void BlueTooth::start(const bool on)
     }
     digitalWrite(LIGHT_PIN, mON ? HIGH : LOW); // actual feedback
 
-    mDbgSerial << "BT " << (mON ? "Started" : "Stopped") << endl;
+    _log << "BT " << (mON ? "Started" : "Stopped") << endl;
   }
 }
 

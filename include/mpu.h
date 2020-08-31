@@ -4,7 +4,7 @@
 #include <FastLED.h> // for lerp15by16
 #include <Wire.h>
 #include <helper_3dmath.h>  // vector & quaternion 
-#include <Streaming.h>
+#include <log.h>
 #include <Pins.h>
 #include <ObjVar.h>
 
@@ -45,7 +45,6 @@ class MPU : public OBJVar, public MPU6050
   bool        mHasBegun = false;
 
   uint8_t*    mFifoBuffer; 
-  Stream&     mSerial;
 
   ulong       mT = 0;
   Quaternion  mQuat;      // quat from dmp fifobuffer
@@ -66,7 +65,6 @@ class MPU : public OBJVar, public MPU6050
 public:
   SensorOutput  mOutput; // public outpout
 
-  MPU(Stream& serial) : mSerial(serial) {};
   void init();
   void begin();
   void calibrate();

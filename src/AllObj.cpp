@@ -3,10 +3,10 @@
 //--------------------------------------
 void AllObj::init()
 {
-  mDbgSerial << "Mount SPIFFS" << endl;
+  _log << "Mount SPIFFS" << endl;
   spiffsOK = SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED);
   if (!spiffsOK)
-    mDbgSerial << "SPIFFS Mount Failed" << endl;
+    _log << "SPIFFS Mount Failed" << endl;
 }
 
 //--------------------------------------
@@ -34,7 +34,7 @@ bool AllObj::addObj(OBJVar& obj, const char* name)
     }
   }
   else
-    mDbgSerial << ">> ERROR !! Max obj is reached " << ALLOBJ_MAXOBJ << endl; 
+    _log << ">> ERROR !! Max obj is reached " << ALLOBJ_MAXOBJ << endl; 
 
   return ok;
 }
@@ -59,11 +59,11 @@ bool AllObj::isNumber(const char* txt)
 void AllObj::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args)
 {
   #ifdef DBG_CMD
-    JoinbySpace(mDbgSerial, cmdKeyword, parsed.objName, parsed.varName);
+    JoinbySpace(_log, cmdKeyword, parsed.objName, parsed.varName);
     
     for (byte i=0; i < nbArg; i++) 
-      mDbgSerial << " " << args[i];
-    mDbgSerial << endl;
+      _log << " " << args[i];
+    _log << endl;
   #endif
 }
 
@@ -230,9 +230,9 @@ File AllObj::getFile(bool isdefault, const char* mode)
   bool isLoading = strcmp(mode, "r")==0;
 
   if (f)
-    mDbgSerial << (isLoading ? "Loading from " : "Saving to ") << fname << "...";
+    _log << (isLoading ? "Loading from " : "Saving to ") << fname << "...";
   else
-    mDbgSerial << "FAIL to " << (isLoading ? "load from " : "save to ") << fname;
+    _log << "FAIL to " << (isLoading ? "load from " : "save to ") << fname;
   
   return f;
 }
@@ -246,9 +246,9 @@ void AllObj::load(bool isdefault, bool change)
     mTmpBuf.clear(); // might not be cleared by readCmdFromStream
     readCmdFromStream((Stream& )f, mTmpBuf, change); // should be a succession of set cmd
     f.close();
-    mDbgSerial << "loaded";
+    _log << "loaded";
   }
-  mDbgSerial << endl;
+  _log << endl;
 }
 
 //----------------
@@ -259,7 +259,7 @@ void AllObj::save(bool isdefault)
   {
     emulateCmdForAllVars(mGetKeyword, (Stream& )f); //for all vars, emulate a get cmd and send the result to file stream
     f.close();
-    mDbgSerial << "saved";
+    _log << "saved";
   }
-  mDbgSerial << endl;
+  _log << endl;
 }

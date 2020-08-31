@@ -9,7 +9,7 @@
 #define USE_WIFI (defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET))
 
 // ----------------------------------------------------
-#include <Streaming.h>
+// #include <Streaming.h>
 #include <Pins.h>
 #include <ledstrip.h>
 #include <mpu.h>
@@ -23,15 +23,19 @@
   #define   Serial  SerialAndTelnet // redefine Serial
 #endif
 
+// -- log, depends on Serial possible redifinition 
+#include <log.h>
+Stream& _log = Serial;
+
 // -- OTA
 #ifdef USE_OTA
   #include  <OTA.h>
-  OTA       Ota(Serial);
+  OTA       Ota;
 #endif
 
 // -- Acc & Wifi
-myWifi  MyWifi(Serial);
-MPU     Mpu(Serial);
+myWifi  MyWifi;
+MPU     Mpu;
 
 // -- BT & Cfg
 #ifdef USE_BT
@@ -39,8 +43,8 @@ MPU     Mpu(Serial);
   #include  <Button.h>
   #include  <AllObjBT.h>
   Button    Button(BUTTON_PIN);
-  BlueTooth BT(Serial);
-  AllObjBT  AllObj(Serial);
+  BlueTooth BT;
+  AllObjBT  AllObj;
 
   #include  <Cfg.h>
   CFG       Cfg(AllObj, BT, Mpu);
@@ -48,35 +52,30 @@ MPU     Mpu(Serial);
 #else
   #include  <NoBluetooth.h>
   #include  <AllObj.h>
-  AllObj    AllObj(Serial);
+  AllObj    AllObj;
 
   #include  <Cfg.h> 
   CFG       Cfg;
 #endif
 
-// --- Serial for ObjVar, MyVar & AllObj::mOBJ
-SetOBJVarSerial(Serial);
-SetMyVarSerial(Serial);
-SetmOBJSerial(Serial);
-
 // --- Strips & Fxs
-AllLedStrips  AllStrips(Serial);
+AllLedStrips  AllStrips;
 
-LedStrip    <NBLEDS_MIDDLE, LEDM_PIN> StripM(Serial, "Mid");
+LedStrip    <NBLEDS_MIDDLE, LEDM_PIN> StripM("Mid");
 RunningFX   FireRun(LUSH_LAVA, 3);     
 RunningFX   AquaRun(AQUA_MENTHE, -3);  
 TwinkleFX   FireTwk(HUE_RED); 
 TwinkleFX   AquaTwk(HUE_AQUA_BLUE);
 PlasmaFX    Plasma;
 
-LedStrip    <NBLEDS_TIPS, LEDR_PIN>  StripR(Serial, "Rear");
+LedStrip    <NBLEDS_TIPS, LEDR_PIN>  StripR("Rear");
 DblCylonFX  CylonR(LUSH_LAVA); 
 FireFX      FireRL;
 FireFX      FireRR(true); // reverse
 TwinkleFX   TwinkleR(CRGB::Red);
 RunningFX   RunR(CRGB::Gold); 
 
-LedStrip    <NBLEDS_TIPS, LEDF_PIN>  StripF(Serial, "Front");
+LedStrip    <NBLEDS_TIPS, LEDF_PIN>  StripF("Front");
 DblCylonFX  CylonF(AQUA);   
 PacificaFX  Pacifica;
 TwinkleFX   TwinkleF(HUE_AQUA_BLUE); 
@@ -91,10 +90,10 @@ void setup()
 
   // -- log
   Serial.begin(SERIAL_BAUD);
-  Serial << "\n---------\n- START -\n---------\n";
-  Serial << "ESP32 " << esp_get_idf_version() << endl;
-  Serial << "CPU runs @ " << getCpuFrequencyMhz() << "MHz" << endl;
-  Serial << "Main runs on Core " << xPortGetCoreID() << endl;
+  _log << "\n---------\n- START -\n---------\n";
+  _log << "ESP32 " << esp_get_idf_version() << endl;
+  _log << "CPU runs @ " << getCpuFrequencyMhz() << "MHz" << endl;
+  _log << "Main runs on Core " << xPortGetCoreID() << endl;
 
   // -- main inits
   Cfg.init();
@@ -142,7 +141,7 @@ void setup()
 }
 
 // ----------------------------------------------------
-Raster Raster(Serial);
+Raster Raster;
 
 // --------------
 inline void loopMpu()

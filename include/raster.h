@@ -5,8 +5,6 @@ struct Raster
 #ifdef DEBUG_RASTER
   static const int max = 20;
 
-  Stream& mSerial;
-
   struct                                                                                                               
   {                                                                                                                           
     const char* name;                                                                                          
@@ -16,8 +14,6 @@ struct Raster
   int  n;                                                                                                       
   long start;                                                                                                 
   long lastEnd;                                     
-
-  Raster(Stream& serial) : mSerial(serial) {};
 
   inline void begin()
   {
@@ -33,24 +29,23 @@ struct Raster
       r[n++].name = name;                                                                                   
     }                                                                                                                           
     else                                                                                                                        
-      mSerial << ">> ERROR !! Max Raster reached "  << n << endl;
+      _log << ">> ERROR !! Max Raster reached "  << n << endl;
   };
 
   inline void end()
   {
     long end = micros();                                                                                                   
-    mSerial << "LOOP "  << (end - lastEnd) << "µs";                                                                    
+    _log << "LOOP "  << (end - lastEnd) << "µs";                                                                    
     lastEnd = end;
 
-    mSerial << " \t TOTAL " << (end - start) << "µs";                                                                  
+    _log << " \t TOTAL " << (end - start) << "µs";                                                                  
     for(byte i=0; i < n; i++)                                                                                        
-      mSerial << " \t - " << r[i].name << " " << (r[i].time - (i==0 ? start : r[i-1].time)) << "µs  "; 
+      _log << " \t - " << r[i].name << " " << (r[i].time - (i==0 ? start : r[i-1].time)) << "µs  "; 
     
-    mSerial << "\t free Heap - " << ESP.getFreeHeap() << endl;
+    _log << "\t free Heap - " << ESP.getFreeHeap() << endl;
   };
 
 #else
-  Raster(Stream&){};
   inline void begin(){};       
   inline void add(const char*){};
   inline void end(){};
