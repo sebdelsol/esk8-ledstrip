@@ -58,7 +58,7 @@ class OBJVar
 
 public:  
   bool   addVar(const char* name, SetFunc* set, GetFunc* get, int min = 0, int max = 0, bool show = true);
-  byte   getNbVar()                       { return mNVAR;};
+  byte   getNbVar()                       { return mNVAR; };
   char*  getVarName(byte i)               { return mVar[i]->getname(); };
   MyVar* getVar(byte i)                   { return mVar[i]; };
   MyVar* getVarFromName(const char* name) { return mHash.get(name); };
@@ -84,7 +84,7 @@ public:
 
 #define _AddVar(N, name, min, max, show, set, ...)                                              \
 { /* __VA_ARGS__ gives optional get expressions */                                              \
-  SetFunc* setF = newSetFunc([this](SetArgs args, byte n) { if (n==N) { set; }             });  \
+  SetFunc* setF = newSetFunc([this](SetArgs args, byte n) { if (n==N) { set; } });              \
   GetFunc* getF = newGetFunc([this](GetArgs args) -> byte { _Stor##N(args, ##__VA_ARGS__); });  \
   addVar(name, setF, getF, min, max, show);                                                     \
 }
