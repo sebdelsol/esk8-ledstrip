@@ -69,9 +69,7 @@ public:
   byte   getID(const MyVar& var) { return var.ID; };
   void   setID(MyVar& var, byte id) const { var.ID = id; };
 
-  // ------ ObjTestVarFunc 
   using  ObjTestVarFunc = bool (OBJVar::*)(byte i);
-  
   bool   isVarShown(byte i) { return mVar[i]->show; };
   bool   hasVarChanged(byte i);
 };
