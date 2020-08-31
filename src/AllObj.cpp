@@ -56,16 +56,25 @@ bool AllObj::isNumber(const char* txt)
   return true; 
 } 
 
-void AllObj::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args)
+void AllObj::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args, bool line = true)
 {
   #ifdef DBG_CMD
     JoinbySpace(_log, cmdKeyword, parsed.objName, parsed.varName);
     
     for (byte i=0; i < nbArg; i++) 
       _log << " " << args[i];
-    _log << endl;
+    if (line) _log << endl;
   #endif
 }
+
+void AllObj::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args, int min, int max)
+{
+  #ifdef DBG_CMD
+    dbgCmd(cmdKeyword, parsed, nbArg, args, false);
+    _log << " [" << min << "-" << max << "]" << endl;
+  #endif
+}
+
 
 //--------------------------------------
 void AllObj::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
@@ -127,7 +136,7 @@ void AllObj::handleInitCmd(const parsedCmd& parsed, Stream& stream)
     stream << " " << args[i];
   stream << endl;
 
-  dbgCmd(mInitKeyword, parsed, nbArg, args);
+  dbgCmd(mInitKeyword, parsed, nbArg, args, min, max);
 }
 
 //--------------------------------------

@@ -30,17 +30,28 @@ public:
 };
 
 //---------
-class AllLedStrips
+class AllLedStrips : public OBJVar
 {
   BaseLedStrip* mStrips[MAXSTRIP];
-  byte    mNStrips = 0;
-  ulong   mLastT = 0;
+  byte      mNStrips  = 0;
+  ulong     mLastT    = 0;
+
+  bool      mDither   = true;
+  int       mMaxmA    = 800;
+  byte      mBright   = 255;  // half brightness (128) is enough & avoid reaching maxmA
+  int       mFade     = 0;    // for the fade in
+  int       mMinProbe = 400;
+  const int mMaxProbe = 4095;
+  bool      mProbe    = false;
 
 public:
   AllLedStrips();
-  void init(const int maxmA, bool dither);
+  void init();
 
   void setBrightness(const byte scale) { FastLED.setBrightness(scale); };
+  void setDither(const bool dither) { FastLED.setDither(dither ? BINARY_DITHER : DISABLE_DITHER); };
+  void setMaxmA(const int maxmA) { FastLED.setMaxPowerInVoltsAndMilliamps(5, maxmA); };
+  
   void switchOff();
   void show();
 
@@ -49,6 +60,7 @@ public:
 
   void showInfo();
   void update();
+  bool doDither();
 };
 
 //--------------------------------------

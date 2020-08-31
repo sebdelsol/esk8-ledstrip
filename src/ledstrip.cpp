@@ -41,11 +41,16 @@ void AllLedStrips::switchOff()
     FastLED.clear(true);
 }
 
-void AllLedStrips::init(const int maxmA, bool dither) 
+void AllLedStrips::init() 
 {
-  FastLED.setMaxPowerInVoltsAndMilliamps(5, maxmA);
-  FastLED.setDither(dither ? BINARY_DITHER : DISABLE_DITHER);
-  _log << "Leds - Max " << maxmA/1000. << "A - Dither " << (dither ? "on" : "off") << endl;
+  setDither(mDither);
+  setMaxmA(mMaxmA);
+
+  AddVarCode ("dither", mDither = args[0]; setDither(args[0]),     mDither, 0,   1);
+  AddVarCode ("maxmA",  mMaxmA  = args[0]; setMaxmA(args[0]),      mMaxmA,  100, 1000);
+  AddVarCode ("bright", mBright = args[0]; setBrightness(args[0]), mBright, 1,   255);
+  AddBoolName("probe", mProbe);
+  AddVarName ("minProbe", mMinProbe, 1, mMaxProbe);
 
   #ifdef FASTLED_CORE
     xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", FASTLED_STACK, nullptr, FASTLED_PRIO, &FastLEDshowTaskHandle, FASTLED_CORE);  
@@ -69,17 +74,38 @@ bool AllLedStrips::addStrip(BaseLedStrip &strip)
 
 void AllLedStrips::update()
 {
+  // update all strips
   ulong t = GET_MILLIS();
   ulong dt = mLastT ? t - mLastT : 1; // to prevent possible /0
   mLastT += dt;
 
   for (byte i=0; i < mNStrips; i++)
     mStrips[i]->update(t, dt);
+
+  // read probe and adjust brightness
+  if(mProbe)
+  {
+    int light = analogRead(LDR_PIN);
+    mBright = map(light, mMinProbe, mMaxProbe, 255, 0); // the darker the light, the brighter the leds
+  }
+  mFade = lerp16by16(mFade,  65535,  650);
+  byte bright = (mBright * ((mFade >> 8) + 1)) >> 8; 
+  setBrightness(mBright);
+
+  // showing if dithering is off
+  if (!mDither) show();
+}
+
+bool AllLedStrips::doDither()
+{
+  // to be called as much as possible for Fastled brightness dithering
+  if (mDither) show(); 
+  return mDither;
 }
 
 void AllLedStrips::showInfo()
 {
-  _log << "FPS " << FastLED.getFPS() << endl;
+  s_log << "FPS " << FastLED.getFPS() << endl;
   for (byte i=0; i < mNStrips; i++)
     mStrips[i]->showInfo();
 }

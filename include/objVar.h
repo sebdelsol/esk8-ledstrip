@@ -2,7 +2,7 @@
 
 #include <HashName.h>
 
-#define MAX_VAR  25
+#define MAX_VAR  16
 #define MAX_ARGS 3
 
 //--------------------------------- 

@@ -7,8 +7,8 @@
 #include <Buf.h>
 
 //-------------------------------
-// #define DBG_CMD      // to see what's happening with send & received cmd
-#define ALLOBJ_MAXOBJ     20
+// #define DBG_CMD        // to see what's happening with send & received cmd
+#define ALLOBJ_MAXOBJ     18
 
 #define ALLOBJ_RESERVED   '!'
 #define ALLOBJ_1ST_ID      (ALLOBJ_RESERVED + 1)
@@ -51,7 +51,9 @@ class AllObj
   bool        spiffsOK = false;
   BUF         mTmpBuf;
   
-  void    dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args);
+  void    dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args, bool  line);
+  void    dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args, int min, int max);
+
   bool    isNumber(const char* txt);
   OBJVar* getObjFromName(const char* name);
 

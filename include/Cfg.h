@@ -3,9 +3,6 @@
 // -------------------- main cfg
 #define   SERIAL_BAUD   115200  // Hz
 
-#define   LED_MAX_MA    800     // mA, lower Cfg.bright to avoid reaching this value
-#define   LED_DITHERING true
-
 #define   LED_TICK      10      // ms, leds update
 #define   BT_TICK       30      // ms, bluetooth update
 #define   WIFI_TICK     30      // ms, wifi update for OTA, telnet & led debug
@@ -22,23 +19,15 @@
 
 // --------------------- maxs
 #define   MAX_uint8     255
-#define   MAX_probe     4095
 #define   MAX_int16     32767
 
-// --------------------- saved cfg
-struct CFG : public OBJVar
+// --------------------- saved Tweaks
+struct Tweaks : public OBJVar
 {
   // update ?
   bool stripMid   = true;
   bool stripRear  = true;
   bool stripFront = true;
-
-  // brightness ?
-  byte bright     = 255;  // half brightness is enough tho to avoid reaching LED_MAX_MA
-  int fade        = 0;    // for the fade in
-  
-  int  minProbe   = 400;
-  bool probe      = false;
 
   byte pacifica   = 158;
   byte fire       = 128;
@@ -68,28 +57,11 @@ struct CFG : public OBJVar
   // rear twinkle
   int minTwkR     = 54;
 
-  #ifdef USE_BT
-        AllObjBT& allObj; BlueTooth& bt; MPU& mpu;
-    CFG(AllObjBT& allObj, BlueTooth& bt, MPU& mpu) : allObj(allObj), bt(bt), mpu(mpu) {};
-  #endif
-
   void init()
   {
-    #ifdef USE_BT
-      AddCmd   ("save",      allObj.save(false)         ) // save not default
-      AddCmd   ("load",      allObj.load(false)         ) // load not default
-      AddCmd   ("default",   allObj.load(true)          ) // load default
-      AddCmdHid("getInits",  allObj.sendInits(bt)       ) // answer with all vars init (min, max, value)
-      AddCmdHid("getUpdate", allObj.sendUpdate(bt, mpu) ) // answer with all updates
-    #endif
-
     AddBool(stripMid);
     AddBool(stripRear);
     AddBool(stripFront);
-
-    AddBool(probe);
-    AddVar (minProbe,   1, MAX_probe);
-    AddVar (bright,     1, MAX_uint8);
 
     AddVar (pacifica,   0, MAX_uint8);
     AddVar (fire,       0, MAX_uint8);
@@ -110,3 +82,26 @@ struct CFG : public OBJVar
     AddVar (minTwkR,    0, MAX_uint8);
   };
 };
+
+#ifdef USE_BT
+  struct CFG : public OBJVar
+  {
+    AllObjBT& allObj; BlueTooth& bt; MPU& mpu;
+    CFG(AllObjBT& allObj, BlueTooth& bt, MPU& mpu) : allObj(allObj), bt(bt), mpu(mpu) {};
+
+    void init()
+    {
+      AddCmd   ("save",      allObj.save(false)         ) // save not default
+      AddCmd   ("load",      allObj.load(false)         ) // load not default
+      AddCmd   ("default",   allObj.load(true)          ) // load default
+      AddCmd   ("reset",     ESP.restart()              ) // reset
+      AddCmdHid("getInits",  allObj.sendInits(bt)       ) // answer with all vars init (min, max, value)
+      AddCmdHid("getUpdate", allObj.sendUpdate(bt, mpu) ) // answer with all updates
+    };
+  };
+#else
+  struct CFG : public OBJVar
+  {
+    void init(){};
+  };
+#endif

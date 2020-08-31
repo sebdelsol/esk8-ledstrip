@@ -1,5 +1,5 @@
 #define USE_BT
-#define USE_OTA 
+// #define USE_OTA 
 // #define USE_TELNET 
 
 // #define DEBUG_RASTER
@@ -44,21 +44,21 @@ MPU     Mpu;
   Button    Button(BUTTON_PIN);
   BlueTooth BT;
   AllObjBT  AllObj;
-
-  #include  <Cfg.h>
-  CFG       Cfg(AllObj, BT, Mpu);
+  #define   CfgArgs (AllObj, BT, Mpu)
 
 #else
   #include  <NoBluetooth.h>
   #include  <AllObj.h>
   AllObj    AllObj;
-
-  #include  <Cfg.h> 
-  CFG       Cfg;
+  #define   CfgArgs
 #endif
 
+#include  <Cfg.h> 
+CFG       Cfg CfgArgs;
+Tweaks    Twk;
+
 // --- Strips & Fxs
-AllLedStrips  AllStrips;
+AllLedStrips AllStrips;
 
 LedStrip    <NBLEDS_MIDDLE, LEDM_PIN> StripM("Mid");
 RunningFX   FireRun(LUSH_LAVA, 3);     
@@ -94,10 +94,11 @@ void setup()
 
   // -- main inits
   Cfg.init();
+  Twk.init();
   Mpu.init();
 
-  // -- Strip inits & register FXs
-  AllStrips.init(LED_MAX_MA, LED_DITHERING);
+  // -- register Strips & FXs
+  AllStrips.init();
   AllStrips.addStrips(StripM, StripR, StripF); 
   
   StripM.addFXs(FireRun,  FireTwk, AquaRun,  AquaTwk, Plasma);
@@ -110,10 +111,10 @@ void setup()
   #define _addObj(cat, obj)  AllObj.addObj(obj, cat#obj);
   #define AddObjs(cat, ...)  ForEachMacro(_addObj, cat, __VA_ARGS__)
 
-  AddObjs("",        Mpu,      Cfg);            
-  AddObjs("mid.",    FireRun,  FireTwk, AquaRun,  AquaTwk,  Plasma);
-  AddObjs("rear.",   TwinkleR, FireRR,  FireRL,   RunR,     CylonR);
-  AddObjs("front.",  TwinkleF, RunF,    Pacifica, CylonF);
+  AddObjs("",        Cfg,      Mpu,       AllStrips,  Twk);            
+  AddObjs("mid.",    FireRun,  FireTwk,   AquaRun,    AquaTwk,  Plasma);
+  AddObjs("rear.",   TwinkleR, FireRR,    FireRL,     RunR,     CylonR);
+  AddObjs("front.",  TwinkleF, RunF,      Pacifica,   CylonF);
 
   AllObj.save(true); // save default
   AllObj.load(false, false); // load not default, do not send change to BT
@@ -189,71 +190,60 @@ inline void loopLeds()
 {
   EVERY_N_MILLISECONDS(LED_TICK)
   {
-    // -- Master brightness
-    if(Cfg.probe)
-    {
-      int light = analogRead(LDR_PIN);
-      Cfg.bright = map(light, Cfg.minProbe, MAX_probe, 255, 0); // the darker the light, the brighter the leds
-    }
-    Cfg.fade = lerp16by16(Cfg.fade,  65535,  650);
-    byte bright = (Cfg.bright * ((Cfg.fade >> 8) + 1)) >> 8; 
-    AllStrips.setBrightness(bright);
-    Raster.add("Light probe");
-
     // led setup modified by MPU
     SensorOutput& m = Mpu.mOutput;
     if (m.updated)
     {
       // -- Gyro
-      int runSpeed =  ((m.wZ > 0) - (m.wZ < 0)) * Cfg.runSpeed;
+      int runSpeed =  ((m.wZ > 0) - (m.wZ < 0)) * Twk.runSpeed;
       int WZ = abs(m.wZ);
-      byte alpha = WZ > Cfg.neutralWZ ? min((WZ - Cfg.neutralWZ) * 255 / Cfg.maxWZ, 255) : 0;
+      byte alpha = WZ > Twk.neutralWZ ? min((WZ - Twk.neutralWZ) * 255 / Twk.maxWZ, 255) : 0;
       byte invAlpha = 255 - alpha;
 
       // -- Acc
       #define MAXACC 256
-      int acc = constrain(m.accY / Cfg.divAcc, -MAXACC, MAXACC) << 8;
+      int acc = constrain(m.accY / Twk.divAcc, -MAXACC, MAXACC) << 8;
 
       // -- Front strip
       int fwd = constrain(acc, 0, 65535);
-      Cfg.FWD = fwd > Cfg.FWD ? fwd : lerp16by16(Cfg.FWD, fwd, Cfg.smoothAcc);
+      Twk.FWD = fwd > Twk.FWD ? fwd : lerp16by16(Twk.FWD, fwd, Twk.smoothAcc);
 
-      int alphaF = constrain((Cfg.FWD - (Cfg.thresAcc << 8))/(MAXACC - Cfg.thresAcc), 0, 255);
-      int eyeF = Cfg.minEye + (((Cfg.maxEye - Cfg.minEye) * alphaF) >> 8);
+      int alphaF = constrain((Twk.FWD - (Twk.thresAcc << 8))/(MAXACC - Twk.thresAcc), 0, 255);
+      int eyeF = Twk.minEye + (((Twk.maxEye - Twk.minEye) * alphaF) >> 8);
 
-      if (Cfg.stripFront)
+      if (Twk.stripFront)
       { 
         RunF.setSpeed(runSpeed);
         RunF.setAlpha(alpha);
         CylonF.setEyeSize(eyeF);
-        CylonF.setAlphaMul(255 - Cfg.pacifica, invAlpha); 
-        Pacifica.setAlphaMul(Cfg.pacifica, invAlpha); 
+        CylonF.setAlphaMul(255 - Twk.pacifica, invAlpha); 
+        Pacifica.setAlphaMul(Twk.pacifica, invAlpha); 
         TwinkleF.setAlphaMul(alphaF, invAlpha); 
       }
 
       // -- Rear Strip
       int rwd = constrain(-acc, 0, 65535);
-      Cfg.RWD = rwd > Cfg.RWD ? rwd : lerp16by16(Cfg.RWD, rwd, Cfg.smoothAcc);
+      Twk.RWD = rwd > Twk.RWD ? rwd : lerp16by16(Twk.RWD, rwd, Twk.smoothAcc);
 
-      int alphaR = constrain((Cfg.RWD - (Cfg.thresAcc << 8))/(MAXACC - Cfg.thresAcc), 0, 255);
-      int eyeR = Cfg.minEye + (((Cfg.maxEye - Cfg.minEye) * alphaR) >> 8);
-      int dim = Cfg.minDim + (((Cfg.maxDim - Cfg.minDim) * alphaR) >> 8);
+      int alphaR = constrain((Twk.RWD - (Twk.thresAcc << 8))/(MAXACC - Twk.thresAcc), 0, 255);
+      int eyeR = Twk.minEye + (((Twk.maxEye - Twk.minEye) * alphaR) >> 8);
+      int dim = Twk.minDim + (((Twk.maxDim - Twk.minDim) * alphaR) >> 8);
 
-      if (Cfg.stripRear)
+      if (Twk.stripRear)
       { 
         RunR.setSpeed(runSpeed);
         RunR.setAlpha(alpha);
         CylonR.setEyeSize(eyeR);
-        CylonR.setAlphaMul(255 - Cfg.fire, invAlpha); 
-        FireRR.setAlphaMul(Cfg.fire, invAlpha); 
-        FireRL.setAlphaMul(Cfg.fire, invAlpha);
+        CylonR.setAlphaMul(255 - Twk.fire, invAlpha); 
+        FireRR.setAlphaMul(Twk.fire, invAlpha); 
+        FireRL.setAlphaMul(Twk.fire, invAlpha);
         FireRR.setDimRatio(dim); 
         FireRL.setDimRatio(dim); 
-        TwinkleR.setAlphaMul(max(Cfg.minTwkR, alphaR), invAlpha); 
+        TwinkleR.setAlphaMul(max(Twk.minTwkR, alphaR), invAlpha); 
       }
 
       // -- Middle Strip
-      if (Cfg.stripMid)
+      if (Twk.stripMid)
       {
         AquaRun.setAlpha(alphaF);
         AquaTwk.setAlpha(alphaF);
@@ -265,19 +255,14 @@ inline void loopLeds()
       Raster.add("Leds setup");
     }
 
-    // -- update ... and showing if dithering is off
+    // -- update
     AllStrips.update();
-    if (!LED_DITHERING) AllStrips.show(); 
-    
     Raster.add("Leds update");
   }
 
   // -- Leds dithering
-  if (LED_DITHERING)
-  {
-    AllStrips.show(); // to be called as much as possible for Fastled brightness dithering
+  if (AllStrips.doDither())
     Raster.add("Leds dither"); 
-  }
 
   #ifdef DEBUG_LED_INFO
     EVERY_N_SECONDS(1) AllStrips.showInfo();
