@@ -93,12 +93,13 @@ void setup()
   _log << "Main runs on Core " << xPortGetCoreID() << endl;
 
   // -- main inits
+  AllStrips.init();
+  AllObj.init();
   Cfg.init();
   Twk.init();
   Mpu.init();
 
   // -- register Strips & FXs
-  AllStrips.init();
   AllStrips.addStrips(StripM, StripR, StripF); 
   
   StripM.addFXs(FireRun,  FireTwk, AquaRun,  AquaTwk, Plasma);
@@ -106,8 +107,6 @@ void setup()
   StripF.addFXs(TwinkleF, RunF,    Pacifica, CylonF);
 
   // -- Register AllObj
-  AllObj.init();
-
   #define _addObj(cat, obj)  AllObj.addObj(obj, cat#obj);
   #define AddObjs(cat, ...)  ForEachMacro(_addObj, cat, __VA_ARGS__)
 
