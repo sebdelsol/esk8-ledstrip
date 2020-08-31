@@ -2,14 +2,14 @@
 
 #include <Streaming.h>
 
-// linear Probe hash for [name] => Class*
+// linear Probe hash for [name] => Class* obj
 // Class needs to store its name and implement a getname() method 
 template <int N, class Class>
 class HashName 
 {
   static constexpr int getN(uint8_t n) { return n * 2; }; // bigger but less long collisions
 
-  Class*      values[getN(N)];
+  Class*      objs[getN(N)];
   uint8_t     maxCol = 0;
 
   inline uint8_t hash(const char *name) // naive hash, works ok with N*2
@@ -22,18 +22,18 @@ class HashName
   inline uint8_t next(uint8_t i) { return (i+1) % getN(N); };
 
 public:
-  HashName() { memset( values, 0, getN(N) ); };
+  HashName() { memset( objs, 0, getN(N) ); };
   
-  void add(Class* value)
+  void add(Class* obj)
   {
-    assert (value!=nullptr);
-    const char *name = value->getname();
+    assert (obj!=nullptr);
+    const char *name = obj->getname();
     assert (name!=nullptr);
     
     uint8_t col = 0;
     uint8_t i = hash(name);
-    while(values[i] != nullptr) // something already there ?
-    {
+    while(objs[i] != nullptr) 
+    { // linear probe looking for an empty slot
       i = next(i);
       col++;
     }
@@ -42,13 +42,13 @@ public:
     if (col > 0)
       Serial << "! hash of [" << name << "] has " << col << " collisions" << endl;
 
-    values[i] = value;
+    objs[i] = obj;
   };
 
-  inline bool valueHasNotMyName(Class* v, const char* name) 
+  inline bool objHasNotMyName(Class* obj, const char* name) 
   {
-    const char* vname = v->getname();
-    return vname != nullptr && strcmp(vname, name) != 0 ? true : false;
+    const char* oname = obj->getname();
+    return oname != nullptr && strcmp(oname, name) != 0 ? true : false;
   };
 
   Class* get(const char *name)
@@ -57,13 +57,12 @@ public:
     
     uint8_t col = 0;
     uint8_t i = hash(name);
-    while(values[i] != nullptr && valueHasNotMyName(values[i], name) ) 
-    {
+    while(objs[i] != nullptr && objHasNotMyName(objs[i], name) ) 
+    { // linear probe looking for an obj named name
       if (++col > maxCol) return nullptr; // failed
       i = next(i);
     }
     
-    // Serial << "got " << name << " stored@" << i << endl;
-    return values[i];
+    return objs[i];
   };
 };
