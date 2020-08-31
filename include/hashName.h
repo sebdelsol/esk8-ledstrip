@@ -42,7 +42,7 @@ public:
     maxCol = col > maxCol ? col : maxCol;
 
     if (col > 0)
-      Serial << "[" << name << "]: +" << col << " lookup" << (col > 1 ? "s" : "") << endl;
+      obj->mSerial << "[" << name << "]: +" << col << " lookup" << (col > 1 ? "s" : "") << endl;
 
     objs[i] = obj;
   };
