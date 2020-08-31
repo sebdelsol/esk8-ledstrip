@@ -279,8 +279,7 @@ inline void loopLeds()
   }
 
   #ifdef DEBUG_LED_INFO
-    EVERY_N_SECONDS(1)
-      AllStrips.showInfo();
+    EVERY_N_SECONDS(1) AllStrips.showInfo();
   #endif
 }
 
