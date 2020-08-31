@@ -30,43 +30,42 @@ class AllObj
 {
   struct parsedCmd 
   {
-    OBJVar*     obj;
-    MyVar*      var;
-    const char* objName;
-    const char* varName;
+    OBJVar*      obj;
+    MyVar*       var;
+    const char*  objName;
+    const char*  varName;
   };
 
   struct mOBJ
   {
-    char*   name;
-    OBJVar* obj;
-    char*   getname() { return name; };
+    char*        name;
+    OBJVar*      obj;
+    inline char* getname() { return name; };
   };
 
   HashName<ALLOBJ_MAXOBJ, mOBJ> mHash;
-  mOBJ mOBJS[ALLOBJ_MAXOBJ];
-  byte mNOBJ = 0;
-  byte mID = 0;
+  mOBJ  mOBJS[ALLOBJ_MAXOBJ];
+  byte  mNOBJ = 0;
+  byte  mID = 0;
 
-  BUF         mTmpBuf;
-  
-  bool        spiffsOK = false;
   const char* cfg_fname = FNAME_CURRENT;
   const char* def_fname = FNAME_DEFAULT;
+  bool        spiffsOK = false;
+  BUF         mTmpBuf;
   
   void    dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args);
   bool    isNumber(const char* txt);
   OBJVar* getObjFromName(const char* name) { return mHash.get(name)->obj; };
 
-  void handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change);
-  void handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact);
-  void handleInitCmd(const parsedCmd& parsed, Stream& stream);
-  bool getObjVar(parsedCmd& parsed, BUF& buf);
-  void handleCmd(Stream& stream, BUF& buf, bool change = true, bool compact = false);
-  File getFile(bool isdefault, const char* mode);
+  void    handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change);
+  void    handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact);
+  void    handleInitCmd(const parsedCmd& parsed, Stream& stream);
+  bool    getObjVar(parsedCmd& parsed, BUF& buf);
+  void    handleCmd(Stream& stream, BUF& buf, bool change = true, bool compact = false);
+  File    getFile(bool isdefault, const char* mode);
 
 protected:
-  Stream& mDbgSerial;
+  Stream&     mDbgSerial;
 
   const char* mSetKeyword = ALLOBJ_SET;
   const char* mGetKeyword = ALLOBJ_GET;

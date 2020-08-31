@@ -35,37 +35,37 @@ bool OBJVar::addVar(const char* name, SetFunc* set, GetFunc* get, int min, int m
 }
 
 // ----------------------------------------------------
-void OBJVar::getMinMax(MyVar* var, int* min, int* max)
+void OBJVar::getMinMax(const MyVar& var, int& min, int& max)
 {
-  *min = var->min;
-  *max = var->max;
+  min = var.min;
+  max = var.max;
 }
 
-void OBJVar::set(MyVar* var, int* toSet, byte n, bool change)
+void OBJVar::set(MyVar& var, SetArgs toSet, byte n, bool change)
 {
-  (*var->set)(toSet, n);
+  (*var.set)(toSet, n); // toSet is not modified
 
   if (!change) // handled as nothing as changed... so
-    get(var, var->last); //update value in var->last
+    get(var, var.last); //update value in var.last
 }
 
-byte OBJVar::get(MyVar* var, int* toGet)
+byte OBJVar::get(MyVar& var, GetArgs toGet)
 {
-  return (*var->get)(toGet);
+  return (*var.get)(toGet); // toGet is modified
 }
 
 // ----------------------------------------------------
 bool OBJVar::hasVarChanged(byte i)
 {
-  MyVar *var = mVar[i]; 
+  MyVar* var = mVar[i]; 
 
   int cur[MAX_ARGS]; 
-  byte n = get(var, cur); //update value in cur
+  byte n = get(*var, cur); //update value in cur
 
   for (byte k=0; k < n; k++)
     if (cur[k] != var->last[k])
     {
-      get(var, var->last); //update value in var->last
+      get(*var, var->last); //update value in var->last
       return true;
     } 
   return false;

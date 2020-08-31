@@ -29,20 +29,24 @@ using ftr = Fctor<__VA_ARGS__>;                           /* ftr     is a Fctor<
 template <class F> using ftr##I = FctorI<F, __VA_ARGS__>; /* ftrI<F> is a FctorI<F, Ret, Args...> implementing Fctor<Ret, Args...> */ \
 template <class F> ftr##I<F>* new##ftr(const F& f) { return new ftr##I<F>(f); } // newftr<F>(f) returns a ftrI<F>* that stores Ret f(Args...){} 
 
-NewFunctor(SetFunc, void, int*, byte)  // newSetFunc(f) returns a SetFunc* that stores void f(int*, byte){}
-NewFunctor(GetFunc, byte, int*)        // newGetFunc(f) returns a GetFunc* that stores byte f(int*){} 
+// actual use
+using SetArgs = const int (&)[MAX_ARGS];  // ref on int[MAX_ARGS] non mutable
+using GetArgs = int (&)[MAX_ARGS];        // ref on int[MAX_ARGS] mutable 
+
+NewFunctor(SetFunc, void, SetArgs, byte)  // newSetFunc(f) returns a SetFunc* that stores void f(SetArg, byte){}
+NewFunctor(GetFunc, byte, GetArgs)        // newGetFunc(f) returns a GetFunc* that stores     byte f(GetArgs){} 
 
 //---------------------------------
 struct MyVar 
 {
-  SetFunc*  set;
-  GetFunc*  get;
-  char*     name;
-  int       min, max;
-  bool      show;
-  byte      ID;
-  int       last[MAX_ARGS];
-  char*     getname() { return name; };
+  SetFunc*     set;
+  GetFunc*     get;
+  char*        name;
+  int          min, max;
+  bool         show;
+  byte         ID;
+  int          last[MAX_ARGS];
+  inline char* getname() { return name; };
 };
 
 //---------------------------------
@@ -55,22 +59,22 @@ class OBJVar
 public:  
   bool   addVar(const char* name, SetFunc* set, GetFunc* get, int min = 0, int max = 0, bool show = true);
   byte   getNbVar()                       { return mNVAR;};
-  char*  getVarName(byte i)               { return mVar[i]->name; };
+  char*  getVarName(byte i)               { return mVar[i]->getname(); };
   MyVar* getVar(byte i)                   { return mVar[i]; };
   MyVar* getVarFromName(const char* name) { return mHash.get(name); };
 
-  void set(MyVar* var, int* toSet, byte n, bool change = false);
-  byte get(MyVar* var, int* toGet);
-  void getMinMax(MyVar* var, int* min, int* max);
+  void   set(MyVar& var, SetArgs toSet, byte n, bool change = false);
+  byte   get(MyVar& var, GetArgs toGet);
+  void   getMinMax(const MyVar& var, int& min, int& max);
 
-  byte getID(MyVar* var) { return var->ID; };
-  void setID(MyVar* var, byte id) const { var->ID = id; };
+  byte   getID(const MyVar& var) { return var.ID; };
+  void   setID(MyVar& var, byte id) const { var.ID = id; };
 
   // ------ ObjTestVarFunc 
-  using ObjTestVarFunc = bool (OBJVar::*)(byte i);
+  using  ObjTestVarFunc = bool (OBJVar::*)(byte i);
   
-  bool isVarShown(byte i) { return mVar[i]->show; };
-  bool hasVarChanged(byte i);
+  bool   isVarShown(byte i) { return mVar[i]->show; };
+  bool   hasVarChanged(byte i);
 };
 
 //---------------------------------
@@ -78,11 +82,11 @@ public:
 #define _Stor1(args, _0)         args[0] = _0;                              return 1
 #define _Stor3(args, _0, _1, _2) args[0] = _0; args[1] = _1; args[2] = _2;  return 3
 
-#define _AddVar(N, name, min, max, show, set, ...) /* __VA_ARGS__ gives optional get expressions */ \
-{                                                                                                   \
-  SetFunc* setF = newSetFunc([this](int* args, byte n) { if (n==N) { set; }             });         \
-  GetFunc* getF = newGetFunc([this](int* args) -> byte { _Stor##N(args, ##__VA_ARGS__); });         \
-  addVar(name, setF, getF, min, max, show);                                                    \
+#define _AddVar(N, name, min, max, show, set, ...)                                              \
+{ /* __VA_ARGS__ gives optional get expressions */                                              \
+  SetFunc* setF = newSetFunc([this](SetArgs args, byte n) { if (n==N) { set; }             });  \
+  GetFunc* getF = newGetFunc([this](GetArgs args) -> byte { _Stor##N(args, ##__VA_ARGS__); });  \
+  addVar(name, setF, getF, min, max, show);                                                     \
 }
 
 #define AddCmd(name, cmd)                                  _AddVar(0, name, 0,   0,   true,  cmd)

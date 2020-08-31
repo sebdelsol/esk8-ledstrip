@@ -29,7 +29,7 @@ bool AllObj::addObj(OBJVar& obj, const char* name)
     {
       MyVar* var = obj.getVar(i);
       
-      obj.setID(var, ALLOBJ_1ST_ID + mID);
+      obj.setID(*var, ALLOBJ_1ST_ID + mID);
       mID += 1;
     }
   }
@@ -64,7 +64,7 @@ void AllObj::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, 
 void AllObj::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
 {
   int min, max;
-  parsed.obj->getMinMax(parsed.var, &min, &max);
+  parsed.obj->getMinMax(*parsed.var, min, max);
 
   int args[MAX_ARGS];
   byte nbArg = 0;
@@ -78,7 +78,7 @@ void AllObj::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
       break;
   }
 
-  parsed.obj->set(parsed.var, args, nbArg, change); //set the value from args
+  parsed.obj->set(*parsed.var, args, nbArg, change); //set the value from args
   
   dbgCmd(mSetKeyword, parsed , nbArg, args);
 }
@@ -87,12 +87,12 @@ void AllObj::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
 void AllObj::handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact)
 {
   int args[MAX_ARGS];
-  byte nbArg = parsed.obj->get(parsed.var, args); //get the value in args
+  byte nbArg = parsed.obj->get(*parsed.var, args); //get the value in args
 
   if (nbArg) 
   { 
     if (compact)
-      stream << parsed.obj->getID(parsed.var);
+      stream << parsed.obj->getID(*parsed.var);
     else
       JoinbySpace(stream, mSetKeyword, parsed.objName, parsed.varName);
 
@@ -107,14 +107,14 @@ void AllObj::handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact)
 //----------------
 void AllObj::handleInitCmd(const parsedCmd& parsed, Stream& stream)
 {
-  JoinbySpace(stream, mInitKeyword, parsed.objName, parsed.varName, parsed.obj->getID(parsed.var)); 
+  JoinbySpace(stream, mInitKeyword, parsed.objName, parsed.varName, parsed.obj->getID(*parsed.var)); 
 
   int min, max;
-  parsed.obj->getMinMax(parsed.var, &min, &max);
+  parsed.obj->getMinMax(*parsed.var, min, max);
   stream << " " << min << " " << max;
 
   int args[MAX_ARGS];
-  byte nbArg = parsed.obj->get(parsed.var, args); 
+  byte nbArg = parsed.obj->get(*parsed.var, args); 
 
   for (byte i=0; i < nbArg; i++)
     stream << " " << args[i];
