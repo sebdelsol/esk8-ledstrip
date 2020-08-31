@@ -1,5 +1,5 @@
 #define USE_BT
-// #define USE_OTA 
+#define USE_OTA 
 // #define USE_TELNET 
 
 // #define DEBUG_RASTER
