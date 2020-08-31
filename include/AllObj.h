@@ -80,3 +80,5 @@ public:
   void load(bool isdefault, bool change = true);
   bool addObj(OBJVar& obj, const char* name);
 };
+
+#define SetmOBJSerial(serial)  Stream& AllObj::mOBJ::mSerial = serial;

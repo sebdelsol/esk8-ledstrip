@@ -76,6 +76,9 @@ public:
   bool   hasVarChanged(byte i);
 };
 
+#define SetOBJVarSerial(serial) Stream& OBJVar::mSerial = serial;
+#define SetMyVarSerial(serial)  Stream& MyVar::mSerial = serial;
+
 //---------------------------------
 #define _Stor0(args)                                                        return 0 
 #define _Stor1(args, _0)         args[0] = _0;                              return 1

@@ -1,6 +1,6 @@
 #define USE_BT
 #define USE_OTA 
-#define USE_TELNET 
+// #define USE_TELNET 
 
 // #define DEBUG_RASTER
 // #define DEBUG_LED_TOWIFI
@@ -54,6 +54,11 @@ MPU     Mpu(Serial);
   CFG       Cfg;
 #endif
 
+// --- Serial for ObjVar, MyVar & AllObj::mOBJ
+SetOBJVarSerial(Serial);
+SetMyVarSerial(Serial);
+SetmOBJSerial(Serial);
+
 // --- Strips & Fxs
 AllLedStrips  AllStrips(Serial);
 
@@ -76,11 +81,6 @@ DblCylonFX  CylonF(AQUA);
 PacificaFX  Pacifica;
 TwinkleFX   TwinkleF(HUE_AQUA_BLUE); 
 RunningFX   RunF(CRGB::Gold);
-
-// ----------------------------------------------------
-Stream& OBJVar::mSerial = Serial;
-Stream& MyVar::mSerial = Serial;
-Stream& AllObj::mOBJ::mSerial = Serial;
 
 // ----------------------------------------------------
 void setup()
