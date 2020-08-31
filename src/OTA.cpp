@@ -5,7 +5,7 @@ void OTA::begin()
 {
   if(WiFi.status() == WL_CONNECTED)
   {
-    mSerial << "OTA Connected @ " << WiFi.localIP() << endl;
+    mSerial << "OTA  Connected @ " << WiFi.localIP() << endl;
     ArduinoOTA.setHostname(OTA_HOSTNAME);
 
     ArduinoOTA

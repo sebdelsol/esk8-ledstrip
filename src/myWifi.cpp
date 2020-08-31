@@ -14,11 +14,11 @@ void myWifi::onWSEvent(WStype_t type, uint8_t * payload, size_t length)
   {
 		case WStype_DISCONNECTED:
 			mWSConnected = false;
-      mSerial << "Socket client disconnected" << endl;
+      mSerial << "Socket client Disconnected" << endl;
 			break;
 		case WStype_CONNECTED:
 			mWSConnected = true;
-      mSerial << "Socket client connected" << endl;
+      mSerial << "Socket client Connected" << endl;
 			break;
 	}
 }
@@ -66,13 +66,13 @@ bool myWifi::update()
       {
         if(WiFi.status() == WL_CONNECTED)
         {
-          mSerial << "Wifi connected @ " << WiFi.localIP() << endl;
+          mSerial << "Wifi Connected @ " << WiFi.localIP() << endl;
           digitalWrite(BUILTIN_LED, LOW); // led on
           mON = true;
 
           if (mIsSocket)
           {
-            mSerial << "Socket client started" << endl;
+            mSerial << "Socket client Started" << endl;
             CurrentMyWifi = this;
             webSocket.onEvent(CallbackWrapper);
             webSocket.begin(SOCK_ADDR, SOCK_PORT);

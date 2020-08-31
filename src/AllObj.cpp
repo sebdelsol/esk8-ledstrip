@@ -3,7 +3,7 @@
 //--------------------------------------
 void AllObj::init()
 {
-  mDbgSerial << "mount SPIFFS" << endl;
+  mDbgSerial << "Mount SPIFFS" << endl;
   spiffsOK = SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED);
   if (!spiffsOK)
     mDbgSerial << "SPIFFS Mount Failed" << endl;
@@ -230,7 +230,7 @@ File AllObj::getFile(bool isdefault, const char* mode)
   bool isLoading = strcmp(mode, "r")==0;
 
   if (f)
-    mDbgSerial << (isLoading ? "loading from " : "saving to ") << fname << "...";
+    mDbgSerial << (isLoading ? "Loading from " : "Saving to ") << fname << "...";
   else
     mDbgSerial << "FAIL to " << (isLoading ? "load from " : "save to ") << fname;
   

@@ -32,15 +32,17 @@ public:
     
     uint8_t col = 0;
     uint8_t i = hash(name);
+    
+    // linear probe lookup for an empty slot
     while(objs[i] != nullptr) 
-    { // linear probe looking for an empty slot
+    { 
       i = next(i);
       col++;
     }
     maxCol = col > maxCol ? col : maxCol;
 
     if (col > 0)
-      Serial << "! hash of [" << name << "] has " << col << " collisions" << endl;
+      Serial << "[" << name << "]: +" << col << " lookup" << (col > 1 ? "s" : "") << endl;
 
     objs[i] = obj;
   };
@@ -57,8 +59,10 @@ public:
     
     uint8_t col = 0;
     uint8_t i = hash(name);
+    
+    // linear probe lookup for an obj named name
     while(objs[i] != nullptr && objHasNotMyName(objs[i], name) ) 
-    { // linear probe looking for an obj named name
+    { 
       if (++col > maxCol) return nullptr; // failed
       i = next(i);
     }
