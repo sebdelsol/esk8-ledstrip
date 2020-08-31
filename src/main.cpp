@@ -83,9 +83,7 @@ RunningFX   RunF(CRGB::Gold);
 // ----------------------------------------------------
 void setup()
 {
-  // -- switch off all leds
-  AllStrips.setBrightness(0);
-  AllStrips.clearAndShow();
+  AllStrips.switchOff();
 
   // -- log
   Serial.begin(SERIAL_BAUD);

@@ -41,8 +41,8 @@ public:
   void init(const int maxmA, bool dither);
 
   void setBrightness(const byte scale) { FastLED.setBrightness(scale); };
+  void switchOff();
   void show();
-  void clearAndShow();
 
   bool addStrip(BaseLedStrip& strip);
   ForEachMethod(addStrip); // create method addStrips(...) that calls addStrip on all args

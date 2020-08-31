@@ -34,6 +34,13 @@ AllLedStrips::AllLedStrips()
   FastLED.countFPS();
 }
 
+void AllLedStrips::switchOff()
+{
+  setBrightness(0);
+  for(byte i=0; i < 3; i++)
+    FastLED.clear(true);
+}
+
 void AllLedStrips::init(const int maxmA, bool dither) 
 {
   FastLED.setMaxPowerInVoltsAndMilliamps(5, maxmA);
@@ -58,12 +65,6 @@ bool AllLedStrips::addStrip(BaseLedStrip &strip)
     _log << ">> ERROR !! Max LedStrips is reached " << MAXSTRIP << endl; 
 
   return ok;
-}
-
-void AllLedStrips::clearAndShow() 
-{ 
-  for(byte i=0; i < 3; i++)
-    FastLED.clear(true);
 }
 
 void AllLedStrips::update()
