@@ -21,7 +21,7 @@
 #define   MAX_uint8     255
 #define   MAX_int16     32767
 
-// --------------------- saved Tweaks
+// --------------------- Tweaks
 struct Tweaks : public OBJVar
 {
   // update ?
@@ -83,10 +83,14 @@ struct Tweaks : public OBJVar
   };
 };
 
+// --------------------- Cfg Cmds
 #ifdef USE_BT
   struct CFG : public OBJVar
   {
-    AllObjBT& allObj; BlueTooth& bt; MPU& mpu;
+    AllObjBT& allObj; 
+    BlueTooth& bt; 
+    MPU& mpu;
+    
     CFG(AllObjBT& allObj, BlueTooth& bt, MPU& mpu) : allObj(allObj), bt(bt), mpu(mpu) {};
 
     void init()
