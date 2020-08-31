@@ -54,4 +54,4 @@
 <sub>3x *470Ω R*, *1000μF* C, *10kΩ* R, LDR, *220Ω* R, *blue* LED, *12x12* switch</sub>| <sub>50c</sub> | .
 
 # Repear
-* in `I2Cdev.h` add `#define BUFFER_LENGTH I2C_BUFFER_LENGTH` to compile I2CDevLib on an esp32
+* to compile I2CDevLib add `#define BUFFER_LENGTH I2C_BUFFER_LENGTH` to compile I2CDevLib on an esp32 in `I2Cdev.h`
