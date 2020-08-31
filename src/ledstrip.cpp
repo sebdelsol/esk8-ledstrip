@@ -105,7 +105,7 @@ bool AllLedStrips::doDither()
 
 void AllLedStrips::showInfo()
 {
-  s_log << "FPS " << FastLED.getFPS() << endl;
+  _log << "FPS " << FastLED.getFPS() << endl;
   for (byte i=0; i < mNStrips; i++)
     mStrips[i]->showInfo();
 }
