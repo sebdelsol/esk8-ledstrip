@@ -12,7 +12,7 @@
 #include <Streaming.h>
 #include <Pins.h>
 #include <ledstrip.h>
-#include <Motion.h>
+#include <mpu.h>
 #include <myWifi.h>
 #include <Raster.h>
 
@@ -31,7 +31,7 @@
 
 // -- Acc & Wifi
 myWifi  MyWifi(Serial);
-MOTION  Motion(Serial);
+MPU     Mpu(Serial);
 
 // -- BT & Cfg
 #ifdef USE_BT
@@ -43,7 +43,7 @@ MOTION  Motion(Serial);
   AllObjBT  AllObj(Serial);
 
   #include  <Cfg.h>
-  CFG       Cfg(AllObj, BT, Motion);
+  CFG       Cfg(AllObj, BT, Mpu);
 
 #else
   #include  <NoBluetooth.h>
@@ -93,7 +93,7 @@ void setup()
 
   // -- main inits
   Cfg.init();
-  Motion.init();
+  Mpu.init();
 
   // -- Strip inits & register FXs
   AllStrips.init(LED_MAX_MA, LED_DITHERING);
@@ -109,7 +109,7 @@ void setup()
   #define _addObj(cat, obj)  AllObj.addObj(obj, cat#obj);
   #define AddObjs(cat, ...)  ForEachMacro(_addObj, cat, __VA_ARGS__)
 
-  AddObjs("",        Motion,   Cfg);            
+  AddObjs("",        Mpu,      Cfg);            
   AddObjs("mid.",    FireRun,  FireTwk, AquaRun,  AquaTwk,  Plasma);
   AddObjs("rear.",   TwinkleR, FireRR,  FireRL,   RunR,     CylonR);
   AddObjs("front.",  TwinkleF, RunF,    Pacifica, CylonF);
@@ -140,10 +140,10 @@ void setup()
 Raster Raster(Serial);
 
 // --------------
-inline void loopMotion()
+inline void loopMpu()
 {
-  EVERY_N_MILLISECONDS(MOTION_TICK) Motion.update(); 
-  Raster.add("Motion");
+  EVERY_N_MILLISECONDS(MPU_TICK) Mpu.update(); 
+  Raster.add("MPU");
 }
 
 // ------------
@@ -200,7 +200,7 @@ inline void loopLeds()
     Raster.add("Light probe");
 
     // led setup modified by MPU
-    SensorOutput& m = Motion.mOutput;
+    SensorOutput& m = Mpu.mOutput;
     if (m.updated)
     {
       // -- Gyro
@@ -287,7 +287,7 @@ inline void loopLeds()
 void loop()
 {
   Raster.begin();
-  loopMotion();
+  loopMpu();
   loopWifi();
   loopBT();
   loopLeds();

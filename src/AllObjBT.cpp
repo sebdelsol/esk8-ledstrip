@@ -17,15 +17,15 @@ void AllObjBT::sendInits(BlueTooth &BT)
 }
 
 //----------------
-void AllObjBT::sendUpdate(BlueTooth &BT, MOTION& motion)
+void AllObjBT::sendUpdate(BlueTooth &BT, MPU& mpu)
 {
   if(BT.isReadyToSend())
   {
     emulateCmdForAllVars(mGetKeyword, BT.getSerial(), &OBJVar::hasVarChanged, true, true); //for all vars, emulate a get cmd and send the result to BTSerial
 
-    SensorOutput& m = motion.mOutput;
+    SensorOutput& m = mpu.mOutput;
     if(m.updated)
-      JoinbySpace(BT.getSerial(), ALLOBJ_MOTION_CMD, m.axis.x, m.axis.y, m.axis.z, m.angle, m.accY, m.wZ) << endl;
+      JoinbySpace(BT.getSerial(), ALLOBJ_MPU_CMD, m.axis.x, m.axis.y, m.axis.z, m.angle, m.accY, m.wZ) << endl;
   }
 }
 

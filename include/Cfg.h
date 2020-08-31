@@ -9,7 +9,7 @@
 #define   LED_TICK      10      // ms, leds update
 #define   BT_TICK       30      // ms, bluetooth update
 #define   WIFI_TICK     30      // ms, wifi update for OTA, telnet & led debug
-#define   MOTION_TICK   10      // ms, MPU internaly updates every 10ms
+#define   MPU_TICK      10      // ms, MPU internaly updates every 10ms
 
 #define   NBLEDS_MIDDLE 72
 #define   NBLEDS_TIPS   36
@@ -69,18 +69,18 @@ struct CFG : public OBJVar
   int minTwkR     = 54;
 
   #ifdef USE_BT
-        AllObjBT& allObj; BlueTooth& bt; MOTION& motion;
-    CFG(AllObjBT& allObj, BlueTooth& bt, MOTION& motion) : allObj(allObj), bt(bt), motion(motion) {};
+        AllObjBT& allObj; BlueTooth& bt; MPU& mpu;
+    CFG(AllObjBT& allObj, BlueTooth& bt, MPU& mpu) : allObj(allObj), bt(bt), mpu(mpu) {};
   #endif
 
   void init()
   {
     #ifdef USE_BT
-      AddCmd   ("save",      allObj.save(false)            ) // save not default
-      AddCmd   ("load",      allObj.load(false)            ) // load not default
-      AddCmd   ("default",   allObj.load(true)             ) // load default
-      AddCmdHid("getInits",  allObj.sendInits(bt)          ) // answer with all vars init (min, max, value)
-      AddCmdHid("getUpdate", allObj.sendUpdate(bt, motion) ) // answer with all updates
+      AddCmd   ("save",      allObj.save(false)         ) // save not default
+      AddCmd   ("load",      allObj.load(false)         ) // load not default
+      AddCmd   ("default",   allObj.load(true)          ) // load default
+      AddCmdHid("getInits",  allObj.sendInits(bt)       ) // answer with all vars init (min, max, value)
+      AddCmdHid("getUpdate", allObj.sendUpdate(bt, mpu) ) // answer with all updates
     #endif
 
     AddBool(stripMid);

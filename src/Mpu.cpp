@@ -1,4 +1,4 @@
-#include <Motion.h>
+#include <mpu.h>
 
 #define __PGMSPACE_H_ 1 // pgmsplace.h define PGMSPACE_INCLUDE instead of __PGMSPACE_H
 #ifdef USE_V6_12
@@ -16,7 +16,7 @@
 
   void MPUGetTask(void* _mpu)
   {
-    MOTION*       mpu = (MOTION* )_mpu;
+    MPU*          mpu = (MPU* )_mpu;
     SensorOutput  taskOutput; //output to store computation
     TickType_t    lastWakeTime = xTaskGetTickCount();
 
@@ -42,7 +42,7 @@
 #endif
 
 //--------------------------------------
-void MOTION::init()
+void MPU::init()
 {
   // save calibration
   #define AddOffset(var)     AddVarHid(var, -32768, 32767)
@@ -67,7 +67,7 @@ void MOTION::init()
 }
 
 //--------------------------------------
-void MOTION::calibrate()
+void MPU::calibrate()
 {
   CalibrateAccel(CALIBRATION_LOOP);
   CalibrateGyro(CALIBRATION_LOOP);
@@ -78,7 +78,7 @@ void MOTION::calibrate()
   mGotOffset = true;
 }
 
-bool MOTION::setOffsets()
+bool MPU::setOffsets()
 {
   Serial << F("Try to get Offset...");
 
@@ -94,20 +94,20 @@ bool MOTION::setOffsets()
   return mGotOffset;
 }
 
-void MOTION::printOffsets(const __FlashStringHelper* txt)
+void MPU::printOffsets(const __FlashStringHelper* txt)
 {
   mSerial << txt << endl;
   mSerial << F("Acc Offset: \tx ") << getXAccelOffset() << F("\ty ") << getYAccelOffset() << F("\tz ") << getZAccelOffset() << endl;
   mSerial << F("Gyr Offset: \tx ") << getXGyroOffset()  << F("\ty ") << getYGyroOffset()  << F("\tz ") << getZGyroOffset()  << endl;
 }
 
-bool MOTION::getFiFoPacket() 
+bool MPU::getFiFoPacket() 
 { 
   return mDmpReady && dmpGetCurrentFIFOPacket(mFifoBuffer); 
 }
 
 //--------------------------------------
-void MOTION::begin()
+void MPU::begin()
 { 
   mHasBegun = true;
   Wire.begin(SDA, SCL, I2C_CLOCK);
@@ -136,7 +136,7 @@ void MOTION::begin()
 }
 
 //--------------------------------------
-void MOTION::getAxiSAngle(VectorInt16& v, int& angle, Quaternion& q)
+void MPU::getAxiSAngle(VectorInt16& v, int& angle, Quaternion& q)
 {
   if (q.w > 1) q.normalize(); // needs q.w < 1 for acos and sqrt
   angle = acos(q.w) * 2 * 10430.; // 32767 / PI 
@@ -157,7 +157,7 @@ void MOTION::getAxiSAngle(VectorInt16& v, int& angle, Quaternion& q)
 #define STAYS_SHORT(x) constrain(x, -32768, 32767)
 #define SHIFTR_VECTOR(v, n) v.x = v.x >> n;   v.y = v.y >> n;   v.z = v.z >> n; 
 
-void MOTION::compute(SensorOutput& output)
+void MPU::compute(SensorOutput& output)
 {
   ulong t = micros();
   ulong dt = t - mT;
@@ -200,7 +200,7 @@ void MOTION::compute(SensorOutput& output)
 }
 
 //--------------------------------------
-void MOTION::update()
+void MPU::update()
 {
   if (!mHasBegun)
     begin();

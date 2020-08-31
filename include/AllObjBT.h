@@ -1,11 +1,11 @@
 #pragma once
 
 #include <Bluetooth.h>
-#include <Motion.h>
+#include <mpu.h>
 #include <AllObj.h>
 #include <Buf.h>
 
-#define ALLOBJ_MOTION_CMD ALLOBJ_RESERVED
+#define ALLOBJ_MPU_CMD ALLOBJ_RESERVED
 
 class AllObjBT : public AllObj
 {
@@ -15,6 +15,6 @@ public:
   AllObjBT(Stream& dbgSerial);
   
   void receiveUpdate(BlueTooth& BT);
-  void sendUpdate(BlueTooth& BT, MOTION& motion);
+  void sendUpdate(BlueTooth& BT, MPU& mpu);
   void sendInits(BlueTooth& BT);
 };

@@ -39,7 +39,7 @@ struct SensorOutput
 };
 
 //-----------------------------
-class MOTION : public OBJVar, public MPU6050
+class MPU : public OBJVar, public MPU6050
 {
   bool        mDmpReady = false; 
   bool        mHasBegun = false;
@@ -66,7 +66,7 @@ class MOTION : public OBJVar, public MPU6050
 public:
   SensorOutput  mOutput; // public outpout
 
-  MOTION(Stream& serial) : mSerial(serial) {};
+  MPU(Stream& serial) : mSerial(serial) {};
   void init();
   void begin();
   void calibrate();
