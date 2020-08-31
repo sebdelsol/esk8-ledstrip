@@ -60,7 +60,7 @@ class AllObj
   void    handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change);
   void    handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact);
   void    handleInitCmd(const parsedCmd& parsed, Stream& stream);
-  bool    getObjVar(parsedCmd& parsed, BUF& buf);
+  bool    parseCmd(parsedCmd& parsed, BUF& buf);
   void    handleCmd(Stream& stream, BUF& buf, bool change = true, bool compact = false);
   File    getFile(bool isdefault, const char* mode);
 
@@ -69,7 +69,7 @@ protected:
   const char* mGetKeyword = ALLOBJ_GET;
   const char* mInitKeyword = ALLOBJ_INIT;
 
-  void readCmdFromStream(Stream& stream, BUF& buf, bool change = true, bool compact = false);
+  void readAndHandleCmd(Stream& stream, BUF& buf, bool change = true, bool compact = false);
   void emulateCmdForAllVars(const char* cmdKeyword, Stream& stream, OBJVar::ObjTestVarFunc testVar = nullptr, bool change = true, bool compact = false);
 
 public:

@@ -77,6 +77,7 @@ void AllObj::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, 
 
 
 //--------------------------------------
+// get the var args from the cmd
 void AllObj::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
 {
   int min, max;
@@ -100,6 +101,7 @@ void AllObj::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
 }
 
 //----------------
+// write the var with it args to the stream as a set cmd
 void AllObj::handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact)
 {
   int args[MAX_ARGS];
@@ -121,6 +123,7 @@ void AllObj::handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact)
 }
 
 //----------------
+// write the var with it args + min/max to the stream as a int cmd
 void AllObj::handleInitCmd(const parsedCmd& parsed, Stream& stream)
 {
   JoinbySpace(stream, mInitKeyword, parsed.objName, parsed.varName, parsed.obj->getID(*parsed.var)); 
@@ -140,7 +143,7 @@ void AllObj::handleInitCmd(const parsedCmd& parsed, Stream& stream)
 }
 
 //--------------------------------------
-bool AllObj::getObjVar(parsedCmd& parsed, BUF& buf)
+bool AllObj::parseCmd(parsedCmd& parsed, BUF& buf)
 {
   parsed.objName = buf.next();
   if (parsed.objName != nullptr)
@@ -174,7 +177,7 @@ void AllObj::handleCmd(Stream& stream, BUF& buf, bool change, bool compact)
 
     parsedCmd parsed;
     
-    if (getObjVar(parsed, buf))
+    if (parseCmd(parsed, buf))
     {
       // SET cmd ?
       if (strcmp(cmd, mSetKeyword)==0)
@@ -192,7 +195,7 @@ void AllObj::handleCmd(Stream& stream, BUF& buf, bool change, bool compact)
 }
 
 //----------------
-void AllObj::readCmdFromStream(Stream& stream, BUF& buf, bool change, bool compact)
+void AllObj::readAndHandleCmd(Stream& stream, BUF& buf, bool change, bool compact)
 {
   while (stream.available() > 0) 
   {
@@ -252,8 +255,8 @@ void AllObj::load(bool isdefault, bool change)
   File f = getFile(isdefault, "r");
   if (f)
   {
-    mTmpBuf.clear(); // might not be cleared by readCmdFromStream
-    readCmdFromStream((Stream& )f, mTmpBuf, change); // should be a succession of set cmd
+    mTmpBuf.clear(); // might not be cleared by readAndHandleCmd
+    readAndHandleCmd((Stream& )f, mTmpBuf, change); // should be a succession of set cmd
     f.close();
     _log << "loaded";
   }
