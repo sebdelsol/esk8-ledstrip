@@ -3,7 +3,7 @@
 #include <log.h>
 
 // linear Probe hash for [name] => Class* obj
-// Class needs to store its name and implement a name() member
+// Class needs to store its name and got a member: const char* name
 template <int N, class Class>
 class HashName 
 {
