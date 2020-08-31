@@ -4,7 +4,6 @@ N = 20
 fName = './include/varMac.h'
 
 ''' 
-
 // for N = 2
 
 #define _M1(_m, _p, x)        _m(_p, x)
@@ -12,7 +11,6 @@ fName = './include/varMac.h'
 
 #define _MNth(n1, n2, N, ...) _M##N
 #define _Mn(...) _MNth(__VA_ARGS__, 2, 1)
-
 '''
 
 with open(fName, 'w') as f:  
