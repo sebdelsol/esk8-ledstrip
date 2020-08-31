@@ -40,6 +40,13 @@ bool AllObj::addObj(OBJVar& obj, const char* name)
 }
 
 //--------------------------------------
+OBJVar* AllObj::getObjFromName(const char* name)
+{ 
+  mOBJ* mobj = mHash.get(name); 
+  return mobj!=nullptr ? mobj->obj : nullptr; 
+}
+
+//--------------------------------------
 bool AllObj::isNumber(const char* txt) 
 { 
   for (int i = 0; i < strlen(txt); i++) 

@@ -54,7 +54,7 @@ class AllObj
   
   void    dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args);
   bool    isNumber(const char* txt);
-  OBJVar* getObjFromName(const char* name) { return mHash.get(name)->obj; };
+  OBJVar* getObjFromName(const char* name);
 
   void    handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change);
   void    handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact);
