@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Streaming.h>
-
 #include <HashName.h>
 
 #define MAX_VAR  25

@@ -5,7 +5,6 @@
 #include <WiFi.h>//<ESP8266WiFi.h>
 #include <Streaming.h>
 #include <WebSocketsClient.h>
-
 #include <ledstrip.h>
 #include <wificonfig.h>  
 // wificonfig.h needs to define :

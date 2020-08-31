@@ -1,4 +1,5 @@
 #pragma once
+
 #include <Streaming.h>
 
 // linear Probe hash for [name] => Class*
