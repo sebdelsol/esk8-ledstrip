@@ -90,7 +90,7 @@ void AllLedStrips::update()
   }
   mFade = lerp16by16(mFade,  65535,  650);
   byte bright = (mBright * ((mFade >> 8) + 1)) >> 8; 
-  setBrightness(mBright);
+  setBrightness(bright);
 
   // showing if dithering is off
   if (!mDither) show();
