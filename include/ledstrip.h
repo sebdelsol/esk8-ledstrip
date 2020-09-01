@@ -48,9 +48,9 @@ public:
   AllLedStrips();
   void init();
 
-  void setBrightness(const byte scale) { FastLED.setBrightness(scale); };
-  void setDither(const bool dither)    { FastLED.setDither(dither ? BINARY_DITHER : DISABLE_DITHER); };
-  void setMaxmA(const int maxmA)       { FastLED.setMaxPowerInVoltsAndMilliamps(5, maxmA); };
+  void setBrightness(const byte bright);
+  void setDither(const bool dither)     { FastLED.setDither(dither ? BINARY_DITHER : DISABLE_DITHER); };
+  void setMaxmA(const int maxmA)        { FastLED.setMaxPowerInVoltsAndMilliamps(5, maxmA); };
   
   void switchOff();
   void show();

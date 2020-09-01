@@ -72,6 +72,13 @@ bool AllLedStrips::addStrip(BaseLedStrip &strip)
   return ok;
 }
 
+void AllLedStrips::setBrightness(const byte bright) 
+{ 
+  byte b = (bright * ((mFade >> 8) + 1)) >> 8; 
+  FastLED.setBrightness(b); 
+};
+
+
 void AllLedStrips::update()
 {
   // update all strips
@@ -89,8 +96,7 @@ void AllLedStrips::update()
     mBright = map(light, mMinProbe, mMaxProbe, 255, 0); // the darker the light, the brighter the leds
   }
   mFade = lerp16by16(mFade,  65535,  650);
-  byte bright = (mBright * ((mFade >> 8) + 1)) >> 8; 
-  setBrightness(bright);
+  setBrightness(mBright); // use mFade
 
   // showing if dithering is off
   if (!mDither) show();
