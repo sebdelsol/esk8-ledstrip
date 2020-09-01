@@ -2,17 +2,18 @@
 
 #include <log.h>
 
-// hash for [name] => Class* obj
-// obj->name needs to be defined
+// hash for [name] => Class* obj, where obj->name needs to be defined
 template <int N, class Class>
 class HashName 
 {
-  static constexpr int getN(uint8_t n) { return n * 2; }; // the bigger the less collisions
+  // the bigger the less collisions
+  static constexpr int getN(uint8_t n) { return n * 2; }; 
 
   Class*      objs[getN(N)] = {nullptr};
   uint8_t     maxCol = 0;
 
-  inline uint8_t hash(const char *name) // djb2: http://www.cse.yorku.ca/~oz/hash.html
+  // djb2: http://www.cse.yorku.ca/~oz/hash.html
+  inline uint8_t hash(const char *name) 
   {
     unsigned long hash = 5381;
     int c;
@@ -22,7 +23,10 @@ class HashName
   }
 
   // quadratic probing
-  inline uint8_t next(uint8_t i, uint8_t col) { return (i + col * col) % getN(N); };
+  inline uint8_t next(uint8_t i, uint8_t col) 
+  { 
+    return (i + col * col) % getN(N); 
+  };
 
 public:
 
