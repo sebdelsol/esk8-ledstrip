@@ -13,7 +13,7 @@ class HashName
   uint8_t     maxCol = 0;
 
   // djb2: http://www.cse.yorku.ca/~oz/hash.html
-  inline uint8_t hash(const char *name) 
+  uint8_t hash(const char *name) 
   {
     unsigned long hash = 5381;
     int c;
@@ -23,9 +23,15 @@ class HashName
   }
 
   // quadratic probing
-  inline uint8_t next(uint8_t i, uint8_t col) 
+  uint8_t next(uint8_t i, uint8_t col) 
   { 
     return (i + col * col) % getN(N); 
+  };
+
+  bool hasAnotherName(Class* obj, const char* name) 
+  {
+    const char* oname = obj->name;
+    return oname != nullptr && strcmp(oname, name) != 0 ? true : false;
   };
 
 public:
@@ -44,14 +50,10 @@ public:
       i = next(i, ++col);
 
     maxCol = col > maxCol ? col : maxCol;
-    if (col > 0) _log << " [" << name << "]: +" << col << " lookup" << (col > 1 ? "s" : "") << endl;
+    if (col > 0) 
+      _log << " [" << name << "]: +" << col << " lookup" << (col > 1 ? "s" : "") << endl;
+    
     objs[i] = obj;
-  };
-
-  inline bool objHasNotMyName(Class* obj, const char* name) 
-  {
-    const char* oname = obj->name;
-    return oname != nullptr && strcmp(oname, name) != 0 ? true : false;
   };
 
   Class* get(const char *name)
@@ -62,7 +64,7 @@ public:
     uint8_t i = hash(name);
     
     // lookup for an obj named name
-    while(objs[i] != nullptr && objHasNotMyName(objs[i], name) ) 
+    while(objs[i] != nullptr && hasAnotherName(objs[i], name) ) 
     {
       if (++col > maxCol) return nullptr; // failed
       i = next(i, col);
