@@ -46,10 +46,10 @@ void AllLedStrips::init()
   setDither(mDither);
   setMaxmA(mMaxmA);
 
-  AddVarCode ("dither", mDither = args[0]; setDither(args[0]),     mDither, 0,   1);
-  AddVarCode ("maxmA",  mMaxmA  = args[0]; setMaxmA(args[0]),      mMaxmA,  100, 1000);
-  AddVarCode ("bright", mBright = args[0]; setBrightness(args[0]), mBright, 1,   255);
-  AddBoolName("probe", mProbe);
+  AddVarCode ("dither",   mDither = args[0]; setDither(args[0]),     mDither, 0,   1);
+  AddVarCode ("maxmA",    mMaxmA  = args[0]; setMaxmA(args[0]),      mMaxmA,  100, 1000);
+  AddVarCode ("bright",   mBright = args[0]; setBrightness(args[0]), mBright, 1,   255);
+  AddBoolName("probe",    mProbe);
   AddVarName ("minProbe", mMinProbe, 1, mMaxProbe);
 
   #ifdef FASTLED_CORE
