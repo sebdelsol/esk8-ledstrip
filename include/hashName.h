@@ -9,7 +9,7 @@ class HashName
 {
   static constexpr int getN(uint8_t n) { return n * 2; }; // the bigger the less collisions
 
-  Class*      objs[getN(N)];
+  Class*      objs[getN(N)] = {nullptr};
   uint8_t     maxCol = 0;
 
   inline uint8_t hash(const char *name) // djb2: http://www.cse.yorku.ca/~oz/hash.html
@@ -25,8 +25,7 @@ class HashName
   inline uint8_t next(uint8_t i, uint8_t col) { return (i + col * col) % getN(N); };
 
 public:
-  HashName() { memset( objs, 0, getN(N) ); };
-  
+
   void add(Class* obj)
   {
     assert (obj!=nullptr);
