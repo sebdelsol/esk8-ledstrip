@@ -23,6 +23,7 @@ void BlueTooth::onEvent(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
   {
     _log << "BT client DisConnected" << endl;
     mConnected = false;
+    mStartTime = millis() - (AUTO_STOP_IF_NOTCONNECTED / 2); // gives half the time to reconnect
   }
 }
 
