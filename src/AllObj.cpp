@@ -107,6 +107,7 @@ void AllObj::handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact)
   int args[MAX_ARGS];
   byte nbArg = parsed.obj->get(*parsed.var, args); //get the value in args
 
+  // remove pure cmd (no args)
   if (nbArg) 
   { 
     if (compact)
