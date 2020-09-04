@@ -37,8 +37,8 @@ class AllObj
 
   struct mOBJ
   {
-    char*          name;
-    OBJVar*        obj;
+    char*        name;
+    OBJVar*      obj;
   };
 
   HashName<ALLOBJ_MAXOBJ, mOBJ> mHash;

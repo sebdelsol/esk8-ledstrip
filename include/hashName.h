@@ -31,7 +31,7 @@ class HashName
   bool hasAnotherName(Class* obj, const char* name) 
   {
     const char* oname = obj->name;
-    return oname != nullptr && strcmp(oname, name) != 0 ? true : false;
+    return oname != nullptr && strcmp(oname, name) != 0;
   };
 
 public:
@@ -50,8 +50,7 @@ public:
       i = next(i, ++col);
 
     maxCol = col > maxCol ? col : maxCol;
-    if (col > 0) 
-      _log << " [" << name << "]: +" << col << " lookup" << (col > 1 ? "s" : "") << endl;
+    if (col > 0) _log << " [" << name << "]: +" << col << " lookup" << (col > 1 ? "s" : "") << endl;
     
     objs[i] = obj;
   };
@@ -63,7 +62,7 @@ public:
     uint8_t col = 0;
     uint8_t i = hash(name);
     
-    // lookup for an obj named name
+    // lookup for empty slot or an obj->name == name
     while(objs[i] != nullptr && hasAnotherName(objs[i], name) ) 
     {
       if (++col > maxCol) return nullptr; // failed
