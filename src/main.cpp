@@ -60,21 +60,21 @@ Tweaks    Twk;
 // --- Strips & Fxs
 AllLedStrips AllStrips;
 
-LedStrip    <NBLEDS_MIDDLE, LEDM_PIN> StripM("Mid");
+LedStrip    <NBLEDS_MIDDLE, LEDM_PIN> StripM("mid");
 RunningFX   FireRun(LUSH_LAVA, 3);     
 RunningFX   AquaRun(AQUA_MENTHE, -3);  
 TwinkleFX   FireTwk(HUE_RED); 
 TwinkleFX   AquaTwk(HUE_AQUA_BLUE);
 PlasmaFX    Plasma;
 
-LedStrip    <NBLEDS_TIPS, LEDR_PIN>  StripR("Rear");
+LedStrip    <NBLEDS_TIPS, LEDR_PIN>  StripR("rear");
 DblCylonFX  CylonR(LUSH_LAVA); 
-FireFX      FireRL;
-FireFX      FireRR(true); // reverse
+FireFX      FireL;
+FireFX      FireR(true); // reverse
 TwinkleFX   TwinkleR(CRGB::Red);
 RunningFX   RunR(CRGB::Gold); 
 
-LedStrip    <NBLEDS_TIPS, LEDF_PIN>  StripF("Front");
+LedStrip    <NBLEDS_TIPS, LEDF_PIN>  StripF("front");
 DblCylonFX  CylonF(AQUA);   
 PacificaFX  Pacifica;
 TwinkleFX   TwinkleF(HUE_AQUA_BLUE); 
@@ -83,8 +83,6 @@ RunningFX   RunF(CRGB::Gold);
 // ----------------------------------------------------
 void setup()
 {
-  AllStrips.switchOff();
-
   // -- log
   Serial.begin(SERIAL_BAUD);
   _log << "\n---------\n- START -\n---------\n";
@@ -103,17 +101,17 @@ void setup()
   AllStrips.addStrips(StripM, StripR, StripF); 
   
   StripM.addFXs(FireRun,  FireTwk, AquaRun,  AquaTwk, Plasma);
-  StripR.addFXs(TwinkleR, FireRR,  FireRL,   RunR,    CylonR);
+  StripR.addFXs(TwinkleR, FireR,   FireL,    RunR,    CylonR);
   StripF.addFXs(TwinkleF, RunF,    Pacifica, CylonF);
 
   // -- Register AllObj
   #define _addObj(cat, obj)  AllObj.addObj(obj, cat#obj);
   #define AddObjs(cat, ...)  ForEachMacro(_addObj, cat, __VA_ARGS__)
 
-  AddObjs("",        Cfg,      Mpu,       AllStrips,  Twk);            
-  AddObjs("mid.",    FireRun,  FireTwk,   AquaRun,    AquaTwk,  Plasma);
-  AddObjs("rear.",   TwinkleR, FireRR,    FireRL,     RunR,     CylonR);
-  AddObjs("front.",  TwinkleF, RunF,      Pacifica,   CylonF);
+  AddObjs("",        Cfg,      Mpu,     AllStrips,  Twk);            
+  AddObjs("mid.",    FireRun,  FireTwk, AquaRun,    AquaTwk,  Plasma);
+  AddObjs("rear.",   TwinkleR, RunR,    CylonR,     FireR,    FireL);
+  AddObjs("front.",  TwinkleF, RunF,    CylonF,     Pacifica);
 
   AllObj.save(true); // save default
   AllObj.load(false, false); // load not default, do not send change to BT
@@ -151,19 +149,16 @@ inline void loopMpu()
 inline void loopWifi()
 {
 #if USE_WIFI
-  EVERY_N_MILLISECONDS(WIFI_TICK)
+  EVERY_N_MILLISECONDS(WIFI_TICK) if(MyWifi.update())
   {
-    if(MyWifi.update())
-    {
-      #ifdef USE_TELNET
-        SerialAndTelnet.handle();
-      #endif
+    #ifdef USE_TELNET
+      SerialAndTelnet.handle();
+    #endif
 
-      #ifdef USE_OTA
-        if (!MyWifi.isWSConnected()) // concurrency issue with WSockets
-          Ota.update();
-      #endif
-    }
+    #ifdef USE_OTA
+      // concurrency issue with WSockets
+      if (!MyWifi.isWSConnected()) Ota.update();
+    #endif
   }
   Raster.add("Wifi");
 #endif
@@ -175,9 +170,7 @@ inline void loopBT()
 #ifdef USE_BT
   EVERY_N_MILLISECONDS(BT_TICK)
   {
-    if (Button.pressed())
-      BT.toggle();
-
+    if (Button.pressed()) BT.toggle();
     AllObj.receiveUpdate(BT);
   }
   Raster.add("BlueTooth");
@@ -234,10 +227,10 @@ inline void loopLeds()
         RunR.setAlpha(alpha);
         CylonR.setEyeSize(eyeR);
         CylonR.setAlphaMul(255 - Twk.fire, invAlpha); 
-        FireRR.setAlphaMul(Twk.fire, invAlpha); 
-        FireRL.setAlphaMul(Twk.fire, invAlpha);
-        FireRR.setDimRatio(dim); 
-        FireRL.setDimRatio(dim); 
+        FireR.setAlphaMul(Twk.fire, invAlpha); 
+        FireL.setAlphaMul(Twk.fire, invAlpha);
+        FireR.setDimRatio(dim); 
+        FireL.setDimRatio(dim); 
         TwinkleR.setAlphaMul(max(Twk.minTwkR, alphaR), invAlpha); 
       }
 
@@ -272,9 +265,12 @@ inline void loopLeds()
 void loop()
 {
   Raster.begin();
-  loopMpu();
+
   loopWifi();
   loopBT();
+
+  loopMpu();
   loopLeds();
+
   Raster.end();
 }
