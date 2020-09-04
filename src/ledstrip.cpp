@@ -28,7 +28,10 @@
 #endif
 
 // ----------------------------------------------------
-AllLedStrips::AllLedStrips()
+AllLedStrips::AllLedStrips() 
+#ifdef DBG_TIMEtoSHOW
+  : beginTime(millis())
+#endif
 {
   setBrightness(0);
   setDither(mDither);
@@ -72,6 +75,14 @@ void AllLedStrips::setBrightness(const byte bright)
 
 void AllLedStrips::update()
 {
+  #ifdef DBG_TIMEtoSHOW
+    if (!mHasbegun)
+    {
+      _log << "------\n>> Time to Start the show: " << millis() - beginTime << "ms" << endl << "------" << endl;
+      mHasbegun = true;
+    }
+  #endif
+
   // update all strips
   ulong t = GET_MILLIS();
   ulong dt = mLastT ? t - mLastT : 1; // to prevent possible /0

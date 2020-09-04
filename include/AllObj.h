@@ -6,8 +6,11 @@
 #include <ObjVar.h>
 #include <Buf.h>
 
-//-------------------------------
+//------------------- Dbg
+// #define DBG_SHOWFILES   // to see files in SPIFFS
 // #define DBG_CMD        // to see what's happening with send & received cmd
+
+//-------------------------------
 #define ALLOBJ_MAXOBJ     18
 
 #define ALLOBJ_RESERVED   '!'

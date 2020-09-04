@@ -19,6 +19,9 @@
 // #define FASTLED_WAIT  100 //ms
 // #define FASTLED_STACK 2048
 
+//------------------- Dbg
+// #define DBG_TIMEtoSHOW
+
 //--------------------------------------
 class BaseLedStrip
 {
@@ -43,6 +46,11 @@ class AllLedStrips : public OBJVar
   int       mMinProbe = 400;
   const int mMaxProbe = 4095;
   bool      mProbe    = false;
+
+  #ifdef DBG_TIMEtoSHOW
+    bool      mHasbegun = false;
+    long      beginTime;
+  #endif
 
 public:
   AllLedStrips();

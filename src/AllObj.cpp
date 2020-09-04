@@ -7,6 +7,19 @@ void AllObj::init()
   spiffsOK = SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED);
   if (!spiffsOK)
     _log << "SPIFFS Mount Failed" << endl;
+
+  #ifdef DBG_SHOWFILES
+    else
+    {
+      File root = SPIFFS.open("/");
+      File file = root.openNextFile();
+      while(file)
+      {
+          _log << "FILE: " << file.name() << endl;
+          file = root.openNextFile();
+      }
+    }
+  #endif
 }
 
 //--------------------------------------
