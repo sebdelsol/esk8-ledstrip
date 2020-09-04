@@ -52,7 +52,6 @@ public:
   void setDither(const bool dither)     { FastLED.setDither(dither ? BINARY_DITHER : DISABLE_DITHER); };
   void setMaxmA(const int maxmA)        { FastLED.setMaxPowerInVoltsAndMilliamps(5, maxmA); };
   
-  void switchOff();
   void show();
 
   bool addStrip(BaseLedStrip& strip);
@@ -78,17 +77,17 @@ class LedStrip : public BaseLedStrip
 
 public:
 
-  LedStrip(const char* name="")
+  LedStrip(const char* name)
   {
-    mName = (char* )malloc(strlen(name) + 1);
+    mName = strdup(name);
     assert (mName!=nullptr);
-    sprintf(mName, "%s", name);
   };
 
   void init() // better for startup, no blinking, fastled is initialized before with 0 brightness
   {
     mController = &FastLED.addLeds<CHIPSET, LEDPIN, COLOR_ORDER>(mDisplay, NLEDS);
     mController->setCorrection(TypicalSMD5050); // = TypicalLEDStrip
+    FastLED.clear(true); // clear all to avoid blinking leds startup 
   };
 
   bool addFX(FX& fx)
