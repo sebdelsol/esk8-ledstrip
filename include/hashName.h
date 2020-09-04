@@ -68,6 +68,7 @@ public:
       if (++col > maxCol) return nullptr; // failed
       i = next(i, col);
     }
+    
     return objs[i];
   };
 };
