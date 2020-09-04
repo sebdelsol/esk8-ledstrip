@@ -49,8 +49,11 @@ public:
     while(objs[i] != nullptr) 
       i = next(i, ++col);
 
-    maxCol = col > maxCol ? col : maxCol;
-    if (col > 0) _log << " [" << name << "]: +" << col << " lookup" << (col > 1 ? "s" : "") << endl;
+    if (col > 0)
+    {
+      _log << " [" << name << "]: +" << col << " lookup" << (col > 1 ? "s" : "") << endl;
+      if (col > maxCol) col = maxCol;
+    } 
     
     objs[i] = obj;
   };
@@ -68,7 +71,7 @@ public:
       if (++col > maxCol) return nullptr; // failed
       i = next(i, col);
     }
-    
+
     return objs[i];
   };
 };
