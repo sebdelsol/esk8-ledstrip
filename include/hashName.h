@@ -52,7 +52,7 @@ public:
     if (col > 0)
     {
       _log << " [" << name << "]: +" << col << " lookup" << (col > 1 ? "s" : "") << endl;
-      if (col > maxCol) col = maxCol;
+      if (col > maxCol) maxCol = col;
     } 
     
     objs[i] = obj;
