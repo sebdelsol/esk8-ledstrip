@@ -48,8 +48,8 @@ class AllLedStrips : public OBJVar
   bool      mProbe    = false;
 
   #ifdef DBG_TIMEtoSHOW
-    bool      mHasbegun = false;
-    long      beginTime;
+    bool    mHasbegun = false;
+    long    beginTime;
   #endif
 
 public:

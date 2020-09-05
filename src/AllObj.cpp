@@ -15,8 +15,8 @@ void AllObj::init()
       File file = root.openNextFile();
       while(file)
       {
-          _log << "FILE: " << file.name() << endl;
-          file = root.openNextFile();
+        _log << "FILE: " << file.name() << endl;
+        file = root.openNextFile();
       }
     }
   #endif
