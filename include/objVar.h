@@ -52,13 +52,13 @@ struct MyVar
 class OBJVar
 {
   HashName<MAX_VAR, MyVar> mHash;
-  MyVar* mVar[MAX_VAR];
-  byte   mNVAR = 0;
+  MyVar*      mVar[MAX_VAR];
+  byte        mNVAR = 0;
 
-  char*  mName;
+  const char* mName;
 
 public:  
-  void setName(const char* name) { mName = strdup(name); assert(mName!=nullptr); };
+  void setName(const char* name) { mName = name; };
   inline const char* getName()   { return mName; };
 
   bool   addVar(const char* name, SetFunc* set, GetFunc* get, int min = 0, int max = 0, bool show = true);

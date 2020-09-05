@@ -79,17 +79,10 @@ class LedStrip : public BaseLedStrip
 {
   CRGBArray<NLEDS> mBuffer; // tmp buffer for copying & fading of each fx
   CRGBArray<NLEDS> mDisplay; // target display
-
-  CLEDController* mController;
-  char* mName;
-
-  struct FxDesc
-  {
-    FX*   fx;
-    char* name;
-  } mFX[MAXFX];
-
-  byte  mNFX = 0;
+  CLEDController*  mController;
+  char*            mName;
+  FX*              mFX[MAXFX];
+  byte             mNFX = 0;
 
 public:
 
@@ -111,13 +104,13 @@ public:
     bool ok = mNFX < MAXFX;
     if (ok)
     {
-      char* fxname = strdup(name);
+      mFX[mNFX++] = &fx;
+
+      char* fxname = (char *)malloc(strlen(mName) + strlen(name) + 2);
       assert(fxname != nullptr);
+      sprintf(fxname, "%s.%s", mName, name);
 
-      FxDesc& fxdesc = mFX[mNFX++];
-      fxdesc.fx = &fx;
-      fxdesc.name = fxname;
-
+      fx.setName(fxname);
       fx.init(NLEDS);
     }
     else
@@ -133,24 +126,18 @@ public:
   {
     for (byte i=0; i < mNFX; i++)
     {
-      FxDesc& fxdesc = mFX[i];
-
-      char* name = (char *)malloc(strlen(mName) + strlen(fxdesc.name) + 2);
-      assert(name != nullptr);
-      sprintf(name, "%s.%s", mName, fxdesc.name);
-
-      allobj.addObj(*fxdesc.fx, name);
-      free(name);
+      FX& fx = *mFX[i];
+      allobj.addObj(fx, fx.getName());
     }
   };
 
   void showInfo()
   {
-    _log << mName << "(" << NLEDS << ") ";
+    _log << NLEDS << " leds ";
     for (byte i=0; i < mNFX; i++)
     {
-      FxDesc& fxdesc = mFX[i];
-      _log << "\t - " << fxdesc.name << "(" << fxdesc.fx->getAlpha() << ")";
+      FX& fx = *mFX[i];
+      _log << "\t - " << fx.getName() << "(" << fx.getAlpha() << ")";
     }
     _log << "                  " << endl;
   };
@@ -167,7 +154,7 @@ public:
 
     // 1st fx is drawn on mDisplay
     for (; i < mNFX; i++) 
-      if (mFX[i].fx->drawOn(mDisplay, t, dt))
+      if (mFX[i]->drawOn(mDisplay, t, dt))
         break; // now we've to blend
 
     // something drawn ?
@@ -175,7 +162,7 @@ public:
     { 
       // some fx left to draw ? draw on mBuffer & blend with mDisplay
       for (; i < mNFX; i++) 
-        if (mFX[i].fx->drawOn(mBuffer, t, dt)) 
+        if (mFX[i]->drawOn(mBuffer, t, dt)) 
             mDisplay |= mBuffer; // get the max of each RGB component
     }
     // if no fx drawn, clear the ledstrip

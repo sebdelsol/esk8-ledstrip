@@ -28,8 +28,11 @@ bool AllObj::addObj(OBJVar& obj, const char* name)
   bool ok = mNOBJ < ALLOBJ_MAXOBJ;
   if (ok)
   {
+    const char* objname = strdup(name);
+    assert(objname != nullptr); 
+    obj.setName(objname);
+
     mOBJS[mNOBJ++] = &obj;
-    obj.setName(name);
     mHash.add(&obj);
 
     // create absolute IDs
