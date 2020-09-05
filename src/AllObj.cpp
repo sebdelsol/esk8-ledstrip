@@ -36,7 +36,7 @@ bool AllObj::addObj(OBJVar& obj, const char* name)
     mobj.obj = &obj;
     mHash.add(&mobj);
 
-    // create IDs
+    // create absolute IDs
     byte nbVar = obj.getNbVar();
     for (byte i = 0; i < nbVar; i++)
     {
