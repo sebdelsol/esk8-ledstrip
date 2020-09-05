@@ -52,6 +52,12 @@ void AllLedStrips::init()
   #endif
 }
 
+void AllLedStrips::addObjs(AllObj& allobj)
+{
+  for (byte i=0; i < mNStrips; i++)
+    mStrips[i]->addObjs(allobj);
+}
+
 bool AllLedStrips::addStrip(BaseLedStrip &strip)
 {
   bool ok = mNStrips < MAXSTRIP;

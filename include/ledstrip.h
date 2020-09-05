@@ -6,6 +6,7 @@
 #include <Pins.h>
 #include <ObjVar.h>
 #include <FX.h>
+#include <AllObj.h>
 #include <Variadic.h>
 
 #define COLOR_ORDER     GRB
@@ -29,6 +30,7 @@ public:
   virtual void showInfo(); 
   virtual void update(ulong time, ulong dt);  
   virtual void init();
+  virtual void addObjs(AllObj& allobj);
   virtual byte* getData(int& n); // for myWifi
 };
 
@@ -64,6 +66,7 @@ public:
 
   bool addStrip(BaseLedStrip& strip);
   ForEachMethod(addStrip); // create method addStrips(...) that calls addStrip on all args
+  void addObjs(AllObj& allobj);
 
   void showInfo();
   void update();
@@ -80,8 +83,13 @@ class LedStrip : public BaseLedStrip
   CLEDController* mController;
   char* mName;
 
-  FX* mFX[MAXFX];
-  byte mNFX = 0;
+  struct FxDesc
+  {
+    FX*   fx;
+    char* name;
+  } mFX[MAXFX];
+
+  byte  mNFX = 0;
 
 public:
 
@@ -98,12 +106,18 @@ public:
     FastLED.clear(true); // clear all to avoid blinking leds startup 
   };
 
-  bool addFX(FX& fx)
+  bool addFX(FX& fx, const char* name)
   {
     bool ok = mNFX < MAXFX;
     if (ok)
     {
-      mFX[mNFX++] = &fx;
+      char* fxname = strdup(name);
+      assert(fxname != nullptr);
+
+      FxDesc& fxdesc = mFX[mNFX++];
+      fxdesc.fx = &fx;
+      fxdesc.name = fxname;
+
       fx.init(NLEDS);
     }
     else
@@ -112,15 +126,31 @@ public:
     return ok;
   };
 
-  ForEachMethod(addFX);   // create method AddFxs(...) that calls addFX on all args
+  #define _addFX(strip, fx)   strip.addFX(fx, #fx);
+  #define AddFXs(strip, ...)  ForEachMacro(_addFX, strip, __VA_ARGS__)
+
+  void addObjs(AllObj& allobj)
+  {
+    for (byte i=0; i < mNFX; i++)
+    {
+      FxDesc& fxdesc = mFX[i];
+
+      char* name = (char *)malloc(strlen(mName) + strlen(fxdesc.name) + 2);
+      assert(name != nullptr);
+      sprintf(name, "%s.%s", mName, fxdesc.name);
+
+      allobj.addObj(*fxdesc.fx, name);
+      free(name);
+    }
+  };
 
   void showInfo()
   {
     _log << mName << "(" << NLEDS << ") ";
     for (byte i=0; i < mNFX; i++)
     {
-      FX* fx = mFX[i];
-      _log << " - " << fx->getName() << "(" << fx->getAlpha() << ")";
+      FxDesc& fxdesc = mFX[i];
+      _log << "\t - " << fxdesc.name << "(" << fxdesc.fx->getAlpha() << ")";
     }
     _log << "                  " << endl;
   };
@@ -137,7 +167,7 @@ public:
 
     // 1st fx is drawn on mDisplay
     for (; i < mNFX; i++) 
-      if (mFX[i]->drawOn(mDisplay, t, dt))
+      if (mFX[i].fx->drawOn(mDisplay, t, dt))
         break; // now we've to blend
 
     // something drawn ?
@@ -145,7 +175,7 @@ public:
     { 
       // some fx left to draw ? draw on mBuffer & blend with mDisplay
       for (; i < mNFX; i++) 
-        if (mFX[i]->drawOn(mBuffer, t, dt)) 
+        if (mFX[i].fx->drawOn(mBuffer, t, dt)) 
             mDisplay |= mBuffer; // get the max of each RGB component
     }
     // if no fx drawn, clear the ledstrip

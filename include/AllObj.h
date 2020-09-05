@@ -81,3 +81,7 @@ public:
   void load(bool isdefault, bool change = true);
   bool addObj(OBJVar& obj, const char* name);
 };
+
+// macro to add several objs to allobj 
+#define _addObj(allobj, obj)  allobj.addObj(obj, #obj);
+#define AddObjs(allobj, ...)  ForEachMacro(_addObj, allobj, __VA_ARGS__)

@@ -18,8 +18,8 @@
 // -- Telnet Serial 
 #ifdef USE_TELNET
   #include  <TelnetSpy.h>  
-  TelnetSpy SerialAndTelnet;  
-  #define   Serial  SerialAndTelnet // redefine Serial
+  TelnetSpy Telnet;  // output on Serial and Telnet
+  #define   Serial  Telnet // redefine Serial
 #endif
 
 // -- log, depends on Serial possible redefinition 
@@ -99,19 +99,14 @@ void setup()
 
   // -- register Strips & FXs
   AllStrips.addStrips(StripM, StripR, StripF); 
-  
-  StripM.addFXs(FireRun,  FireTwk, AquaRun,  AquaTwk, Plasma);
-  StripR.addFXs(TwinkleR, FireR,   FireL,    RunR,    CylonR);
-  StripF.addFXs(TwinkleF, RunF,    Pacifica, CylonF);
+
+  AddFXs(StripM,    FireRun,  FireTwk, AquaRun, AquaTwk, Plasma);
+  AddFXs(StripR,    TwinkleR, RunR,    CylonR,  FireR,   FireL);
+  AddFXs(StripF,    TwinkleF, RunF,    CylonF,  Pacifica);
 
   // -- Register AllObj
-  #define _addObj(cat, obj)  AllObj.addObj(obj, cat#obj);
-  #define AddObjs(cat, ...)  ForEachMacro(_addObj, cat, __VA_ARGS__)
-
-  AddObjs("",        Cfg,      Mpu,     AllStrips,  Twk);            
-  AddObjs("mid.",    FireRun,  FireTwk, AquaRun,    AquaTwk,  Plasma);
-  AddObjs("rear.",   TwinkleR, RunR,    CylonR,     FireR,    FireL);
-  AddObjs("front.",  TwinkleF, RunF,    CylonF,     Pacifica);
+  AddObjs(AllObj,   Cfg, Mpu, AllStrips, Twk);            
+  AllStrips.addObjs(AllObj);
 
   AllObj.save(true); // save default
   AllObj.load(false, false); // load not default, do not send change to BT
@@ -152,7 +147,7 @@ inline void loopWifi()
   EVERY_N_MILLISECONDS(WIFI_TICK) if(MyWifi.update())
   {
     #ifdef USE_TELNET
-      SerialAndTelnet.handle();
+      Telnet.handle();
     #endif
 
     #ifdef USE_OTA

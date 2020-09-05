@@ -5,7 +5,6 @@
 #include <Streaming.h>
 #include <ObjVar.h>
 
-#define SetFxNAME(name) const char* getName() {return name;};
 #define ClearLeds(l, n) memset8(l, 0, n * sizeof(CRGB)); 
 
 //--------------------------------------
@@ -25,7 +24,6 @@ public:
   byte getAlpha();
   bool drawOn(CRGBSet dst, ulong time, ulong dt);
   
-  virtual const char* getName()=0;
   virtual void update(ulong time, ulong dt)=0;
   virtual void initFX()=0;
 };
@@ -46,7 +44,6 @@ public:
   void setDimRatio(const int dimRatio) { mDimRatio = dimRatio; };
   void initFX();
   void update(ulong time, ulong dt);
-  SetFxNAME("Fire");
 };
 
 //---------
@@ -54,7 +51,6 @@ class AquaFX : public FireFX
 {
 public:
   AquaFX(const bool reverse = false, const byte speed = 27, const float dimRatio = 10.);
-  SetFxNAME("Aqua");
 };
 
 //--------------------------------------
@@ -66,7 +62,6 @@ public:
   PlasmaFX(const byte wavelenght = 5, const byte period1 = 3, const byte period2 = 5);
   void initFX();
   void update(ulong time, ulong dt);
-  SetFxNAME("Plasma");
 };
 
 //---------
@@ -84,7 +79,6 @@ public:
   void setEyeSize(const int eyeSize) {mEyeSize = eyeSize;};
   void initFX();
   void update(ulong time, ulong dt);
-  SetFxNAME("Cylon");
 };
 
 //---------
@@ -93,7 +87,6 @@ class DblCylonFX : public CylonFX
 public:
   using CylonFX::CylonFX;
   void update(ulong time, ulong dt);
-  SetFxNAME("DbldCylon");
 };
 
 //---------
@@ -108,7 +101,6 @@ public:
   void setSpeed(const int speed) {mSpeed = speed;};
   void initFX();
   void update(ulong time, ulong dt);
-  SetFxNAME("Running");
 };
 
 //---------
@@ -126,7 +118,6 @@ public:
   TwinkleFX(const CRGB color=0xff0000, const byte hueDiv=5, const byte div=5);
   void initFX();
   void update(ulong time, ulong dt);
-  SetFxNAME("Twinkle");
 };
 
 //--------- // by Mark Kriegsman and Mary Corey March.
@@ -142,5 +133,4 @@ public:
   PacificaFX(const byte speed = 4);
   void initFX();
   void update(ulong time, ulong dt);
-  SetFxNAME("Pacifica");
 };
