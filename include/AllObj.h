@@ -72,9 +72,7 @@ public:
   void init();
   void save(bool isdefault);
   void load(bool isdefault, bool change = true);
+  
   bool addObj(OBJVar& obj, const char* name);
+  ForEachMethodPairs(addObj);  // create a method addObjs(obj1, name1, obj2, name2, ...) that calls addObj(obj, name) for each pair
 };
-
-// macro to add several objs to allobj 
-#define _addObj(allobj, obj)  allobj.addObj(obj, #obj);
-#define AddObjs(allobj, ...)  ForEachMacro(_addObj, allobj, __VA_ARGS__)

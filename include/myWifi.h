@@ -41,7 +41,7 @@ public:
   bool isWSConnected() { return mIsSocket && mWSConnected; };
   
   void addStrip(const BaseLedStrip &leds);
-  ForEachMethod(addStrip); // create method addStrips(...) that calls addStrip on all args
+  ForEachMethod(addStrip); // create a method addStrips(...) that calls addStrip on all args
 
   bool update();
 };

@@ -65,7 +65,8 @@ public:
   void show();
 
   bool addStrip(BaseLedStrip& strip);
-  ForEachMethod(addStrip); // create method addStrips(...) that calls addStrip on all args
+  ForEachMethod(addStrip); // create a method addStrips(...) that calls addStrip on all args
+  
   void addObjs(AllObj& allobj);
 
   void showInfo();
@@ -119,8 +120,7 @@ public:
     return ok;
   };
 
-  #define _addFX(strip, fx)   strip.addFX(fx, #fx);
-  #define AddFXs(strip, ...)  ForEachMacro(_addFX, strip, __VA_ARGS__)
+  ForEachMethodPairs(addFX); // create a method addFXs(fx1, name1, fx2, name2, ...) that calls addFX(fx, name) for each pair
 
   void addObjs(AllObj& allobj)
   {

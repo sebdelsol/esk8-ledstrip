@@ -100,15 +100,15 @@ void setup()
   // -- register Strips & FXs
   AllStrips.addStrips(StripM, StripR, StripF); 
 
-  AddFXs(StripM,    FireRun,  FireTwk, AquaRun, AquaTwk, Plasma);
-  AddFXs(StripR,    TwinkleR, RunR,    CylonR,  FireR,   FireL);
-  AddFXs(StripF,    TwinkleF, RunF,    CylonF,  Pacifica);
+  StripM.addFXs( NameIt(FireRun,  FireTwk, AquaRun, AquaTwk, Plasma) );
+  StripR.addFXs( NameIt(TwinkleR, RunR,    CylonR,  FireR,   FireL) );
+  StripF.addFXs( NameIt(TwinkleF, RunF,    CylonF,  Pacifica) );
 
   // -- Register AllObj
-  AddObjs(AllObj,   Cfg, Mpu, AllStrips, Twk);            
+  AllObj.addObjs( NameIt(Cfg, Mpu, AllStrips, Twk) );            
   AllStrips.addObjs(AllObj);
 
-  AllObj.save(true); // save default
+  AllObj.save(true);         // save default
   AllObj.load(false, false); // load not default, do not send change to BT
 
   // -- BlueTooth

@@ -64,7 +64,7 @@ bool AllObj::isNumber(const char* txt)
 void AllObj::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args, bool line = true)
 {
   #ifdef DBG_CMD
-    JoinbySpace(_log, cmdKeyword, parsed.objName, parsed.varName);
+    _log << JoinbySpace(cmdKeyword, parsed.objName, parsed.varName);
     
     for (byte i=0; i < nbArg; i++) 
       _log << " " << args[i];
@@ -118,7 +118,7 @@ void AllObj::handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact)
     if (compact)
       stream << parsed.obj->getID(*parsed.var);
     else
-      JoinbySpace(stream, mSetKeyword, parsed.objName, parsed.varName);
+      stream << JoinbySpace(mSetKeyword, parsed.objName, parsed.varName);
 
     for (byte i=0; i < nbArg; i++)
       stream << " " << args[i];
@@ -132,7 +132,7 @@ void AllObj::handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact)
 // write the var with it args + min/max to the stream as a int cmd
 void AllObj::handleInitCmd(const parsedCmd& parsed, Stream& stream)
 {
-  JoinbySpace(stream, mInitKeyword, parsed.objName, parsed.varName, parsed.obj->getID(*parsed.var)); 
+  stream << JoinbySpace(mInitKeyword, parsed.objName, parsed.varName, parsed.obj->getID(*parsed.var)); 
 
   int min, max;
   parsed.obj->getMinMax(*parsed.var, min, max);
