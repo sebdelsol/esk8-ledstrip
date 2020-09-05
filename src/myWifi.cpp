@@ -10,17 +10,17 @@ void CallbackWrapper(WStype_t type, uint8_t * payload, size_t length)
 
 void myWifi::onWSEvent(WStype_t type, uint8_t * payload, size_t length)
 {
-	switch(type)
+  switch(type)
   {
-		case WStype_DISCONNECTED:
-			mWSConnected = false;
+    case WStype_DISCONNECTED:
+      mWSConnected = false;
       _log << "Socket client Disconnected" << endl;
-			break;
-		case WStype_CONNECTED:
-			mWSConnected = true;
+      break;
+    case WStype_CONNECTED:
+      mWSConnected = true;
       _log << "Socket client Connected" << endl;
-			break;
-	}
+      break;
+  }
 }
 
 // ----------------------------------------------------
