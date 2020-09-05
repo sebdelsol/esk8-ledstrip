@@ -38,16 +38,10 @@ class AllObj
     const char*  varName;
   };
 
-  struct mOBJ
-  {
-    char*        name;
-    OBJVar*      obj;
-  };
-
-  HashName<ALLOBJ_MAXOBJ, mOBJ> mHash;
-  mOBJ  mOBJS[ALLOBJ_MAXOBJ];
-  byte  mNOBJ = 0;
-  byte  mID = 0;
+  HashName<ALLOBJ_MAXOBJ, OBJVar> mHash;
+  OBJVar*     mOBJS[ALLOBJ_MAXOBJ];
+  byte        mNOBJ = 0;
+  byte        mID = 0;
 
   const char* cfg_fname = FNAME_CURRENT;
   const char* def_fname = FNAME_DEFAULT;
@@ -58,7 +52,6 @@ class AllObj
   void    dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args, int min, int max);
 
   bool    isNumber(const char* txt);
-  OBJVar* getObjFromName(const char* name);
 
   void    handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change);
   void    handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact);

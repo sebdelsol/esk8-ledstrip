@@ -28,13 +28,9 @@ bool AllObj::addObj(OBJVar& obj, const char* name)
   bool ok = mNOBJ < ALLOBJ_MAXOBJ;
   if (ok)
   {
-    char* namecpy = strdup(name);
-    assert (namecpy!=nullptr);
-
-    mOBJ& mobj = mOBJS[mNOBJ++];
-    mobj.name = namecpy;
-    mobj.obj = &obj;
-    mHash.add(&mobj);
+    mOBJS[mNOBJ++] = &obj;
+    obj.setName(name);
+    mHash.add(&obj);
 
     // create absolute IDs
     byte nbVar = obj.getNbVar();
@@ -50,13 +46,6 @@ bool AllObj::addObj(OBJVar& obj, const char* name)
     _log << ">> ERROR !! Max obj is reached " << ALLOBJ_MAXOBJ << endl; 
 
   return ok;
-}
-
-//--------------------------------------
-OBJVar* AllObj::getObjFromName(const char* name)
-{ 
-  mOBJ* mobj = mHash.get(name); 
-  return mobj!=nullptr ? mobj->obj : nullptr; 
 }
 
 //--------------------------------------
@@ -162,7 +151,7 @@ bool AllObj::parseCmd(parsedCmd& parsed, BUF& buf)
   parsed.objName = buf.next();
   if (parsed.objName != nullptr)
   {
-    parsed.obj = getObjFromName(parsed.objName);
+    parsed.obj = mHash.get(parsed.objName);
     if(parsed.obj != nullptr)
     {
       parsed.varName = buf.next();
@@ -232,15 +221,15 @@ void AllObj::emulateCmdForAllVars(const char* cmdKeyword, Stream& stream, OBJVar
 {
   for (byte i = 0; i < mNOBJ; i++)
   {
-    char* objName = mOBJS[i].name;
-    OBJVar* obj = mOBJS[i].obj;
+    OBJVar& obj = *mOBJS[i];
+    const char* objName = obj.getName();
     
-    byte nbVar = obj->getNbVar();
+    byte nbVar = obj.getNbVar();
     for (byte j = 0; j < nbVar; j++)
     {
-      if(testVar == nullptr || (obj->*testVar)(j))
+      if(testVar == nullptr || (obj.*testVar)(j))
       {
-        char* varName = obj->getVarName(j);
+        char* varName = obj.getVarName(j);
         snprintf(mTmpBuf.getBuf(), mTmpBuf.getLen(), "%s %s %s", cmdKeyword, objName, varName); // emulate a cmd
         handleCmd(stream, mTmpBuf, change, compact); // the result of the cmd is sent to the stream
       }

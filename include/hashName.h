@@ -2,7 +2,7 @@
 
 #include <log.h>
 
-// hash for [name] => Class* obj, where obj->name needs to be defined
+// hash for [name] => Class* obj, with a Class::getname() method defined
 template <int N, class Class>
 class HashName 
 {
@@ -30,8 +30,8 @@ class HashName
 
   bool hasAnotherName(Class* obj, const char* name) 
   {
-    const char* oname = obj->name;
-    return oname != nullptr && strcmp(oname, name) != 0;
+    const char* objname = obj->getName();
+    return objname != nullptr && strcmp(objname, name) != 0;
   };
 
 public:
@@ -39,7 +39,7 @@ public:
   void add(Class* obj)
   {
     assert (obj!=nullptr);
-    const char *name = obj->name;
+    const char *name = obj->getName();
     assert (name!=nullptr);
     
     uint8_t col = 0;

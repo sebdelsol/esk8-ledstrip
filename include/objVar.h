@@ -44,6 +44,8 @@ struct MyVar
   bool      show;
   byte      ID;
   int       last[MAX_ARGS];
+  
+  inline const char* getName() { return name; };
 };
 
 //---------------------------------
@@ -53,7 +55,12 @@ class OBJVar
   MyVar* mVar[MAX_VAR];
   byte   mNVAR = 0;
 
+  char*  mName;
+
 public:  
+  void setName(const char* name) { mName = strdup(name); assert(mName!=nullptr); };
+  inline const char* getName()   { return mName; };
+
   bool   addVar(const char* name, SetFunc* set, GetFunc* get, int min = 0, int max = 0, bool show = true);
   byte   getNbVar()                       { return mNVAR; };
   char*  getVarName(byte i)               { return mVar[i]->name; };
