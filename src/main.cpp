@@ -9,7 +9,6 @@
 #define USE_WIFI (defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET))
 
 // ----------------------------------------------------
-#include <Pins.h>
 #include <ledstrip.h>
 #include <mpu.h>
 #include <myWifi.h>
