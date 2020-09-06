@@ -70,7 +70,6 @@ class OBJVar
   HashName<MAX_VAR, MyVar> mHash;
   MyVar*      mVar[MAX_VAR];
   byte        mNVAR = 0;
-
   const char* mName;
 
 public:  
