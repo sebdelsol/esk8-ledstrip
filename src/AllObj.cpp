@@ -8,18 +8,14 @@ void AllObj::init()
   if (!spiffsOK)
     _log << "SPIFFS Mount Failed" << endl;
 
-  #ifdef DBG_SHOWFILES
-    else
-    {
-      File root = SPIFFS.open("/");
-      File file = root.openNextFile();
-      while(file)
-      {
-        _log << "FILE: " << file.name() << endl;
-        file = root.openNextFile();
-      }
-    }
-  #endif
+#ifdef DBG_SHOWFILES
+  else
+  {
+    File root = SPIFFS.open("/");
+    while(File file = root.openNextFile())
+      _log << "FILE: \"" << file.name() << "\" - " << file.size() << " B" << endl;
+  }
+#endif
 }
 
 //--------------------------------------
@@ -235,44 +231,27 @@ void AllObj::sendCmdForAllVars(const char* cmdKeyword, Stream& stream, TrackChan
   mTmpBuf.clear(); 
 }
 
-//--------------------------------------
-File AllObj::getFile(CfgFile cfgfile, const char* mode)
-{	
-  const char* fname = cfgfile==CfgFile::Default ? def_fname : cfg_fname;
-  File f = spiffsOK ? SPIFFS.open(fname, mode) : File();
-  bool isLoading = strcmp(mode, "r")==0;
-
-  if (f)
-    _log << (isLoading ? "Loading from " : "Saving to ") << fname << "...";
-  else
-    _log << "FAIL to " << (isLoading ? "load from " : "save to ") << fname;
-  
-  return f;
+//----------------
+void AllObj::load(CfgType cfgtype, TrackChange trackChange)
+{
+  if (spiffsOK)
+  {
+    CfgFile f = CfgFile(cfgtype, FileMode::load);
+    if (f.isOk())
+    {
+      mTmpBuf.clear(); // better safe than sorry
+      readCmd(f.getStream(), mTmpBuf, trackChange, Decode::undefined); // should be a succession of set cmd
+    }
+  }
 }
 
 //----------------
-void AllObj::load(CfgFile cfgfile, TrackChange trackChange)
+void AllObj::save(CfgType cfgtype)
 {
-  File f = getFile(cfgfile, "r");
-  if (f)
+  if (spiffsOK)
   {
-    mTmpBuf.clear(); // better safe than sorry
-    readCmd((Stream& )f, mTmpBuf, trackChange, Decode::undefined); // should be a succession of set cmd
-    f.close();
-    _log << "loaded";
+    CfgFile f = CfgFile(cfgtype, FileMode::save);
+    if (f.isOk())
+      sendCmdForAllVars(mGetKeyword, f.getStream(), TrackChange::undefined, Decode::verbose); //for all vars, send a get cmd & output the result in the file stream
   }
-  _log << endl;
-}
-
-//----------------
-void AllObj::save(CfgFile cfgfile)
-{
-  File f = getFile(cfgfile, "w");
-  if (f)
-  {
-    sendCmdForAllVars(mGetKeyword, (Stream& )f, TrackChange::undefined, Decode::verbose); //for all vars, send a get cmd & output the result in the file stream
-    f.close();
-    _log << "saved";
-  }
-  _log << endl;
 }

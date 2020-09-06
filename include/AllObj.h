@@ -23,11 +23,12 @@
 #define ALLOBJ_GET        "get"
 #define ALLOBJ_INIT       "init"
 
-#define FNAME_CURRENT     "/config.cfg"
-#define FNAME_DEFAULT     "/config.def"
+#define CFG_CURRENT       "/config.cfg"
+#define CFG_DEFAULT       "/config.def"
 
-enum class CfgFile : bool { Default, Current };
+enum class CfgType : bool   { Default, Current };
 enum class Decode : uint8_t { compact, verbose, undefined };
+enum class FileMode : bool  { save, load };
 
 //-------------------------------
 class AllObj 
@@ -43,8 +44,6 @@ class AllObj
   byte        mNOBJ = 0;
   byte        mID = 0;
 
-  const char* cfg_fname = FNAME_CURRENT;
-  const char* def_fname = FNAME_DEFAULT;
   bool        spiffsOK = false;
   BUF         mTmpBuf;
   
@@ -58,7 +57,6 @@ class AllObj
   void    initCmd(const parsedCmd& parsed, Stream& stream);
   bool    parseCmd(parsedCmd& parsed, BUF& buf);
   void    handleCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode decode);
-  File    getFile(CfgFile cfgfile, const char* mode);
 
 protected:
   const char* mSetKeyword = ALLOBJ_SET;
@@ -71,9 +69,43 @@ protected:
 
 public:
   void init();
-  void save(CfgFile cfgfile);
-  void load(CfgFile cfgfile, TrackChange trackChange = TrackChange::yes);
+  void save(CfgType cfgtype);
+  void load(CfgType cfgtype, TrackChange trackChange = TrackChange::yes);
   
   bool addObj(OBJVar& obj, const char* name);
   ForEachMethodPairs(addObj);  // create a method addObjs(obj1, name1, obj2, name2, ...) that calls addObj(obj, name) for each pair
+};
+
+//-------------------------------
+class CfgFile
+{
+  File  f;
+  bool  isloading;
+
+public:
+  CfgFile(CfgType cfgtype, FileMode mode)
+  {
+    bool isdef = cfgtype == CfgType::Default;
+    isloading = mode == FileMode::load; 
+    
+    const char* fname = isdef ? CFG_DEFAULT : CFG_CURRENT;
+    f = SPIFFS.open(fname, isloading ? "r" : "w");
+
+    if (f)
+      _log << (isloading ? "Loading from " : "Saving to ") << fname << "...";
+    else
+      _log << "FAIL to " << (isloading ? "load from " : "save to ") << fname << endl;
+  };
+
+  ~CfgFile()
+  {
+    if (f)
+    {
+      f.close();
+      _log << (isloading ? "loaded" : "saved") << endl;
+    }
+  }
+
+  Stream& getStream() { return (Stream&)f; };
+  bool    isOk()      { return f ? true : false; };
 };

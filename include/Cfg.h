@@ -95,9 +95,9 @@ struct Tweaks : public OBJVar
 
     void init()
     {
-      AddCmd   ("save",      allObj.save(CfgFile::Current) ) // save not default
-      AddCmd   ("load",      allObj.load(CfgFile::Current) ) // load not default
-      AddCmd   ("default",   allObj.load(CfgFile::Default) ) // load default
+      AddCmd   ("save",      allObj.save(CfgType::Current) ) // save not default
+      AddCmd   ("load",      allObj.load(CfgType::Current) ) // load not default
+      AddCmd   ("default",   allObj.load(CfgType::Default) ) // load default
       AddCmd   ("reset",     ESP.restart()                 ) // reset
       AddCmdHid("getInits",  allObj.sendInits(bt)          ) // answer with all vars init (min, max, value)
       AddCmdHid("getUpdate", allObj.sendUpdate(bt, mpu)    ) // answer with all updates
