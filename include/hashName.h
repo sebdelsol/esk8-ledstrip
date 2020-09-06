@@ -2,6 +2,8 @@
 
 #include <log.h>
 
+// #define DBG_HASH
+
 // hash for [name] => Class* obj, with a Class::getname() method defined
 template <int N, class Class>
 class HashName 
@@ -52,11 +54,11 @@ public:
     while(objs[i] != nullptr) 
       i = next(i, ++col);
 
-    if (col > 0)
-    {
-      _log << " [" << name << "]: +" << col << " lookup" << (col > 1 ? "s" : "") << endl;
-      if (col > maxCol) maxCol = col;
-    } 
+    if (col > maxCol) maxCol = col;
+    
+    #ifdef DBG_HASH
+      if (col > 0) _log << " [" << name << "]: +" << col << " lookup" << (col > 1 ? "s" : "") << endl;
+    #endif
     
     objs[i] = obj;
   };
