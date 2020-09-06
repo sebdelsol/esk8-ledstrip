@@ -21,7 +21,7 @@ void AllObj::init()
 //--------------------------------------
 bool AllObj::addObj(OBJVar& obj, const char* name)
 {
-  bool ok = mNOBJ < ALLOBJ_MAXOBJ;
+  bool ok = mNOBJ < MAXOBJ;
   if (ok)
   {
     const char* objname = strdup(name);
@@ -33,10 +33,10 @@ bool AllObj::addObj(OBJVar& obj, const char* name)
 
     // create absolute IDs
     for(MyVar* var : obj)
-      var->setID(ALLOBJ_1ST_ID + mID++);
+      var->setID(CMD_1ST_ID + mID++);
   }
   else
-    _log << ">> ERROR !! Max obj is reached " << ALLOBJ_MAXOBJ << endl; 
+    _log << ">> ERROR !! Max obj is reached " << MAXOBJ << endl; 
 
   return ok;
 }
@@ -169,7 +169,7 @@ void AllObj::handleCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode
   const char* cmd = buf.first();
   if (cmd!=nullptr)
   {
-    if (strcmp(cmd, "U")==0) // shortcut for update
+    if (strcmp(cmd, mUpdateShortcut)==0) // shortcut for update
     {
       snprintf(buf.getBuf(), buf.getLen(), "%s Cfg getUpdate", mSetKeyword); // emulate a set cmd
       cmd = buf.first();
@@ -200,9 +200,9 @@ void AllObj::readCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode d
   while (stream.available() > 0) 
   {
     char c = stream.read();
-    if (c != ALLOBJ_ALIVE)
+    if (c != CMD_ALIVE)
     {
-      if (c == ALLOBJ_TERM)
+      if (c == CMD_TERM)
       {
         handleCmd(stream, buf, trackChange, decode);
         buf.clear();

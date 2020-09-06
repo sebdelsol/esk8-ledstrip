@@ -8,23 +8,24 @@
 #include <iterator.h>
 
 //------------------- Dbg
-// #define DBG_SHOWFILES   // to see files in SPIFFS
+// #define DBG_SHOWFILES  // to see files in SPIFFS
 // #define DBG_CMD        // to see what's happening with send & received cmd
 
 //-------------------------------
-#define ALLOBJ_MAXOBJ     18
+#define MAXOBJ        18
 
-#define ALLOBJ_RESERVED   '!'
-#define ALLOBJ_1ST_ID      (ALLOBJ_RESERVED + 1)
-#define ALLOBJ_TERM        '\n' 
-#define ALLOBJ_ALIVE       '~'
+#define CMD_RESERVED  '!'
+#define CMD_1ST_ID    (CMD_RESERVED + 1)
+#define CMD_TERM      '\n' 
+#define CMD_ALIVE     '~'
 
-#define ALLOBJ_SET        "set"
-#define ALLOBJ_GET        "get"
-#define ALLOBJ_INIT       "init"
+#define CMD_SET       "set"
+#define CMD_GET       "get"
+#define CMD_INIT      "init"
+#define CMD_UPDATE    "U"
 
-#define CFG_CURRENT       "/config.cfg"
-#define CFG_DEFAULT       "/config.def"
+#define CFG_CURRENT   "/config.cfg"
+#define CFG_DEFAULT   "/config.def"
 
 enum class CfgType : bool   { Default, Current };
 enum class Decode : uint8_t { compact, verbose, undefined };
@@ -39,33 +40,33 @@ class AllObj
     MyVar*       var;
   };
 
-  HashName<ALLOBJ_MAXOBJ, OBJVar> mHash;
-  OBJVar*     mOBJS[ALLOBJ_MAXOBJ];
+  HashName<MAXOBJ, OBJVar> mHash;
+  OBJVar*     mOBJS[MAXOBJ];
   byte        mNOBJ = 0;
   byte        mID = 0;
 
   bool        spiffsOK = false;
   BUF         mTmpBuf;
   
-  void    dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args, bool  line);
+  void    dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args, bool line);
   void    dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args, int min, int max);
 
   bool    isNumber(const char* txt);
-
   void    setCmd(const parsedCmd& parsed, BUF& buf, TrackChange trackChange);
   void    getCmd(const parsedCmd& parsed, Stream& stream, Decode decode);
   void    initCmd(const parsedCmd& parsed, Stream& stream);
   bool    parseCmd(parsedCmd& parsed, BUF& buf);
   void    handleCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode decode);
+  ArrayIterator(OBJVar, mOBJS, mNOBJ); // not really needed :)
 
 protected:
-  const char* mSetKeyword = ALLOBJ_SET;
-  const char* mGetKeyword = ALLOBJ_GET;
-  const char* mInitKeyword = ALLOBJ_INIT;
+  const char* mSetKeyword     = CMD_SET;
+  const char* mGetKeyword     = CMD_GET;
+  const char* mInitKeyword    = CMD_INIT;
+  const char* mUpdateShortcut = CMD_UPDATE;
 
   void readCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode decode);
   void sendCmdForAllVars(const char* cmdKeyword, Stream& stream, TrackChange trackChange, Decode decode, MyVar::TestFunc testVar = nullptr);
-  ArrayIterator(OBJVar, mOBJS, mNOBJ); // not really needed :)
 
 public:
   void init();
