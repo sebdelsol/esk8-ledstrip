@@ -35,20 +35,33 @@ NewFunctor(SetFunc, void, SetArgs, byte)  // newSetFunc(f) returns a SetFunc* th
 NewFunctor(GetFunc, byte, GetArgs)        // newGetFunc(f) returns a GetFunc* that stores byte f(GetArgs){} 
 
 //---------------------------------
-struct MyVar 
-{
-  SetFunc*  set;
-  GetFunc*  get;
-  char*     name;
-  int       min, max;
-  bool      show;
-  byte      ID;
-  int       last[MAX_ARGS];
-  
-  inline const char* getName() { return name; };
-};
-
 enum class TrackChange : uint8_t { yes, no, undefined };
+
+class MyVar 
+{
+  SetFunc*  mSetF;
+  GetFunc*  mGetF;
+  char*     mName;
+  int       mMin, mMax;
+  bool      mShow;
+  byte      mID;
+  int       mLast[MAX_ARGS];
+
+public:
+  MyVar(const char* name, SetFunc* set, GetFunc* get, int min, int max, bool show);
+  inline const char* getName() { return mName; };
+  
+  void   getRange(int& min, int& max);
+  void   set(SetArgs toSet, byte n, TrackChange trackChange);
+  byte   get(GetArgs toGet);
+
+  byte   getID() { return mID; };
+  void   setID(byte id) { mID = id; };
+
+  using  TestFunc = bool (MyVar::*)();
+  bool   isShown() { return mShow; };
+  bool   hasChanged();
+};
 
 //---------------------------------
 class OBJVar
@@ -65,20 +78,8 @@ public:
 
   bool   addVar(const char* name, SetFunc* set, GetFunc* get, int min = 0, int max = 0, bool show = true);
   byte   getNbVar()                       { return mNVAR; };
-  char*  getVarName(byte i)               { return mVar[i]->name; };
   MyVar* getVar(byte i)                   { return mVar[i]; };
   MyVar* getVarFromName(const char* name) { return mHash.get(name); };
-
-  void   set(MyVar& var, SetArgs toSet, byte n, TrackChange trackChange);
-  byte   get(MyVar& var, GetArgs toGet);
-  void   getMinMax(const MyVar& var, int& min, int& max);
-
-  byte   getID(const MyVar& var) { return var.ID; };
-  void   setID(MyVar& var, byte id) const { var.ID = id; };
-
-  using  ObjTestVarFunc = bool (OBJVar::*)(byte i);
-  bool   isVarShown(byte i) { return mVar[i]->show; };
-  bool   hasVarChanged(byte i);
 };
 
 //---------------------------------

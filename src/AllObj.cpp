@@ -40,8 +40,7 @@ bool AllObj::addObj(OBJVar& obj, const char* name)
     for (byte i = 0; i < nbVar; i++)
     {
       MyVar* var = obj.getVar(i);
-      
-      obj.setID(*var, ALLOBJ_1ST_ID + mID);
+      var->setID(ALLOBJ_1ST_ID + mID);
       mID += 1;
     }
   }
@@ -64,7 +63,7 @@ bool AllObj::isNumber(const char* txt)
 void AllObj::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args, bool line = true)
 {
   #ifdef DBG_CMD
-    _log << JoinbySpace(cmdKeyword, parsed.objName, parsed.varName);
+    _log << JoinbySpace(cmdKeyword, parsed.obj->getName(), parsed.var->getName());
     
     for (byte i=0; i < nbArg; i++) 
       _log << " " << args[i];
@@ -88,7 +87,7 @@ void AllObj::setCmd(const parsedCmd& parsed, BUF& buf, TrackChange trackChange)
   assert(trackChange != TrackChange::undefined);
   
   int min, max;
-  parsed.obj->getMinMax(*parsed.var, min, max);
+  parsed.var->getRange(min, max);
 
   int args[MAX_ARGS];
   byte nbArg = 0;
@@ -102,7 +101,7 @@ void AllObj::setCmd(const parsedCmd& parsed, BUF& buf, TrackChange trackChange)
       break;
   }
 
-  parsed.obj->set(*parsed.var, args, nbArg, trackChange); //set the value from args
+  parsed.var->set(args, nbArg, trackChange); //set the value from args
   
   dbgCmd(mSetKeyword, parsed , nbArg, args);
 }
@@ -114,15 +113,15 @@ void AllObj::getCmd(const parsedCmd& parsed, Stream& stream, Decode decode)
   assert(decode != Decode::undefined);
 
   int args[MAX_ARGS];
-  byte nbArg = parsed.obj->get(*parsed.var, args); //get the value in args
+  byte nbArg = parsed.var->get(args); //get the value in args
 
   // remove pure cmd (no args)
   if (nbArg) 
   { 
     if (decode == Decode::compact)
-      stream << parsed.obj->getID(*parsed.var);
+      stream << parsed.var->getID();
     else
-      stream << JoinbySpace(mSetKeyword, parsed.objName, parsed.varName);
+      stream << JoinbySpace(mSetKeyword, parsed.obj->getName(), parsed.var->getName());
 
     for (byte i=0; i < nbArg; i++)
       stream << " " << args[i];
@@ -136,14 +135,14 @@ void AllObj::getCmd(const parsedCmd& parsed, Stream& stream, Decode decode)
 // write the var with it args + min/max to the stream as a int cmd
 void AllObj::initCmd(const parsedCmd& parsed, Stream& stream)
 {
-  stream << JoinbySpace(mInitKeyword, parsed.objName, parsed.varName, parsed.obj->getID(*parsed.var)); 
+  stream << JoinbySpace(mInitKeyword, parsed.obj->getName(), parsed.var->getName(), parsed.var->getID()); 
 
   int min, max;
-  parsed.obj->getMinMax(*parsed.var, min, max);
+  parsed.var->getRange(min, max);
   stream << " " << min << " " << max;
 
   int args[MAX_ARGS];
-  byte nbArg = parsed.obj->get(*parsed.var, args); 
+  byte nbArg = parsed.var->get(args); 
 
   for (byte i=0; i < nbArg; i++)
     stream << " " << args[i];
@@ -155,16 +154,16 @@ void AllObj::initCmd(const parsedCmd& parsed, Stream& stream)
 //--------------------------------------
 bool AllObj::parseCmd(parsedCmd& parsed, BUF& buf)
 {
-  parsed.objName = buf.next();
-  if (parsed.objName != nullptr)
+  const char* objName = buf.next();
+  if (objName != nullptr)
   {
-    parsed.obj = mHash.get(parsed.objName);
+    parsed.obj = mHash.get(objName);
     if(parsed.obj != nullptr)
     {
-      parsed.varName = buf.next();
-      if (parsed.varName != nullptr)
+      const char* varName = buf.next();
+      if (varName != nullptr)
       { 
-        parsed.var = parsed.obj->getVarFromName(parsed.varName);
+        parsed.var = parsed.obj->getVarFromName(varName);
         if (parsed.var != nullptr)
           return true;
       }
@@ -224,7 +223,7 @@ void AllObj::readCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode d
 }
 
 //----------------
-void AllObj::sendCmdForAllVars(const char* cmdKeyword, Stream& stream, TrackChange trackChange, Decode decode, OBJVar::ObjTestVarFunc testVar)
+void AllObj::sendCmdForAllVars(const char* cmdKeyword, Stream& stream, TrackChange trackChange, Decode decode, MyVar::TestFunc testVar)
 {
   for (byte i = 0; i < mNOBJ; i++)
   {
@@ -234,10 +233,10 @@ void AllObj::sendCmdForAllVars(const char* cmdKeyword, Stream& stream, TrackChan
     byte nbVar = obj.getNbVar();
     for (byte j = 0; j < nbVar; j++)
     {
-      if(testVar == nullptr || (obj.*testVar)(j))
+      MyVar& var = *obj.getVar(j);
+      if(testVar == nullptr || (var.*testVar)())
       {
-        char* varName = obj.getVarName(j);
-        snprintf(mTmpBuf.getBuf(), mTmpBuf.getLen(), "%s %s %s", cmdKeyword, objName, varName); // emulate a cmd
+        snprintf(mTmpBuf.getBuf(), mTmpBuf.getLen(), "%s %s %s", cmdKeyword, objName, var.getName()); // emulate a cmd
         handleCmd(stream, mTmpBuf, trackChange, decode); // the result of the cmd is sent to the stream
       }
     }

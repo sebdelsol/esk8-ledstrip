@@ -35,8 +35,6 @@ class AllObj
   {
     OBJVar*      obj;
     MyVar*       var;
-    const char*  objName;
-    const char*  varName;
   };
 
   HashName<ALLOBJ_MAXOBJ, OBJVar> mHash;
@@ -67,7 +65,7 @@ protected:
   const char* mInitKeyword = ALLOBJ_INIT;
 
   void readCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode decode);
-  void sendCmdForAllVars(const char* cmdKeyword, Stream& stream, TrackChange trackChange, Decode decode, OBJVar::ObjTestVarFunc testVar = nullptr);
+  void sendCmdForAllVars(const char* cmdKeyword, Stream& stream, TrackChange trackChange, Decode decode, MyVar::TestFunc testVar = nullptr);
 
 public:
   void init();
