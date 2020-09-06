@@ -1,6 +1,7 @@
 #include <FX.h>
 
 // ----------------------------------------------------
+  // better for startup: no blinking, strips is initialized before to 0 brightness
 void FX::init(int nLeds)
 {
   mNLEDS = nLeds;
@@ -8,7 +9,6 @@ void FX::init(int nLeds)
   assert (mLeds!=nullptr);
   ClearLeds(mLeds, nLeds);
 
-  // better for startup, no blinking, strips is initialized before to 0 brightness
   AddVarCode("alpha", setAlpha(args[0]),  getAlpha(), 0, 255)
   initFX();
 }
