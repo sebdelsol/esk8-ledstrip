@@ -25,7 +25,8 @@
 #define FNAME_CURRENT     "/config.cfg"
 #define FNAME_DEFAULT     "/config.def"
 
-#define FORMAT_SPIFFS_IF_FAILED true
+enum class CfgFile : bool { Default, Current };
+enum class Decode : uint8_t { compact, verbose, undefined };
 
 //-------------------------------
 class AllObj 
@@ -53,25 +54,25 @@ class AllObj
 
   bool    isNumber(const char* txt);
 
-  void    handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change);
-  void    handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact);
-  void    handleInitCmd(const parsedCmd& parsed, Stream& stream);
+  void    setCmd(const parsedCmd& parsed, BUF& buf, TrackChange trackChange);
+  void    getCmd(const parsedCmd& parsed, Stream& stream, Decode decode);
+  void    initCmd(const parsedCmd& parsed, Stream& stream);
   bool    parseCmd(parsedCmd& parsed, BUF& buf);
-  void    handleCmd(Stream& stream, BUF& buf, bool change = true, bool compact = false);
-  File    getFile(bool isdefault, const char* mode);
+  void    handleCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode decode);
+  File    getFile(CfgFile cfgfile, const char* mode);
 
 protected:
   const char* mSetKeyword = ALLOBJ_SET;
   const char* mGetKeyword = ALLOBJ_GET;
   const char* mInitKeyword = ALLOBJ_INIT;
 
-  void readAndHandleCmd(Stream& stream, BUF& buf, bool change = true, bool compact = false);
-  void emulateCmdForAllVars(const char* cmdKeyword, Stream& stream, OBJVar::ObjTestVarFunc testVar = nullptr, bool change = true, bool compact = false);
+  void readCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode decode);
+  void sendCmdForAllVars(const char* cmdKeyword, Stream& stream, TrackChange trackChange, Decode decode, OBJVar::ObjTestVarFunc testVar = nullptr);
 
 public:
   void init();
-  void save(bool isdefault);
-  void load(bool isdefault, bool change = true);
+  void save(CfgFile cfgfile);
+  void load(CfgFile cfgfile, TrackChange trackChange = TrackChange::yes);
   
   bool addObj(OBJVar& obj, const char* name);
   ForEachMethodPairs(addObj);  // create a method addObjs(obj1, name1, obj2, name2, ...) that calls addObj(obj, name) for each pair

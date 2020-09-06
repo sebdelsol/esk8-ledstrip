@@ -48,6 +48,8 @@ struct MyVar
   inline const char* getName() { return name; };
 };
 
+enum class TrackChange : uint8_t { yes, no, undefined };
+
 //---------------------------------
 class OBJVar
 {
@@ -67,7 +69,7 @@ public:
   MyVar* getVar(byte i)                   { return mVar[i]; };
   MyVar* getVarFromName(const char* name) { return mHash.get(name); };
 
-  void   set(MyVar& var, SetArgs toSet, byte n, bool change = false);
+  void   set(MyVar& var, SetArgs toSet, byte n, TrackChange trackChange);
   byte   get(MyVar& var, GetArgs toGet);
   void   getMinMax(const MyVar& var, int& min, int& max);
 

@@ -107,8 +107,8 @@ void setup()
   AllObj.addObjs( NameIt(Cfg, Mpu, AllStrips, Twk) );            
   AllStrips.addObjs(AllObj);
 
-  AllObj.save(true);         // save default
-  AllObj.load(false, false); // load not default, do not send change to BT
+  AllObj.save(CfgFile::Default);        
+  AllObj.load(CfgFile::Current, TrackChange::no);  // inits' cmd will send the right values to BT
 
   // -- BlueTooth
   #ifdef USE_BT

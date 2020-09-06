@@ -4,7 +4,7 @@
 void AllObj::init()
 {
   _log << "Mount SPIFFS" << endl;
-  spiffsOK = SPIFFS.begin(FORMAT_SPIFFS_IF_FAILED);
+  spiffsOK = SPIFFS.begin(true); // format if failed
   if (!spiffsOK)
     _log << "SPIFFS Mount Failed" << endl;
 
@@ -83,8 +83,10 @@ void AllObj::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, 
 
 //--------------------------------------
 // get the var args from the cmd
-void AllObj::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
+void AllObj::setCmd(const parsedCmd& parsed, BUF& buf, TrackChange trackChange)
 {
+  assert(trackChange != TrackChange::undefined);
+  
   int min, max;
   parsed.obj->getMinMax(*parsed.var, min, max);
 
@@ -100,22 +102,24 @@ void AllObj::handleSetCmd(const parsedCmd& parsed, BUF& buf, bool change)
       break;
   }
 
-  parsed.obj->set(*parsed.var, args, nbArg, change); //set the value from args
+  parsed.obj->set(*parsed.var, args, nbArg, trackChange); //set the value from args
   
   dbgCmd(mSetKeyword, parsed , nbArg, args);
 }
 
 //----------------
 // write the var with it args to the stream as a set cmd
-void AllObj::handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact)
+void AllObj::getCmd(const parsedCmd& parsed, Stream& stream, Decode decode)
 {
+  assert(decode != Decode::undefined);
+
   int args[MAX_ARGS];
   byte nbArg = parsed.obj->get(*parsed.var, args); //get the value in args
 
   // remove pure cmd (no args)
   if (nbArg) 
   { 
-    if (compact)
+    if (decode == Decode::compact)
       stream << parsed.obj->getID(*parsed.var);
     else
       stream << JoinbySpace(mSetKeyword, parsed.objName, parsed.varName);
@@ -130,7 +134,7 @@ void AllObj::handleGetCmd(const parsedCmd& parsed, Stream& stream, bool compact)
 
 //----------------
 // write the var with it args + min/max to the stream as a int cmd
-void AllObj::handleInitCmd(const parsedCmd& parsed, Stream& stream)
+void AllObj::initCmd(const parsedCmd& parsed, Stream& stream)
 {
   stream << JoinbySpace(mInitKeyword, parsed.objName, parsed.varName, parsed.obj->getID(*parsed.var)); 
 
@@ -170,7 +174,7 @@ bool AllObj::parseCmd(parsedCmd& parsed, BUF& buf)
 }
 
 //----------------
-void AllObj::handleCmd(Stream& stream, BUF& buf, bool change, bool compact)
+void AllObj::handleCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode decode)
 {
   const char* cmd = buf.first();
   if (cmd!=nullptr)
@@ -187,21 +191,21 @@ void AllObj::handleCmd(Stream& stream, BUF& buf, bool change, bool compact)
     {
       // SET cmd ?
       if (strcmp(cmd, mSetKeyword)==0)
-        handleSetCmd(parsed, buf, change); //read in buf and set the parsed var value
+        setCmd(parsed, buf, trackChange); //read in buf and set the parsed var values
       
       // GET cmd ?
       else if (strcmp(cmd, mGetKeyword)==0)
-        handleGetCmd(parsed, stream, compact); //write to stream the parsed var value           
+        getCmd(parsed, stream, decode); //write to stream the parsed var values           
       
       // INIT cmd ?
-      else if (strcmp(cmd, mInitKeyword)==0) //write to stream the parsed var init           
-        handleInitCmd(parsed, stream);            
+      else if (strcmp(cmd, mInitKeyword)==0) //write to stream the parsed var inits           
+        initCmd(parsed, stream);            
     }
   }
 }
 
 //----------------
-void AllObj::readAndHandleCmd(Stream& stream, BUF& buf, bool change, bool compact)
+void AllObj::readCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode decode)
 {
   while (stream.available() > 0) 
   {
@@ -210,7 +214,7 @@ void AllObj::readAndHandleCmd(Stream& stream, BUF& buf, bool change, bool compac
     {
       if (c == ALLOBJ_TERM)
       {
-        handleCmd(stream, buf, change, compact);
+        handleCmd(stream, buf, trackChange, decode);
         buf.clear();
       }
       else if (isprint(c))
@@ -220,7 +224,7 @@ void AllObj::readAndHandleCmd(Stream& stream, BUF& buf, bool change, bool compac
 }
 
 //----------------
-void AllObj::emulateCmdForAllVars(const char* cmdKeyword, Stream& stream, OBJVar::ObjTestVarFunc testVar, bool change, bool compact)
+void AllObj::sendCmdForAllVars(const char* cmdKeyword, Stream& stream, TrackChange trackChange, Decode decode, OBJVar::ObjTestVarFunc testVar)
 {
   for (byte i = 0; i < mNOBJ; i++)
   {
@@ -234,16 +238,17 @@ void AllObj::emulateCmdForAllVars(const char* cmdKeyword, Stream& stream, OBJVar
       {
         char* varName = obj.getVarName(j);
         snprintf(mTmpBuf.getBuf(), mTmpBuf.getLen(), "%s %s %s", cmdKeyword, objName, varName); // emulate a cmd
-        handleCmd(stream, mTmpBuf, change, compact); // the result of the cmd is sent to the stream
+        handleCmd(stream, mTmpBuf, trackChange, decode); // the result of the cmd is sent to the stream
       }
     }
-  } 
+  }
+  mTmpBuf.clear(); 
 }
 
 //--------------------------------------
-File AllObj::getFile(bool isdefault, const char* mode)
+File AllObj::getFile(CfgFile cfgfile, const char* mode)
 {	
-  const char* fname = isdefault ? def_fname : cfg_fname;
+  const char* fname = cfgfile==CfgFile::Default ? def_fname : cfg_fname;
   File f = spiffsOK ? SPIFFS.open(fname, mode) : File();
   bool isLoading = strcmp(mode, "r")==0;
 
@@ -256,13 +261,13 @@ File AllObj::getFile(bool isdefault, const char* mode)
 }
 
 //----------------
-void AllObj::load(bool isdefault, bool change)
+void AllObj::load(CfgFile cfgfile, TrackChange trackChange)
 {
-  File f = getFile(isdefault, "r");
+  File f = getFile(cfgfile, "r");
   if (f)
   {
-    mTmpBuf.clear(); // might not be cleared by readAndHandleCmd
-    readAndHandleCmd((Stream& )f, mTmpBuf, change); // should be a succession of set cmd
+    mTmpBuf.clear(); // better safe than sorry
+    readCmd((Stream& )f, mTmpBuf, trackChange, Decode::undefined); // should be a succession of set cmd
     f.close();
     _log << "loaded";
   }
@@ -270,12 +275,12 @@ void AllObj::load(bool isdefault, bool change)
 }
 
 //----------------
-void AllObj::save(bool isdefault)
+void AllObj::save(CfgFile cfgfile)
 {
-  File f = getFile(isdefault, "w");
+  File f = getFile(cfgfile, "w");
   if (f)
   {
-    emulateCmdForAllVars(mGetKeyword, (Stream& )f); //for all vars, emulate a get cmd and send the result to file stream
+    sendCmdForAllVars(mGetKeyword, (Stream& )f, TrackChange::undefined, Decode::verbose); //for all vars, send a get cmd & output the result in the file stream
     f.close();
     _log << "saved";
   }
