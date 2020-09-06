@@ -13,20 +13,20 @@ bool OBJVar::addVar(const char* name, SetFunc* set, GetFunc* get, int min, int m
       return false;
     }
 
-    MyVar* var = (MyVar* )malloc(sizeof(MyVar));
+    MyVar* var = new MyVar;
     assert (var!=nullptr);
 
     var->name = strdup(name);
     assert (var->name!=nullptr);
-
-    mVar[mNVAR++] = var;
-    mHash.add(var);
 
     var->set =  set;
     var->get =  get;
     var->min =  min;
     var->max =  max;
     var->show = show;
+
+    mVar[mNVAR++] = var;
+    mHash.add(var);
   }
   else
     _log << ">> ERROR !! Max var is reached " << MAX_VAR << endl; 
@@ -57,15 +57,15 @@ byte OBJVar::get(MyVar& var, GetArgs toGet)
 // ----------------------------------------------------
 bool OBJVar::hasVarChanged(byte i)
 {
-  MyVar* var = mVar[i]; 
+  MyVar& var = *mVar[i]; 
 
   int cur[MAX_ARGS]; 
-  byte n = get(*var, cur); //update value in cur
+  byte n = get(var, cur); //update value in cur
 
   for (byte k=0; k < n; k++)
-    if (cur[k] != var->last[k])
+    if (cur[k] != var.last[k])
     {
-      get(*var, var->last); //update value in var->last
+      get(var, var.last); //update value in var->last
       return true;
     } 
   return false;
