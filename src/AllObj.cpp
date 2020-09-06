@@ -54,7 +54,7 @@ bool AllObj::isNumber(const char* txt)
 void AllObj::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args, bool line = true)
 {
   #ifdef DBG_CMD
-    _log << JoinbySpace(cmdKeyword, parsed.obj->getName(), parsed.var->getName());
+    _log << SpaceIt(cmdKeyword, parsed.obj->getName(), parsed.var->getName());
     
     for (byte i=0; i < nbArg; i++) 
       _log << " " << args[i];
@@ -112,7 +112,7 @@ void AllObj::getCmd(const parsedCmd& parsed, Stream& stream, Decode decode)
     if (decode == Decode::compact)
       stream << parsed.var->getID();
     else
-      stream << JoinbySpace(mSetKeyword, parsed.obj->getName(), parsed.var->getName());
+      stream << SpaceIt(mSetKeyword, parsed.obj->getName(), parsed.var->getName());
 
     for (byte i=0; i < nbArg; i++)
       stream << " " << args[i];
@@ -126,7 +126,7 @@ void AllObj::getCmd(const parsedCmd& parsed, Stream& stream, Decode decode)
 // write the var with it args + min/max to the stream as a int cmd
 void AllObj::initCmd(const parsedCmd& parsed, Stream& stream)
 {
-  stream << JoinbySpace(mInitKeyword, parsed.obj->getName(), parsed.var->getName(), parsed.var->getID()); 
+  stream << SpaceIt(mInitKeyword, parsed.obj->getName(), parsed.var->getName(), parsed.var->getID()); 
 
   int min, max;
   parsed.var->getRange(min, max);

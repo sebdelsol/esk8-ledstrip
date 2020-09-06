@@ -10,15 +10,15 @@
 // create a macro that calls a _m macro for each arg & _ml for the last arg
 #define ForEachMacro(_m, _ml, ...) _Mn(__VA_ARGS__)(_m, _ml, __VA_ARGS__)
 
-// create JoinbySpace(...) // need @least one args...
+// create SpaceIt(...) // need @least one args...
 #define _nameit(obj)     obj, #obj,
 #define _nameitLast(obj) obj, #obj
 #define NameIt(...)      ForEachMacro(_nameit, _nameitLast, __VA_ARGS__)
 
-// create JoinbySpace(...) // need @least one args...
-#define _join(txt)       txt << " " <<
-#define _joinLast(txt)   txt
-#define JoinbySpace(...) ForEachMacro(_join, _joinLast, __VA_ARGS__)
+// create SpaceIt(...) // need @least one args...
+#define _join(txt)     txt << " " <<
+#define _joinLast(txt) txt
+#define SpaceIt(...)   ForEachMacro(_join, _joinLast, __VA_ARGS__)
 
 // -----------------------------------------------------
 // create the _methods(...) that calls _method(arg) for each arg
