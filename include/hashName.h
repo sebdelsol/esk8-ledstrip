@@ -42,6 +42,9 @@ public:
     const char *name = obj->getName();
     assert (name!=nullptr);
     
+    // already exists ??
+    assert(get(name) == nullptr); 
+    
     uint8_t col = 0;
     uint8_t i = hash(name);
     
