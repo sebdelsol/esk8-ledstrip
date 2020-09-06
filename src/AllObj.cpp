@@ -223,8 +223,10 @@ void AllObj::sendCmdForAllVars(const char* cmdKeyword, Stream& stream, TrackChan
     {
       if(testVar == nullptr || (var->*testVar)())
       {
-        snprintf(mTmpBuf.getBuf(), mTmpBuf.getLen(), "%s %s %s", cmdKeyword, objName, var->getName()); // emulate a cmd
-        handleCmd(stream, mTmpBuf, trackChange, decode); // the result of the cmd is sent to the stream
+        // write a cmd in mTmpBuf
+        snprintf(mTmpBuf.getBuf(), mTmpBuf.getLen(), "%s %s %s", cmdKeyword, objName, var->getName()); 
+        // send the result of the cmd to the stream
+        handleCmd(stream, mTmpBuf, trackChange, decode); 
       }
     }
   }
@@ -238,10 +240,8 @@ void AllObj::load(CfgType cfgtype, TrackChange trackChange)
   {
     CfgFile f = CfgFile(cfgtype, FileMode::load);
     if (f.isOk())
-    {
-      mTmpBuf.clear(); // better safe than sorry
-      readCmd(f.getStream(), mTmpBuf, trackChange, Decode::undefined); // should be a succession of set cmd
-    }
+      // should be a succession of set cmd
+      readCmd(f.getStream(), mTmpBuf, trackChange, Decode::undefined); 
   }
 }
 
@@ -252,6 +252,7 @@ void AllObj::save(CfgType cfgtype)
   {
     CfgFile f = CfgFile(cfgtype, FileMode::save);
     if (f.isOk())
-      sendCmdForAllVars(mGetKeyword, f.getStream(), TrackChange::undefined, Decode::verbose); //for all vars, send a get cmd & output the result in the file stream
+      //for all vars, send a get cmd & output the result in the file stream
+      sendCmdForAllVars(mGetKeyword, f.getStream(), TrackChange::undefined, Decode::verbose); 
   }
 }
