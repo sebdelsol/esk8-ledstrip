@@ -1,6 +1,7 @@
 #pragma once
 
 #include <HashName.h>
+#include <iterator.h>
 
 #define MAX_VAR  16
 #define MAX_ARGS 3
@@ -55,11 +56,11 @@ public:
   void   set(SetArgs toSet, byte n, TrackChange trackChange);
   byte   get(GetArgs toGet);
 
-  byte   getID() { return mID; };
+  byte   getID()        { return mID; };
   void   setID(byte id) { mID = id; };
 
   using  TestFunc = bool (MyVar::*)();
-  bool   isShown() { return mShow; };
+  bool   isShown()      { return mShow; };
   bool   hasChanged();
 };
 
@@ -77,9 +78,8 @@ public:
   inline const char* getName()   { return mName; };
 
   bool   addVar(const char* name, SetFunc* set, GetFunc* get, int min = 0, int max = 0, bool show = true);
-  byte   getNbVar()                       { return mNVAR; };
-  MyVar* getVar(byte i)                   { return mVar[i]; };
   MyVar* getVarFromName(const char* name) { return mHash.get(name); };
+  ArrayIterator(MyVar, mVar, mNVAR);
 };
 
 //---------------------------------

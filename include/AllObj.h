@@ -5,6 +5,7 @@
 #include <Variadic.h>
 #include <ObjVar.h>
 #include <Buf.h>
+#include <iterator.h>
 
 //------------------- Dbg
 // #define DBG_SHOWFILES   // to see files in SPIFFS
@@ -66,6 +67,7 @@ protected:
 
   void readCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode decode);
   void sendCmdForAllVars(const char* cmdKeyword, Stream& stream, TrackChange trackChange, Decode decode, MyVar::TestFunc testVar = nullptr);
+  ArrayIterator(OBJVar, mOBJS, mNOBJ); // not really needed :)
 
 public:
   void init();
