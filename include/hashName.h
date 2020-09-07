@@ -38,6 +38,7 @@ class HashName
 
 public:
 
+  // obj needs to implement the getName() method
   void add(Class* obj)
   {
     assert (obj!=nullptr);
@@ -63,6 +64,7 @@ public:
     objs[i] = obj;
   };
 
+  // return an obj or nullptr if nothing found
   Class* get(const char *name)
   {
     assert (name!=nullptr);
