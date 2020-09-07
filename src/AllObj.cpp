@@ -169,7 +169,8 @@ void AllObj::handleCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode
   const char* cmd = buf.first();
   if (cmd!=nullptr)
   {
-    if (strcmp(cmd, mUpdateShortcut)==0) // shortcut for update
+    // shortcut for update ?
+    if (strcmp(cmd, mUpdateShortcut)==0) 
     {
       snprintf(buf.getBuf(), buf.getLen(), "%s Cfg getUpdate", mSetKeyword); // emulate a set cmd
       cmd = buf.first();

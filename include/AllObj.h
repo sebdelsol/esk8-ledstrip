@@ -19,11 +19,11 @@
 #define CMD_TERM      '\n' 
 #define CMD_ALIVE     '~'
 
-#define CMD_SET       "set"
-#define CMD_GET       "get"
-#define CMD_INIT      "init"
-#define CMD_UPDATE    "U"
-#define CMD_INIT_DONE "initdone"
+#define CMD_SET           "set"
+#define CMD_GET           "get"
+#define CMD_INIT          "init"
+#define CMD_INIT_DONE     "initdone"
+#define CMD_UPDATE_SHORT  "U"
 
 #define CFG_CURRENT   "/config.cfg"
 #define CFG_DEFAULT   "/config.def"
@@ -64,7 +64,7 @@ protected:
   const char* mSetKeyword     = CMD_SET;
   const char* mGetKeyword     = CMD_GET;
   const char* mInitKeyword    = CMD_INIT;
-  const char* mUpdateShortcut = CMD_UPDATE;
+  const char* mUpdateShortcut = CMD_UPDATE_SHORT;
 
   void readCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode decode);
   void sendCmdForAllVars(const char* cmdKeyword, Stream& stream, TrackChange trackChange, Decode decode, MyVar::TestFunc testVar = nullptr);
