@@ -44,7 +44,7 @@
 * launch a `telnet` session & `open esk8.local`
 
 # Shop
-*Components* | *20€* | **ⓘ**
+*Components* | *20€* | *Shop*
 :---| ---: | :---:
 <sub>custom **[PCB](https://easyeda.com/seb.morin/esk8)**| <sub>2€</sub>| [ⓘ](https://easyeda.com/seb.morin/esk8)</sub>
 <sub> Wemos **[Lolin32](https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32_datasheet_en.pdf)**</sub>| <sub>4€</sub> | [ⓘ](https://www.aliexpress.com/wholesale?catId=0&SearchText=lolin32)
