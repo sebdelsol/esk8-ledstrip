@@ -10,13 +10,13 @@ NOSIZE = 1
 NOMOVE = 2
 
 #---------------------------------------------------------------
-with open("./include/wificonfig.h", "r") as f:
+with open('./include/wificonfig.h', 'r') as f:
     for l in f.readlines():
-        w = l.split(" ")
+        w = l.split(' ')
         if len(w)>2:
-            if w[1] == "SOCK_ADDR":
+            if w[1] == 'SOCK_ADDR':
                 SOCK_ADDR = w[2].replace('\n', '').replace('"', '')
-            elif w[1] == "SOCK_PORT":
+            elif w[1] == 'SOCK_PORT':
                 SOCK_PORT = int(w[2])
 
 #----------------------------------------------------------------
@@ -117,7 +117,6 @@ TEXT = 0x1
 BINARY = 0x2
 
 class Showled(WebSocket):
-
     np = NeoPixel()
     currentNo = None;
     currentNb = None;
@@ -142,9 +141,9 @@ class Showled(WebSocket):
     def handleClose(self):
         print 'Closed @%s:%s' %self.address
 
+#----------------------------------------------------------------
 def main():
-    
-    print "Starting server @%s:%d" % (SOCK_ADDR, SOCK_PORT)
+    print 'Starting server @%s:%d' % (SOCK_ADDR, SOCK_PORT)
     server = SimpleWebSocketServer(SOCK_ADDR, SOCK_PORT, Showled)
     print 'Server started'
     server.serveforever()
