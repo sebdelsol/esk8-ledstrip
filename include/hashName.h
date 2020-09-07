@@ -5,7 +5,7 @@
 // #define DBG_HASH
 
 // hash for [name] => Class* obj, with a Class::getname() method defined
-template <int N, class Class>
+template <class Class, int N>
 class HashName 
 {
   // the bigger the less collisions

@@ -40,7 +40,7 @@ class AllObj
     MyVar*       var;
   };
 
-  HashName<MAXOBJ, OBJVar> mHash;
+  HashName<OBJVar, MAXOBJ> mHash;
   OBJVar*     mOBJS[MAXOBJ];
   byte        mNOBJ = 0;
   byte        mID = 0;
