@@ -8,7 +8,7 @@
 template <class Class, int N>
 class HashName 
 {
-  // the bigger the less collisions
+  // the bigger multiplicator, the less collisions
   static constexpr int getN(uint8_t n) { return n * 2; }; 
 
   Class*      objs[getN(N)] = {nullptr};
@@ -20,7 +20,7 @@ class HashName
     unsigned long hash = 5381;
     int c;
     while (c = *name++)
-        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+        hash = ((hash << 5) + hash) + c; // hash * 33 + c
     return hash % getN(N);;
   }
 
@@ -30,10 +30,10 @@ class HashName
     return (i + col * col) % getN(N); 
   };
 
-  bool hasAnotherName(Class* obj, const char* name) 
+  bool hasAnotherName(Class* obj, const char* mename) 
   {
     const char* objname = obj->getName();
-    return objname != nullptr && strcmp(objname, name) != 0;
+    return objname != nullptr && strcmp(objname, mename) != 0;
   };
 
 public:
@@ -73,7 +73,8 @@ public:
     // lookup for empty slot or an obj->name == name
     while(objs[i] != nullptr && hasAnotherName(objs[i], name) ) 
     {
-      if (++col > maxCol) return nullptr; // failed
+      // failed coz too much collisions ?
+      if (++col > maxCol) return nullptr; 
       i = next(i, col);
     }
 
