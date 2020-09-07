@@ -16,9 +16,9 @@
 #define NameIt(...)      ForEachMacro(_nameit, _nameitLast, __VA_ARGS__)
 
 // create SpaceIt(...) // need @least one args...
-#define _join(txt)     txt << " " <<
-#define _joinLast(txt) txt
-#define SpaceIt(...)   ForEachMacro(_join, _joinLast, __VA_ARGS__)
+#define _join(txt)       txt << " " <<
+#define _joinLast(txt)   txt
+#define SpaceIt(...)     ForEachMacro(_join, _joinLast, __VA_ARGS__)
 
 // -----------------------------------------------------
 // create the _methods(...) that calls _method(arg) for each arg
@@ -33,7 +33,8 @@ inline void _forEach(_method)(First& first, Args&... args)  \
   _forEach(_method)(args...);                               \
 };
 
-// create the _methods(...) that calls _method(arg1, arg2) for each arg pairs
+// create the _methods(...) that calls _method(arg1, arg2) for each args' pair 
+// _methods(...) needs an even number of args
 #define ForEachMethodPairs(_method)                                  \
 inline void _forEach(_method)() {};                                  \
 template<class First, class Sec, class... Args>                      \
