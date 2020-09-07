@@ -55,3 +55,6 @@
 
 # repear
 * to compile I2CDevLib add `#define BUFFER_LENGTH I2C_BUFFER_LENGTH` in `I2Cdev.h`
+
+# sloc
+* [here](https://api.codetabs.com/v1/loc/?github=sebdelsol/esk8-ledstrip)
