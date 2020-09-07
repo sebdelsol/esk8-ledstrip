@@ -23,6 +23,7 @@
 #define CMD_GET       "get"
 #define CMD_INIT      "init"
 #define CMD_UPDATE    "U"
+#define CMD_INIT_DONE "initdone"
 
 #define CFG_CURRENT   "/config.cfg"
 #define CFG_DEFAULT   "/config.def"

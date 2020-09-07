@@ -5,7 +5,7 @@
 #include <AllObj.h>
 #include <Buf.h>
 
-#define CMD_MPU CMD_RESERVED
+#define CMD_MPU_UPDATE CMD_RESERVED
 
 class AllObjBT : public AllObj
 {

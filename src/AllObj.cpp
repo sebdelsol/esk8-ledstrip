@@ -252,7 +252,7 @@ void AllObj::save(CfgType cfgtype)
   {
     CfgFile f = CfgFile(cfgtype, FileMode::save);
     if (f.isOk())
-      //for all vars, send a get cmd & output the result in the file stream
+      // for all vars, send a get cmd & output the result in the file stream
       sendCmdForAllVars(mGetKeyword, f.getStream(), TrackChange::undefined, Decode::verbose); 
   }
 }
