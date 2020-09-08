@@ -152,10 +152,12 @@ bool AllObj::parseCmd(parsedCmd& parsed, BUF& buf)
 {
   const char* objname = buf.next();
   parsed.obj = getObjFromName(objname);
+  
   if(parsed.obj != nullptr)
   {
     const char* varname = buf.next();
     parsed.var = parsed.obj->getVarFromName(varname); 
+    
     if (parsed.var != nullptr)
       return true;
   }
