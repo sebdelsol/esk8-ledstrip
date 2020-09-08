@@ -41,6 +41,11 @@ bool AllObj::addObj(OBJVar& obj, const char* name)
   return ok;
 }
 
+OBJVar* AllObj::getObjFromName(const char* name) 
+{ 
+  return name != nullptr ? mHash.get(name) : nullptr; 
+};
+  
 //--------------------------------------
 bool AllObj::isNumber(const char* txt) 
 { 
@@ -145,20 +150,14 @@ void AllObj::initCmd(const parsedCmd& parsed, Stream& stream)
 //--------------------------------------
 bool AllObj::parseCmd(parsedCmd& parsed, BUF& buf)
 {
-  const char* objName = buf.next();
-  if (objName != nullptr)
+  const char* objname = buf.next();
+  parsed.obj = getObjFromName(objname);
+  if(parsed.obj != nullptr)
   {
-    parsed.obj = mHash.get(objName);
-    if(parsed.obj != nullptr)
-    {
-      const char* varName = buf.next();
-      if (varName != nullptr)
-      { 
-        parsed.var = parsed.obj->getVarFromName(varName);
-        if (parsed.var != nullptr)
-          return true;
-      }
-    }
+    const char* varname = buf.next();
+    parsed.var = parsed.obj->getVarFromName(varname); 
+    if (parsed.var != nullptr)
+      return true;
   }
   return false;
 }

@@ -67,3 +67,8 @@ bool OBJVar::addVar(const char* name, SetFunc* set, GetFunc* get, int min, int m
     
   return ok;
 }
+
+MyVar* OBJVar::getVarFromName(const char* name) 
+{ 
+  return name != nullptr ? mHash.get(name) : nullptr; 
+};

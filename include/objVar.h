@@ -77,7 +77,7 @@ public:
   inline const char* getName()   { return mName; };
 
   bool   addVar(const char* name, SetFunc* set, GetFunc* get, int min = 0, int max = 0, bool show = true);
-  MyVar* getVarFromName(const char* name) { return mHash.get(name); };
+  MyVar* getVarFromName(const char* name);
   ArrayIterator(MyVar, mVar, mNVAR);
 };
 

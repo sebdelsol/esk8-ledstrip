@@ -75,6 +75,7 @@ public:
   void load(CfgType cfgtype, TrackChange trackChange = TrackChange::yes);
   
   bool addObj(OBJVar& obj, const char* name);
+  OBJVar* getObjFromName(const char* name);
   ForEachMethodPairs(addObj);  // create a method addObjs(obj1, name1, obj2, name2, ...) that calls addObj(obj, name) for each pair
 };
 
