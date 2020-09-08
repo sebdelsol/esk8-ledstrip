@@ -75,7 +75,6 @@ void AllObj::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, 
   #endif
 }
 
-
 //--------------------------------------
 // get the var args from the cmd
 void AllObj::setCmd(const parsedCmd& parsed, BUF& buf, TrackChange trackChange)
