@@ -21,6 +21,7 @@ struct Raster
     start = micros();
   };       
 
+  // to be called only with string literal with static storage !!  
   inline void add(const char* name)
   {
     if (n < max)                                                                                              
