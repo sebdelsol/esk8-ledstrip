@@ -187,18 +187,16 @@ inline void loopLeds()
       byte invAlpha = 255 - alpha;
 
       // -- Acc
-      #define MAXACC 256
-      int acc = constrain(m.accY / Twk.divAcc, -MAXACC, MAXACC) << 8;
+      int acc = constrain(m.accY / Twk.divAcc, -256, 256) << 8;
 
       // -- Front strip
       int fwd = constrain(acc, 0, 65535);
       Twk.FWD = fwd > Twk.FWD ? fwd : lerp16by16(Twk.FWD, fwd, Twk.smoothAcc);
-
-      int alphaF = constrain((Twk.FWD - (Twk.thresAcc << 8))/(MAXACC - Twk.thresAcc), 0, 255);
-      int eyeF = Twk.minEye + (((Twk.maxEye - Twk.minEye) * alphaF) >> 8);
+      int alphaF = constrain((Twk.FWD - (Twk.thresAcc << 8)) / (256 - Twk.thresAcc), 0, 255);
 
       if (Twk.stripFront)
       { 
+        int eyeF = Twk.minEye + (((Twk.maxEye - Twk.minEye) * alphaF) >> 8);
         RunF.setSpeed(runSpeed);
         RunF.setAlpha(alpha);
         CylonF.setEyeSize(eyeF);
@@ -210,13 +208,12 @@ inline void loopLeds()
       // -- Rear Strip
       int rwd = constrain(-acc, 0, 65535);
       Twk.RWD = rwd > Twk.RWD ? rwd : lerp16by16(Twk.RWD, rwd, Twk.smoothAcc);
-
-      int alphaR = constrain((Twk.RWD - (Twk.thresAcc << 8))/(MAXACC - Twk.thresAcc), 0, 255);
-      int eyeR = Twk.minEye + (((Twk.maxEye - Twk.minEye) * alphaR) >> 8);
-      int dim = Twk.minDim + (((Twk.maxDim - Twk.minDim) * alphaR) >> 8);
+      int alphaR = constrain((Twk.RWD - (Twk.thresAcc << 8)) / (256 - Twk.thresAcc), 0, 255);
 
       if (Twk.stripRear)
       { 
+        int eyeR = Twk.minEye + (((Twk.maxEye - Twk.minEye) * alphaR) >> 8);
+        int dim = Twk.minDim + (((Twk.maxDim - Twk.minDim) * alphaR) >> 8);
         RunR.setSpeed(runSpeed);
         RunR.setAlpha(alpha);
         CylonR.setEyeSize(eyeR);
