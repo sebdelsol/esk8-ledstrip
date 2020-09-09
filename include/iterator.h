@@ -13,6 +13,6 @@ public:
   T&      operator*()                      const { return *ptr; };             // deference
 };
 
-#define ArrayIterator(type, arr, max)                                           \
+#define ArrayOfPtr_Iter(type, arr, max)                                           \
 iterArr<type* const> begin() const { return iterArr<type* const>(arr); };       \
 iterArr<type* const> end()   const { return iterArr<type* const>(arr + max); };

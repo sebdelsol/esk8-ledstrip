@@ -38,9 +38,10 @@ public:
 class AllLedStrips : public OBJVar
 {
   BaseLedStrip* mStrips[MAXSTRIP];
-  byte      mNStrips  = 0;
-  ulong     mLastT    = 0;
+  byte          mNStrips  = 0;
+  ArrayOfPtr_Iter(BaseLedStrip, mStrips, mNStrips); 
 
+  ulong     mLastT    = 0;
   bool      mDither   = true;
   int       mMaxmA    = 800;
   byte      mBright   = 255;  // half brightness (128) is enough & avoid reaching maxmA
@@ -82,8 +83,10 @@ class LedStrip : public BaseLedStrip
   CRGBArray<NLEDS> mDisplay; // target display
   CLEDController*  mController;
   const char*      mName;
+
   FX*              mFX[MAXFX];
   byte             mNFX = 0;
+  ArrayOfPtr_Iter(FX, mFX, mNFX); 
 
 public:
 
@@ -120,21 +123,15 @@ public:
 
   void addObjs(AllObj& allobj)
   {
-    for (byte i=0; i < mNFX; i++)
-    {
-      FX& fx = *mFX[i];
-      allobj.addObj(fx, fx.getName());
-    }
+    for (FX* fx : *this)
+      allobj.addObj(*fx, fx->getName());
   };
 
   void showInfo()
   {
     _log << NLEDS << " leds ";
-    for (byte i=0; i < mNFX; i++)
-    {
-      FX& fx = *mFX[i];
-      _log << "\t - " << fx.getName() << "(" << fx.getAlpha() << ")";
-    }
+    for (FX* fx : *this)
+      _log << "\t - " << fx->getName() << "(" << fx->getAlpha() << ")";
     _log << "                  " << endl;
   };
 

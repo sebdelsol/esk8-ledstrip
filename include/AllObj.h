@@ -44,8 +44,9 @@ class AllObj
   HashName<OBJVar, MAXOBJ> mHash;
   OBJVar*     mOBJS[MAXOBJ];
   byte        mNOBJ = 0;
+  ArrayOfPtr_Iter(OBJVar, mOBJS, mNOBJ); 
+  
   byte        mID = 0;
-
   bool        spiffsOK = false;
   BUF         mTmpBuf;
   
@@ -58,8 +59,7 @@ class AllObj
   void    initCmd(const parsedCmd& parsed, Stream& stream);
   bool    parseCmd(parsedCmd& parsed, BUF& buf);
   void    handleCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode decode);
-  ArrayIterator(OBJVar, mOBJS, mNOBJ); // not really needed :)
-
+  
 protected:
   const char* mSetKeyword     = CMD_SET;
   const char* mGetKeyword     = CMD_GET;
