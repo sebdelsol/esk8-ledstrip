@@ -1,17 +1,8 @@
 #include <ObjVar.h>
 
 // ------------------------------
-MyVar::MyVar(const char* name, SetFunc* set, GetFunc* get, int min, int max, bool show)
-{
-  mName = strdup(name);
-  assert (mName!=nullptr);
-
-  mSetF = set;
-  mGetF = get;
-  mMin  = min;
-  mMax  = max;
-  mShow = show;
-}
+MyVar::MyVar(const char* name, SetFunc* set, GetFunc* get, int min, int max, bool show) 
+: mName(name), mSetF(set), mGetF(get), mMin(min), mMax(max), mShow(show) {}
 
 //----------------
 void MyVar::getRange(int& min, int& max)

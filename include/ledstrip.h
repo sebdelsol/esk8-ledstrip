@@ -81,17 +81,13 @@ class LedStrip : public BaseLedStrip
   CRGBArray<NLEDS> mBuffer; // tmp buffer for copying & fading of each fx
   CRGBArray<NLEDS> mDisplay; // target display
   CLEDController*  mController;
-  char*            mName;
+  const char*      mName;
   FX*              mFX[MAXFX];
   byte             mNFX = 0;
 
 public:
 
-  LedStrip(const char* name)
-  {
-    mName = strdup(name);
-    assert (mName!=nullptr);
-  };
+  LedStrip(const char* name) : mName(name) {};
 
   void init() // better for startup, no blinking, fastled is initialized before with 0 brightness
   {

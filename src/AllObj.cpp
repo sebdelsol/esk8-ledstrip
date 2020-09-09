@@ -24,9 +24,8 @@ bool AllObj::addObj(OBJVar& obj, const char* name)
   bool ok = mNOBJ < MAXOBJ;
   if (ok)
   {
-    const char* objname = strdup(name);
-    assert(objname != nullptr); 
-    obj.setName(objname);
+    assert(name != nullptr); 
+    obj.setName(name); // string literals or already allocated
 
     mOBJS[mNOBJ++] = &obj;
     mHash.add(&obj);

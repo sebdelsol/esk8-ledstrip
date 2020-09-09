@@ -40,13 +40,13 @@ enum class TrackChange : uint8_t { yes, no, undefined };
 
 class MyVar 
 {
-  SetFunc*  mSetF;
-  GetFunc*  mGetF;
-  char*     mName;
-  int       mMin, mMax;
-  bool      mShow;
-  byte      mID;
-  int       mLast[MAX_ARGS];
+  SetFunc*    mSetF;
+  GetFunc*    mGetF;
+  const char* mName;
+  int         mMin, mMax;
+  bool        mShow;
+  byte        mID;
+  int         mLast[MAX_ARGS];
 
 public:
   MyVar(const char* name, SetFunc* set, GetFunc* get, int min, int max, bool show);
