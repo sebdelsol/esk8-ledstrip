@@ -40,7 +40,7 @@ MPU     Mpu;
   #include  <Bluetooth.h>
   #include  <Button.h>
   #include  <AllObjBT.h>
-  Button    Button(BUTTON_PIN);
+  Button    Button(BUTTON_PIN, LOW);
   BlueTooth BT;
   AllObjBT  AllObj;
   #define   CfgArgs (AllObj, BT, Mpu)
@@ -113,7 +113,6 @@ void setup()
   // -- BlueTooth
   #ifdef USE_BT
     BT.init(); // and start
-    Button.begin();
   #else   
     NoBT();
   #endif
@@ -164,7 +163,7 @@ inline void loopBT()
 #ifdef USE_BT
   EVERY_N_MILLISECONDS(BT_TICK)
   {
-    if (Button.pressed()) BT.toggle();
+    if (Button.debounce()) BT.toggle();
     AllObj.receiveUpdate(BT);
   }
   Raster.add("BlueTooth");
