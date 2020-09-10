@@ -6,13 +6,14 @@ class iterArr
 {
   T* ptr;
 public:
-  iterArr(T* ptr) : ptr(ptr) {};
-  
+  iterArr(T* ptr) : ptr(ptr) {};                                               // constructor
   iterArr operator++()                           { ++ptr; return *this; };     // increment
   bool    operator!=(const iterArr& other) const { return ptr != other.ptr; }; // compare
   T&      operator*()                      const { return *ptr; };             // deference
 };
 
-#define ArrayOfPtr_Iter(type, arr, max)                                           \
-iterArr<type* const> begin() const { return iterArr<type* const>(arr); };       \
-iterArr<type* const> end()   const { return iterArr<type* const>(arr + max); };
+// declaration for iterator on type* arr[] with a variable max
+#define ArrayOfPtr_Iter(type, arr, max)                 \
+using iterator = iterArr<type* const>;                  \
+iterator begin() const { return iterator(arr); };       \
+iterator end()   const { return iterator(arr + max); };
