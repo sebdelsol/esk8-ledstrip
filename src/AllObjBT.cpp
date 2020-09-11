@@ -37,10 +37,8 @@ void AllObjBT::receiveUpdate(BlueTooth &BT)
 {
   if (BT.isReady())
   {
-    BluetoothSerial& BTserial = BT.getSerial();
-
     // should receive a list of set cmd 
     // DO NOT track change or what's received would echoed in sendUpdate
-    readCmd(BTserial, mBTbuf, TrackChange::no, Decode::undefined); // there's nothing to decode set cmd @the moment
+    readCmd(BT.getSerial(), mBTbuf, TrackChange::no, Decode::undefined); // there's nothing to decode set cmd @the moment
   }
 }
