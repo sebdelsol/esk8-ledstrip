@@ -35,7 +35,6 @@ class myWifi
 public:
   void start();
   void stop();
-  void toggle() { mON ? stop() : start(); };
   
   void onWSEvent(WStype_t type, uint8_t * payload, size_t length);
   bool isWSConnected() { return mIsSocket && mWSConnected; };
