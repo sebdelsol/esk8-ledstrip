@@ -214,7 +214,7 @@ void AllObj::readCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode d
 }
 
 //----------------
-void AllObj::sendCmdForAllVars(const char* cmdKeyword, Stream& stream, TrackChange trackChange, Decode decode, MyVar::TestFunc testVar)
+void AllObj::sendCmdForAllVars(Stream& stream, const char* cmdKeyword, TrackChange trackChange, Decode decode, MyVar::TestFunc testVar)
 {
   for (OBJVar* obj : *this)
   {
@@ -253,6 +253,6 @@ void AllObj::save(CfgType cfgtype)
     CfgFile f = CfgFile(cfgtype, FileMode::save);
     if (f.isOk())
       // for all vars, send a get cmd & output the result in the file stream
-      sendCmdForAllVars(mGetKeyword, f.getStream(), TrackChange::undefined, Decode::verbose); 
+      sendCmdForAllVars(f.getStream(), mGetKeyword, TrackChange::undefined, Decode::verbose); 
   }
 }

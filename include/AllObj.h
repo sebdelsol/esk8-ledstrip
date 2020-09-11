@@ -67,7 +67,7 @@ protected:
   const char* mUpdateShortcut = CMD_UPDATE_SHORT;
 
   void readCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode decode);
-  void sendCmdForAllVars(const char* cmdKeyword, Stream& stream, TrackChange trackChange, Decode decode, MyVar::TestFunc testVar = nullptr);
+  void sendCmdForAllVars(Stream& stream, const char* cmdKeyword, TrackChange trackChange, Decode decode, MyVar::TestFunc testVar = nullptr);
 
 public:
   void init();
