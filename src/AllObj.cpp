@@ -31,7 +31,7 @@ bool AllObj::addObj(OBJVar& obj, const char* name)
     mHash.add(&obj);
 
     // create absolute IDs
-    for(MyVar* var : obj)
+    for (auto var : obj)
       var->setID(CMD_1ST_ID + mID++);
   }
   else
@@ -97,7 +97,7 @@ void AllObj::setCmd(const parsedCmd& parsed, BUF& buf, TrackChange trackChange)
 
   parsed.var->set(args, nbArg, trackChange); //set the value from args
   
-  dbgCmd(mSetKeyword, parsed , nbArg, args);
+  dbgCmd(CMD_SET, parsed , nbArg, args);
 }
 
 //----------------
@@ -115,13 +115,13 @@ void AllObj::getCmd(const parsedCmd& parsed, Stream& stream, Decode decode)
     if (decode == Decode::compact)
       stream << parsed.var->getID();
     else
-      stream << SpaceIt(mSetKeyword, parsed.obj->getName(), parsed.var->getName());
+      stream << SpaceIt(CMD_SET, parsed.obj->getName(), parsed.var->getName());
 
     for (byte i=0; i < nbArg; i++)
       stream << " " << args[i];
     stream << endl;
     
-    dbgCmd(mGetKeyword, parsed, nbArg, args);
+    dbgCmd(CMD_GET, parsed, nbArg, args);
   }
 }
 
@@ -129,7 +129,7 @@ void AllObj::getCmd(const parsedCmd& parsed, Stream& stream, Decode decode)
 // write the var with it args + min/max to the stream as a int cmd
 void AllObj::initCmd(const parsedCmd& parsed, Stream& stream)
 {
-  stream << SpaceIt(mInitKeyword, parsed.obj->getName(), parsed.var->getName(), parsed.var->getID()); 
+  stream << SpaceIt(CMD_INIT, parsed.obj->getName(), parsed.var->getName(), parsed.var->getID()); 
 
   int min, max;
   parsed.var->getRange(min, max);
@@ -142,7 +142,7 @@ void AllObj::initCmd(const parsedCmd& parsed, Stream& stream)
     stream << " " << args[i];
   stream << endl;
 
-  dbgCmd(mInitKeyword, parsed, nbArg, args, min, max);
+  dbgCmd(CMD_INIT, parsed, nbArg, args, min, max);
 }
 
 //--------------------------------------
@@ -169,9 +169,9 @@ void AllObj::handleCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode
   if (cmd!=nullptr)
   {
     // shortcut for update ?
-    if (strcmp(cmd, mUpdateShortcut)==0) 
+    if (strcmp(cmd, CMD_UPDATE_SHORT)==0) 
     {
-      snprintf(buf.getBuf(), buf.getLen(), "%s Cfg getUpdate", mSetKeyword); // emulate a set cmd
+      snprintf(buf.getBuf(), buf.getLen(), "%s Cfg getUpdate", CMD_SET); // emulate a set cmd
       cmd = buf.first();
     }
 
@@ -180,15 +180,15 @@ void AllObj::handleCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode
     if (parseCmd(parsed, buf))
     {
       // SET cmd ?
-      if (strcmp(cmd, mSetKeyword)==0)
+      if (strcmp(cmd, CMD_SET)==0)
         setCmd(parsed, buf, trackChange); //read in buf and set the parsed var values
       
       // GET cmd ?
-      else if (strcmp(cmd, mGetKeyword)==0)
+      else if (strcmp(cmd, CMD_GET)==0)
         getCmd(parsed, stream, decode); //write to stream the parsed var values           
       
       // INIT cmd ?
-      else if (strcmp(cmd, mInitKeyword)==0) //write to stream the parsed var inits           
+      else if (strcmp(cmd, CMD_INIT)==0) //write to stream the parsed var inits           
         initCmd(parsed, stream);            
     }
   }
@@ -216,10 +216,10 @@ void AllObj::readCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode d
 //----------------
 void AllObj::sendCmdForAllVars(Stream& stream, const char* cmdKeyword, TrackChange trackChange, Decode decode, MyVar::TestFunc testVar)
 {
-  for (OBJVar* obj : *this)
+  for (auto obj : *this)
   {
     const char* objName = obj->getName();
-    for(MyVar* var : *obj)
+    for (auto var : *obj)
     {
       if(testVar == nullptr || (var->*testVar)())
       {
@@ -253,6 +253,6 @@ void AllObj::save(CfgType cfgtype)
     CfgFile f = CfgFile(cfgtype, FileMode::save);
     if (f.isOk())
       // for all vars, send a get cmd & output the result in the file stream
-      sendCmdForAllVars(f.getStream(), mGetKeyword, TrackChange::undefined, Decode::verbose); 
+      sendCmdForAllVars(f.getStream(), CMD_GET, TrackChange::undefined, Decode::verbose); 
   }
 }

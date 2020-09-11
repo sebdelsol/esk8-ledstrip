@@ -123,14 +123,14 @@ public:
 
   void addObjs(AllObj& allobj)
   {
-    for (FX* fx : *this)
+    for (auto fx : *this)
       allobj.addObj(*fx, fx->getName());
   };
 
   void showInfo()
   {
     _log << NLEDS << " leds ";
-    for (FX* fx : *this)
+    for (auto fx : *this)
       _log << "\t - " << fx->getName() << "(" << fx->getAlpha() << ")";
     _log << "                  " << endl;
   };

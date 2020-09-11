@@ -26,7 +26,7 @@ class myWifi
   bool mWSConnected = false; 
   WebSocketsClient webSocket;
 
-  BaseLedStrip* mLeds[MAXSTRIPS];
+  BaseLedStrip* mStrips[MAXSTRIPS];
   byte mNStrips = 0;
 
   #define INFO_LEN 15
@@ -39,7 +39,7 @@ public:
   void onWSEvent(WStype_t type, uint8_t * payload, size_t length);
   bool isWSConnected() { return mIsSocket && mWSConnected; };
   
-  void addStrip(const BaseLedStrip &leds);
+  void addStrip(const BaseLedStrip &strip);
   ForEachMethod(addStrip); // create a method addStrips(...) that calls addStrip on all args
 
   bool update();

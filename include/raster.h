@@ -40,7 +40,7 @@ struct Raster
     lastEnd = end;
 
     _log << " \t TOTAL " << (end - start) << "µs";                                                                  
-    for(byte i=0; i < n; i++)                                                                                        
+    for (byte i=0; i < n; i++)                                                                                        
       _log << " \t - " << r[i].name << " " << (r[i].time - (i==0 ? start : r[i-1].time)) << "µs  "; 
     
     _log << "\t free Heap - " << ESP.getFreeHeap() << endl;

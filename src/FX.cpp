@@ -153,7 +153,7 @@ void CylonFX::showEye(int p)
   byte frac = (pos16 & 0x0F) << FRAC_SHIFT;
 
   mLeds[pos] = mColor % (byte)(255 - frac); // cast to avoid warning
-  for(byte j = 0; j < mEyeSize; j++)
+  for (byte j = 0; j < mEyeSize; j++)
     mLeds[++pos] = mColor;
   if (pos < mNLEDS-1)
     mLeds[++pos] = mColor % frac;
@@ -278,7 +278,7 @@ void PacificaFX::update(ulong time, ulong dt)
   uint8_t basethreshold = beatsin8(9, 55, 65);
   uint8_t wave = beat8(7);
   
-  for(byte i = 0; i < mNLEDS; i++)
+  for (byte i = 0; i < mNLEDS; i++)
   {
     uint8_t threshold = scale8(sin8( wave), 20) + basethreshold;
     wave += 7;
@@ -292,7 +292,7 @@ void PacificaFX::update(ulong time, ulong dt)
   }
 
   // Deepen the blues and greens a bit
-  for(byte i = 0; i < mNLEDS; i++)
+  for (byte i = 0; i < mNLEDS; i++)
   {
     mLeds[i].blue = scale8(mLeds[i].blue, 145); 
     mLeds[i].green = scale8(mLeds[i].green, 200); 
@@ -304,7 +304,7 @@ void PacificaFX::update(ulong time, ulong dt)
 void PacificaFX::oneLayer(CRGBPalette16& p, uint16_t cistart, uint16_t wavescale, uint8_t bri, uint16_t waveangle)
 {
   uint16_t wavescaleHalf = (wavescale / 2) + 20;
-  for(byte i = 0; i < mNLEDS; i++)
+  for (byte i = 0; i < mNLEDS; i++)
   {
     waveangle += 250;
     uint16_t s16 = sin16(waveangle) + 32768;

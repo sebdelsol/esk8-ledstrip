@@ -19,14 +19,14 @@
 #define CMD_TERM      '\n' 
 #define CMD_ALIVE     '~'
 
-#define CMD_SET           "set"
-#define CMD_GET           "get"
-#define CMD_INIT          "init"
-#define CMD_INIT_DONE     "initdone"
-#define CMD_UPDATE_SHORT  "U"
+static auto CMD_SET          = "set";
+static auto CMD_GET          = "get";
+static auto CMD_INIT         = "init";
+static auto CMD_INIT_DONE    = "initdone";
+static auto CMD_UPDATE_SHORT = "U";
 
-#define CFG_CURRENT   "/config.cfg"
-#define CFG_DEFAULT   "/config.def"
+static auto CFG_CURRENT      = "/config.cfg";
+static auto CFG_DEFAULT      = "/config.def";
 
 enum class CfgType : bool   { Default, Current };
 enum class Decode : uint8_t { compact, verbose, undefined };
@@ -61,11 +61,6 @@ class AllObj
   void    handleCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode decode);
   
 protected:
-  const char* mSetKeyword     = CMD_SET;
-  const char* mGetKeyword     = CMD_GET;
-  const char* mInitKeyword    = CMD_INIT;
-  const char* mUpdateShortcut = CMD_UPDATE_SHORT;
-
   void readCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode decode);
   void sendCmdForAllVars(Stream& stream, const char* cmdKeyword, TrackChange trackChange, Decode decode, MyVar::TestFunc testVar = nullptr);
 

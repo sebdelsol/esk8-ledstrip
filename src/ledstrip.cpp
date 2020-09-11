@@ -54,7 +54,7 @@ void AllLedStrips::init()
 
 void AllLedStrips::addObjs(AllObj& allobj)
 {
-  for (BaseLedStrip *strip : *this)
+  for (auto strip : *this)
     strip->addObjs(allobj);
 }
 
@@ -94,7 +94,7 @@ void AllLedStrips::update()
   ulong dt = mLastT ? t - mLastT : 1; // to prevent possible /0
   mLastT += dt;
 
-  for (BaseLedStrip *strip : *this)
+  for (auto strip : *this)
     strip->update(t, dt);
 
   // read probe and adjust brightness
@@ -120,7 +120,7 @@ bool AllLedStrips::doDither()
 void AllLedStrips::showInfo()
 {
   _log << "FPS " << FastLED.getFPS() << endl;
-  for (BaseLedStrip *strip : *this)
+  for (auto strip : *this)
     strip->showInfo();
 }
 
