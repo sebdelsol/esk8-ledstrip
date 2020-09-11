@@ -31,7 +31,7 @@ void myWifi::stop()
 
   mWantON = false;
   mON = false;
-  _log << "Wifi off" << endl;
+  _log << "Wifi stop" << endl;
 }
 
 void myWifi::start()
@@ -43,7 +43,7 @@ void myWifi::start()
   mON = false;
   mWantON = true;
 
-  _log << "Wifi Connecting" << endl;
+  _log << "Wifi start" << endl;
 }
 
 // ----------------------------------------------------

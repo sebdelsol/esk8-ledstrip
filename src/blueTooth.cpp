@@ -64,7 +64,7 @@ void BlueTooth::start(const bool on)
 
 void BlueTooth::toggle()
 {
-  start(mON ? false : true);
+  start(!mON);
 }
 
 //------------------------------------------------------------
