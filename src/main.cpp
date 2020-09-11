@@ -41,8 +41,8 @@ MPU     Mpu;
   #include  <Button.h>
   #include  <AllObjBT.h>
   Button    Button(BUTTON_PIN, LOW);
-  BlueTooth BT;
   AllObjBT  AllObj;
+  BlueTooth BT;
   #define   CfgArgs (AllObj, BT, Mpu)
 
 #else
@@ -112,7 +112,7 @@ void setup()
 
   // -- BlueTooth
   #ifdef USE_BT
-    BT.init(); // and start
+    BT.init(true); // and start
   #else   
     NoBT();
   #endif
@@ -129,7 +129,7 @@ void setup()
 }
 
 // ----------------------------------------------------
-Raster Raster;
+Raster Raster; // use only string literals for .add()
 
 // --------------
 inline void loopMpu()
@@ -171,6 +171,13 @@ inline void loopBT()
 }
 
 // ------------
+byte getAlphaAcc(int& storedAcc, int acc)
+{
+  int wantedAcc = constrain(acc, 0, 65535);
+  storedAcc = wantedAcc > storedAcc ? wantedAcc : lerp16by16(storedAcc, wantedAcc, Twk.smoothAcc);
+  return constrain((storedAcc - (Twk.thresAcc << 8)) / (256 - Twk.thresAcc), 0, 255);
+}
+
 inline void loopLeds()
 {
   EVERY_N_MILLISECONDS(LED_TICK)
@@ -189,9 +196,7 @@ inline void loopLeds()
       int acc = constrain(m.accY / Twk.divAcc, -256, 256) << 8;
 
       // -- Front strip
-      int fwd = constrain(acc, 0, 65535);
-      Twk.FWD = fwd > Twk.FWD ? fwd : lerp16by16(Twk.FWD, fwd, Twk.smoothAcc);
-      int alphaF = constrain((Twk.FWD - (Twk.thresAcc << 8)) / (256 - Twk.thresAcc), 0, 255);
+      int alphaF = getAlphaAcc(Twk.FWD, acc);
 
       if (Twk.stripFront)
       { 
@@ -205,9 +210,7 @@ inline void loopLeds()
       }
 
       // -- Rear Strip
-      int rwd = constrain(-acc, 0, 65535);
-      Twk.RWD = rwd > Twk.RWD ? rwd : lerp16by16(Twk.RWD, rwd, Twk.smoothAcc);
-      int alphaR = constrain((Twk.RWD - (Twk.thresAcc << 8)) / (256 - Twk.thresAcc), 0, 255);
+      int alphaR = getAlphaAcc(Twk.RWD, -acc);
 
       if (Twk.stripRear)
       { 
