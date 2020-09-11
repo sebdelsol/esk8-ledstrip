@@ -68,7 +68,7 @@ void BlueTooth::toggle()
 }
 
 //------------------------------------------------------------
-bool BlueTooth::isReadyToReceive()
+bool BlueTooth::isReady()
 {
   if (mON)
   {
@@ -78,9 +78,4 @@ bool BlueTooth::isReadyToReceive()
       start(false);
   }
   return false;
-}
-
-bool BlueTooth::isReadyToSend()
-{ 
-  return mON && mConnected; 
 }

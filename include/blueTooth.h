@@ -21,6 +21,5 @@ public:
   void toggle();
   void onEvent(esp_spp_cb_event_t event, esp_spp_cb_param_t* param); 
   BluetoothSerial& getSerial() { return mBTSerial; };
-  bool isReadyToReceive();
-  bool isReadyToSend();
+  bool isReady();
 };
