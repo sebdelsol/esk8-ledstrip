@@ -27,11 +27,12 @@
 class BaseLedStrip
 {
 public:
-  virtual void showInfo(); 
-  virtual void update(ulong time, ulong dt);  
-  virtual void init();
-  virtual void addObjs(AllObj& allobj);
-  virtual byte* getData(int& n); // for myWifi
+  virtual void  showInfo(); 
+  virtual void  update(ulong time, ulong dt);  
+  virtual void  init();
+  virtual void  addObjs(AllObj& allobj);
+  virtual byte* getRawData(); // for myWifi
+  virtual int   getRawLength(); // for myWifi
 };
 
 //---------
@@ -135,11 +136,8 @@ public:
     _log << "                  " << endl;
   };
 
-  byte* getData(int& n)
-  {
-    n = NLEDS * sizeof(CRGB);
-    return (byte* ) mDisplay.leds;
-  };
+  int   getRawLength() { return NLEDS * sizeof(CRGB); };
+  byte* getRawData()   { return (byte* ) mDisplay.leds; };
 
   void update(ulong t, ulong dt)
   {

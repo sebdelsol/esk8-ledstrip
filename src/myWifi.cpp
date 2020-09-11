@@ -52,7 +52,16 @@ void myWifi::addStrip(const BaseLedStrip &strip)
   mIsSocket = true;
 
   if (mNStrips < MAXSTRIPS)
-    mStrips[mNStrips++] = (BaseLedStrip*)&strip;
+  {
+    byte i = mNStrips++;
+    mStrips[i] = (BaseLedStrip*)&strip;
+
+    int length = mStrips[i]->getRawLength() + 1;
+    if (maxTosend==0) tosend = (byte*) malloc(length);
+    else if (length > maxTosend) tosend = (byte*) realloc(tosend, length);
+    assert(tosend !=nullptr);
+    maxTosend = length;
+  }
 }
 
 // ----------------------------------------------------
@@ -89,15 +98,15 @@ bool myWifi::update()
       {
         webSocket.loop();
 
-        for (byte i=0; i < mNStrips; i++)
-        {
-          int length;
-          byte* data = mStrips[i]->getData(length);
-          snprintf(mInfo, INFO_LEN, "STRIP %d %d", i, length/3); 
+        if (mWSConnected)
+          for (byte i=0; i < mNStrips; i++)
+          {
+            tosend[0] = i; //row to display
+            int length = mStrips[i]->getRawLength();
+            memcpy(&tosend[1], mStrips[i]->getRawData(), length);
 
-          webSocket.sendTXT(mInfo, strlen(mInfo));
-          webSocket.sendBIN(data, length);
-        }
+            webSocket.sendBIN(tosend, length + 1);
+          }
       }
     }
   }

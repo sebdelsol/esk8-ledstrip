@@ -22,15 +22,15 @@ class myWifi
   bool mON = false;
   bool mWantON = false;
 
+  WebSocketsClient webSocket;
   bool mIsSocket = false;
   bool mWSConnected = false; 
-  WebSocketsClient webSocket;
 
   BaseLedStrip* mStrips[MAXSTRIPS];
-  byte mNStrips = 0;
+  byte          mNStrips = 0;
 
-  #define INFO_LEN 15
-  char mInfo[INFO_LEN];
+  byte*         tosend;
+  int           maxTosend = 0;
 
 public:
   void start();

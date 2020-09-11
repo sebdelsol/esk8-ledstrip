@@ -87,27 +87,28 @@ class NeoPixel:
 
         self.running = True
 
-    def write(self, buf, nb, row):
-        if nb==len(buf) / 3:
-            if self.nb.get(row, 0) != nb:
-                self.initPixels(nb, row)
+    def write(self, buf): 
+        nb = (len(buf) - 1) / 3
+        row = buf[0]
+        if self.nb.get(row, 0) != nb:
+            self.initPixels(nb, row)
+            
+        if self.running:
+            buf = bytearray(buf)
+
+            if row == 0:
+                self.screen.fill((0, 0, 0))
                 
-            if self.running:
-                buf = bytearray(buf)
+            for i, p in enumerate(self.pixels[row]):
+                pos = 1 + i * 3
+                p.draw((buf[pos], buf[pos + 1], buf[pos + 2]), self.screen)
 
-                if row == 0:
-                    self.screen.fill((0, 0, 0))
-                    
-                for i, p in enumerate(self.pixels[row]):
-                    pos = i * 3
-                    p.draw((buf[pos], buf[pos + 1], buf[pos + 2]), self.screen)
+            if row == len(self.nb) - 1:
+                pygame.display.flip()
 
-                if row == len(self.nb) - 1:
-                    pygame.display.flip()
-
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        self.running = False
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
 
 #----------------------------------------------------------------
 import sys
@@ -118,19 +119,11 @@ BINARY = 0x2
 
 class Showled(WebSocket):
     np = NeoPixel()
-    currentNo = None;
-    currentNb = None;
 
     def handleMessage(self):
         try:
             if self.opcode==BINARY:
-                self.np.write(self.data, self.currentNb, self.currentNo)
-
-            elif self.opcode==TEXT:
-                info = self.data.split(' ')
-                if len(info)==3 and info[0]=='STRIP':
-                    self.currentNo = int(info[1])
-                    self.currentNb = int(info[2])
+                self.np.write(self.data)
 
         except:
             sys.stdout.write(traceback.format_exc())
