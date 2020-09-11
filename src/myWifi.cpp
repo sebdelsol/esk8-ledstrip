@@ -1,28 +1,5 @@
 #include <myWifi.h>
 
-//------------------------------------------------------------
-myWifi* CurrentMyWifi;
-
-void CallbackWrapper(WStype_t type, uint8_t * payload, size_t length)
-{
-  CurrentMyWifi->onWSEvent(type, payload, length);
-}
-
-void myWifi::onWSEvent(WStype_t type, uint8_t * payload, size_t length)
-{
-  switch(type)
-  {
-    case WStype_DISCONNECTED:
-      mWSConnected = false;
-      _log << "Socket client Disconnected" << endl;
-      break;
-    case WStype_CONNECTED:
-      mWSConnected = true;
-      _log << "Socket client Connected" << endl;
-      break;
-  }
-}
-
 // ----------------------------------------------------
 void myWifi::stop()
 {
@@ -83,10 +60,8 @@ bool myWifi::update()
 
           if (mIsSocket)
           {
-            _log << "Socket client Started" << endl;
-            CurrentMyWifi = this;
-            webSocket.onEvent(CallbackWrapper);
-            webSocket.begin(SOCK_ADDR, SOCK_PORT);
+            mWSConnected = webSocket.connect(SOCK_ADDR, SOCK_PORT, "/");
+            _log << "Socket client " << (mWSConnected ? "started" : "not started - run debugLedstrip.py & reboot the esp32") << endl;
           }
         }
       }
@@ -98,9 +73,10 @@ bool myWifi::update()
     {
       if (mIsSocket)
       {
-        webSocket.loop();
+        mWSConnected = mWSConnected ? webSocket.available() : false;
 
         if (mWSConnected)
+        {
           for (byte i=0; i < mNStrips; i++)
           {
             int length = mStrips[i]->getRawLength();
@@ -108,8 +84,18 @@ bool myWifi::update()
 
             payload[0] = i; //row to display
             memcpy(&payload[1], mStrips[i]->getRawData(), length);
-            webSocket.sendBIN(payload, length + 1);
+            webSocket.sendBinary((const char*)payload, length + 1);
           }
+        }
+        // else
+        // {
+        //   EVERY_N_SECONDS(1)
+        //   {
+        //     _log << "try reconnect" << endl;
+        //     // mWSConnected = webSocket.connect(SOCK_ADDR, SOCK_PORT, "/");          
+        //     _log << "try reconnect done" << endl;
+        //   }
+        // }
       }
     }
   }

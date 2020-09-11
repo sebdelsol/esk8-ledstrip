@@ -2,8 +2,8 @@
 
 #define NODEBUG_WEBSOCKETS
 
-#include <WiFi.h>//<ESP8266WiFi.h>
-#include <WebSocketsClient.h>
+#include <WiFi.h>
+#include <ArduinoWebsockets.h>
 #include <log.h>
 #include <ledstrip.h>
 #include <wificonfig.h>  
@@ -16,13 +16,15 @@
 #define MAXSTRIPS 3
 #define WIFI_TIMEOUT 10000
 
+using namespace websockets;
+
 class myWifi
 {
   int  mBegunOn;
   bool mON = false;
   bool mWantON = false;
 
-  WebSocketsClient webSocket;
+  WebsocketsClient webSocket;
   bool mIsSocket = false;
   bool mWSConnected = false; 
 
@@ -36,7 +38,6 @@ public:
   void start();
   void stop();
   
-  void onWSEvent(WStype_t type, uint8_t * payload, size_t length);
   bool isWSConnected() { return mIsSocket && mWSConnected; };
   
   void addStrip(const BaseLedStrip &strip);
