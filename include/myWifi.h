@@ -29,8 +29,8 @@ class myWifi
   BaseLedStrip* mStrips[MAXSTRIPS];
   byte          mNStrips = 0;
 
-  byte*         tosend;
-  int           maxTosend = 0;
+  byte*         payload;
+  int           maxPayloadLength = 0;
 
 public:
   void start();
