@@ -28,7 +28,7 @@
 
 **check the Ledstrips on PC**
 * uncomment `#define DEBUG_LED_TOWIFI` in [main.cpp](https://github.com/sebdelsol/esk8-ledstrip/blob/82ecda3be91b94f26fb60965aa64fff2283162f5/src/main.cpp#L6) 
-* launch [debugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py) w/ dependencies : [PyGame](https://www.pygame.org) & [SimpleWebsocketServer](https://pypi.org/project/simple-websocket-server) 
+* launch [debugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py) w/ dependencies : [PyGame](https://www.pygame.org), [Websocket](https://pypi.org/project/websocket_client/) & [ZeroConf](https://pypi.org/project/zeroconf/) 
 
 <p>&nbsp;</p>  <p>&nbsp;</p> 
 
