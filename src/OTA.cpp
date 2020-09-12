@@ -5,7 +5,7 @@ void OTA::begin()
 {
   if(WiFi.status() == WL_CONNECTED)
   {
-    _log << "OTA  Connected @ " << WiFi.localIP() << endl;
+    _log << "OTA started" << endl;
     ArduinoOTA.setHostname(OTA_HOSTNAME);
     ArduinoOTA.begin();
     mBegun = true;

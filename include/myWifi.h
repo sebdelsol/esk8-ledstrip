@@ -3,20 +3,24 @@
 #define NODEBUG_WEBSOCKETS
 
 #include <WiFi.h>
-#include <ArduinoWebsockets.h>
+#include <WebSocketsServer.h>
+#include <ESPmDNS.h>
 #include <log.h>
 #include <ledstrip.h>
 #include <wificonfig.h>  
 // wificonfig.h needs to define :
 // #define WIFINAME "******"
 // #define WIFIPASS "****"
-// #define SOCK_ADDR "**.**.**.**"
-// #define SOCK_PORT **
 
-#define MAXSTRIPS 3
+#define MAXSTRIPS    3
 #define WIFI_TIMEOUT 10000
 
-using namespace websockets;
+#define SOCK_PORT    80      
+#define MDNSNAME    "esp32"
+
+// see debugLedstrip.py to use the same type, it'll give '_leds._tcp.local.'
+#define MDNSTYPE    "leds" 
+#define MDNSPROT    "tcp"
 
 class myWifi
 {
@@ -24,9 +28,11 @@ class myWifi
   bool mON = false;
   bool mWantON = false;
 
-  WebsocketsClient webSocket;
-  bool mIsSocket = false;
-  bool mWSConnected = false; 
+  WebSocketsServer mServer = WebSocketsServer(SOCK_PORT);
+
+  bool mIsSocket           = false;
+  bool mIsClientConnected  = false; 
+  bool mWasClientConnected = false;
 
   BaseLedStrip* mStrips[MAXSTRIPS];
   byte          mNStrips = 0;
@@ -38,7 +44,7 @@ public:
   void start();
   void stop();
   
-  bool isWSConnected() { return mIsSocket && mWSConnected; };
+  bool isClientConnected() { return mIsSocket && mIsClientConnected; };
   
   void addStrip(const BaseLedStrip &strip);
   ForEachMethod(addStrip); // create a method addStrips(...) that calls addStrip on all args

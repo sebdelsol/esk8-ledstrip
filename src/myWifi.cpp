@@ -54,14 +54,19 @@ bool myWifi::update()
       {
         if(WiFi.status() == WL_CONNECTED)
         {
-          _log << "Wifi Connected @ " << WiFi.localIP() << endl;
+          _log << "Wifi Connected, answser @ " << WiFi.localIP() << endl;
           digitalWrite(BUILTIN_LED, LOW); // led on
           mON = true;
 
           if (mIsSocket)
           {
-            mWSConnected = webSocket.connect(SOCK_ADDR, SOCK_PORT, "/");
-            _log << "Socket client " << (mWSConnected ? "started" : "not started - run debugLedstrip.py & reboot the esp32") << endl;
+            bool mdns = MDNS.begin(MDNSNAME); 
+            if (mdns) MDNS.addService(MDNSTYPE, MDNSPROT, SOCK_PORT);
+            _log << (mdns ? "mDNS responder started" : "Error setting up MDNS responder!");
+            _log << " for " << MDNSNAME << "." << MDNSTYPE << "." << MDNSPROT << ".local." << endl;
+
+            mServer.begin();
+            _log << "Socket server started" << endl;
           }
         }
       }
@@ -69,34 +74,27 @@ bool myWifi::update()
         stop();
     }
     
-    else
+    else if (mIsSocket)
     {
-      if (mIsSocket)
+      mServer.loop();
+      mIsClientConnected = mServer.connectedClients() > 0;
+
+      if (mIsClientConnected)
       {
-        mWSConnected = mWSConnected ? webSocket.available() : false;
-
-        if (mWSConnected)
+        for (byte i=0; i < mNStrips; i++)
         {
-          for (byte i=0; i < mNStrips; i++)
-          {
-            int length = mStrips[i]->getRawLength();
-            assert(length + 1 <= maxPayloadLength);
+          int length = mStrips[i]->getRawLength();
+          assert(length + 1 <= maxPayloadLength);
 
-            payload[0] = i; //row to display
-            memcpy(&payload[1], mStrips[i]->getRawData(), length);
-            webSocket.sendBinary((const char*)payload, length + 1);
-          }
+          payload[0] = i; //row to display
+          memcpy(&payload[1], mStrips[i]->getRawData(), length);
+          mServer.sendBIN(0, payload, length + 1);
         }
-        // else
-        // {
-        //   EVERY_N_SECONDS(1)
-        //   {
-        //     _log << "try reconnect" << endl;
-        //     // mWSConnected = webSocket.connect(SOCK_ADDR, SOCK_PORT, "/");          
-        //     _log << "try reconnect done" << endl;
-        //   }
-        // }
       }
+
+      if (mIsClientConnected != mWasClientConnected)
+        _log << "Socket client " << (mIsClientConnected ? "connected" : "disconnected") << endl;
+      mWasClientConnected = mIsClientConnected;
     }
   }
 

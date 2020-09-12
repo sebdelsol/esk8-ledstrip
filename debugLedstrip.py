@@ -9,16 +9,6 @@ TOPMOST = -1
 NOSIZE = 1
 NOMOVE = 2
 
-#---------------------------------------------------------------
-with open('./include/wificonfig.h', 'r') as f:
-    for l in f.readlines():
-        w = l.split(' ')
-        if len(w)>2:
-            if w[1] == 'SOCK_ADDR':
-                SOCK_ADDR = w[2].replace('\n', '').replace('"', '')
-            elif w[1] == 'SOCK_PORT':
-                SOCK_PORT = int(w[2])
-
 #----------------------------------------------------------------
 wPixel = 25
 cPixel = wPixel * .25 
@@ -94,7 +84,7 @@ class NeoPixel:
             self.initPixels(nb, row)
             
         if self.running:
-            buf = bytearray(buf)
+            #buf = bytearray(buf)
 
             if row == 0:
                 self.screen.fill((0, 0, 0))
@@ -111,34 +101,73 @@ class NeoPixel:
                     self.running = False
 
 #----------------------------------------------------------------
-import sys
-from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket
+from zeroconf import ServiceBrowser, Zeroconf
+import socket
 
-TEXT = 0x1
-BINARY = 0x2
+class findEsp32:
+    esp32Type = '_leds._tcp.local.'
 
-class Showled(WebSocket):
-    np = NeoPixel()
+    def add_service(self, zeroconf, typ, name):
+        info = zeroconf.get_service_info(typ, name)
+        if info and typ == self.esp32Type: 
+            address =  'ws://%s:%d/' % (socket.inet_ntoa(info.address), info.port)
+            name = info.name.split('.')[0]
+            print 'found %s' % name
+            self.whoToCallBack(address, name)
 
-    def handleMessage(self):
+    def __init__(self, whoToCallBack):
+        self.whoToCallBack = whoToCallBack
+        self.zeroconf = Zeroconf()
         try:
-            if self.opcode==BINARY:
-                self.np.write(self.data)
-
+            browser = ServiceBrowser(self.zeroconf, self.esp32Type, self)
         except:
             sys.stdout.write(traceback.format_exc())
+            
+    def close(self):
+        self.zeroconf.close()
 
-    def handleConnected(self):
-        print 'Connected @%s:%s' %self.address
+#-----------
+import sys
+import websocket
 
-    def handleClose(self):
-        print 'Closed @%s:%s' %self.address
+class Showled:
 
-#----------------------------------------------------------------
-def main():
-    print 'Starting server @%s:%d' % (SOCK_ADDR, SOCK_PORT)
-    server = SimpleWebSocketServer(SOCK_ADDR, SOCK_PORT, Showled)
-    print 'Server started'
-    server.serveforever()
+    np = NeoPixel()
 
-main()
+    def onMessage(self, ws, message):
+        self.np.write(bytearray(message))
+
+    def onError(self, ws, error):
+        pass #print(error)
+
+    def onClose(self, ws):
+        print 'disconnected'
+
+    def onOpen(self, ws):
+        print 'connected'
+
+    def onEsp32Found(self, address, name):
+        print 'try to connect to %s' % address
+        ws = websocket.WebSocketApp(
+            address,
+            on_message = lambda ws,msg: self.onMessage(ws, msg),
+            on_error   = lambda ws,msg: self.onError(ws, msg),
+            on_close   = lambda ws:     self.onClose(ws),
+            on_open    = lambda ws:     self.onOpen(ws))
+
+        while True:
+            ws.run_forever(ping_interval=3, ping_timeout=0)
+
+    def __init__(self):
+        self.browser = findEsp32(lambda addr, name : self.onEsp32Found(addr, name))
+
+    def close(sel):
+        self.browser(close)
+
+#-----------
+import time
+
+Showled()
+while True:
+    time.sleep(1)
+ 
