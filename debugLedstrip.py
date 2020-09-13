@@ -44,7 +44,6 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 
 from ctypes import windll
-SetWindowPos = windll.user32.SetWindowPos
 TOPMOST, NOSIZE, NOMOVE = -1, 1, 2
 
 class Strip:
@@ -66,12 +65,13 @@ class Strip:
         self.W = max(self.W, n * wPixel)
         self.H = max(self.H, maxPixel * (strip + 1))
 
-        posx, posy = 1920 / 2 - self.W / 2, 1200 - self.H
-        os.environ['SDL_VIDEO_WINDOW_POS'] = '%i,%i' % (posx,posy)
+        # SCREENW, SCREENH = 1920, 1200
+        # pos = (SCREENW / 2 - self.W / 2, SCREENH - self.H)
+        # os.environ['SDL_VIDEO_WINDOW_POS'] = '%i,%i' % pos
 
         self.screen = pygame.display.set_mode((self.W, self.H)) # pygame.NOFRAME
         hwnd = pygame.display.get_wm_info()['window'] # handle to the window
-        SetWindowPos(hwnd, TOPMOST, 0, 0, 0, 0, NOMOVE|NOSIZE)
+        windll.user32.SetWindowPos(hwnd, TOPMOST, 0, 0, 0, 0, NOMOVE|NOSIZE)
 
         self.running = True
 
@@ -101,30 +101,30 @@ class Strip:
 from threading import Thread
 import socket
 import time
-
-with open("./platformio.ini", "r") as f:
-    for l in f.readlines():
-        w = l.replace(' ', '').split('=')
-        if len(w)>1:
-            if w[0] == "OTAname":
-                SOCK_HOSTNAME = w[1].replace('\n', '').replace('"', '').replace("'", '')
-            elif w[0] == "OTAport":
-                SOCK_PORT = int(w[1])
+import re
 
 def findServerAddr(callback):
-    name = '%s.local' % SOCK_HOSTNAME
-    print 'seek %s' % name
+
+    with open("./platformio.ini", "r") as f:
+        for l in f.readlines():
+            w = l.replace(' ', '').split('=')
+            if len(w) > 1:
+                if w[0] == "OTAname":
+                    hostname = '%s.local' % re.sub(r'[\n"\']', '', w[1])
+                elif w[0] == "OTAport":
+                    port = int(w[1])
+    
+    print 'seek %s' % hostname
     try:
-        ip = socket.gethostbyname(name)
-        print 'found %s' % name
-        callback('ws://%s:%d/' % (ip, SOCK_PORT))
+        ip = socket.gethostbyname(hostname)
+        print 'found %s' % hostname
+        callback('ws://%s:%d/' % (ip, port))
 
     except socket.gaierror:
         time.sleep(1)
 
 #-----------
-import sys
-import websocket
+from websocket import WebSocketApp
 
 class Showled:
 
@@ -145,7 +145,7 @@ class Showled:
 
     def onServerFound(self, address):
         print 'connecting to %s' % address
-        ws = websocket.WebSocketApp(address,
+        ws = WebSocketApp(address,
             on_message = lambda ws,msg: self.onMessage(ws, msg),
             on_error   = lambda ws,msg: self.onError(ws, msg),
             on_close   = lambda ws:     self.onClose(ws),
