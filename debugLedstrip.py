@@ -134,8 +134,6 @@ import websocket
 
 class Showled:
 
-    np = Strip()
-
     def onMessage(self, ws, message):
         self.np.write(bytearray(message))
 
@@ -160,6 +158,8 @@ class Showled:
             on_open    = lambda ws:     self.onOpen(ws))
 
         self.connected = False
+        self.np = Strip()
+        
         while True:
             ws.run_forever(ping_interval=3, ping_timeout=0)
 
