@@ -119,8 +119,8 @@ import time
 
 class findSocketAddr(threading.Thread):
     
-    def __init__(self, whoToCallBack):      
-        self.whoToCallBack = whoToCallBack
+    def __init__(self, callback):      
+        self.callback = callback
         threading.Thread.__init__(self) 
 
     def run(self):
@@ -129,7 +129,7 @@ class findSocketAddr(threading.Thread):
         try:
             ip = socket.gethostbyname(name)
             print 'found %s' % name
-            self.whoToCallBack('ws://%s:%d/' % (ip, SOCK_PORT))
+            self.callback('ws://%s:%d/' % (ip, SOCK_PORT))
 
         except socket.gaierror:
             time.sleep(1)
