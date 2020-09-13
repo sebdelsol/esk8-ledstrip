@@ -69,12 +69,7 @@ class Strip:
     def initPixels(self, strip, n):
         print 'add strip with %d pixels' % n
         self.n[strip] = n
-
-        self.pixels[strip] = []
-        for i in range(n):
-            p = Pixel(i, strip)
-            self.pixels[strip].append(p)
-
+        self.pixels[strip] = [Pixel(i, strip) for i in range(n)]
         self.initDisplay(n, strip)
 
     def initDisplay(self, n, strip):
@@ -84,7 +79,7 @@ class Strip:
         posx, posy = 1920 / 2 - self.W / 2, 1200 - self.H
         os.environ['SDL_VIDEO_WINDOW_POS'] = '%i,%i' % (posx,posy)
 
-        self.screen = pygame.display.set_mode((self.W, self.H), pygame.NOFRAME | pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode((self.W, self.H)) # pygame.NOFRAME
         hwnd = pygame.display.get_wm_info()['window'] # handle to the window
         SetWindowPos(hwnd, TOPMOST, 0, 0, 0, 0, NOMOVE|NOSIZE)
 
