@@ -13,7 +13,6 @@
 // #define WIFI_password "****"
 #include <wificonfig.h>  
 
-#define MAXSTRIPS    3
 #define WIFI_TIMEOUT 10000
 
 class myWifi
@@ -28,7 +27,7 @@ class myWifi
   bool mIsClientConnected  = false; 
   bool mWasClientConnected = false;
 
-  BaseLedStrip* mStrips[MAXSTRIPS];
+  BaseLedStrip* mStrips[MAXSTRIP];
   byte          mNStrips = 0;
 
   byte*         payload;

@@ -28,7 +28,7 @@ void myWifi::addStrip(const BaseLedStrip &strip)
 {
   mIsSocket = true;
 
-  if (mNStrips < MAXSTRIPS)
+  if (mNStrips < MAXSTRIP)
   {
     byte i = mNStrips++;
     mStrips[i] = (BaseLedStrip*)&strip;
