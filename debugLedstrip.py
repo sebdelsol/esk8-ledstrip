@@ -20,8 +20,6 @@ REM = 0.5
 GAMMA = 5.
 
 #----------------------------------------------------------------
-os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
-import pygame
 import math
 
 class Pixel:
@@ -52,6 +50,9 @@ class Pixel:
         pygame.draw.rect(screen, color2, self.rect)
 
 #----------------------------------------------------------------
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+import pygame
+
 from ctypes import windll
 SetWindowPos = windll.user32.SetWindowPos
 TOPMOST, NOSIZE, NOMOVE = -1, 1, 2
