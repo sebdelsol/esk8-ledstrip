@@ -62,12 +62,13 @@ void myWifi::socketInit()
   if (mIsSocket)
   {
     mServer.begin();
-    _log << "Socket server, answer @ " << OTA_NAME << ".local:" << OTA_PORT;
+    _log << "Socket server, answer @ " << OTA_NAME << ".local:" << OTA_PORT << endl;
 
     // OTA_NAME & OTA_PORT are shared by OTA and the webSocket server, check platformio build_flags
-    bool mdns = MDNS.begin(OTA_NAME); 
-    if (mdns) MDNS.enableArduino(OTA_PORT, false); // no auth
-    _log << (mdns ? "" : " - mDNS Error") << endl;
+    if (MDNS.begin(OTA_NAME))
+      MDNS.enableArduino(OTA_PORT, false); // no auth
+    else
+      _log << "mDNS Error !" << endl;
   }
 }
 
