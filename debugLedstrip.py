@@ -24,7 +24,7 @@ import pygame
 import math
 
 class Pixel:
-    
+
     def __init__(self, i, j):
         self.x = int(round(wPixel * (i + .5)))
         self.y = int(round(maxPixel * ( j + .5)))
@@ -147,20 +147,23 @@ class Showled:
         pass #print(error)
 
     def onClose(self, ws):
-        print 'disconnected'
+        if self.connected :
+            print 'disconnected'
+        self.connected = False
 
     def onOpen(self, ws):
+        self.connected = True
         print 'connected'
 
     def onEsp32Found(self, address):
         print 'try to connect to %s' % address
-        ws = websocket.WebSocketApp(
-            address,
+        ws = websocket.WebSocketApp(address,
             on_message = lambda ws,msg: self.onMessage(ws, msg),
             on_error   = lambda ws,msg: self.onError(ws, msg),
             on_close   = lambda ws:     self.onClose(ws),
             on_open    = lambda ws:     self.onOpen(ws))
 
+        self.connected = False
         while True:
             ws.run_forever(ping_interval=3, ping_timeout=0)
 
