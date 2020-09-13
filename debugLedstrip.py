@@ -56,29 +56,29 @@ from ctypes import windll
 SetWindowPos = windll.user32.SetWindowPos
 TOPMOST, NOSIZE, NOMOVE = -1, 1, 2
 
-class NeoPixel:
+class Strip:
 
     def __init__(self):
         self.running = False
-        self.nb = {} 
+        self.n = {} 
         self.pixels = {}
         self.W = 0
         self.H = 0
 
-    def initPixels(self, nb, row):
-        print 'Row %d has %d pixels' %(row, nb)
-        self.nb[row] = nb
+    def initPixels(self, strip, n):
+        print 'add strip with %d pixels' % n
+        self.n[strip] = n
 
-        self.pixels[row] = []
-        for i in range(nb):
-            p = Pixel(i, row)
-            self.pixels[row].append(p)
+        self.pixels[strip] = []
+        for i in range(n):
+            p = Pixel(i, strip)
+            self.pixels[strip].append(p)
 
-        self.initDisplay(nb, row)
+        self.initDisplay(n, strip)
 
-    def initDisplay(self, n, row):
+    def initDisplay(self, n, strip):
         self.W = max(self.W, n * wPixel)
-        self.H = max(self.H, maxPixel * (row + 1))
+        self.H = max(self.H, maxPixel * (strip + 1))
 
         posx, posy = 1920 / 2 - self.W / 2, 1200 - self.H
         os.environ['SDL_VIDEO_WINDOW_POS'] = '%i,%i' % (posx,posy)
@@ -90,23 +90,21 @@ class NeoPixel:
         self.running = True
 
     def write(self, buf): 
-        row = buf[0]
-        nb = (len(buf) - 1) / 3
+        strip = buf[0]
+        n = (len(buf) - 1) / 3
         
-        if self.nb.get(row, 0) != nb:
-            self.initPixels(nb, row)
+        if self.n.get(strip, 0) != n:
+            self.initPixels(strip, n)
             
         if self.running:
-            #buf = bytearray(buf)
-
-            if row == 0:
+            if strip == 0:
                 self.screen.fill((0, 0, 0))
                 
-            for i, p in enumerate(self.pixels[row]):
+            for i, p in enumerate(self.pixels[strip]):
                 pos = 1 + i * 3
                 p.draw((buf[pos], buf[pos + 1], buf[pos + 2]), self.screen)
 
-            if row == len(self.nb) - 1:
+            if strip == len(self.n) - 1:
                 pygame.display.flip()
 
             for event in pygame.event.get():
@@ -141,7 +139,7 @@ import websocket
 
 class Showled:
 
-    np = NeoPixel()
+    np = Strip()
 
     def onMessage(self, ws, message):
         self.np.write(bytearray(message))
