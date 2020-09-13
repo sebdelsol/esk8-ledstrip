@@ -9,8 +9,8 @@
 #include <ledstrip.h>
 
 // wificonfig.h needs to define :
-// #define WIFINAME "******"
-// #define WIFIPASS "****"
+// #define WIFI_ssid "******"
+// #define WIFI_password "****"
 #include <wificonfig.h>  
 
 #define MAXSTRIPS    3

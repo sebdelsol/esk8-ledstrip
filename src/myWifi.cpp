@@ -14,7 +14,7 @@ void myWifi::stop()
 void myWifi::start()
 {
   WiFi.mode(WIFI_STA);
-  WiFi.begin(WIFINAME, WIFIPASS);
+  WiFi.begin(WIFI_ssid, WIFI_password);
   
   mBegunOn = millis();
   mON = false;
@@ -68,7 +68,7 @@ bool myWifi::update()
             bool mdns = MDNS.begin(OTA_NAME); 
             if (mdns) MDNS.enableArduino(OTA_PORT, false); // no auth
             _log << (mdns ? "mDNS responder started" : "Error setting up MDNS responder!");
-            _log << " for " << OTA_NAME << ":" << OTA_PORT << endl;
+            _log << " for " << OTA_NAME << ".local:" << OTA_PORT << endl;
           }
         }
       }
