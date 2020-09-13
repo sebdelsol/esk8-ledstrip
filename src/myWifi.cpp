@@ -60,13 +60,15 @@ bool myWifi::update()
 
           if (mIsSocket)
           {
-            bool mdns = MDNS.begin(MDNSNAME); 
-            if (mdns) MDNS.addService(MDNSTYPE, MDNSPROT, SOCK_PORT);
-            _log << (mdns ? "mDNS responder started" : "Error setting up MDNS responder!");
-            _log << " for " << MDNSNAME << "." << MDNSTYPE << "." << MDNSPROT << ".local." << endl;
-
             mServer.begin();
             _log << "Socket server started" << endl;
+
+            // OTA_NAME & OTA_PORT are shared by OTA and the webSocket server
+            // check platformio build_flags
+            bool mdns = MDNS.begin(OTA_NAME); 
+            if (mdns) MDNS.enableArduino(OTA_PORT, false); // no auth
+            _log << (mdns ? "mDNS responder started" : "Error setting up MDNS responder!");
+            _log << " for " << OTA_NAME << ":" << OTA_PORT << endl;
           }
         }
       }

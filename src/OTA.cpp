@@ -6,7 +6,13 @@ void OTA::begin()
   if(WiFi.status() == WL_CONNECTED)
   {
     _log << "OTA started" << endl;
-    ArduinoOTA.setHostname(OTA_HOSTNAME);
+
+    // OTA_NAME & OTA_PORT are shared by OTA and the webSocket server
+    // check platformio build_flags
+    ArduinoOTA.setHostname(OTA_NAME)
+    .setPort(OTA_PORT)
+    .setMdnsEnabled(!MDNS.begin(OTA_NAME)); 
+
     ArduinoOTA.begin();
     mBegun = true;
   }

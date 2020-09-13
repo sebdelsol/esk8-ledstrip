@@ -7,20 +7,14 @@
 #include <ESPmDNS.h>
 #include <log.h>
 #include <ledstrip.h>
-#include <wificonfig.h>  
+
 // wificonfig.h needs to define :
 // #define WIFINAME "******"
 // #define WIFIPASS "****"
+#include <wificonfig.h>  
 
 #define MAXSTRIPS    3
 #define WIFI_TIMEOUT 10000
-
-#define SOCK_PORT    80      
-#define MDNSNAME    "esp32"
-
-// see debugLedstrip.py to use the same type, it'll give '_leds._tcp.local.'
-#define MDNSTYPE    "leds" 
-#define MDNSPROT    "tcp"
 
 class myWifi
 {
@@ -28,7 +22,7 @@ class myWifi
   bool mON = false;
   bool mWantON = false;
 
-  WebSocketsServer mServer = WebSocketsServer(SOCK_PORT);
+  WebSocketsServer mServer = WebSocketsServer(OTA_PORT);
 
   bool mIsSocket           = false;
   bool mIsClientConnected  = false; 

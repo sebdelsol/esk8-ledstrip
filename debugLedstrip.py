@@ -1,13 +1,15 @@
-import pygame
-import math
 import os
 import traceback
 
-from ctypes import windll
-SetWindowPos = windll.user32.SetWindowPos
-TOPMOST = -1
-NOSIZE = 1
-NOMOVE = 2
+#---------------------------------------------------------------
+with open("./platformio.ini", "r") as f:
+    for l in f.readlines():
+        w = l.replace(' ', '').split('=')
+        if len(w)>1:
+            if w[0] == "OTAname":
+                SOCK_HOSTNAME = w[1].replace('\n', '').replace('"', '').replace("'", '')
+            elif w[0] == "OTAport":
+                SOCK_PORT = int(w[1])
 
 #----------------------------------------------------------------
 wPixel = 25
@@ -18,7 +20,11 @@ REM = 0.5
 GAMMA = 5.
 
 #----------------------------------------------------------------
+import pygame
+import math
+
 class Pixel:
+    
     def __init__(self, i, j):
         self.x = int(round(wPixel * (i + .5)))
         self.y = int(round(maxPixel * ( j + .5)))
@@ -45,7 +51,12 @@ class Pixel:
         pygame.draw.rect(screen, color2, self.rect)
 
 #----------------------------------------------------------------
+from ctypes import windll
+SetWindowPos = windll.user32.SetWindowPos
+TOPMOST, NOSIZE, NOMOVE = -1, 1, 2
+
 class NeoPixel:
+
     def __init__(self):
         self.running = False
         self.nb = {} 
@@ -101,30 +112,25 @@ class NeoPixel:
                     self.running = False
 
 #----------------------------------------------------------------
-from zeroconf import ServiceBrowser, Zeroconf
 import socket
+import threading
+import time
 
-class findEsp32:
-    esp32Type = '_leds._tcp.local.'
-
-    def add_service(self, zeroconf, typ, name):
-        info = zeroconf.get_service_info(typ, name)
-        if info and typ == self.esp32Type: 
-            address =  'ws://%s:%d/' % (socket.inet_ntoa(info.address), info.port)
-            name = info.name.split('.')[0]
-            print 'found %s' % name
-            self.whoToCallBack(address, name)
-
-    def __init__(self, whoToCallBack):
+class findSocketAddr(threading.Thread):
+    
+    def __init__(self, whoToCallBack):      
         self.whoToCallBack = whoToCallBack
-        self.zeroconf = Zeroconf()
+        threading.Thread.__init__(self) 
+
+    def run(self):
+        name = '%s.local' % SOCK_HOSTNAME
         try:
-            browser = ServiceBrowser(self.zeroconf, self.esp32Type, self)
-        except:
-            sys.stdout.write(traceback.format_exc())
-            
-    def close(self):
-        self.zeroconf.close()
+            ip = socket.gethostbyname(name)
+            print 'found %s' % name
+            self.whoToCallBack('ws://%s:%d/' % (ip, SOCK_PORT))
+
+        except socket.gaierror:
+            time.sleep(1)
 
 #-----------
 import sys
@@ -146,7 +152,7 @@ class Showled:
     def onOpen(self, ws):
         print 'connected'
 
-    def onEsp32Found(self, address, name):
+    def onEsp32Found(self, address):
         print 'try to connect to %s' % address
         ws = websocket.WebSocketApp(
             address,
@@ -159,15 +165,11 @@ class Showled:
             ws.run_forever(ping_interval=3, ping_timeout=0)
 
     def __init__(self):
-        self.browser = findEsp32(lambda addr, name : self.onEsp32Found(addr, name))
-
-    def close(sel):
-        self.browser(close)
+        findSocketAddr(lambda addr : self.onEsp32Found(addr)).start()
 
 #-----------
-import time
-
 Showled()
+
 while True:
     time.sleep(1)
  
