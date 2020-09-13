@@ -50,9 +50,9 @@ void myWifi::sendStripData()
     int length = mStrips[i]->getRawLength();
     assert(length + 1 <= maxPayloadLength);
 
-    payload[0] = i; //row to display
+    payload[0] = i; // row to display
     memcpy(&payload[1], mStrips[i]->getRawData(), length);
-    mServer.sendBIN(0, payload, length + 1);
+    mServer.sendBIN(0, payload, length + 1); // send to client 0 only
   }
 }
 

@@ -89,8 +89,9 @@ class NeoPixel:
         self.running = True
 
     def write(self, buf): 
-        nb = (len(buf) - 1) / 3
         row = buf[0]
+        nb = (len(buf) - 1) / 3
+        
         if self.nb.get(row, 0) != nb:
             self.initPixels(nb, row)
             
