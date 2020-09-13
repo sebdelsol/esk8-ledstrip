@@ -54,21 +54,19 @@ bool myWifi::update()
       {
         if(WiFi.status() == WL_CONNECTED)
         {
-          _log << "Wifi Connected, answser @ " << WiFi.localIP() << endl;
+          _log << "Wifi connected, answser @ " << WiFi.localIP() << endl;
           digitalWrite(BUILTIN_LED, LOW); // led on
           mON = true;
 
           if (mIsSocket)
           {
             mServer.begin();
-            _log << "Socket server started" << endl;
+            _log << "Socket server, answer @ " << OTA_NAME << ".local:" << OTA_PORT;
 
-            // OTA_NAME & OTA_PORT are shared by OTA and the webSocket server
-            // check platformio build_flags
+            // OTA_NAME & OTA_PORT are shared by OTA and the webSocket server, check platformio build_flags
             bool mdns = MDNS.begin(OTA_NAME); 
             if (mdns) MDNS.enableArduino(OTA_PORT, false); // no auth
-            _log << (mdns ? "mDNS responder started" : "Error setting up MDNS responder!");
-            _log << " for " << OTA_NAME << ".local:" << OTA_PORT << endl;
+            _log << (mdns ? "" : " - Error setting up MDNS responder") << endl;
           }
         }
       }
