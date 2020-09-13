@@ -113,26 +113,20 @@ class Strip:
                     self.running = False
 
 #----------------------------------------------------------------
+from threading import Thread
 import socket
-import threading
 import time
 
-class findSocketAddr(threading.Thread):
-    
-    def __init__(self, callback):      
-        self.callback = callback
-        threading.Thread.__init__(self) 
+def findServerAddr(callback):
+    name = '%s.local' % SOCK_HOSTNAME
+    print 'seek %s' % name
+    try:
+        ip = socket.gethostbyname(name)
+        print 'found %s' % name
+        callback('ws://%s:%d/' % (ip, SOCK_PORT))
 
-    def run(self):
-        name = '%s.local' % SOCK_HOSTNAME
-        print 'seek %s' % name
-        try:
-            ip = socket.gethostbyname(name)
-            print 'found %s' % name
-            self.callback('ws://%s:%d/' % (ip, SOCK_PORT))
-
-        except socket.gaierror:
-            time.sleep(1)
+    except socket.gaierror:
+        time.sleep(1)
 
 #-----------
 import sys
@@ -157,7 +151,7 @@ class Showled:
         self.connected = True
         print 'connected'
 
-    def onEsp32Found(self, address):
+    def onServerFound(self, address):
         print 'connecting to %s' % address
         ws = websocket.WebSocketApp(address,
             on_message = lambda ws,msg: self.onMessage(ws, msg),
@@ -170,7 +164,8 @@ class Showled:
             ws.run_forever(ping_interval=3, ping_timeout=0)
 
     def __init__(self):
-        findSocketAddr(lambda addr : self.onEsp32Found(addr)).start()
+        callback = lambda addr : self.onServerFound(addr)
+        Thread(target = findServerAddr, args = (callback, )).start()
 
 #-----------
 Showled()
