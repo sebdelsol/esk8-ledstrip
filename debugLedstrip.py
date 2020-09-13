@@ -20,6 +20,7 @@ REM = 0.5
 GAMMA = 5.
 
 #----------------------------------------------------------------
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 import math
 
@@ -125,6 +126,7 @@ class findSocketAddr(threading.Thread):
 
     def run(self):
         name = '%s.local' % SOCK_HOSTNAME
+        print 'seek %s' % name
         try:
             ip = socket.gethostbyname(name)
             print 'found %s' % name
@@ -157,7 +159,7 @@ class Showled:
         print 'connected'
 
     def onEsp32Found(self, address):
-        print 'try to connect to %s' % address
+        print 'connecting to %s' % address
         ws = websocket.WebSocketApp(address,
             on_message = lambda ws,msg: self.onMessage(ws, msg),
             on_error   = lambda ws,msg: self.onError(ws, msg),
