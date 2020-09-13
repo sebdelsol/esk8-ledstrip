@@ -1,16 +1,6 @@
 import os
 import traceback
 
-#---------------------------------------------------------------
-with open("./platformio.ini", "r") as f:
-    for l in f.readlines():
-        w = l.replace(' ', '').split('=')
-        if len(w)>1:
-            if w[0] == "OTAname":
-                SOCK_HOSTNAME = w[1].replace('\n', '').replace('"', '').replace("'", '')
-            elif w[0] == "OTAport":
-                SOCK_PORT = int(w[1])
-
 #----------------------------------------------------------------
 wPixel = 25
 cPixel = wPixel * .25 
@@ -19,7 +9,7 @@ maxPixel = int(round(wPixel * 1.))
 REM = 0.5
 GAMMA = 5.
 
-#----------------------------------------------------------------
+#----------
 import math
 
 class Pixel:
@@ -111,6 +101,15 @@ class Strip:
 from threading import Thread
 import socket
 import time
+
+with open("./platformio.ini", "r") as f:
+    for l in f.readlines():
+        w = l.replace(' ', '').split('=')
+        if len(w)>1:
+            if w[0] == "OTAname":
+                SOCK_HOSTNAME = w[1].replace('\n', '').replace('"', '').replace("'", '')
+            elif w[0] == "OTAport":
+                SOCK_PORT = int(w[1])
 
 def findServerAddr(callback):
     name = '%s.local' % SOCK_HOSTNAME
