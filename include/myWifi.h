@@ -3,7 +3,6 @@
 #define NODEBUG_WEBSOCKETS
 
 #include <WiFi.h>
-#include <WebSocketsServer.h>
 #include <ESPmDNS.h>
 #include <log.h>
 #include <ledstrip.h>
@@ -15,13 +14,16 @@
 
 #define WIFI_TIMEOUT 10000
 
+// using namespace websockets;
+
 class myWifi
 {
   int  mBegunOn;
   bool mON = false;
   bool mWantON = false;
 
-  WebSocketsServer mServer = WebSocketsServer(OTA_PORT);
+  WiFiServer mServer = WiFiServer(OTA_PORT);
+  WiFiClient mClient;
 
   bool mIsSocket           = false;
   bool mIsClientConnected  = false; 
@@ -30,14 +32,10 @@ class myWifi
   BaseLedStrip* mStrips[MAXSTRIP];
   byte          mNStrips = 0;
 
-  byte*         payload;
-  int           maxPayloadLength = 0;
-
 public:
   void start();
   void stop();
   
-  bool isClientConnected() { return mIsSocket && mIsClientConnected; };
   void socketInit();
   void socketUpdate();
 

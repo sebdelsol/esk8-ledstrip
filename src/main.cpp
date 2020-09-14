@@ -149,8 +149,7 @@ inline void loopWifi()
     #endif
 
     #ifdef USE_OTA
-      // concurrency issue with sockets
-      if (!MyWifi.isClientConnected()) Ota.update();
+      Ota.update();
     #endif
   }
   Raster.add("Wifi");

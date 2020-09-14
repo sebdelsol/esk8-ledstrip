@@ -2,6 +2,26 @@ import os
 import traceback
 
 #----------------------------------------------------------------
+import re
+
+def findInFile(fname, split, *search):
+    found = []
+    search = list(search)
+    with open(fname, "r") as f:
+        for l in f.readlines():
+            if len(search) == 0: break
+            w = re.sub(' +', ' ', l).split(split)
+            if len(w) > 1:
+                w = map(lambda x: x.replace(' ', ''), w)
+                for s in search:
+                    if s in w:
+                        found.append(re.sub(r'[\n"\']', '', w[w.index(s) + 1]))
+                        search.remove(s)
+                        break
+                    
+    return found[0] if len(found)==1 else found
+
+#----------------------------------------------------------------
 wPixel = 25
 cPixel = wPixel * .25 
 minPixel = wPixel * .6
@@ -54,6 +74,10 @@ class Strip:
         self.pixels = {}
         self.W = 0
         self.H = 0
+        self.t = time.time()
+
+        tick = findInFile('./include/cfg.h', ' ', 'WIFI_TICK')
+        self.tick = int(tick) / 1000.
 
     def initPixels(self, strip, n):
         print 'add strip with %d pixels' % n
@@ -75,9 +99,8 @@ class Strip:
 
         self.running = True
 
-    def write(self, buf): 
-        strip = buf[0]
-        n = (len(buf) - 1) / 3
+    def write(self, buf, length, strip): 
+        n = length / 3
         
         if self.n.get(strip, 0) != n:
             self.initPixels(strip, n)
@@ -87,10 +110,13 @@ class Strip:
                 self.screen.fill((0, 0, 0))
                 
             for i, p in enumerate(self.pixels[strip]):
-                pos = 1 + i * 3
+                pos = i * 3
                 p.draw((buf[pos], buf[pos + 1], buf[pos + 2]), self.screen)
 
             if strip == len(self.n) - 1:
+                dt = time.time() - self.t
+                time.sleep(max(0, self.tick - dt))
+                self.t = time.time()
                 pygame.display.flip()
 
             for event in pygame.event.get():
@@ -101,69 +127,70 @@ class Strip:
 from threading import Thread
 import socket
 import time
-import re
 
 def findServerAddr(callback):
 
-    with open("./platformio.ini", "r") as f:
-        for l in f.readlines():
-            w = l.replace(' ', '').split('=')
-            if len(w) > 1:
-                if w[0] == "OTAname":
-                    hostname = '%s.local' % re.sub(r'[\n"\']', '', w[1])
-                elif w[0] == "OTAport":
-                    port = int(w[1])
-    
+    hostname, port = findInFile('./platformio.ini', '=', 'otaname', 'otaport')
+    hostname = '%s.local' % hostname
+    port = int(port)
+
     print 'seek %s' % hostname
     try:
         ip = socket.gethostbyname(hostname)
         print 'found %s' % hostname
-        callback('ws://%s:%d/' % (ip, port))
+        callback((ip, port))
 
     except socket.gaierror:
         time.sleep(1)
 
 #-----------
-from websocket import WebSocketApp
+import struct
 
 class Showled:
 
-    def onMessage(self, ws, message):
-        self.np.write(bytearray(message))
+    def recvMsg(self):
+        header = self.recvn(2)
+        if not header: return None
+        length, strip = struct.unpack('BB', header)
+        buf = self.recvn(length)
+        return buf, length, strip if buf else None
 
-    def onError(self, ws, error):
-        pass #print(error)
-
-    def onClose(self, ws):
-        if self.connected :
-            print 'disconnected'
-        self.connected = False
-
-    def onOpen(self, ws):
-        self.connected = True
-        print 'connected'
+    def recvn(self, n):
+        buf = bytearray()
+        while len(buf) < n:
+            packet = self.sock.recv(n - len(buf))
+            if not packet: return None
+            buf.extend(packet)
+        return buf
 
     def onServerFound(self, address):
-        print 'connecting to %s' % address
-        ws = WebSocketApp(address,
-            on_message = lambda ws,msg: self.onMessage(ws, msg),
-            on_error   = lambda ws,msg: self.onError(ws, msg),
-            on_close   = lambda ws:     self.onClose(ws),
-            on_open    = lambda ws:     self.onOpen(ws))
-
-        self.connected = False
         self.np = Strip()
         
         while True:
-            ws.run_forever(ping_interval=3, ping_timeout=0)
+            print 'connecting to %s:%d' % address
+            self.sock = socket.socket() 
+            self.sock.connect(address)
+            self.sock.settimeout(3)
+            
+            connected = True
+            while connected:
+                try:
+                    msg = self.recvMsg()
+                    if msg is not None:
+                        self.np.write(*msg)
+                    else:
+                        connected = False
+                
+                except socket.timeout:
+                    traceback.print_exc()
+                    connected = False
+            
+            print 'disconnected'
+            self.sock.close()
 
     def __init__(self):
         callback = lambda addr : self.onServerFound(addr)
         Thread(target = findServerAddr, args = (callback, )).start()
 
 #-----------
-Showled()
-
-while True:
-    time.sleep(1)
- 
+Showled() 

@@ -29,31 +29,20 @@ void myWifi::addStrip(const BaseLedStrip &strip)
   mIsSocket = true;
 
   if (mNStrips < MAXSTRIP)
-  {
-    byte i = mNStrips++;
-    mStrips[i] = (BaseLedStrip*)&strip;
-
-    int length = mStrips[i]->getRawLength() + 1;
-    if (length > maxPayloadLength)
-    {
-      payload = (byte*) (maxPayloadLength==0 ? malloc(length) : realloc(payload, length));
-      maxPayloadLength = length;
-    }
-    assert(payload !=nullptr);
-  }
+    mStrips[mNStrips++] = (BaseLedStrip*)&strip;
 }
 
 void myWifi::sendStripData()
 {
-  for (byte i=0; i < mNStrips; i++)
-  {
-    int length = mStrips[i]->getRawLength();
-    assert(length + 1 <= maxPayloadLength);
-
-    payload[0] = i; // row to display
-    memcpy(&payload[1], mStrips[i]->getRawData(), length);
-    mServer.sendBIN(0, payload, length + 1); // send to client 0 only
-  }
+    for (byte i=0; i < mNStrips; i++)
+    {
+      BaseLedStrip& strip = *mStrips[i];
+      int length = strip.getRawLength();
+      mClient.write(length); 
+      mClient.write(i); 
+      mClient.write(strip.getRawData(), length); 
+    }
+    // mClient.flush();
 }
 
 // --------------
@@ -61,10 +50,10 @@ void myWifi::socketInit()
 {
   if (mIsSocket)
   {
+    // OTA_NAME & OTA_PORT are shared by OTA and the webSocket server, check platformio build_flags
     mServer.begin();
     _log << "Socket server, answer @ " << OTA_NAME << ".local:" << OTA_PORT << endl;
 
-    // OTA_NAME & OTA_PORT are shared by OTA and the webSocket server, check platformio build_flags
     if (MDNS.begin(OTA_NAME))
       MDNS.enableArduino(OTA_PORT, false); // no auth
     else
@@ -74,16 +63,20 @@ void myWifi::socketInit()
 
 void myWifi::socketUpdate()
 {
-  if (mIsSocket)
+  if (mIsSocket) 
   {
-    mServer.loop();
-    mIsClientConnected = mServer.connectedClients() > 0;
+    mIsClientConnected = mClient.connected();
+
+    if (!mIsClientConnected)
+      mClient = mServer.available();
+    else
+      sendStripData();
 
     if (mIsClientConnected != mWasClientConnected)
+    {
       _log << "Socket client " << (mIsClientConnected ? "connected" : "disconnected") << endl;
-    mWasClientConnected = mIsClientConnected;
-
-    if (mIsClientConnected) sendStripData();
+      mWasClientConnected = mIsClientConnected;
+    }
   }
 }
 
@@ -100,9 +93,9 @@ bool myWifi::update()
         {
           _log << "Wifi connected, answser @ " << WiFi.localIP() << endl;
           digitalWrite(BUILTIN_LED, LOW); // led on
-          mON = true;
 
           socketInit();
+          mON = true;
         }
       }
       else 
@@ -111,6 +104,5 @@ bool myWifi::update()
     else
       socketUpdate();
   }
-
   return mON;
 }
