@@ -75,8 +75,8 @@ class Strip:
         self.pixels = {}
         self.W = 0
         self.H = 0
-        self.t = time.time()
 
+        self.t = time.time()
         tick = findInFile('./include/cfg.h', ' ', 'WIFI_TICK')
         self.tick = int(tick) / 1000.
 
@@ -100,7 +100,7 @@ class Strip:
 
         self.running = True
 
-    def write(self, buf, length, strip): 
+    def show(self, buf, length, strip): 
         n = length / 3
         
         if self.n.get(strip, 0) != n:
@@ -130,7 +130,6 @@ import socket
 import time
 
 def findServerAddr(callback):
-
     hostname, port = findInFile('./platformio.ini', '=', 'otaname', 'otaport')
     hostname = '%s.local' % hostname
     port = int(port)
@@ -149,23 +148,26 @@ import struct
 
 class Showled:
 
-    def recvMsg(self):
-        header = self.recvn(2)
-        if not header: return None
-        length, strip = struct.unpack('BB', header)
-        buf = self.recvn(length)
-        return buf, length, strip if buf else None
-
-    def recvn(self, n):
+    def recv(self, n):
         buf = bytearray()
         while len(buf) < n:
             packet = self.sock.recv(n - len(buf))
             if not packet: return None
             buf.extend(packet)
+        
         return buf
 
+    def recvMsg(self):
+        header = self.recv(2)
+        if not header: return None
+        
+        length, strip = struct.unpack('BB', header)
+        buf = self.recv(length)
+        
+        return buf, length, strip if buf else None
+
     def onServerFound(self, address):
-        self.np = Strip()
+        strips = Strip()
         
         while True:
             print 'connecting to %s:%d' % address
@@ -178,7 +180,7 @@ class Showled:
                 try:
                     msg = self.recvMsg()
                     if msg is not None:
-                        self.np.write(*msg)
+                        strips.show(*msg)
                     else:
                         connected = False
                 
