@@ -49,10 +49,10 @@ void myWifi::socketInit()
 {
   if (mIsSocket)
   {
-    // OTA_NAME & OTA_PORT are shared by OTA and the webSocket server, check platformio build_flags
     mServer.begin();
-    _log << "Socket server, answer @ " << OTA_NAME << ".local:" << OTA_PORT << endl;
 
+    // OTA_NAME & OTA_PORT are shared by OTA and the webSocket server, check platformio build_flags
+    _log << "Socket server, answer @ " << OTA_NAME << ".local:" << OTA_PORT << endl;
     if (MDNS.begin(OTA_NAME))
       MDNS.enableArduino(OTA_PORT, false); // no auth
     else
