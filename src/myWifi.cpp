@@ -42,7 +42,6 @@ void myWifi::sendStripData()
       mClient.write(i); 
       mClient.write(strip.getRawData(), length); 
     }
-    // mClient.flush();
 }
 
 // --------------

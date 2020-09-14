@@ -7,6 +7,7 @@ import re
 def findInFile(fname, split, *search):
     found = []
     search = list(search)
+    
     with open(fname, "r") as f:
         for l in f.readlines():
             if len(search) == 0: break
