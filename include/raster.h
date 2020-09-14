@@ -14,7 +14,7 @@ struct Raster
   int  n;                                                                                                       
   long start;                                                                                                 
   long lastEnd;  
-  char fnumber[6];                                   
+  char fnumber[10];                                   
 
   inline void begin()
   {
@@ -36,7 +36,7 @@ struct Raster
 
   inline char* printnb(long n)
   {
-    snprintf(fnumber, 5, "%4d", n);
+    snprintf(fnumber, 6, "%4d", n);
     return fnumber;
   };
 
@@ -46,11 +46,11 @@ struct Raster
     _log << "LOOP "  << printnb(end - lastEnd) << "µs";                                                                    
     lastEnd = end;
 
-    _log << "   TOTAL " << printnb(end - start) << "µs";                                                                  
+    _log << " - TOTAL " << printnb(end - start) << "µs";                                                                  
     for (byte i=0; i < n; i++)
-      _log << "  -  " << r[i].name << " " << printnb(r[i].time - (i==0 ? start : r[i-1].time)) << "µs"; 
+      _log << "  - " << r[i].name << " " << printnb(r[i].time - (i==0 ? start : r[i-1].time)) << "µs"; 
     
-    _log << "    - free Heap " << ESP.getFreeHeap() << "B" << endl;
+    _log << "    - free Heap " << _FLOAT(ESP.getFreeHeap() / 1024., 4) << " kB" << "\r   ";
   };
 
 #else
