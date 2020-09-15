@@ -37,7 +37,7 @@
 
 **upload**
 * uncomment `#define USE_OTA` in [main.cpp](https://github.com/sebdelsol/esk8-ledstrip/blob/82ecda3be91b94f26fb60965aa64fff2283162f5/src/main.cpp#L2) 
-* uncomment`upload_protocol` & `upload_port` in [platformio.ini](https://github.com/sebdelsol/esk8-ledstrip/blob/d424636c7f25b86f0befb9136ea09239c2bad716/platformio.ini#L14-15)
+* uncomment`upload_***` defines in [platformio.ini](https://github.com/sebdelsol/esk8-ledstrip/blob/d424636c7f25b86f0befb9136ea09239c2bad716/platformio.ini#L14-15)
 
 **log**
 * uncomment `#define USE_TELNET` in [main.cpp](https://github.com/sebdelsol/esk8-ledstrip/blob/82ecda3be91b94f26fb60965aa64fff2283162f5/src/main.cpp#L3) 
