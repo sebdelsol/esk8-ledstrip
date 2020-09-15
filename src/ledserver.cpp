@@ -36,7 +36,7 @@ void LedServer::begin()
 }
 
 // --------------
-void LedServer::update()
+bool LedServer::update()
 {
   if (!mHasBegun)
     begin();
@@ -57,4 +57,6 @@ void LedServer::update()
     else
       _log << "disconnected" << endl;
   }
+
+  return mIsClientConnected;
 }

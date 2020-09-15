@@ -1,18 +1,18 @@
 #define USE_BT
 #define USE_OTA 
-#define USE_TELNET 
+// #define USE_TELNET 
 #define USE_LEDSERVER
 
 // #define DEBUG_RASTER
 // #define DEBUG_LED_INFO
 
-#define USE_WIFI (defined(USE_LEDSERVER) || defined(USE_OTA) || defined(USE_TELNET))
-
 // ----------------------------------------------------
 #include <ledstrip.h>
 #include <mpu.h>
-#include <myWifi.h>
 #include <Raster.h>
+#include <myWifi.h>
+
+#define USE_WIFI (defined(USE_LEDSERVER) || defined(USE_OTA) || defined(USE_TELNET))
 
 // -- Telnet Serial 
 #ifdef USE_TELNET
@@ -156,16 +156,20 @@ inline void loopWifi()
 #if USE_WIFI
   EVERY_N_MILLISECONDS(WIFI_TICK) if(MyWifi.update())
   {
+    bool socketClient = false;
+
     #ifdef USE_TELNET
       Telnet.handle();
-    #endif
-
-    #ifdef USE_OTA
-      Ota.update();
+      socketClient |= Telnet.isClientConnected();
     #endif
 
     #ifdef USE_LEDSERVER
-      LedServer.update();
+      socketClient |= LedServer.update();
+    #endif
+
+    #ifdef USE_OTA
+      // ota crash when other socket clients are connected
+      if (!socketClient) Ota.update();
     #endif
 
   }

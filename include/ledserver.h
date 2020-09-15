@@ -24,5 +24,5 @@ public:
   void addStrip(const BaseLedStrip &strip);
   ForEachMethod(addStrip); // create a method addStrips(...) that calls addStrip on all args
 
-  void update();
+  bool update();
 };
