@@ -47,7 +47,7 @@ class AllLedStrips : public OBJVar
   byte      mBright     = 255; // half brightness (128) is enough & avoid reaching maxmA
   byte      mRawBright  = 0;   // with fade 
   int       mFade       = 0;   // for the fade in
-  int       mFadeTime   = 2000; // ms
+  int       mFadeTime   = 1000; // ms
   int       mMinProbe   = 400;
   const int mMaxProbe   = 4095;
   bool      mProbe      = false;
