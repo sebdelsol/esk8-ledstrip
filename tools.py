@@ -30,7 +30,6 @@ def findServerAddr(callback):
     print 'seek %s' % hostname
     try:
         ip = socket.gethostbyname(hostname)
-        print 'found %s' % hostname
         callback((ip, port))
 
     except socket.gaierror:

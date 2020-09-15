@@ -3,6 +3,9 @@ import os
 import time
 import traceback
 
+print 'DEBUG LED STRIPS'
+print '----------------'
+
 #----------------------------------------------------------------
 wPixel = 25
 cPixel = wPixel * .25 

@@ -1,12 +1,12 @@
 #define USE_BT
 #define USE_OTA 
 #define USE_TELNET 
+#define USE_LEDSERVER
 
-#define DEBUG_LED_TOWIFI
 // #define DEBUG_RASTER
 // #define DEBUG_LED_INFO
 
-#define USE_WIFI (defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET))
+#define USE_WIFI (defined(USE_LEDSERVER) || defined(USE_OTA) || defined(USE_TELNET))
 
 // ----------------------------------------------------
 #include <ledstrip.h>
@@ -32,7 +32,7 @@ Stream& _log = Serial;
 #endif
 
 // -- LedServer
-#ifdef DEBUG_LED_TOWIFI
+#ifdef USE_LEDSERVER
   #include  <ledserver.h>
   LedServer LedServer;
 #endif
@@ -126,9 +126,15 @@ void setup()
   // -- Wifi
   #if USE_WIFI
     MyWifi.start();
-    #ifdef DEBUG_LED_TOWIFI
+
+    #ifdef USE_LEDSERVER
       LedServer.addStrips(StripM, StripR, StripF);
     #endif
+
+    #ifdef USE_TELNET
+      Telnet.setWelcomeMsg("");
+    #endif
+
   #else
     MyWifi.stop();
   #endif
@@ -158,7 +164,7 @@ inline void loopWifi()
       Ota.update();
     #endif
 
-    #ifdef DEBUG_LED_TOWIFI
+    #ifdef USE_LEDSERVER
       LedServer.update();
     #endif
 

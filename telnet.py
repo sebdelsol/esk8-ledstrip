@@ -6,6 +6,9 @@ import socket
 import time
 import traceback
 
+print ('TELNET')
+print ('------')
+
 class Log:
 
     def onServerFound(self, address):
@@ -18,7 +21,7 @@ class Log:
             self.sock.settimeout(None)
             self.sock.connect(address)
             self.sock.settimeout(3)
-            print('--------------')
+            print ('------')
             
             connected = True
             while connected:
@@ -32,10 +35,10 @@ class Log:
                         connected = False
             
                 except socket.timeout:
-                    traceback.print_exc()
+                    #traceback.print_exc()
                     connected = False
             
-            print('--------------')
+            print ('------')
             print('disconnected')
             self.sock.close()
 
