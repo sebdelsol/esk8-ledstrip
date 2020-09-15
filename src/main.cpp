@@ -31,6 +31,12 @@ Stream& _log = Serial;
   OTA       Ota;
 #endif
 
+// -- LedServer
+#ifdef DEBUG_LED_TOWIFI
+  #include  <ledserver.h>
+  LedServer LedServer;
+#endif
+
 // -- Acc & Wifi
 myWifi  MyWifi;
 MPU     Mpu;
@@ -121,7 +127,7 @@ void setup()
   #if USE_WIFI
     MyWifi.start();
     #ifdef DEBUG_LED_TOWIFI
-      MyWifi.addStrips(StripM, StripR, StripF);
+      LedServer.addStrips(StripM, StripR, StripF);
     #endif
   #else
     MyWifi.stop();
@@ -151,6 +157,11 @@ inline void loopWifi()
     #ifdef USE_OTA
       Ota.update();
     #endif
+
+    #ifdef DEBUG_LED_TOWIFI
+      LedServer.update();
+    #endif
+
   }
   Raster.add("Wifi");
 #endif
