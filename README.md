@@ -28,7 +28,7 @@
 
 **check the Ledstrips on PC**
 * uncomment `#define USE_LEDSERVER` in [main.cpp](https://github.com/sebdelsol/esk8-ledstrip/blob/870b272afb6b136938d0b67caa385b4bf29b96c0/src/main.cpp#L4) 
-* launch [debugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py) - dependency : [PyGame](https://www.pygame.org)
+* launch [debugLedstrip.py](https://github.com/sebdelsol/esk8-ledstrip/blob/master/debugLedstrip.py) - dependency : [PyGame](https://www.pygame.org)
 
 <p>&nbsp;</p>  <p>&nbsp;</p> 
 
