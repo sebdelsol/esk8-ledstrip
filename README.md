@@ -18,8 +18,8 @@
 <img src="https://media.giphy.com/media/TfFm0aNsc1LnWPsiab/giphy.gif" height="250" align="right">
 
 **tweak in real time on a phone**
-* use easy macros to **create new app's widgets**, check [objVar.h](https://github.com/sebdelsol/esk8-ledstrip/blob/e3f43bdf868395875970e63024d04a82ad06267d/include/objVar.h#L83-93)
-* import [esk8.aia](https://github.com/sebdelsol/Esk8/blob/master/Esk8.aia) on [App Inventor](http://ai2.appinventor.mit.edu/)
+* use easy macros to **create new app's widgets**, check [objVar.h](https://github.com/sebdelsol/esk8-ledstrip/blob/cfee2ca77b1fcf0d9df5d271e498db0bf86edbf7/include/objVar.h#L96)
+* import [esk8.aia](https://github.com/sebdelsol/esk8-ledstrip/blob/master/Esk8.aia) on [App Inventor](http://ai2.appinventor.mit.edu/)
 * pair your phone with the `esk8` bluetooth device *within 30s after being switched on*
 <p>&nbsp;</p>  <p>&nbsp;</p>  
 
@@ -27,21 +27,21 @@
 <img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="215" align="right">
 
 **check the Ledstrips on PC**
-* uncomment `#define DEBUG_LED_TOWIFI` in [main.cpp](https://github.com/sebdelsol/esk8-ledstrip/blob/82ecda3be91b94f26fb60965aa64fff2283162f5/src/main.cpp#L6) 
-* launch [debugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py) - dependency : [PyGame](https://www.pygame.org)
+* uncomment `#define USE_LEDSERVER` in [main.cpp](https://github.com/sebdelsol/esk8-ledstrip/blob/870b272afb6b136938d0b67caa385b4bf29b96c0/src/main.cpp#L4) 
+* launch [debugLedstrip.py](https://github.com/sebdelsol/esk8-ledstrip/blob/master/debugLedstrip.py) - dependency : [PyGame](https://www.pygame.org)
 
 <p>&nbsp;</p>  <p>&nbsp;</p> 
 
-# OTA
-* check [myWifi.h](https://github.com/sebdelsol/esk8-ledstrip/blob/fed4b2dac2e1fe955d3d43a7b7f73ea413290fed/include/myWifi.h#L11) how to create `Wificonfig.h` 
+# over the air
+* check [myWifi.h](https://github.com/sebdelsol/esk8-ledstrip/blob/cfee2ca77b1fcf0d9df5d271e498db0bf86edbf7/include/myWifi.h#L8) how to create `Wificonfig.h` 
 
 **upload**
-* uncomment `#define USE_OTA` in [main.cpp](https://github.com/sebdelsol/esk8-ledstrip/blob/82ecda3be91b94f26fb60965aa64fff2283162f5/src/main.cpp#L2) 
-* uncomment`upload_*` defines in [platformio.ini](https://github.com/sebdelsol/esk8-ledstrip/blob/d424636c7f25b86f0befb9136ea09239c2bad716/platformio.ini#L14-15)
+* uncomment `#define USE_OTA` in [main.cpp](https://github.com/sebdelsol/esk8-ledstrip/blob/870b272afb6b136938d0b67caa385b4bf29b96c0/src/main.cpp#L2) 
+* uncomment`upload_*` defines in [platformio.ini](https://github.com/sebdelsol/esk8-ledstrip/blob/d1ec9845f7aaaaa8174fc5b309df723bf2c1d1d1/platformio.ini#L25-27)
 
 **log**
-* uncomment `#define USE_TELNET` in [main.cpp](https://github.com/sebdelsol/esk8-ledstrip/blob/82ecda3be91b94f26fb60965aa64fff2283162f5/src/main.cpp#L3) 
-* launch [telnet.py](https://github.com/sebdelsol/Esk8/blob/master/telnet.py)
+* uncomment `#define USE_TELNET` in [main.cpp](https://github.com/sebdelsol/esk8-ledstrip/blob/870b272afb6b136938d0b67caa385b4bf29b96c0/src/main.cpp#L3) 
+* launch [telnet.py](https://github.com/sebdelsol/esk8-ledstrip/blob/master/telnet.py)
 
 # shop
 *Components* | *20€* | *Shop*
