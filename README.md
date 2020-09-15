@@ -27,20 +27,20 @@
 <img src="https://media.giphy.com/media/eJFgXPfn9yUhgEfCkM/giphy.gif" height="215" align="right">
 
 **check the Ledstrips on PC**
-* uncomment `#define DEBUG_LED_TOWIFI` in [main.cpp](https://github.com/sebdelsol/esk8-ledstrip/blob/82ecda3be91b94f26fb60965aa64fff2283162f5/src/main.cpp#L6) 
+* uncomment `#define USE_LEDSERVER` in [main.cpp](https://github.com/sebdelsol/esk8-ledstrip/blob/870b272afb6b136938d0b67caa385b4bf29b96c0/src/main.cpp#L4) 
 * launch [debugLedstrip.py](https://github.com/sebdelsol/Esk8/blob/master/DebugLedstrip.py) - dependency : [PyGame](https://www.pygame.org)
 
 <p>&nbsp;</p>  <p>&nbsp;</p> 
 
-# OTA
+# over the air
 * check [myWifi.h](https://github.com/sebdelsol/esk8-ledstrip/blob/fed4b2dac2e1fe955d3d43a7b7f73ea413290fed/include/myWifi.h#L11) how to create `Wificonfig.h` 
 
 **upload**
-* uncomment `#define USE_OTA` in [main.cpp](https://github.com/sebdelsol/esk8-ledstrip/blob/82ecda3be91b94f26fb60965aa64fff2283162f5/src/main.cpp#L2) 
+* uncomment `#define USE_OTA` in [main.cpp](https://github.com/sebdelsol/esk8-ledstrip/blob/870b272afb6b136938d0b67caa385b4bf29b96c0/src/main.cpp#L2) 
 * uncomment`upload_*` defines in [platformio.ini](https://github.com/sebdelsol/esk8-ledstrip/blob/d424636c7f25b86f0befb9136ea09239c2bad716/platformio.ini#L14-15)
 
 **log**
-* uncomment `#define USE_TELNET` in [main.cpp](https://github.com/sebdelsol/esk8-ledstrip/blob/82ecda3be91b94f26fb60965aa64fff2283162f5/src/main.cpp#L3) 
+* uncomment `#define USE_TELNET` in [main.cpp](https://github.com/sebdelsol/esk8-ledstrip/blob/870b272afb6b136938d0b67caa385b4bf29b96c0/src/main.cpp#L3) 
 * launch [telnet.py](https://github.com/sebdelsol/Esk8/blob/master/telnet.py)
 
 # shop
