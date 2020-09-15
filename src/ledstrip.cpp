@@ -28,10 +28,7 @@
 #endif
 
 // ----------------------------------------------------
-AllLedStrips::AllLedStrips() 
-#ifdef DBG_TIMEtoSHOW
-  : mBeginTime(millis())
-#endif
+AllLedStrips::AllLedStrips() : mBeginTime(millis())
 {
   setBrightness(0);
   setDither(mDither);
@@ -84,11 +81,9 @@ void AllLedStrips::update()
 {
   if (!mHasbegun)
   {
-    #ifdef DBG_TIMEtoSHOW
-      _log << "------\n>> Time to Start the show: " << millis() - beginTime << "ms" << endl << "------" << endl;
-    #endif
+    _log << "Time to show " << millis() - mBeginTime << "ms" << endl ;
+    mBeginTime = millis(); // for fadein
     mHasbegun = true;
-    mBeginTime = millis();
   }
 
   // update all strips
@@ -106,6 +101,7 @@ void AllLedStrips::update()
     mBright = map(light, mMinProbe, mMaxProbe, 255, 0); // the darker the light, the brighter the leds
   }
   
+  // fadein
   long dur = millis() - mBeginTime;
   mFade =  dur < mFadeTime ? sq((dur << 8) / mFadeTime) >> 8 : 255;
   setBrightness(mBright); // use mFade
