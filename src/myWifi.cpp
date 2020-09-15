@@ -1,14 +1,18 @@
 #include <myWifi.h>
 
 // ----------------------------------------------------
-void myWifi::stop()
+void myWifi::stop(const char* reason = nullptr)
 {
   WiFi.mode(WIFI_OFF);
   digitalWrite(BUILTIN_LED, HIGH); // led off
 
   mWantON = false;
   mON = false;
-  _log << "Wifi stop" << endl;
+  
+  _log << "Wifi stopped";
+  if (reason!=nullptr)
+    _log << " because of " << reason;
+  _log << endl;
 }
 
 void myWifi::start()
@@ -20,7 +24,25 @@ void myWifi::start()
   mON = false;
   mWantON = true;
 
-  _log << "Wifi start" << endl;
+  _log << "Wifi started" << endl;
+}
+
+bool myWifi::justConnected()
+{
+  if(millis() - mBegunOn < WIFI_TIMEOUT)
+  {
+    if(WiFi.status() == WL_CONNECTED)
+    {
+      _log << "Wifi connected, answer @ " << WiFi.localIP() << endl;
+      digitalWrite(BUILTIN_LED, LOW); // led on
+      mON = true;
+      return true;
+    }
+  }
+  else 
+    stop("timeout");
+
+  return false;
 }
 
 // ----------------------------------------------------
@@ -36,11 +58,11 @@ void myWifi::sendStripData()
 {
     for (byte i=0; i < mNStrips; i++)
     {
-      BaseLedStrip& strip = *mStrips[i];
-      int length = strip.getRawLength();
+      if (!mClient) return;
+      int length = mStrips[i]->getRawLength();
       mClient.write(length); 
       mClient.write(i); 
-      mClient.write(strip.getRawData(), length); 
+      mClient.write(mStrips[i]->getRawData(), length); 
     }
 }
 
@@ -67,38 +89,31 @@ void myWifi::socketUpdate()
     mIsClientConnected = mClient.connected();
 
     if (!mIsClientConnected)
-      mClient = mServer.available();
+      mClient = mServer.accept(); // it disconnects an already connected client
     else
       sendStripData();
 
     if (mIsClientConnected != mWasClientConnected)
     {
-      _log << "Socket client " << (mIsClientConnected ? "connected" : "disconnected") << endl;
       mWasClientConnected = mIsClientConnected;
+      _log << "Socket client ";
+      if (mIsClientConnected)
+        _log << "connected @ " << mClient.remoteIP() << ":" << mClient.remotePort() << endl;
+      else
+        _log << "disconnected" << endl;
     }
   }
 }
 
-// ----------------------------------------------------
+// --------------
 bool myWifi::update()
 {
   if(mWantON)
   {
     if(!mON)
     {
-      if(millis() - mBegunOn < WIFI_TIMEOUT)
-      {
-        if(WiFi.status() == WL_CONNECTED)
-        {
-          _log << "Wifi connected, answer @ " << WiFi.localIP() << endl;
-          digitalWrite(BUILTIN_LED, LOW); // led on
-
+      if (justConnected())
           socketInit();
-          mON = true;
-        }
-      }
-      else 
-        stop();
     }
     else
       socketUpdate();

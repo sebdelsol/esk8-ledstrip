@@ -1,11 +1,11 @@
 #pragma once
 
 #include <BluetoothSerial.h>
-#include <log.h>
 #include <Pins.h>
+#include <log.h>
 
-#define BT_TERMINAL_NAME "Esk8"
-#define AUTO_STOP_IF_NOTCONNECTED 30000 // duration before bluetooth autostop if not connected
+const char* const BT_SERVER_NAME = "Esk8";
+const long BT_TIMEOUT            = 30 * 1000; // sec before stopping non connected BT
 
 class BlueTooth
 {

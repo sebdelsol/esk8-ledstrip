@@ -23,7 +23,7 @@ void BlueTooth::onEvent(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
   {
     _log << "BT client DisConnected" << endl;
     mConnected = false;
-    mStartTime = millis() - (AUTO_STOP_IF_NOTCONNECTED / 2); // gives half the time to reconnect
+    mStartTime = millis() - (BT_TIMEOUT / 2); // gives half the time to reconnect
   }
 }
 
@@ -48,7 +48,7 @@ void BlueTooth::start(const bool on)
     digitalWrite(LIGHT_PIN, on ? HIGH : LOW); // faster feedbcack might be false
     if (on)
     {
-      mON = mBTSerial.begin(BT_TERMINAL_NAME);
+      mON = mBTSerial.begin(BT_SERVER_NAME);
       if (mON) mStartTime = millis();
     }
     else 
@@ -74,7 +74,7 @@ bool BlueTooth::isReady()
   {
     if (mConnected)
       return true;
-    else if(millis() - mStartTime > AUTO_STOP_IF_NOTCONNECTED)
+    else if(millis() - mStartTime > BT_TIMEOUT)
       start(false);
   }
   return false;

@@ -12,9 +12,7 @@
 // #define WIFI_password "****"
 #include <wificonfig.h>  
 
-#define WIFI_TIMEOUT 10000
-
-// using namespace websockets;
+const long WIFI_TIMEOUT = 10 * 1000; // sec before stopping non connected wifi
 
 class myWifi
 {
@@ -32,15 +30,16 @@ class myWifi
   BaseLedStrip* mStrips[MAXSTRIP];
   byte          mNStrips = 0;
 
-public:
-  void start();
-  void stop();
-  
   void socketInit();
   void socketUpdate();
-
-  void addStrip(const BaseLedStrip &strip);
   void sendStripData();
+  bool justConnected();
+
+public:
+  void start();
+  void stop(const char* reason);
+ 
+  void addStrip(const BaseLedStrip &strip);
   ForEachMethod(addStrip); // create a method addStrips(...) that calls addStrip on all args
 
   bool update();

@@ -2,8 +2,8 @@
 #define USE_OTA 
 // #define USE_TELNET 
 
+#define DEBUG_LED_TOWIFI
 // #define DEBUG_RASTER
-// #define DEBUG_LED_TOWIFI
 // #define DEBUG_LED_INFO
 
 #define USE_WIFI (defined(DEBUG_LED_TOWIFI) || defined(USE_OTA) || defined(USE_TELNET))
