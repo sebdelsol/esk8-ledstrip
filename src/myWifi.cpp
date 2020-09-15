@@ -90,7 +90,7 @@ bool myWifi::update()
       {
         if(WiFi.status() == WL_CONNECTED)
         {
-          _log << "Wifi connected, answser @ " << WiFi.localIP() << endl;
+          _log << "Wifi connected, answer @ " << WiFi.localIP() << endl;
           digitalWrite(BUILTIN_LED, LOW); // led on
 
           socketInit();
