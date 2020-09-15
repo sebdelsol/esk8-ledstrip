@@ -1,6 +1,6 @@
 #define USE_BT
 #define USE_OTA 
-// #define USE_TELNET 
+#define USE_TELNET 
 
 #define DEBUG_LED_TOWIFI
 // #define DEBUG_RASTER
