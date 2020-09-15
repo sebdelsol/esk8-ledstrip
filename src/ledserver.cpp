@@ -10,6 +10,7 @@ void LedServer::send()
 {
   byte i = 0;
   byte bright = mAllStrip->getRawBrightness();
+  
   for (auto strip : *mAllStrip)
   {
     int length = strip->getRawLength();

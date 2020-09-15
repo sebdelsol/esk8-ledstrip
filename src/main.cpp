@@ -1,7 +1,7 @@
 #define USE_BT
 #define USE_OTA 
 // #define USE_TELNET 
-#define USE_LEDSERVER
+// #define USE_LEDSERVER
 
 // #define DEBUG_RASTER
 // #define DEBUG_LED_INFO
