@@ -30,7 +30,7 @@
 // ----------------------------------------------------
 AllLedStrips::AllLedStrips() 
 #ifdef DBG_TIMEtoSHOW
-  : beginTime(millis())
+  : mBeginTime(millis())
 #endif
 {
   setBrightness(0);
@@ -40,11 +40,13 @@ AllLedStrips::AllLedStrips()
 
 void AllLedStrips::init() 
 {
-  AddVarCode ("dither",   mDither = args[0]; setDither(args[0]),     mDither, 0,   1);
-  AddVarCode ("maxmA",    mMaxmA  = args[0]; setMaxmA(args[0]),      mMaxmA,  100, 1000);
-  AddVarCode ("bright",   mBright = args[0]; setBrightness(args[0]), mBright, 1,   255);
-  AddBoolName("probe",    mProbe);
-  AddVarName ("minProbe", mMinProbe, 1, mMaxProbe);
+  AddVarCode ("dither",     mDither = args[0]; setDither(args[0]),     mDither, 0,   1);
+  AddVarCode ("maxmA",      mMaxmA  = args[0]; setMaxmA(args[0]),      mMaxmA,  100, 1000);
+  AddVarCode ("bright",     mBright = args[0]; setBrightness(args[0]), mBright, 1,   255);
+  AddVarName ("fadeTime",   mFadeTime, 500, 3000);
+  AddCmd     ("fadeIn",     mBeginTime = millis());
+  AddBoolName("probe",      mProbe);
+  AddVarName ("minProbe",   mMinProbe, 1, mMaxProbe);
 
   #ifdef FASTLED_CORE
     xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", FASTLED_STACK, nullptr, FASTLED_PRIO, &FastLEDshowTaskHandle, FASTLED_CORE);  
@@ -74,19 +76,20 @@ bool AllLedStrips::addStrip(BaseLedStrip &strip)
 
 void AllLedStrips::setBrightness(const byte bright) 
 { 
-  mRawBright = (bright * ((mFade >> 8) + 1)) >> 8; 
+  mRawBright = (bright * (mFade + 1)) >> 8; 
   FastLED.setBrightness(mRawBright); 
 };
 
 void AllLedStrips::update()
 {
-  #ifdef DBG_TIMEtoSHOW
-    if (!mHasbegun)
-    {
+  if (!mHasbegun)
+  {
+    #ifdef DBG_TIMEtoSHOW
       _log << "------\n>> Time to Start the show: " << millis() - beginTime << "ms" << endl << "------" << endl;
-      mHasbegun = true;
-    }
-  #endif
+    #endif
+    mHasbegun = true;
+    mBeginTime = millis();
+  }
 
   // update all strips
   ulong t = GET_MILLIS();
@@ -102,7 +105,9 @@ void AllLedStrips::update()
     int light = analogRead(LDR_PIN);
     mBright = map(light, mMinProbe, mMaxProbe, 255, 0); // the darker the light, the brighter the leds
   }
-  mFade = lerp16by16(mFade,  65535,  650);
+  
+  long dur = millis() - mBeginTime;
+  mFade =  dur < mFadeTime ? sq((dur << 8) / mFadeTime) >> 8 : 255;
   setBrightness(mBright); // use mFade
 
   // showing if dithering is off

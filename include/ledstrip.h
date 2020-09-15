@@ -41,20 +41,19 @@ class AllLedStrips : public OBJVar
   BaseLedStrip* mStrips[MAXSTRIP];
   byte          mNStrips  = 0;
 
-  ulong     mLastT    = 0;
-  bool      mDither   = true;
-  int       mMaxmA    = 800;
-  byte      mBright   = 255;  // half brightness (128) is enough & avoid reaching maxmA
-  byte      mRawBright = 0;   // with fade 
-  int       mFade     = 0;    // for the fade in
-  int       mMinProbe = 400;
-  const int mMaxProbe = 4095;
-  bool      mProbe    = false;
+  ulong     mLastT      = 0;
+  bool      mDither     = true;
+  int       mMaxmA      = 800;
+  byte      mBright     = 255; // half brightness (128) is enough & avoid reaching maxmA
+  byte      mRawBright  = 0;   // with fade 
+  int       mFade       = 0;   // for the fade in
+  int       mFadeTime   = 2000; // ms
+  int       mMinProbe   = 400;
+  const int mMaxProbe   = 4095;
+  bool      mProbe      = false;
 
-  #ifdef DBG_TIMEtoSHOW
-    bool    mHasbegun = false;
-    long    beginTime;
-  #endif
+  bool      mHasbegun   = false;
+  long      mBeginTime;
 
 public:
   AllLedStrips();
