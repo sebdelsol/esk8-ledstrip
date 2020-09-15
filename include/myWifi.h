@@ -1,6 +1,6 @@
 #pragma once
 
-#define NODEBUG_WEBSOCKETS
+// #define ARDUHAL_LOG_LEVEL ARDUHAL_LOG_LEVEL_NONE
 
 #include <WiFi.h>
 #include <ESPmDNS.h>

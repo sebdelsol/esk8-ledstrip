@@ -172,6 +172,7 @@ class Showled:
         while True:
             print 'connecting to %s:%d' % address
             self.sock = socket.socket() 
+            self.sock.settimeout(None)
             self.sock.connect(address)
             self.sock.settimeout(3)
             
