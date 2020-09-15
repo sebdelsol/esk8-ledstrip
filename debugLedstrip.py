@@ -29,11 +29,11 @@ class Pixel:
     def remanence(self, c, cd):
         return [(c[i] * REM + cd[i] * (1 - REM)) for i in range(3)]
 
-    def draw(self, color, screen):
+    def draw(self, color, screen, brightness):
         r, g, b = (e/255. for e in self.color)
         lum = math.sqrt( 0.299 * r**2 + 0.587 * g**2 + 0.114 * b**2 )
         
-        mul = 2 * (lum ** ((1. / GAMMA) - 1) if lum > 0 else 1)
+        mul = 2 * (lum ** ((1. / GAMMA) - 1) if lum > 0 else 1) * brightness / 255.
 
         color = [min(c * mul, 255) for c in color]
         self.color = self.remanence(self.color, color)
@@ -84,7 +84,7 @@ class Strip:
 
         self.running = True
 
-    def show(self, buf, length, strip): 
+    def show(self, buf, length, strip, brightness): 
         n = length / 3
         
         if self.n.get(strip, 0) != n:
@@ -96,7 +96,7 @@ class Strip:
                 
             for i, p in enumerate(self.pixels[strip]):
                 pos = i * 3
-                p.draw((buf[pos], buf[pos + 1], buf[pos + 2]), self.screen)
+                p.draw((buf[pos], buf[pos + 1], buf[pos + 2]), self.screen, brightness)
 
             if strip == len(self.n) - 1:
                 dt = time.time() - self.t
@@ -126,13 +126,13 @@ class Showled:
         return buf
 
     def recvMsg(self):
-        header = self.recv(2)
+        header = self.recv(3)
         if not header: return None
         
-        length, strip = struct.unpack('BB', header)
-        buf = self.recv(length)
+        length, strip, bright = struct.unpack('BBB', header)
+        buf = self.recv(length) if length > 0 else None
         
-        return buf, length, strip if buf else None
+        return buf, length, strip, bright if buf else None
 
     def onServerFound(self, address):
         strips = Strip()

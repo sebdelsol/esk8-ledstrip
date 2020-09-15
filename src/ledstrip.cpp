@@ -74,10 +74,9 @@ bool AllLedStrips::addStrip(BaseLedStrip &strip)
 
 void AllLedStrips::setBrightness(const byte bright) 
 { 
-  byte b = (bright * ((mFade >> 8) + 1)) >> 8; 
-  FastLED.setBrightness(b); 
+  mRawBright = (bright * ((mFade >> 8) + 1)) >> 8; 
+  FastLED.setBrightness(mRawBright); 
 };
-
 
 void AllLedStrips::update()
 {

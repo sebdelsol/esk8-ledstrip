@@ -1,3 +1,4 @@
+from __future__ import print_function
 import socket
 import time
 import re
@@ -27,8 +28,9 @@ def findServerAddr(callback):
     hostname = '%s.local' % hostname
     port = int(port)
 
-    print 'seek %s' % hostname
+    print ('seek %s...' % hostname, end='')
     try:
+        print('found')
         ip = socket.gethostbyname(hostname)
         callback((ip, port))
 

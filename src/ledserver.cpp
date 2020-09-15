@@ -1,22 +1,22 @@
 #include <ledserver.h>
 
-// --------------
-void LedServer::addStrip(const BaseLedStrip &strip)
+void LedServer::addAllStrips(AllLedStrips &allStrip)
 {
-  if (mNStrips < MAXSTRIP)
-    mStrips[mNStrips++] = (BaseLedStrip*)&strip;
+  mAllStrip = &allStrip;
 }
 
 // --------------
 void LedServer::send()
 {
-  for (byte i=0; i < mNStrips; i++)
+  byte i = 0;
+  byte bright = mAllStrip->getRawBrightness();
+  for (auto strip : *mAllStrip)
   {
-    if (!mClient) return;
-    int length = mStrips[i]->getRawLength();
+    int length = strip->getRawLength();
     mClient.write(length); 
-    mClient.write(i); 
-    mClient.write(mStrips[i]->getRawData(), length); 
+    mClient.write(i++); 
+    mClient.write(bright); 
+    mClient.write(strip->getRawData(), length); 
   }
 }
 

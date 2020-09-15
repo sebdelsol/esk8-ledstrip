@@ -40,12 +40,12 @@ class AllLedStrips : public OBJVar
 {
   BaseLedStrip* mStrips[MAXSTRIP];
   byte          mNStrips  = 0;
-  ArrayOfPtr_Iter(BaseLedStrip, mStrips, mNStrips); 
 
   ulong     mLastT    = 0;
   bool      mDither   = true;
   int       mMaxmA    = 800;
   byte      mBright   = 255;  // half brightness (128) is enough & avoid reaching maxmA
+  byte      mRawBright = 0;   // with fade 
   int       mFade     = 0;    // for the fade in
   int       mMinProbe = 400;
   const int mMaxProbe = 4095;
@@ -60,6 +60,8 @@ public:
   AllLedStrips();
   void init();
 
+  ArrayOfPtr_Iter(BaseLedStrip, mStrips, mNStrips); 
+  byte getRawBrightness() { return mRawBright; };
   void setBrightness(const byte bright);
   void setDither(const bool dither)     { FastLED.setDither(dither ? BINARY_DITHER : DISABLE_DITHER); };
   void setMaxmA(const int maxmA)        { FastLED.setMaxPowerInVoltsAndMilliamps(5, maxmA); };

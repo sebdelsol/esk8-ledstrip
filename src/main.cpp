@@ -128,7 +128,7 @@ void setup()
     MyWifi.start();
 
     #ifdef USE_LEDSERVER
-      LedServer.addStrips(StripM, StripR, StripF);
+      LedServer.addAllStrips(AllStrips);
     #endif
 
     #ifdef USE_TELNET

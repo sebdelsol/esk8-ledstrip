@@ -13,16 +13,13 @@ class LedServer
   bool mIsClientConnected  = false; 
   bool mWasClientConnected = false;
 
-  BaseLedStrip* mStrips[MAXSTRIP];
-  byte          mNStrips = 0;
+  AllLedStrips* mAllStrip;
 
   bool mHasBegun = false;
   void begin();
   void send();
 
 public:
-  void addStrip(const BaseLedStrip &strip);
-  ForEachMethod(addStrip); // create a method addStrips(...) that calls addStrip on all args
-
+  void addAllStrips(AllLedStrips &allStrip);
   bool update();
 };

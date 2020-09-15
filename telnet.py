@@ -47,3 +47,5 @@ class Log:
         Thread(target = findServerAddr, args = (callback, )).start()
 
 Log()
+while True:
+    time.sleep(1)
