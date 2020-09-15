@@ -25,7 +25,7 @@ bool AllObj::addObj(OBJVar& obj, const char* name)
   if (ok)
   {
     assert(name != nullptr); 
-    obj.setName(name); // string literals or already allocated
+    obj.setName(strdup(name)); // string literals or already allocated
 
     mOBJS[mNOBJ++] = &obj;
     mHash.add(&obj);
