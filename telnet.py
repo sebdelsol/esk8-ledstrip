@@ -26,7 +26,7 @@ class Log:
 
                     if buf is not None:
                         if len(buf) > 0 and buf[0] is not '\0':
-                            print buf[:-1]
+                            print buf[:-1] if buf[-1]=='\n' else buf
                     else:
                         connected = False
             
