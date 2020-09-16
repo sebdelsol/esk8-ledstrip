@@ -39,8 +39,7 @@ void LedServer::begin()
 // --------------
 bool LedServer::update()
 {
-  if (!mHasBegun)
-    begin();
+  if (!mHasBegun) begin();
   
   mConnected = mClient.connected();
 
