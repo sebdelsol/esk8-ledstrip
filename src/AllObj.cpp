@@ -25,6 +25,8 @@ bool AllObj::addObj(OBJVar& obj, const char* name)
   if (ok)
   {
     assert(name != nullptr); 
+    assert(strchr(name, ' ')==nullptr); // no space !
+    
     obj.setName(name); // string literals or already allocated
 
     mOBJS[mNOBJ++] = &obj;

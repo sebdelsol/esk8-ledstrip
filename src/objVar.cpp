@@ -2,7 +2,11 @@
 
 // ------------------------------
 MyVar::MyVar(const char* name, SetFunc* set, GetFunc* get, int min, int max, bool show) 
-: mName(name), mSetF(set), mGetF(get), mMin(min), mMax(max), mShow(show) {}
+: mName(name), mSetF(set), mGetF(get), mMin(min), mMax(max), mShow(show) 
+{
+  assert(name!=nullptr);
+  assert(strchr(name, ' ')==nullptr); // no space !
+}
 
 //----------------
 void MyVar::getRange(int& min, int& max)
