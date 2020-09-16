@@ -87,7 +87,7 @@ void AllLedStrips::update()
   }
 
   // update all strips
-  ulong t = GET_MILLIS();
+  ulong t = millis();
   ulong dt = mLastT ? t - mLastT : 1; // to prevent possible /0
   mLastT += dt;
 
