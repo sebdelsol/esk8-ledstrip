@@ -20,6 +20,6 @@ class LedServer
   void send();
 
 public:
-  void addAllStrips(AllLedStrips &allStrip);
+  void addAllStrips(AllLedStrips& allStrip);
   bool update();
 };

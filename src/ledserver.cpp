@@ -1,6 +1,6 @@
 #include <ledserver.h>
 
-void LedServer::addAllStrips(AllLedStrips &allStrip)
+void LedServer::addAllStrips(AllLedStrips& allStrip)
 {
   mAllStrip = &allStrip;
 }
