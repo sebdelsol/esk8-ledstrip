@@ -123,8 +123,7 @@ public:
 
   void addObjs(AllObj& allobj)
   {
-    for (auto fx : *this)
-      allobj.addObj(*fx, fx->getName());
+    for (auto fx : *this) allobj.addObj(*fx, fx->getName());
   };
 
   void showInfo()

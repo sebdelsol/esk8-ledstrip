@@ -53,8 +53,7 @@ void AllLedStrips::init()
 
 void AllLedStrips::addObjs(AllObj& allobj)
 {
-  for (auto strip : *this)
-    strip->addObjs(allobj);
+  for (auto strip : *this) strip->addObjs(allobj);
 }
 
 bool AllLedStrips::addStrip(BaseLedStrip &strip)
@@ -79,20 +78,21 @@ void AllLedStrips::setBrightness(const byte bright)
 
 void AllLedStrips::update()
 {
+  ulong time = millis();
+
   if (!mHasbegun)
   {
-    _log << "Time to show " << millis() - mBeginTime << "ms" << endl ;
-    mBeginTime = millis(); // for fadein
-    mHasbegun = true;
+    _log << "Time to show " << time - mBeginTime << "ms" << endl ;
+    mBeginTime = time; // for fadein
+    mLastT     = time; // for dt
+    mHasbegun  = true;
   }
 
   // update all strips
-  ulong t = millis();
-  ulong dt = mLastT ? t - mLastT : 1; // to prevent possible /0
+  ulong dt = constrain(time - mLastT, 1, 100); // avoid /0 or too big dt
   mLastT += dt;
 
-  for (auto strip : *this)
-    strip->update(t, dt);
+  for (auto strip : *this) strip->update(time, dt);
 
   // read probe and adjust brightness
   if(mProbe)
@@ -102,7 +102,7 @@ void AllLedStrips::update()
   }
   
   // fadein
-  long dur = millis() - mBeginTime;
+  long dur = time - mBeginTime;
   mFade =  dur < mFadeTime ? sq((dur << 8) / mFadeTime) >> 8 : 255;
   setBrightness(mBright); // use mFade
 
@@ -120,8 +120,7 @@ bool AllLedStrips::doDither()
 void AllLedStrips::showInfo()
 {
   _log << "FPS " << FastLED.getFPS() << endl;
-  for (auto strip : *this)
-    strip->showInfo();
+  for (auto strip : *this) strip->showInfo();
 }
 
 void AllLedStrips::show() 
