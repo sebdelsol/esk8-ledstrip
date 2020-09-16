@@ -216,14 +216,14 @@ void AllObj::readCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode d
 }
 
 //----------------
-void AllObj::sendCmdForAllVars(Stream& stream, const char* cmdKeyword, TrackChange trackChange, Decode decode, MyVar::TestFunc testVar)
+void AllObj::sendCmdForAllVars(Stream& stream, const char* cmdKeyword, TrackChange trackChange, Decode decode, MyVar::TestFunc test)
 {
   for (auto obj : *this)
   {
     const char* objName = obj->getName();
     for (auto var : *obj)
     {
-      if(testVar == nullptr || (var->*testVar)())
+      if(test == nullptr || (var->*test)())
       {
         // write a cmd in mTmpBuf
         snprintf(mTmpBuf.getBuf(), mTmpBuf.getLen(), "%s %s %s", cmdKeyword, objName, var->getName()); 

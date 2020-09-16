@@ -62,7 +62,7 @@ class AllObj
   
 protected:
   void readCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode decode);
-  void sendCmdForAllVars(Stream& stream, const char* cmdKeyword, TrackChange trackChange, Decode decode, MyVar::TestFunc testVar = nullptr);
+  void sendCmdForAllVars(Stream& stream, const char* cmdKeyword, TrackChange trackChange, Decode decode, MyVar::TestFunc test = nullptr);
 
 public:
   void init();
