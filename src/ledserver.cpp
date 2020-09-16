@@ -27,11 +27,11 @@ void LedServer::begin()
   mServer.begin();
 
   // OTA_NAME & OTA_PORT are shared by OTA and the webSocket server, check platformio build_flags
-  _log << "Socket server, answer @ " << OTA_NAME << ".local:" << OTA_PORT << endl;
   if (MDNS.begin(OTA_NAME))
+  {
     MDNS.enableArduino(OTA_PORT, false); // no auth
-  else
-    _log << "mDNS Error !" << endl;
+    _log << "Socket server, answer @ " << OTA_NAME << ".local:" << OTA_PORT << endl;
+  }
   
   mHasBegun = true;
 }
@@ -42,22 +42,18 @@ bool LedServer::update()
   if (!mHasBegun)
     begin();
   
-  mIsClientConnected = mClient.connected();
+  mConnected = mClient.connected();
 
-  if (!mIsClientConnected)
+  if (!mConnected)
     mClient = mServer.accept(); // it disconnects an already connected client
   else
     send();
 
-  if (mIsClientConnected != mWasClientConnected)
+  if (mConnected != mWasConnected)
   {
-    mWasClientConnected = mIsClientConnected;
-    _log << "Socket client ";
-    if (mIsClientConnected)
-      _log << "connected @ " << mClient.remoteIP() << ":" << mClient.remotePort() << endl;
-    else
-      _log << "disconnected" << endl;
+    mWasConnected = mConnected;
+    _log << "Socket client " << (mConnected ? "connected" : "disconnected") << endl;
   }
 
-  return mIsClientConnected;
+  return mConnected;
 }

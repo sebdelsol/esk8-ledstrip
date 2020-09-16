@@ -10,8 +10,8 @@ class LedServer
   WiFiServer mServer = WiFiServer(OTA_PORT);
   WiFiClient mClient;
 
-  bool mIsClientConnected  = false; 
-  bool mWasClientConnected = false;
+  bool mConnected  = false; 
+  bool mWasConnected = false;
 
   AllLedStrips* mAllStrip;
 

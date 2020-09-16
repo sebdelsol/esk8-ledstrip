@@ -156,22 +156,21 @@ inline void loopWifi()
 #if USE_WIFI
   EVERY_N_MILLISECONDS(WIFI_TICK) if(MyWifi.update())
   {
-    bool socketClient = false;
+    bool isClient = false;
 
     #ifdef USE_TELNET
       Telnet.handle();
-      socketClient |= Telnet.isClientConnected();
+      isClient |= Telnet.isClientConnected();
     #endif
 
     #ifdef USE_LEDSERVER
-      socketClient |= LedServer.update();
+      isClient |= LedServer.update();
     #endif
 
     #ifdef USE_OTA
       // ota crash when other socket clients are connected
-      if (!socketClient) Ota.update();
+      if (!isClient) Ota.update();
     #endif
-
   }
   Raster.add("Wifi");
 #endif
