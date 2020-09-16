@@ -6,8 +6,9 @@ import socket
 import time
 import traceback
 
-print ('           TELNET')
-print ('---------------------------')
+sep = '-' * 30
+print('TELNET')
+print(sep)
 
 def onServerFound(address):
 
@@ -19,9 +20,11 @@ def onServerFound(address):
         sock.settimeout(None)
         sock.connect(address)
         sock.settimeout(3)
-        print('---------------------------')
-        
         connected = True
+
+        print(sep)
+        print('\n')
+        
         while connected:
             try:
                 buf = sock.recv(4096)
@@ -36,9 +39,11 @@ def onServerFound(address):
                 #traceback.print_exc()
                 connected = False
         
-        print('\n---------------------------')
-        print('disconnected')
         sock.close()
+
+        print ('\n')
+        print(sep)
+        print('disconnected')
 
 Thread(target = findServerAddr, args = (onServerFound, )).start()
 while True: time.sleep(1)
