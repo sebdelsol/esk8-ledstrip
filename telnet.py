@@ -1,7 +1,6 @@
 from __future__ import print_function
 from tools import findServerAddr
 from threading import Thread
-import struct
 import socket
 import time
 import traceback
