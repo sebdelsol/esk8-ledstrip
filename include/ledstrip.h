@@ -108,9 +108,9 @@ public:
 
       char* fxname = (char *)malloc(strlen(mName) + strlen(name) + 2);
       assert(fxname != nullptr);
-      sprintf(fxname, "%s.%s", mName, name);
-
+      sprintf(fxname, "%s.%s", mName, name); // fxname is strip.fx
       fx.setName(fxname);
+
       fx.init(NLEDS);
     }
     else
