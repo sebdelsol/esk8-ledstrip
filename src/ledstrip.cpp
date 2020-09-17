@@ -56,7 +56,7 @@ void AllLedStrips::addObjs(AllObj& allobj)
   for (auto strip : *this) strip->addObjs(allobj);
 }
 
-bool AllLedStrips::addStrip(BaseLedStrip &strip)
+bool AllLedStrips::addStrip(BaseLedStrip& strip)
 {
   bool ok = mNStrips < MAXSTRIP;
   if (ok)
