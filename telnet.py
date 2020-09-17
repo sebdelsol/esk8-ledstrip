@@ -29,7 +29,7 @@ def onServerFound(address):
                 buf = sock.recv(4096)
 
                 if buf is not None:
-                    if buf[0] is not '\0': # keep-alive
+                    if len(buf) > 0 and buf[0] is not '\0': # keep-alive
                         print(buf, end='') # '\n' already in buf
                 else:
                     connected = False
