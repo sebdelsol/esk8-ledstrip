@@ -136,33 +136,39 @@ class Showled:
 
     def onServerFound(self, address):
         strips = Strip()
-        
-        while True:
-            print 'connecting to %s:%d' % address
-            self.sock = socket.socket() 
-            self.sock.settimeout(None)
-            self.sock.connect(address)
-            self.sock.settimeout(3)
-            
-            connected = True
-            while connected:
-                try:
-                    msg = self.recvMsg()
-                    if msg is not None:
-                        strips.show(*msg)
-                    else:
+        try:
+            while True:
+                self.sock = socket.socket() 
+                self.sock.settimeout(10)
+                self.sock.connect(address)
+                print 'connected to %s:%d' % address
+                self.sock.settimeout(3)
+                
+                connected = True
+                while connected:
+                    try:
+                        msg = self.recvMsg()
+                        if msg is not None:
+                            strips.show(*msg)
+                        else:
+                            connected = False
+                    
+                    except socket.timeout:
+                        # traceback.print_exc()
                         connected = False
                 
-                except socket.timeout:
-                    # traceback.print_exc()
-                    connected = False
-            
-            print 'disconnected'
+                print 'disconnected'
+                self.sock.close()
+        except :
+            #traceback.print_exc()
             self.sock.close()
+            time.sleep(2)
+
 
     def __init__(self):
         callback = lambda addr : self.onServerFound(addr)
         Thread(target = findServerAddr, args = (callback, )).start()
+        while True: time.sleep(1)
 
 #-----------
 Showled() 
