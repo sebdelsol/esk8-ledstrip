@@ -7,6 +7,7 @@
 #include <log.h>
 #include <Pins.h>
 #include <ObjVar.h>
+#include <Variadic.h>
 
 #define MPU6050_INCLUDE_DMP_MOTIONAPPS20 // so that all dmp functions are included
 #include <MPU6050.h>
@@ -45,8 +46,9 @@ class MPU : public OBJVar, public MPU6050
   bool        mHasBegun = false;
 
   uint8_t*    mFifoBuffer; 
+  ulong       mT = 0;     // µs
+  ulong       mdt = 1000; // µs
 
-  ulong       mT = 0;
   Quaternion  mQuat;      // quat from dmp fifobuffer
   VectorInt16 mW;         // gyro 
   VectorInt16 mAcc;       // accel 
@@ -65,10 +67,12 @@ class MPU : public OBJVar, public MPU6050
 public:
   SensorOutput  mOutput; // public outpout
 
-  void init();
-  void begin();
+  // for mpu task
   void calibrate();
   bool getFiFoPacket();
   void compute(SensorOutput& output);
+
+  void init();
+  void begin();
   void update();
 };

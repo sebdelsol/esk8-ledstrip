@@ -12,9 +12,9 @@
   SemaphoreHandle_t   OutputMutex;
   EventGroupHandle_t  FlagReady;
   TaskHandle_t        NotifyToCalibrate;
-  SensorOutput        SharedOutput; // shared with update so that the mutex is barely taken by MPUGetTask
+  SensorOutput        SharedOutput; // shared with update so that the mutex is barely taken by MPUComputeTask
 
-  void MPUGetTask(void* _mpu)
+  void MPUComputeTask(void* _mpu)
   {
     MPU*          mpu = (MPU* )_mpu;
     SensorOutput  taskOutput; //output to store computation
@@ -22,8 +22,6 @@
 
     for (;;) // forever
     {
-      vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(10)); // a packet every 10ms 
-      
       if(mpu->getFiFoPacket())
       {
         mpu->compute(taskOutput);
@@ -37,6 +35,9 @@
         if(ulTaskNotifyTake(pdTRUE, 0)) // pool the the task semaphore
           mpu->calibrate();
       }
+
+      // should got a packet every 10ms
+      vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(10)); 
     }
   }
 #endif
@@ -55,8 +56,8 @@ void MPU::init()
   #ifdef MPU_GET_CORE
     OutputMutex = xSemaphoreCreateMutex();
     FlagReady = xEventGroupCreate();
-    xTaskCreatePinnedToCore(MPUGetTask, "mpuTask", MPU_GET_STACK, this, MPU_GET_PRIO, &NotifyToCalibrate, MPU_GET_CORE);  
-    _log << "Mpu runs on Core " << MPU_GET_CORE << " with Prio " << MPU_GET_PRIO << endl;
+    xTaskCreatePinnedToCore(MPUComputeTask, "mpuTask", MPU_GET_STACK, this, MPU_GET_PRIO, &NotifyToCalibrate, MPU_GET_CORE);  
+    _log << _FMT("Mpu runs on Core % with Prio %", MPU_GET_CORE, MPU_GET_PRIO) << endl;
 
     AddCmd("calibrate",  xTaskNotifyGive(NotifyToCalibrate) ) // trigger a calibration
   #else
@@ -97,13 +98,8 @@ bool MPU::setOffsets()
 void MPU::printOffsets(const __FlashStringHelper* txt)
 {
   _log << txt << endl;
-  _log << F("Acc Offset: \tx ") << getXAccelOffset() << F("\ty ") << getYAccelOffset() << F("\tz ") << getZAccelOffset() << endl;
-  _log << F("Gyr Offset: \tx ") << getXGyroOffset()  << F("\ty ") << getYGyroOffset()  << F("\tz ") << getZGyroOffset()  << endl;
-}
-
-bool MPU::getFiFoPacket() 
-{ 
-  return mDmpReady && dmpGetCurrentFIFOPacket(mFifoBuffer); 
+  _log << F("Acc Offset: ") << SpaceIt(_WIDTH(getXAccelOffset(), 6), _WIDTH(getYAccelOffset(), 6), _WIDTH(getZAccelOffset(), 6)) << endl;
+  _log << F("Gyr Offset: ") << SpaceIt(_WIDTH(getXGyroOffset(), 6),  _WIDTH(getYGyroOffset(), 6),  _WIDTH(getZGyroOffset(), 6))  << endl;
 }
 
 //--------------------------------------
@@ -131,7 +127,7 @@ void MPU::begin()
   else // error
   {
     const __FlashStringHelper* error =  devStatus == 1 ? F("initial memory load") : (devStatus == 2 ? F("DMP configuration updates") : F("unknown"));
-    _log << F("DMP ERROR #") << devStatus << F(" : ") << error << F(" failure") << endl;
+    _log << _FMT(F("DMP ERROR #% : % failure"), devStatus, error) << endl;
   }
 }
 
@@ -154,15 +150,25 @@ void MPU::getAxiSAngle(VectorInt16& v, int& angle, Quaternion& q)
 }
 
 //--------------------------------------
+bool MPU::getFiFoPacket() 
+{ 
+  ulong dt = micros() - mT; // best place to get the actual dt if called right after the delay function
+
+  if (mDmpReady && dmpGetCurrentFIFOPacket(mFifoBuffer))
+  {
+    mdt = dt;
+    mT += dt;
+    return true; 
+  }
+  return false;
+}
+
+//--------------------------------------
 #define STAYS_SHORT(x) constrain(x, -32768, 32767)
 #define SHIFTR_VECTOR(v, n) v.x = v.x >> n;   v.y = v.y >> n;   v.z = v.z >> n; 
 
 void MPU::compute(SensorOutput& output)
 {
-  ulong t = micros();
-  ulong dt = t - mT;
-  mT = t;
-
   dmpGetQuaternion(&mQuat, mFifoBuffer);
   dmpGetGyro(&mW, mFifoBuffer);
   #ifdef USE_V6_12
@@ -181,7 +187,7 @@ void MPU::compute(SensorOutput& output)
   dmpGetLinearAccel(&mAccReal, &mAcc, &mGrav);
 
   // smooth acc & gyro
-  uint16_t smooth = - int(pow(1. - ACCEL_AVG, dt * ACCEL_BASE_FREQ * .000001) * 65536.); // 1 - (1-accel_avg) ^ (dt * 60 / 1000 000) using fract16
+  uint16_t smooth = - int(pow(1. - ACCEL_AVG, mdt * ACCEL_BASE_FREQ * .000001) * 65536.); // 1 - (1-accel_avg) ^ (dt * 60 / 1000 000) using fract16
   output.accX =  lerp15by16(output.accX,  STAYS_SHORT(mAccReal.x),  smooth);
   output.accY =  lerp15by16(output.accY,  STAYS_SHORT(mAccReal.y),  smooth);
   output.accZ =  lerp15by16(output.accZ,  STAYS_SHORT(mAccReal.z),  smooth);
@@ -189,13 +195,13 @@ void MPU::compute(SensorOutput& output)
   output.updated = true;
 
   #ifdef MPU_DBG
-    _log << "[ dt "   << dt*.001 << "ms\t smooth" << smooth/65536. << "\t Wz "  << output.wZ  << "]\t ";
-    _log << "[ gyr "  << mW.x << "\t "            << mW.y << "\t "              << mW.z << "\t ";
-    _log << "[ grav " << mGrav.x << "\t "         << mGrav.y << "\t "           << mGrav.z << "]\t ";
-    _log << "[ avg "  << output.accX << "\t "     << output.accY << "\t "       << output.accZ << "]\t ";
-    _log << "[ acc "  << mAcc.x << "\t "          << mAcc.y << "\t "            << mAcc.z << "]\t ";
-    _log << "[ real " << mAccReal.x << "\t "      << mAccReal.y << "\t "        << mAccReal.z << "]\t ";
-    _log << endl;
+    _log << "[ dt "   << _FLOATW(mdt * .001, 2, 6) << "ms - smooth " << _FLOATW(smooth / 65536., 2,  6) << "  - Wz "  << _WIDTH(output.wZ, 6) << "] ";
+    _log << "[ gyr "  << SpaceIt( _WIDTH(mW.x, 4),        _WIDTH(mW.y, 4),        _WIDTH(mW.z, 4))        << "] ";
+    _log << "[ grav " << SpaceIt( _FLOATW(mGrav.x, 2, 6), _FLOATW(mGrav.y, 2, 6), _FLOATW(mGrav.z, 2, 6))     << "] ";
+    _log << "[ avg "  << SpaceIt( _WIDTH(output.accX, 6), _WIDTH(output.accY, 6), _WIDTH(output.accZ, 6)) << "] ";
+    _log << "[ acc "  << SpaceIt( _WIDTH(mAcc.x, 6),      _WIDTH(mAcc.y, 6),      _WIDTH(mAcc.z, 6))      << "] ";
+    _log << "[ real " << SpaceIt( _WIDTH(mAccReal.x, 6),  _WIDTH(mAccReal.y, 6),  _WIDTH(mAccReal.z, 6))  << "] ";
+    _log << "\r";
   #endif
 }
 
