@@ -14,7 +14,6 @@ struct Raster
   int  n;                                                                                                       
   long start;                                                                                                 
   long lastEnd;  
-  char fnumber[10];                                   
 
   inline void begin()
   {
@@ -34,23 +33,20 @@ struct Raster
       _log << ">> ERROR !! Max Raster reached "  << n << endl;
   };
 
-  inline char* printnb(long n)
-  {
-    snprintf(fnumber, 6, "%4d", n);
-    return fnumber;
-  };
-
   inline void end()
   {
     long end = micros();                                                                                                   
-    _log << "LOOP "  << printnb(end - lastEnd) << "µs";                                                                    
-    lastEnd = end;
-
-    _log << " - TOTAL " << printnb(end - start) << "µs";                                                                  
+    _log << "Free " << _FLOATW(ESP.getFreeHeap() / 1024., 4, 8) << " kB";
+    _log << " - Loop "  << _WIDTH(end - lastEnd, 6) << "µs";                                                                    
+    _log << " - rasters " << _WIDTH(end - start, 5) << "µs";                                                                  
     for (byte i=0; i < n; i++)
-      _log << "  - " << r[i].name << " " << printnb(r[i].time - (i==0 ? start : r[i-1].time)) << "µs"; 
-    
-    _log << "    - free Heap " << _FLOAT(ESP.getFreeHeap() / 1024., 4) << " kB" << "\r   ";
+    {
+      _log << "  - " << r[i].name << " " << _WIDTH(r[i].time - start, 5) << "µs"; 
+      start = r[i].time;
+    }
+    // _log << "\r";
+    _log << endl;
+    lastEnd = end;
   };
 
 #else

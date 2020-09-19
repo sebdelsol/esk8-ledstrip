@@ -91,9 +91,9 @@ void setup()
   // -- log
   Serial.begin(SERIAL_BAUD);
   _log << "\n---------\n- START -\n---------\n";
-  _log << "ESP32 " << esp_get_idf_version() << endl;
-  _log << "CPU runs @ " << getCpuFrequencyMhz() << "MHz" << endl;
-  _log << "Main runs on Core " << xPortGetCoreID() << endl;
+  _log << _FMT("ESP32 %", esp_get_idf_version()) << endl;
+  _log << _FMT("CPU runs @ % MHz", getCpuFrequencyMhz()) << endl;
+  _log << _FMT("Main runs on Core %", xPortGetCoreID()) << endl;
 
   // -- main inits
   AllStrips.init();
