@@ -258,3 +258,27 @@ void AllObj::save(CfgType cfgtype)
       sendCmdForAllVars(f.getStream(), CMD_GET, TrackChange::undefined, Decode::verbose); 
   }
 }
+
+//----------------
+CfgFile::CfgFile(CfgType cfgtype, FileMode mode)
+{
+  bool isdef = cfgtype == CfgType::Default;
+  isloading = mode == FileMode::load; 
+  
+  const char* fname = isdef ? CFG_DEFAULT : CFG_CURRENT;
+  f = SPIFFS.open(fname, isloading ? "r" : "w");
+
+  if (f)
+    _log << (isloading ? "Loading from " : "Saving to ") << fname << "...";
+  else
+    _log << "FAIL to " << (isloading ? "load from " : "save to ") << fname << endl;
+};
+
+CfgFile::~CfgFile()
+{
+  if (f)
+  {
+    f.close();
+    _log << (isloading ? "loaded" : "saved") << endl;
+  }
+}

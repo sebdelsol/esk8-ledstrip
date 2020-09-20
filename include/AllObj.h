@@ -81,28 +81,8 @@ class CfgFile
   bool  isloading;
 
 public:
-  CfgFile(CfgType cfgtype, FileMode mode)
-  {
-    bool isdef = cfgtype == CfgType::Default;
-    isloading = mode == FileMode::load; 
-    
-    const char* fname = isdef ? CFG_DEFAULT : CFG_CURRENT;
-    f = SPIFFS.open(fname, isloading ? "r" : "w");
-
-    if (f)
-      _log << (isloading ? "Loading from " : "Saving to ") << fname << "...";
-    else
-      _log << "FAIL to " << (isloading ? "load from " : "save to ") << fname << endl;
-  };
-
-  ~CfgFile()
-  {
-    if (f)
-    {
-      f.close();
-      _log << (isloading ? "loaded" : "saved") << endl;
-    }
-  }
+  CfgFile(CfgType cfgtype, FileMode mode);
+  ~CfgFile();
 
   Stream& getStream() { return (Stream&)f; };
   bool    isOk()      { return f ? true : false; };
