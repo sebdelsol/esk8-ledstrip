@@ -16,7 +16,7 @@
 
   void MPUComputeTask(void* _mpu)
   {
-    MPU*          mpu = (MPU* )_mpu;
+    MPU*          mpu = (MPU*) _mpu;
     SensorOutput  taskOutput; //output to store computation
     TickType_t    lastWakeTime = xTaskGetTickCount();
 
@@ -47,7 +47,6 @@ void MPU::init()
 {
   // save calibration
   #define AddOffset(var)     AddVarHid(var, -32768, 32767)
-  
   AddOffset(mXGyroOffset);   AddOffset(mYGyroOffset);  AddOffset(mZGyroOffset);
   AddOffset(mXAccelOffset);  AddOffset(mYAccelOffset); AddOffset(mZAccelOffset);
   
