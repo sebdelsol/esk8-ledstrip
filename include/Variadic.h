@@ -16,7 +16,7 @@
 #define NameIt(...)      ForEachMacro(_nameit, _nameitLast, __VA_ARGS__)
 
 // create SpaceIt(...) // need @least one args...
-#define _join(txt)       txt << " " <<
+#define _join(txt)       txt << F(" ") <<
 #define _joinLast(txt)   txt
 #define SpaceIt(...)     ForEachMacro(_join, _joinLast, __VA_ARGS__)
 
