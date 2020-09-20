@@ -54,8 +54,8 @@ void MPU::init()
   
   #ifdef MPU_GET_CORE
     xTaskCreatePinnedToCore(MPUComputeTask, "mpuTask", MPU_GET_STACK, this, MPU_GET_PRIO, &NotifyToCalibrate, MPU_GET_CORE);  
-    _log << _FMT("Mpu runs on Core % with Prio %", MPU_GET_CORE, MPU_GET_PRIO) << endl;
     AddCmd("calibrate",  xTaskNotifyGive(NotifyToCalibrate) ) // trigger a calibration
+    _log << _FMT("Mpu runs on Core % with Prio %", MPU_GET_CORE, MPU_GET_PRIO) << endl;
 
   #else
     AddCmd("calibrate",  calibrate() ) 
