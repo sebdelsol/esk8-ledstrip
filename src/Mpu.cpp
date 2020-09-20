@@ -9,8 +9,8 @@
 
 //--------------------------------------
 #ifdef MPU_GET_CORE
-  SemaphoreHandle_t   OutputMutex;
-  EventGroupHandle_t  FlagReady;
+  SemaphoreHandle_t   OutputMutex = xSemaphoreCreateMutex();
+  EventGroupHandle_t  FlagReady = xEventGroupCreate();
   TaskHandle_t        NotifyToCalibrate;
   SensorOutput        SharedOutput; // shared with update so that the mutex is barely taken by MPUComputeTask
 
@@ -53,12 +53,10 @@ void MPU::init()
   AddBoolNameHid("gotOffset", mGotOffset);
   
   #ifdef MPU_GET_CORE
-    OutputMutex = xSemaphoreCreateMutex();
-    FlagReady = xEventGroupCreate();
     xTaskCreatePinnedToCore(MPUComputeTask, "mpuTask", MPU_GET_STACK, this, MPU_GET_PRIO, &NotifyToCalibrate, MPU_GET_CORE);  
     _log << _FMT("Mpu runs on Core % with Prio %", MPU_GET_CORE, MPU_GET_PRIO) << endl;
-
     AddCmd("calibrate",  xTaskNotifyGive(NotifyToCalibrate) ) // trigger a calibration
+
   #else
     AddCmd("calibrate",  calibrate() ) 
   #endif
