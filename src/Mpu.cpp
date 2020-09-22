@@ -192,9 +192,9 @@ void MPU::compute(SensorOutput& output)
   output.updated = true;
 
   #ifdef MPU_DBG
-    _log << "[ dt "   << _FLOATW(mdt * .001, 2, 6) << "ms - smooth " << _FLOATW(smooth / 65536., 2,  6) << "  - Wz "  << _WIDTH(output.wZ, 6) << "] ";
+    _log << "[ dt "   << _WIDTH(mdt * .001, 6) << "ms - smooth " << _WIDTH(smooth / 65536.,  6) << "  - Wz "  << _WIDTH(output.wZ, 6) << "] ";
     _log << "[ gyr "  << SpaceIt( _WIDTH(mW.x, 4),        _WIDTH(mW.y, 4),        _WIDTH(mW.z, 4))        << "] ";
-    _log << "[ grav " << SpaceIt( _FLOATW(mGrav.x, 2, 6), _FLOATW(mGrav.y, 2, 6), _FLOATW(mGrav.z, 2, 6))     << "] ";
+    _log << "[ grav " << SpaceIt( _WIDTH(mGrav.x, 6),     _WIDTH(mGrav.y, 6),     _WIDTH(mGrav.z, 6))     << "] ";
     _log << "[ avg "  << SpaceIt( _WIDTH(output.accX, 6), _WIDTH(output.accY, 6), _WIDTH(output.accZ, 6)) << "] ";
     _log << "[ acc "  << SpaceIt( _WIDTH(mAcc.x, 6),      _WIDTH(mAcc.y, 6),      _WIDTH(mAcc.z, 6))      << "] ";
     _log << "[ real " << SpaceIt( _WIDTH(mAccReal.x, 6),  _WIDTH(mAccReal.y, 6),  _WIDTH(mAccReal.z, 6))  << "] ";
