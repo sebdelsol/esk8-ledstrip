@@ -262,7 +262,7 @@ void AllObj::save(CfgType cfgtype)
   }
 }
 
-//----------------
+//--------------------------------------------------------------------------
 CfgFile::CfgFile(CfgType cfgtype, FileMode mode, MyNvs& nvs) : mNVS(nvs)
 {
   fname = cfgtype == CfgType::Default ? CFG_DEFAULT : CFG_CURRENT;
@@ -276,6 +276,7 @@ CfgFile::CfgFile(CfgType cfgtype, FileMode mode, MyNvs& nvs) : mNVS(nvs)
     _log << "FAIL to " << (isloading ? "load from " : "save to ") << fname << endl;
 };
 
+//----------------
 CfgFile::~CfgFile()
 {
   if (f)
@@ -288,6 +289,7 @@ CfgFile::~CfgFile()
   }
 }
 
+//----------------
 uint32_t CfgFile::getCRC()
 {
   CRC32 crc;
@@ -299,6 +301,7 @@ uint32_t CfgFile::getCRC()
   return crc.finalize();
 }
 
+//----------------
 void CfgFile::handleCRC()
 {
   if (mNVS.isOK())
@@ -306,33 +309,17 @@ void CfgFile::handleCRC()
     f = SPIFFS.open(fname, "r");
     if (f)
     {
-      _log << "crc...";
+      uint32_t oldcrc;
       uint32_t crc = getCRC();
 
-      if (isloading)
+      if (isloading && mNVS.getuint32(fname, oldcrc))
       {
-        uint32_t oldcrc;
-        if (mNVS.getuint32(fname, oldcrc))
-        {
-          if (crc != oldcrc)
-          {
-            _log << "BAD, delete the file";
-            SPIFFS.remove(fname); // remove it !
-          }
-          else
-            _log << "ok";
-        }
-        else
-        {
-          _log << "doesn't exist yet...set";
-          mNVS.setuint32(fname, crc);
-        }
+        bool corrupted = crc != oldcrc;
+        _log << "check crc..." << (corrupted ? "BAD, delete the file" : "ok");
+        if (corrupted) SPIFFS.remove(fname); // remove the file !
       }
       else
-      {
-        _log << "set";
-        mNVS.setuint32(fname, crc);
-      }
+        _log << "set crc..." << ( mNVS.setuint32(fname, crc) ? "ok" : "failed" );
 
       f.close();
     }
