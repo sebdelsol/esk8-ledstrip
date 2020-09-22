@@ -1,8 +1,11 @@
+
 #include <AllObj.h>
 
 //--------------------------------------
 void AllObj::init()
 {
+  mNVS.begin("storage");
+
   _log << "Mount SPIFFS" << endl;
   spiffsOK = SPIFFS.begin(true); // format if failed
   if (!spiffsOK)
@@ -240,7 +243,7 @@ void AllObj::load(CfgType cfgtype, TrackChange trackChange)
 {
   if (spiffsOK)
   {
-    CfgFile f = CfgFile(cfgtype, FileMode::load);
+    CfgFile f = CfgFile(cfgtype, FileMode::load, mNVS);
     if (f.isOk())
       // should be a succession of set cmd
       readCmd(f.getStream(), mTmpBuf, trackChange, Decode::undefined); 
@@ -252,7 +255,7 @@ void AllObj::save(CfgType cfgtype)
 {
   if (spiffsOK)
   {
-    CfgFile f = CfgFile(cfgtype, FileMode::save);
+    CfgFile f = CfgFile(cfgtype, FileMode::save, mNVS);
     if (f.isOk())
       // for all vars, send a get cmd & output the result in the file stream
       sendCmdForAllVars(f.getStream(), CMD_GET, TrackChange::undefined, Decode::verbose); 
@@ -260,12 +263,11 @@ void AllObj::save(CfgType cfgtype)
 }
 
 //----------------
-CfgFile::CfgFile(CfgType cfgtype, FileMode mode)
+CfgFile::CfgFile(CfgType cfgtype, FileMode mode, MyNvs& nvs) : mNVS(nvs)
 {
-  bool isdef = cfgtype == CfgType::Default;
+  fname = cfgtype == CfgType::Default ? CFG_DEFAULT : CFG_CURRENT;
   isloading = mode == FileMode::load; 
-  
-  const char* fname = isdef ? CFG_DEFAULT : CFG_CURRENT;
+
   f = SPIFFS.open(fname, isloading ? "r" : "w");
 
   if (f)
@@ -279,6 +281,61 @@ CfgFile::~CfgFile()
   if (f)
   {
     f.close();
-    _log << (isloading ? "loaded" : "saved") << endl;
+
+    _log << (isloading ? "loaded" : "saved") << "...";
+    handleCRC();
+    _log << endl;
   }
 }
+
+uint32_t CfgFile::getCRC()
+{
+  CRC32 crc;
+  size_t size = f.size();
+
+  for (size_t i = 0; i < size; i++)
+    crc.update(f.read());
+  
+  return crc.finalize();
+}
+
+void CfgFile::handleCRC()
+{
+  if (mNVS.isOK())
+  {
+    f = SPIFFS.open(fname, "r");
+    if (f)
+    {
+      _log << "crc...";
+      uint32_t crc = getCRC();
+
+      if (isloading)
+      {
+        uint32_t oldcrc;
+        if (mNVS.getuint32(fname, oldcrc))
+        {
+          if (crc != oldcrc)
+          {
+            _log << "BAD, delete the file";
+            SPIFFS.remove(fname); // remove it !
+          }
+          else
+            _log << "ok";
+        }
+        else
+        {
+          _log << "doesn't exist yet...set";
+          mNVS.setuint32(fname, crc);
+        }
+      }
+      else
+      {
+        _log << "set";
+        mNVS.setuint32(fname, crc);
+      }
+
+      f.close();
+    }
+  }
+}
+

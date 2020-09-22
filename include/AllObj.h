@@ -2,10 +2,12 @@
 
 #include <log.h>
 #include <SPIFFS.h>
+#include <CRC32.h>
 #include <Variadic.h>
 #include <ObjVar.h>
 #include <Buf.h>
 #include <iterator.h>
+#include <myNVS.h>
 
 //------------------- Dbg
 // #define DBG_SHOWFILES  // to see files in SPIFFS
@@ -28,9 +30,9 @@ static auto CMD_UPDATE_SHORT = "U";
 static auto CFG_CURRENT      = "/config.cfg";
 static auto CFG_DEFAULT      = "/config.def";
 
-enum class CfgType : bool   { Default, Current };
-enum class Decode : uint8_t { compact, verbose, undefined };
-enum class FileMode : bool  { save, load };
+enum class CfgType :  bool    { Default, Current };
+enum class Decode :   uint8_t { compact, verbose, undefined };
+enum class FileMode : bool    { save, load };
 
 //-------------------------------
 class AllObj 
@@ -49,6 +51,8 @@ class AllObj
   byte        mID = 0;
   bool        spiffsOK = false;
   BUF         mTmpBuf;
+
+  MyNvs       mNVS;
   
   void    dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args, bool line);
   void    dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, int* args, int min, int max);
@@ -79,9 +83,14 @@ class CfgFile
 {
   File  f;
   bool  isloading;
+  const char* fname;
+
+  MyNvs&   mNVS; // to load/save CRC
+  uint32_t getCRC();
+  void     handleCRC();
 
 public:
-  CfgFile(CfgType cfgtype, FileMode mode);
+  CfgFile(CfgType cfgtype, FileMode mode, MyNvs& nvs);
   ~CfgFile();
 
   Stream& getStream() { return (Stream&)f; };
