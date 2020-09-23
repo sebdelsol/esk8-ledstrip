@@ -23,7 +23,7 @@ void CfgFiles::init()
 FileObjPtr CfgFiles::getCfgFile(CfgType cfgtype, FileMode mode) 
 {
   const char* path = cfgtype == CfgType::Default ? CFG_DEFAULT : CFG_CURRENT;
-  return spiffsOK ? FileObjPtr(new FileObj(path, mode, mNVS)) : FileObjPtr(nullptr); 
+  return FileObjPtr(spiffsOK ? new FileObj(path, mode, mNVS) : nullptr ); 
 }
 
 //--------------------------------------------------------------------------
