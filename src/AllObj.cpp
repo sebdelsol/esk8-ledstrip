@@ -2,26 +2,6 @@
 #include <AllObj.h>
 
 //--------------------------------------
-void AllObj::init()
-{
-  mNVS.begin("storage");
-
-  _log << "Mount SPIFFS" << endl;
-  spiffsOK = SPIFFS.begin(true); // format if failed
-  if (!spiffsOK)
-    _log << "SPIFFS Mount Failed" << endl;
-
-#ifdef DBG_SHOWFILES
-  else
-  {
-    File root = SPIFFS.open("/");
-    while(File file = root.openNextFile())
-      _log << "FILE: \"" << file.name() << "\" - " << file.size() << " B" << endl;
-  }
-#endif
-}
-
-//--------------------------------------
 bool AllObj::addObj(OBJVar& obj, const char* name)
 {
   bool ok = mNOBJ < MAXOBJ;
@@ -241,88 +221,17 @@ void AllObj::sendCmdForAllVars(Stream& stream, const char* cmdKeyword, TrackChan
 //----------------
 void AllObj::load(CfgType cfgtype, TrackChange trackChange)
 {
-  if (spiffsOK)
-  {
-    CfgFile f = CfgFile(cfgtype, FileMode::load, mNVS);
-    if (f.isOk())
-      // should be a succession of set cmd
-      readCmd(f.getStream(), mTmpBuf, trackChange, Decode::undefined); 
-  }
+  FileObjPtr cfg = getCfgFile(cfgtype, FileMode::load);
+  if (cfg && cfg->ok())
+    // should be a succession of set cmd
+    readCmd(cfg->getStream(), mTmpBuf, trackChange, Decode::undefined); 
 }
 
 //----------------
 void AllObj::save(CfgType cfgtype)
 {
-  if (spiffsOK)
-  {
-    CfgFile f = CfgFile(cfgtype, FileMode::save, mNVS);
-    if (f.isOk())
-      // for all vars, send a get cmd & output the result in the file stream
-      sendCmdForAllVars(f.getStream(), CMD_GET, TrackChange::undefined, Decode::verbose); 
-  }
+  FileObjPtr cfg = getCfgFile(cfgtype, FileMode::save);
+  if (cfg && cfg->ok())
+    // for all vars, send a get cmd & output the result in the file stream
+    sendCmdForAllVars(cfg->getStream(), CMD_GET, TrackChange::undefined, Decode::verbose); 
 }
-
-//--------------------------------------------------------------------------
-CfgFile::CfgFile(CfgType cfgtype, FileMode mode, MyNvs& nvs) : mNVS(nvs)
-{
-  fname = cfgtype == CfgType::Default ? CFG_DEFAULT : CFG_CURRENT;
-  isloading = mode == FileMode::load; 
-
-  f = SPIFFS.open(fname, isloading ? "r" : "w");
-
-  if (f)
-    _log << (isloading ? "Loading from " : "Saving to ") << fname << "...";
-  else
-    _log << "FAIL to " << (isloading ? "load from " : "save to ") << fname << endl;
-};
-
-//----------------
-CfgFile::~CfgFile()
-{
-  if (f)
-  {
-    f.close();
-
-    _log << (isloading ? "loaded" : "saved") << "...";
-    handleCRC();
-    _log << endl;
-  }
-}
-
-//----------------
-uint32_t CfgFile::getCRC()
-{
-  CRC32 crc;
-  size_t size = f.size();
-
-  for (size_t i = 0; i < size; i++)
-    crc.update(f.read());
-  
-  return crc.finalize();
-}
-
-//----------------
-void CfgFile::handleCRC()
-{
-  if (mNVS.isOK())
-  {
-    f = SPIFFS.open(fname, "r");
-    if (f)
-    {
-      uint32_t oldcrc;
-      uint32_t crc = getCRC();
-
-      if (isloading && mNVS.getuint32(fname, oldcrc))
-      {
-        bool corrupted = crc != oldcrc;
-        _log << "check crc..." << (corrupted ? "BAD, delete the file" : "ok");
-        if (corrupted) SPIFFS.remove(fname); // remove the file !
-      }
-      else
-        _log << "set crc..." << ( mNVS.setuint32(fname, crc) ? "ok" : "failed" );
-
-      f.close();
-    }
-  }
-}
-
