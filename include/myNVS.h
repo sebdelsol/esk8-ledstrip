@@ -11,12 +11,12 @@ extern "C"
 
 class MyNvs 
 {
-  nvs_handle  _nvs_handle;    
+  nvs_handle  mHandle;    
   bool        mIsOK = false;
 
   bool commit()
   {
-    esp_err_t err = nvs_commit(_nvs_handle);
+    esp_err_t err = nvs_commit(mHandle);
     return err == ESP_OK;
   };
 
@@ -45,22 +45,32 @@ public:
       TASKTEST(err != ESP_OK, "reinit", "failed\n" , "done") return false;
     }
 
-    err = nvs_open(namespaceNvs, NVS_READWRITE, &_nvs_handle);
+    err = nvs_open(namespaceNvs, NVS_READWRITE, &mHandle);
     TASKTEST(err != ESP_OK, "open", "failed\n" , "done\n") return false;
 
     mIsOK = true;
     return true;
   };
 
-  bool setuint32(const char* key, uint32_t value)
+  bool setuint(const char* key, uint32_t value)
   {
-    esp_err_t err = nvs_set_u32(_nvs_handle, key, value);
+    assert(key != nullptr);
+    esp_err_t err = nvs_set_u32(mHandle, key, value);
     return err == ESP_OK ? commit() : false;
   };
 
-  bool getuint32(const char* key, uint32_t& value)
+  bool getuint(const char* key, uint32_t& value)
   {
-    esp_err_t err = nvs_get_u32(_nvs_handle, key, &value);
+    assert(key != nullptr);
+    esp_err_t err = nvs_get_u32(mHandle, key, &value);
     return err == ESP_OK;
   };
+
+  bool erase(const char* key)
+  {
+    assert(key != nullptr);
+    esp_err_t err = nvs_erase_key(mHandle, key);
+    return err == ESP_OK ? commit() : false;
+  };
+
 };

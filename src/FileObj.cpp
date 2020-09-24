@@ -29,7 +29,7 @@ FileObjPtr CfgFiles::getCfgFile(CfgType cfgtype, FileMode mode)
 //--------------------------------------------------------------------------
 FileObj::FileObj(const char* path, FileMode mode, MyNvs& nvs) : isloading(mode == FileMode::load), mNVS(nvs)
 {
-  if (!isloading || SPIFFS.exists(path))
+  if (!isloading || SPIFFS.exists(path)) // might not exists if saving
   {
     f = SPIFFS.open(path, isloading ? "r" : "w+"); // need to be readeable to compute crc
     if (f)
@@ -38,6 +38,8 @@ FileObj::FileObj(const char* path, FileMode mode, MyNvs& nvs) : isloading(mode =
       return;
     }
   }
+
+  mNVS.erase(path);
   _log << "FAIL to " << (isloading ? "load from " : "save to ") << path << endl;
 };
 
@@ -48,12 +50,7 @@ FileObj::~FileObj()
   {
     _log << (isloading ? "loaded" : "saved") << "...";
 
-    if (mNVS.isOK())
-    {
-      f.flush();
-      f.seek(0, SeekMode::SeekSet);
-      handleCRC();
-    }
+    if (mNVS.isOK()) handleCRC();
 
     _log << endl;
 
@@ -66,21 +63,29 @@ FileObj::~FileObj()
 void FileObj::remove()
 {
   char* path = strdup(f.name());
-  if (path != nullptr)
+
+  _log << "delete the file...";
+
+  f.close(); // close the file before removing it
+  
+  bool deleted = path != nullptr && SPIFFS.remove(path);
+  
+  if (deleted)
   {
-    f.close(); // close the file before removing it
-    SPIFFS.remove(path); 
+    mNVS.erase(path);
     free(path);
-    _log << "ok";
   }
-  else
-    _log << "failed";
+
+  _log << ( deleted ? "ok" : "failed" );
 }
 
 //----------------
 uint32_t FileObj::getCRC()
 {
   CRC32 crc;
+  
+  f.flush();
+  f.seek(0, SeekMode::SeekSet);
   
   for (size_t i = 0; i < f.size(); i++) 
     crc.update(f.read());
@@ -91,22 +96,27 @@ uint32_t FileObj::getCRC()
 //----------------
 void FileObj::handleCRC()
 {
-  uint32_t oldcrc;
   uint32_t crc = getCRC();
 
   _log << ( isloading ? "check" : "set" ) << " crc...";
 
-  if (isloading && mNVS.getuint32(f.name(), oldcrc))
+  if (isloading)
   {
-    if (crc != oldcrc) 
+    uint32_t oldcrc;
+    
+    if (mNVS.getuint(f.name(), oldcrc))
     {
-      _log << "BAD, delete the file";
-      remove(); 
+      bool corrupted = crc != oldcrc;
+    
+      _log << ( corrupted ? "BAD..." : "ok" );
+      if (corrupted) remove();
+    
+      return;
     }
-    else      
-      _log << "ok";
+
+    _log << "no crc...set...";
   }
-  else
-    _log << ( mNVS.setuint32(f.name(), crc) ? "ok" : "failed" );
+
+  _log << ( mNVS.setuint(f.name(), crc) ? "ok" : "failed" );
 }
 
