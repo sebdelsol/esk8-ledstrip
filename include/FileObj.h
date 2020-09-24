@@ -19,7 +19,6 @@ class FileObj
 {
   const char* path;
   bool        isloading;
-  bool        isOK;
   MyNvs&      mNVS; // to load/save CRC
   File        f;
   
@@ -30,7 +29,7 @@ public:
   FileObj(const char* path, FileMode mode, MyNvs& nvs);
   ~FileObj();
 
-  bool    ok() { return isOK; };
+  bool    ok() { return f ? true : false; };
   Stream& getStream() { return (Stream&)f; };
 };
 

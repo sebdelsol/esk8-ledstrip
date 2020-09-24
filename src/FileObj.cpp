@@ -29,27 +29,29 @@ FileObjPtr CfgFiles::getCfgFile(CfgType cfgtype, FileMode mode)
 //--------------------------------------------------------------------------
 FileObj::FileObj(const char* path, FileMode mode, MyNvs& nvs) : path(path), isloading(mode == FileMode::load), mNVS(nvs)
 {
-  f = SPIFFS.open(path, isloading ? "r" : "w");
-  
-  // Spiffs always gives a working file, need to check the size if saving
-  isOK = f && (!isloading || f.size()>0) ? true : false; 
-  
-  if (isOK)
-    _log << (isloading ? "Loading from " : "Saving to ") << path << "...";
-  else
-    _log << "FAIL to " << (isloading ? "load from " : "save to ") << path << endl;
+  if (!isloading || SPIFFS.exists(path))
+  {
+    f = SPIFFS.open(path, isloading ? "r" : "w");
+    if (f)
+    {
+      _log << (isloading ? "Loading from " : "Saving to ") << path << "...";
+      return;
+    }
+  }
+  _log << "FAIL to " << (isloading ? "load from " : "save to ") << path << endl;
 };
 
 //----------------
 FileObj::~FileObj()
 {
-  if (isOK)
+  if (f)
   {
     f.close(); 
 
     _log << (isloading ? "loaded" : "saved") << "...";
 
-    if (mNVS.isOK()) handleCRC();
+    if (mNVS.isOK())
+      handleCRC();
 
     _log << endl;
   }
@@ -69,6 +71,8 @@ uint32_t FileObj::getCRC()
 //----------------
 void FileObj::handleCRC()
 {
+  _log << ( isloading ? "check" : "set" ) << " crc...";
+
   f = SPIFFS.open(path, "r");
   if (f)
   {
@@ -76,19 +80,21 @@ void FileObj::handleCRC()
     uint32_t crc = getCRC();
     
     f.close(); // close it, we might delete it
-    
-    _log << ( isloading ? "check" : "set" ) << " crc...";
 
     if (isloading && mNVS.getuint32(path, oldcrc))
     {
-      bool corrupt = crc != oldcrc;
-      if (corrupt)
+      if (crc != oldcrc) 
+      {
+        _log << "BAD, delete the file";
         SPIFFS.remove(path); // delete!
-      
-      _log << ( corrupt ? "BAD, delete the file" : "ok" );
+      }
+      else      
+        _log << "ok";
     }
     else
       _log << ( mNVS.setuint32(path, crc) ? "ok" : "failed" );
   }
+  else
+    _log << "can't read";
 }
 
