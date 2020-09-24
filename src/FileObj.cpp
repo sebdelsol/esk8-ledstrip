@@ -23,7 +23,7 @@ void CfgFiles::init()
 FileObjPtr CfgFiles::getCfgFile(CfgType cfgtype, FileMode mode) 
 {
   const char* path = cfgtype == CfgType::Default ? CFG_DEFAULT : CFG_CURRENT;
-  return FileObjPtr(spiffsOK ? new FileObj(path, mode, mNVS) : nullptr ); 
+  return FileObjPtr( spiffsOK ? new FileObj(path, mode, mNVS) : nullptr ); 
 }
 
 //--------------------------------------------------------------------------
@@ -74,17 +74,21 @@ void FileObj::handleCRC()
   {
     uint32_t oldcrc;
     uint32_t crc = getCRC();
+    
+    f.close(); // close it, we might delete it
+    
+    _log << ( isloading ? "check" : "set" ) << " crc...";
 
     if (isloading && mNVS.getuint32(path, oldcrc))
     {
-      bool corrupted = crc != oldcrc;
-      _log << "check crc..." << (corrupted ? "BAD, delete the file" : "ok");
-      if (corrupted) SPIFFS.remove(path); // remove the file !
+      bool corrupt = crc != oldcrc;
+      if (corrupt)
+        SPIFFS.remove(path); // delete!
+      
+      _log << ( corrupt ? "BAD, delete the file" : "ok" );
     }
     else
-      _log << "set crc..." << ( mNVS.setuint32(path, crc) ? "ok" : "failed" );
-
-    f.close();
+      _log << ( mNVS.setuint32(path, crc) ? "ok" : "failed" );
   }
 }
 
