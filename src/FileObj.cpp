@@ -1,6 +1,13 @@
 #include <FileObj.h>
 
 //--------------------------------------------------------------------------
+inline bool logTst(bool tst, const char* task, const char* ok, const char* failed)
+{
+  _log << "..." << task << "..." << (tst ? ok : failed);
+  return tst;
+}
+
+//--------------------------------------------------------------------------
 void CfgFiles::init()
 {
   mNVS.begin("storage");
@@ -48,7 +55,7 @@ FileObj::~FileObj()
 {
   if (f)
   {
-    _log << (isloading ? "loaded" : "saved") << "...";
+    _log << (isloading ? "loaded" : "saved");
 
     if (mNVS.isOK()) handleCRC();
 
@@ -63,20 +70,15 @@ FileObj::~FileObj()
 void FileObj::remove()
 {
   char* path = strdup(f.name());
-
-  _log << "delete the file...";
-
-  f.close(); // close the file before removing it
-  
-  bool deleted = path != nullptr && SPIFFS.remove(path);
-  
-  if (deleted)
+  if (path != nullptr)
   {
-    mNVS.erase(path);
+    f.close(); // close the file before removing it
+    
+    if (logTst(SPIFFS.remove(path), "delete the file", "ok", "failed"))
+      mNVS.erase(path);
+
     free(path);
   }
-
-  _log << ( deleted ? "ok" : "failed" );
 }
 
 //----------------
@@ -98,25 +100,17 @@ void FileObj::handleCRC()
 {
   uint32_t crc = getCRC();
 
-  _log << ( isloading ? "check" : "set" ) << " crc...";
-
   if (isloading)
   {
     uint32_t oldcrc;
     
-    if (mNVS.getuint(f.name(), oldcrc))
+    logTst(mNVS.getuint(f.name(), oldcrc), "crc", "found", "doesn't exist");
     {
-      bool corrupted = crc != oldcrc;
-    
-      _log << ( corrupted ? "BAD..." : "ok" );
-      if (corrupted) remove();
-    
+      if (logTst(crc != oldcrc, "check crc", "BAD", "ok")) remove();
       return;
     }
-
-    _log << "no crc...set...";
   }
 
-  _log << ( mNVS.setuint(f.name(), crc) ? "ok" : "failed" );
+  logTst(mNVS.setuint(f.name(), crc), "set crc", "ok", "failed");
 }
 
