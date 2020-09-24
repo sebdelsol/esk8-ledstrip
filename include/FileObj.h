@@ -17,13 +17,13 @@ enum class FileMode : bool { save, load };
 //-------------------------------
 class FileObj
 {
-  const char* path;
   bool        isloading;
   MyNvs&      mNVS; // to load/save CRC
   File        f;
   
-  uint32_t getCRC();
-  void     handleCRC();
+  uint32_t  getCRC();
+  void      handleCRC();
+  void      remove();
 
 public:
   FileObj(const char* path, FileMode mode, MyNvs& nvs);

@@ -27,7 +27,7 @@ FileObjPtr CfgFiles::getCfgFile(CfgType cfgtype, FileMode mode)
 }
 
 //--------------------------------------------------------------------------
-FileObj::FileObj(const char* path, FileMode mode, MyNvs& nvs) : path(path), isloading(mode == FileMode::load), mNVS(nvs)
+FileObj::FileObj(const char* path, FileMode mode, MyNvs& nvs) : isloading(mode == FileMode::load), mNVS(nvs)
 {
   if (!isloading || SPIFFS.exists(path))
   {
@@ -54,10 +54,27 @@ FileObj::~FileObj()
       f.seek(0, SeekMode::SeekSet);
       handleCRC();
     }
-    // f.close(); // already done in file destructor
 
     _log << endl;
+
+    // no need to manually close the file
+    // it's already done in file destructor
   }
+}
+
+//----------------
+void FileObj::remove()
+{
+  char* path = strdup(f.name());
+  if (path != nullptr)
+  {
+    f.close(); // close the file before removing it
+    SPIFFS.remove(path); 
+    free(path);
+    _log << "ok";
+  }
+  else
+    _log << "failed";
 }
 
 //----------------
@@ -79,17 +96,17 @@ void FileObj::handleCRC()
 
   _log << ( isloading ? "check" : "set" ) << " crc...";
 
-  if (isloading && mNVS.getuint32(path, oldcrc))
+  if (isloading && mNVS.getuint32(f.name(), oldcrc))
   {
     if (crc != oldcrc) 
     {
       _log << "BAD, delete the file";
-      SPIFFS.remove(path); 
+      remove(); 
     }
     else      
       _log << "ok";
   }
   else
-    _log << ( mNVS.setuint32(path, crc) ? "ok" : "failed" );
+    _log << ( mNVS.setuint32(f.name(), crc) ? "ok" : "failed" );
 }
 
