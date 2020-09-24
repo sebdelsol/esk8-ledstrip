@@ -31,7 +31,7 @@ FileObj::FileObj(const char* path, FileMode mode, MyNvs& nvs) : path(path), islo
 {
   if (!isloading || SPIFFS.exists(path))
   {
-    f = SPIFFS.open(path, isloading ? "r" : "w");
+    f = SPIFFS.open(path, isloading ? "r" : "w+"); // need to be readeable to compute crc
     if (f)
     {
       _log << (isloading ? "Loading from " : "Saving to ") << path << "...";
@@ -46,12 +46,15 @@ FileObj::~FileObj()
 {
   if (f)
   {
-    f.close(); 
-
     _log << (isloading ? "loaded" : "saved") << "...";
 
     if (mNVS.isOK())
+    {
+      f.flush();
+      f.seek(0, SeekMode::SeekSet);
       handleCRC();
+    }
+    // f.close(); // already done in file destructor
 
     _log << endl;
   }
@@ -71,30 +74,22 @@ uint32_t FileObj::getCRC()
 //----------------
 void FileObj::handleCRC()
 {
+  uint32_t oldcrc;
+  uint32_t crc = getCRC();
+
   _log << ( isloading ? "check" : "set" ) << " crc...";
 
-  f = SPIFFS.open(path, "r");
-  if (f)
+  if (isloading && mNVS.getuint32(path, oldcrc))
   {
-    uint32_t oldcrc;
-    uint32_t crc = getCRC();
-    
-    f.close(); // close it, we might delete it
-
-    if (isloading && mNVS.getuint32(path, oldcrc))
+    if (crc != oldcrc) 
     {
-      if (crc != oldcrc) 
-      {
-        _log << "BAD, delete the file";
-        SPIFFS.remove(path); // delete!
-      }
-      else      
-        _log << "ok";
+      _log << "BAD, delete the file";
+      SPIFFS.remove(path); 
     }
-    else
-      _log << ( mNVS.setuint32(path, crc) ? "ok" : "failed" );
+    else      
+      _log << "ok";
   }
   else
-    _log << "can't read";
+    _log << ( mNVS.setuint32(path, crc) ? "ok" : "failed" );
 }
 
