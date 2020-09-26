@@ -5,8 +5,8 @@
 
 void NoBT()
 {
-  pinMode(LIGHT_PIN, OUTPUT); //blue led
-  digitalWrite(LIGHT_PIN, LOW); // switch off blue led
+  pinMode(BLUE_PIN, OUTPUT); //blue led
+  digitalWrite(BLUE_PIN, LOW); // switch off blue led
   btStop(); // turnoff bt 
   _log << "No Bluetooth" << endl;
 }

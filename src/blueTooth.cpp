@@ -26,8 +26,8 @@ void BlueTooth::onEvent(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
 //------------------------------------------------------------
 void BlueTooth::init(const bool on)
 {
-  pinMode(LIGHT_PIN, OUTPUT); //blue led
-  mBTSerial.register_callback(BlueTooth::onEvent);
+  pinMode(BLUE_PIN, OUTPUT); //blue led
+  mBTSerial.register_callback(onEvent);
   start(on);
 }
 
@@ -39,7 +39,7 @@ void BlueTooth::start(const bool on)
     mConnected = false;
 
     _log << "BT " << (on ? "starting" : "stopping") << "...";
-    digitalWrite(LIGHT_PIN, on ? HIGH : LOW); // faster feedbcack might be false
+    digitalWrite(BLUE_PIN, on ? HIGH : LOW); // faster feedbcack might be false
 
     if (on)
     {
@@ -52,7 +52,7 @@ void BlueTooth::start(const bool on)
       mBTSerial.end();
     }
     
-    digitalWrite(LIGHT_PIN, mON ? HIGH : LOW); // actual feedback
+    digitalWrite(BLUE_PIN, mON ? HIGH : LOW); // actual feedback
     _log << "BT " << (mON ? "started" : "stopped") << endl;
   }
 }

@@ -12,6 +12,7 @@ class BlueTooth
   BluetoothSerial mBTSerial;
   bool mON = false;
 
+  // C callback need a static method
   static long mStartTime;
   static bool mConnected;
   static void onEvent(esp_spp_cb_event_t event, esp_spp_cb_param_t* param); 
