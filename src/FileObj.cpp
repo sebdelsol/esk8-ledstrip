@@ -12,16 +12,15 @@ void CfgFiles::init()
 {
   mNVS.begin("storage");
 
-  _log << "Mount SPIFFS...";
-  spiffsOK = SPIFFS.begin(true); // format if failed
-  _log << (spiffsOK ? "ok" : "failed") << endl;
+  spiffsOK = logTst(SPIFFS.begin(true), "Mount SPIFFS", "ok", "failed");
+  _log << endl;
 
 #ifdef DBG_SHOWFILES
   if (spiffsOK)
   {
     File root = SPIFFS.open("/");
     while(File file = root.openNextFile())
-      _log << "File \"" << file.name() << "\" - " << file.size() << " Bytes" << endl;
+      _log << "File " << file.name() << " - " << file.size() << " Bytes" << endl;
   }
 #endif
 }

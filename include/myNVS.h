@@ -31,22 +31,22 @@ public:
     esp_err_t err = nvs_flash_init();
     TASKTEST(err != ESP_OK, "init", "failed", "done")
     {
-      TASKTEST(err == ESP_ERR_NVS_NO_FREE_PAGES, "is free page", "no\n", "yes") return false;
+      TASKTEST(err == ESP_ERR_NVS_NO_FREE_PAGES, "is free page", "no", "yes") return false;
 
       // erase and reinit
       const esp_partition_t *nvs_partition = esp_partition_find_first(ESP_PARTITION_TYPE_DATA, ESP_PARTITION_SUBTYPE_DATA_NVS, NULL);
-      TASKTEST(nvs_partition == NULL, "find partion", "failed\n", "found") return false;
+      TASKTEST(nvs_partition == NULL, "find partion", "failed", "found") return false;
       
       _log << "NVS reformat...";
       err = esp_partition_erase_range(nvs_partition, 0, nvs_partition->size);
-      TASKTEST(err != ESP_OK, "reformat", "failed\n" ,"done") return false;
+      TASKTEST(err != ESP_OK, "reformat", "failed" ,"done") return false;
 
       err = nvs_flash_init();
-      TASKTEST(err != ESP_OK, "reinit", "failed\n" , "done") return false;
+      TASKTEST(err != ESP_OK, "reinit", "failed" , "done") return false;
     }
 
     err = nvs_open(namespaceNvs, NVS_READWRITE, &mHandle);
-    TASKTEST(err != ESP_OK, "open", "failed\n" , "done\n") return false;
+    TASKTEST(err != ESP_OK, "open", "failed" , "done") return false;
 
     mIsOK = true;
     return true;
