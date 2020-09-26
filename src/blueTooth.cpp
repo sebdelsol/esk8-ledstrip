@@ -10,8 +10,7 @@ void BlueTooth::onEvent(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
   if(event == ESP_SPP_SRV_OPEN_EVT)
   {
     _log << "BT client connected @ ";
-    for (int i = 0; i < 5; i++) _log << _HEX(param->srv_open.rem_bda[i]) << ":";
-    _log << _HEX(param->srv_open.rem_bda[5]) << endl;
+    for (int i = 0; i < 6; i++) _log << _HEX(param->srv_open.rem_bda[i]) << ( i < 5 ? ":" : "\n" );
 
     mConnected = true;
   }
@@ -27,10 +26,9 @@ void BlueTooth::onEvent(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
 //------------------------------------------------------------
 void BlueTooth::init(const bool on)
 {
+  pinMode(LIGHT_PIN, OUTPUT); //blue led
   mBTSerial.register_callback(BlueTooth::onEvent);
   start(on);
-
-  pinMode(LIGHT_PIN, OUTPUT); //blue led
 }
 
 //------------------------------------------------------------
