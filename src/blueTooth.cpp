@@ -1,37 +1,33 @@
 #include <Bluetooth.h>
 
+// needed in static onEvent
+bool BlueTooth::mConnected = false;
+long BlueTooth::mStartTime;
+
 //------------------------------------------------------------
-BlueTooth* CurrentBT;
-
-void CallbackWrapper(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
-{
-  CurrentBT->onEvent(event, param);
-}
-
 void BlueTooth::onEvent(esp_spp_cb_event_t event, esp_spp_cb_param_t* param)
 {
   if(event == ESP_SPP_SRV_OPEN_EVT)
   {
     _log << "BT client connected @ ";
-    for (int i = 0; i < 6; i++)
-      _log << _HEX(param->srv_open.rem_bda[i]) << (i < 5 ? ":" : "");
-    _log << endl;
+    for (int i = 0; i < 5; i++) _log << _HEX(param->srv_open.rem_bda[i]) << ":";
+    _log << _HEX(param->srv_open.rem_bda[5]) << endl;
 
     mConnected = true;
   }
   else if(event == ESP_SPP_CLOSE_EVT)
   {
     _log << "BT client disConnected" << endl;
+
     mConnected = false;
-    mStartTime = millis() - (BT_TIMEOUT / 2); // gives half the time to reconnect
+    mStartTime = millis(); 
   }
 }
 
 //------------------------------------------------------------
 void BlueTooth::init(const bool on)
 {
-  CurrentBT = this;
-  mBTSerial.register_callback(CallbackWrapper);
+  mBTSerial.register_callback(BlueTooth::onEvent);
   start(on);
 
   pinMode(LIGHT_PIN, OUTPUT); //blue led
@@ -42,10 +38,11 @@ void BlueTooth::start(const bool on)
 {
   if (mON != on)
   {
-    _log << "BT " << (on ? "starting" : "stopping") << "...";
     mConnected = false;
-  
+
+    _log << "BT " << (on ? "starting" : "stopping") << "...";
     digitalWrite(LIGHT_PIN, on ? HIGH : LOW); // faster feedbcack might be false
+
     if (on)
     {
       mON = mBTSerial.begin(BT_SERVER_NAME);
@@ -56,8 +53,8 @@ void BlueTooth::start(const bool on)
       mON = false;
       mBTSerial.end();
     }
+    
     digitalWrite(LIGHT_PIN, mON ? HIGH : LOW); // actual feedback
-
     _log << "BT " << (mON ? "started" : "stopped") << endl;
   }
 }

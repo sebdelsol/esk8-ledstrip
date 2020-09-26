@@ -9,17 +9,17 @@ const long BT_TIMEOUT            = 30 * 1000; // sec before stopping non connect
 
 class BlueTooth
 {
-  long mStartTime;
-  bool mON = false;
-  bool mConnected = false;
-
   BluetoothSerial mBTSerial;
+  bool mON = false;
+
+  static long mStartTime;
+  static bool mConnected;
+  static void onEvent(esp_spp_cb_event_t event, esp_spp_cb_param_t* param); 
 
 public:
   void init(const bool on=true);
   void start(const bool on=true);
   void toggle();
-  void onEvent(esp_spp_cb_event_t event, esp_spp_cb_param_t* param); 
   BluetoothSerial& getSerial() { return mBTSerial; };
   bool isReady();
 };
