@@ -65,12 +65,8 @@ void BlueTooth::toggle()
 //------------------------------------------------------------
 bool BlueTooth::isReady()
 {
-  if (mON)
-  {
-    if (mConnected)
-      return true;
-    else if(millis() - mStartTime > BT_TIMEOUT)
-      start(false);
-  }
-  return false;
+  //handle timeout when not connected
+  if (mON && !mConnected && millis() - mStartTime > BT_TIMEOUT) start(false);
+  
+  return mON && mConnected;
 }
