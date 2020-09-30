@@ -54,15 +54,19 @@ TOPMOST, NOSIZE, NOMOVE = -1, 1, 2
 class Strip:
 
     def __init__(self):
+        self.reset()
+
+        self.t = time.time()
+        tick = findInFile('./include/cfg.h', ' ', 'WIFI_TICK')
+        self.tick = int(tick) / 1000.
+
+    def reset(self):
+        self.screen = None
         self.running = False
         self.n = {} 
         self.pixels = {}
         self.W = 0
         self.H = 0
-
-        self.t = time.time()
-        tick = findInFile('./include/cfg.h', ' ', 'WIFI_TICK')
-        self.tick = int(tick) / 1000.
 
     def initPixels(self, strip, n):
         print 'add strip with %d pixels' % n
@@ -83,6 +87,11 @@ class Strip:
         windll.user32.SetWindowPos(hwnd, TOPMOST, 0, 0, 0, 0, NOMOVE|NOSIZE)
 
         self.running = True
+
+    def closeDisplay(self):
+        if self.screen:
+            pygame.display.quit()
+            self.reset()
 
     def show(self, buf, length, strip, brightness): 
         n = length / 3
@@ -136,10 +145,11 @@ class Showled:
 
     def onServerFound(self, address):
         strips = Strip()
-        try:
-            while True:
-                self.sock = socket.socket() 
-                self.sock.settimeout(10)
+        while True:
+            self.sock = socket.socket() 
+            self.sock.settimeout(10)
+            
+            try:
                 self.sock.connect(address)
                 print 'connected to %s:%d' % address
                 self.sock.settimeout(3)
@@ -156,19 +166,22 @@ class Showled:
                     except socket.timeout:
                         # traceback.print_exc()
                         connected = False
-                
-                print 'disconnected'
-                self.sock.close()
-        except :
-            #traceback.print_exc()
-            self.sock.close()
-            time.sleep(2)
 
+            except :
+                # traceback.print_exc()
+                connected = False
+            
+            print 'disconnected'
+            self.sock.close()
+            strips.closeDisplay()
+            time.sleep(2)
 
     def __init__(self):
         callback = lambda addr : self.onServerFound(addr)
         Thread(target = findServerAddr, args = (callback, )).start()
-        while True: time.sleep(1)
+        while True: 
+            # print 'out'
+            time.sleep(1)
 
 #-----------
 Showled() 
