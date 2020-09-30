@@ -128,10 +128,9 @@ public:
 
   void showInfo()
   {
-    _log << NLEDS << " leds ";
-    for (auto fx : *this)
-      _log << "\t - " << fx->getName() << "(" << fx->getAlpha() << ")";
-    _log << "                  " << endl;
+    _log << _WIDTH(NLEDS,3) << " leds";
+    for (auto fx : *this) _log << " - " << _WIDTH(fx->getName(), 16) << " " << _WIDTH(fx->getAlpha(), 3);
+    _log << endl;
   };
 
   int   getRawLength() { return NLEDS * sizeof(CRGB); };
@@ -139,23 +138,18 @@ public:
 
   void update(ulong t, ulong dt)
   {
-    byte i = 0; // fx count
+    bool first = true;
 
-    // 1st fx is drawn on mDisplay
-    for (; i < mNFX; i++) 
-      if (mFX[i]->drawOn(mDisplay, t, dt))
-        break; // now we've to blend
+    for (auto fx : *this) 
+      if (fx->drawOn(first ? mDisplay : mBuffer, t, dt)) // first drawn on mDisplay, then on mBuffer
+      {
+        if (first) first = false;
+        else nblend(mDisplay.leds, mBuffer.leds, NLEDS, 128); //average of the 2
+      } 
 
-    // something drawn ?
-    if (++i <= mNFX)
-    { 
-      // some fx left to draw ? draw on mBuffer & blend with mDisplay
-      for (; i < mNFX; i++) 
-        if (mFX[i]->drawOn(mBuffer, t, dt)) 
-            mDisplay |= mBuffer; // get the max of each RGB component
-    }
     // if no fx drawn, clear the ledstrip
-    else 
-      mController->clearLedData();
+    if (first) mController->clearLedData();
   };
 };
+
+

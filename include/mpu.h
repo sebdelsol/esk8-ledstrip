@@ -14,7 +14,8 @@
 
 //----------------------------- dmp Version & Debug
 // #define USE_V6_12
-// #define MPU_DBG
+// #define USE_MEASURED_GRAVITY // use the measured gravity for real acc computation, instead a (more precise?) rotated gravity
+#define MPU_DBG
 
 //----------------------------- calibration & I2c clock
 #define CALIBRATION_LOOP  6
@@ -34,8 +35,8 @@ struct SensorOutput
 {
   VectorInt16 axis;
   int         angle = 0;
-  int         accX = 0, accY = 0, accZ = 0;
-  int         wZ = 0;
+  int16_t     acc = 0;
+  int16_t     w = 0;
   bool        updated = false;
 };
 
@@ -53,16 +54,28 @@ class MPU : public OBJVar, public MPU6050
   VectorInt16 mW;         // gyro 
   VectorInt16 mAcc;       // accel 
   VectorInt16 mAccReal;   // gravity-free accel
-  VectorFloat mGrav;      // gravity 
-
-  int16_t     mXGyroOffset,   mYGyroOffset,   mZGyroOffset;
-  int16_t     mXAccelOffset,  mYAccelOffset,  mZAccelOffset;
-  bool        mGotOffset  = false;
-  bool        mAutoCalibrate = false;
-
+  
+  #ifndef USE_MEASURED_GRAVITY
+    void getLinearAccel(VectorInt16 *v, VectorInt16 *vRaw, Quaternion *q); // use rotated gravity
+  #endif
   void getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q);
+
+  int16_t mXGyroOffset,   mYGyroOffset,   mZGyroOffset;
+  int16_t mXAccelOffset,  mYAccelOffset,  mZAccelOffset;
+  bool    mGotOffset     = false;
+  bool    mAutoCalibrate = false;
+
   void printOffsets(const __FlashStringHelper* txt);
   bool setOffsets();
+
+  int16_t  mAccY  = 0;
+  int16_t  mWZ    = 0;
+
+  uint16_t mSmoothAcc  = 1600;
+  uint16_t mNeutralAcc = 60;
+  byte     mDivAcc     = 2;
+  uint16_t mNeutralW   = 3000;
+  int      mMaxW       = 7000; 
 
 public:
   SensorOutput  mOutput; // public outpout

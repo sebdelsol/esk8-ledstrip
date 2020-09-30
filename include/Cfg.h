@@ -19,7 +19,6 @@
 
 // --------------------- maxs
 #define   MAX_uint8     255
-#define   MAX_int16     32767
 
 // --------------------- Tweaks
 struct Tweaks : public OBJVar
@@ -32,30 +31,22 @@ struct Tweaks : public OBJVar
   byte pacifica   = 158;
   byte fire       = 128;
 
-  // for rotation
   byte runSpeed   = 3;
-  int  neutralWZ  = 3000;
-  int  maxWZ      = 7000; 
 
-  // for acc
-  byte divAcc     = 2;
-  int  smoothAcc  = 1600;
-  byte thresAcc   = 30;
-
-  // for acc lerping
-  int FWD         = 0;
-  int RWD         = 0;
+  // // for acc lerping
+  // int FWD         = 0;
+  // int RWD         = 0;
 
   // front & rear Cylons
   byte minEye     = 5;
   byte maxEye     = 10;
 
   // rear Fire
-  int  minDim     = 4;
-  int  maxDim     = 10;
+  byte  minDim    = 4;
+  byte  maxDim    = 10;
 
   // rear twinkle
-  int minTwkR     = 54;
+  byte minTwkR    = 54;
 
   void init()
   {
@@ -67,12 +58,6 @@ struct Tweaks : public OBJVar
     AddVar (fire,       0, MAX_uint8);
 
     AddVar (runSpeed,   0, 10);
-    AddVar (neutralWZ,  0, MAX_int16);
-    AddVar (maxWZ,      0, MAX_int16);
-
-    AddVar (divAcc,     1, 10);
-    AddVar (smoothAcc,  1, MAX_int16);
-    AddVar (thresAcc,   0, MAX_uint8);
 
     AddVar (minEye,     1, (NBLEDS_TIPS>>1));
     AddVar (maxEye,     1, (NBLEDS_TIPS>>1));

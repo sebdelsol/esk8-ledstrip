@@ -28,7 +28,7 @@ void AllObjBT::sendUpdate(BlueTooth &BT, MPU& mpu)
     // send mpu update 
     SensorOutput& m = mpu.mOutput;
     if(m.updated)
-      BTserial << SpaceIt(CMD_MPU_UPDATE, m.axis.x, m.axis.y, m.axis.z, m.angle, m.accY, m.wZ) << endl;
+      BTserial << SpaceIt(CMD_MPU_UPDATE, m.axis.x, m.axis.y, m.axis.z, m.angle, m.acc, m.w) << endl;
   }
 }
 

@@ -153,25 +153,25 @@ class Showled:
                 self.sock.connect(address)
                 print 'connected to %s:%d' % address
                 self.sock.settimeout(3)
-                
-                connected = True
-                while connected:
-                    try:
-                        msg = self.recvMsg()
-                        if msg is not None:
-                            strips.show(*msg)
-                        else:
-                            connected = False
-                    
-                    except socket.timeout:
-                        # traceback.print_exc()
-                        connected = False
 
+                connected = True
             except :
                 # traceback.print_exc()
                 connected = False
+                
+            while connected:
+                try:
+                    msg = self.recvMsg()
+                    if msg is not None:
+                        strips.show(*msg)
+                    else:
+                        break
+                
+                except socket.timeout:
+                    # traceback.print_exc()
+                    break
             
-            print 'disconnected'
+            if connected: print 'disconnected'
             self.sock.close()
             strips.closeDisplay()
             time.sleep(2)

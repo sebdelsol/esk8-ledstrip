@@ -61,7 +61,13 @@ void MPU::init()
     AddCmd("calibrate",  calibrate() ) 
   #endif
 
-  AddBoolName("auto", mAutoCalibrate);
+  AddBoolName("auto",       mAutoCalibrate);
+
+  AddVarName ("neutralAcc", mNeutralAcc, 0, 300);
+  AddVarName ("divAcc",     mDivAcc,     1, 10);
+  AddVarName ("smoothAcc",  mSmoothAcc,  1, 32767)
+  AddVarName ("neutralW",   mNeutralW,   0, 32767);
+  AddVarName ("maxW",       mMaxW,       0, 32767);
 }
 
 //--------------------------------------
@@ -161,43 +167,78 @@ bool MPU::getFiFoPacket()
 }
 
 //--------------------------------------
-#define STAYS_SHORT(x) constrain(x, -32768, 32767)
+#ifndef USE_MEASURED_GRAVITY
+  // remove rotated gravity
+  void MPU::getLinearAccel(VectorInt16 *accReal, VectorInt16 *acc, Quaternion *rot)
+  {
+    // inv rotate gravity
+    VectorInt16 g(0, 0, 8192);
+    Quaternion invrot = rot->getConjugate();
+    g.rotate(&invrot);
+
+    // and remove it
+    accReal->x = acc->x - g.x; 
+    accReal->y = acc->y - g.y; 
+    accReal->z = acc->z - g.z;
+  }
+#endif
+
+//--------------------------------------
+inline int thresh(const int v, const uint16_t t) 
+{
+  return v > 0 ? max(0, v - t) : min(v + t, 0);
+}
+
+#define _stayShort(x) constrain(x, -32768, 32767)
 #define SHIFTR_VECTOR(v, n) v.x = v.x >> n;   v.y = v.y >> n;   v.z = v.z >> n; 
 
 void MPU::compute(SensorOutput& output)
 {
+  // measures
   dmpGetQuaternion(&mQuat, mFifoBuffer);
   dmpGetGyro(&mW, mFifoBuffer);
-  #ifdef USE_V6_12
-    SHIFTR_VECTOR(mW, 2) // fix sensibility bug in MPU6050_6Axis_MotionApps_V6_12.h
-  #endif 
-
-  // axis angle
-  dmpGetGravity(&mGrav, &mQuat);
-  getAxiSAngle(output.axis, output.angle, mQuat);
-
-  // real acceleration, adjusted to remove gravity
   dmpGetAccel(&mAcc, mFifoBuffer);
+
   #ifdef USE_V6_12 
-    SHIFTR_VECTOR(mAcc, 1) // fix sensibility bug in MPU6050_6Axis_MotionApps_V6_12.h
+    // fix sensibility bug in MPU6050_6Axis_MotionApps_V6_12.h
+    SHIFTR_VECTOR(mW, 2) 
+    SHIFTR_VECTOR(mAcc, 1) 
   #endif
-  dmpGetLinearAccel(&mAccReal, &mAcc, &mGrav);
+
+  #ifdef USE_MEASURED_GRAVITY
+    VectorFloat mGrav;    // measured gravity  
+    dmpGetGravity(&mGrav, &mQuat);
+    dmpGetLinearAccel(&mAccReal, &mAcc, &mGrav); // remove measured grav
+  #else
+    getLinearAccel(&mAccReal, &mAcc, &mQuat); // remove rotated grav
+    // mAccReal = mAcc; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  #endif
 
   // smooth acc & gyro
   uint16_t smooth = - int(pow(1. - ACCEL_AVG, mdt * ACCEL_BASE_FREQ * .000001) * 65536.); // 1 - (1-accel_avg) ^ (dt * 60 / 1000 000) using fract16
-  output.accX =  lerp15by16(output.accX,  STAYS_SHORT(mAccReal.x),  smooth);
-  output.accY =  lerp15by16(output.accY,  STAYS_SHORT(mAccReal.y),  smooth);
-  output.accZ =  lerp15by16(output.accZ,  STAYS_SHORT(mAccReal.z),  smooth);
-  output.wZ =    lerp15by16(output.wZ,    STAYS_SHORT(mW.z * -655), smooth);
+  mAccY = lerp15by16(mAccY, _stayShort(mAccReal.y),  smooth);
+  mWZ   = lerp15by16(mWZ,   _stayShort(mW.z * -655), smooth);
+
+  // output
+  getAxiSAngle(output.axis, output.angle, mQuat);
+
+  int16_t acc = _stayShort(thresh(mAccY / mDivAcc, mNeutralAcc) << 8);
+  output.acc = acc * output.acc < 0 || abs(acc) > abs(output.acc) ? acc : lerp15by16(output.acc, acc, mSmoothAcc);
+
+  output.w = constrain((thresh(mWZ, mNeutralW) << 8) / mMaxW, -255, 255);
+
   output.updated = true;
 
   #ifdef MPU_DBG
-    _log << "[ dt "   << _WIDTH(mdt * .001, 6) << "ms - smooth " << _WIDTH(smooth / 65536.,  6) << "  - Wz "  << _WIDTH(output.wZ, 6) << "] ";
-    _log << "[ gyr "  << SpaceIt( _WIDTH(mW.x, 4),        _WIDTH(mW.y, 4),        _WIDTH(mW.z, 4))        << "] ";
-    _log << "[ grav " << SpaceIt( _WIDTH(mGrav.x, 6),     _WIDTH(mGrav.y, 6),     _WIDTH(mGrav.z, 6))     << "] ";
-    _log << "[ avg "  << SpaceIt( _WIDTH(output.accX, 6), _WIDTH(output.accY, 6), _WIDTH(output.accZ, 6)) << "] ";
-    _log << "[ acc "  << SpaceIt( _WIDTH(mAcc.x, 6),      _WIDTH(mAcc.y, 6),      _WIDTH(mAcc.z, 6))      << "] ";
-    _log << "[ real " << SpaceIt( _WIDTH(mAccReal.x, 6),  _WIDTH(mAccReal.y, 6),  _WIDTH(mAccReal.z, 6))  << "] ";
+    _log << "[ dt "         << _WIDTH(mdt * .001, 6) << "ms - smooth "  << _WIDTH(smooth / 65536.,  6) << "] ";
+    _log << "[ smooth acc " << _WIDTH(mAccY, 6)      << " - smooth w "  << _WIDTH(mWZ, 6)              << "] ";
+    _log << "[ ouput acc "  << _WIDTH(output.acc, 4) << " - ouput w "   << _WIDTH(output.w, 4)         << "] ";
+    #ifdef USE_MEASURED_GRAVITY
+    _log << "[ grav " << SpaceIt( _WIDTH(mGrav.x, 6),    _WIDTH(mGrav.y, 6),      _WIDTH(mGrav.z, 6))     << "] ";
+    #endif
+    _log << "[ gyr "  << SpaceIt( _WIDTH(mW.x, 4),       _WIDTH(mW.y, 4),         _WIDTH(mW.z, 4))        << "] ";
+    _log << "[ acc "  << SpaceIt( _WIDTH(mAcc.x, 6),     _WIDTH(mAcc.y, 6),       _WIDTH(mAcc.z, 6))      << "] ";
+    _log << "[ real " << SpaceIt( _WIDTH(mAccReal.x, 6), _WIDTH(mAccReal.y, 6),   _WIDTH(mAccReal.z, 6))  << "] ";
     _log << "\r";
   #endif
 }
