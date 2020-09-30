@@ -138,7 +138,7 @@ void MPU::begin()
 void MPU::getAxiSAngle(VectorInt16& v, int& angle, Quaternion& q)
 {
   if (q.w > 1) q.normalize(); // needs q.w < 1 for acos and sqrt
-  angle = acos(q.w) * 2 * 10430.; // 32767 / PI 
+  angle = acos(q.w) * 2 * 318.; // 999 / PI 
   
   float s = sqrt(1 - q.w * q.w);
   if (s < 0.001) // div 0
@@ -147,7 +147,7 @@ void MPU::getAxiSAngle(VectorInt16& v, int& angle, Quaternion& q)
   }
   else
   {
-    float n = 32767. / s; 
+    float n = 255. / s; 
     v.x = q.x * n; v.y = q.y * n; v.z = q.z * n;
   }
 }
@@ -165,23 +165,6 @@ bool MPU::getFiFoPacket()
   }
   return false;
 }
-
-//--------------------------------------
-#ifndef USE_MEASURED_GRAVITY
-  // remove rotated gravity
-  void MPU::getLinearAccel(VectorInt16 *accReal, VectorInt16 *acc, Quaternion *rot)
-  {
-    // inv rotate gravity
-    VectorInt16 g(0, 0, 8192);
-    Quaternion invrot = rot->getConjugate();
-    g.rotate(&invrot);
-
-    // and remove it
-    accReal->x = acc->x - g.x; 
-    accReal->y = acc->y - g.y; 
-    accReal->z = acc->z - g.z;
-  }
-#endif
 
 //--------------------------------------
 inline int thresh(const int v, const uint16_t t) 
@@ -205,14 +188,9 @@ void MPU::compute(SensorOutput& output)
     SHIFTR_VECTOR(mAcc, 1) 
   #endif
 
-  #ifdef USE_MEASURED_GRAVITY
-    VectorFloat mGrav;    // measured gravity  
-    dmpGetGravity(&mGrav, &mQuat);
-    dmpGetLinearAccel(&mAccReal, &mAcc, &mGrav); // remove measured grav
-  #else
-    getLinearAccel(&mAccReal, &mAcc, &mQuat); // remove rotated grav
-    // mAccReal = mAcc; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  #endif
+  // gravity & corrected accel
+  dmpGetGravity(&mGrav, &mQuat);
+  dmpGetLinearAccel(&mAccReal, &mAcc, &mGrav); // remove measured grav
 
   // smooth acc & gyro
   uint16_t smooth = - int(pow(1. - ACCEL_AVG, mdt * ACCEL_BASE_FREQ * .000001) * 65536.); // 1 - (1-accel_avg) ^ (dt * 60 / 1000 000) using fract16
@@ -223,22 +201,20 @@ void MPU::compute(SensorOutput& output)
   getAxiSAngle(output.axis, output.angle, mQuat);
 
   int16_t acc = _stayShort(thresh(mAccY / mDivAcc, mNeutralAcc) << 8);
-  output.acc = acc * output.acc < 0 || abs(acc) > abs(output.acc) ? acc : lerp15by16(output.acc, acc, mSmoothAcc);
-
+  mAccYsmooth = acc * mAccYsmooth < 0 || abs(acc) > abs(mAccYsmooth) ? acc : lerp15by16(mAccYsmooth, acc, mSmoothAcc);
+  output.acc = constrain(mAccYsmooth >> 7, -255, 255);
+  
   output.w = constrain((thresh(mWZ, mNeutralW) << 8) / mMaxW, -255, 255);
-
   output.updated = true;
 
   #ifdef MPU_DBG
-    _log << "[ dt "         << _WIDTH(mdt * .001, 6) << "ms - smooth "  << _WIDTH(smooth / 65536.,  6) << "] ";
-    _log << "[ smooth acc " << _WIDTH(mAccY, 6)      << " - smooth w "  << _WIDTH(mWZ, 6)              << "] ";
-    _log << "[ ouput acc "  << _WIDTH(output.acc, 4) << " - ouput w "   << _WIDTH(output.w, 4)         << "] ";
-    #ifdef USE_MEASURED_GRAVITY
-    _log << "[ grav " << SpaceIt( _WIDTH(mGrav.x, 6),    _WIDTH(mGrav.y, 6),      _WIDTH(mGrav.z, 6))     << "] ";
-    #endif
-    _log << "[ gyr "  << SpaceIt( _WIDTH(mW.x, 4),       _WIDTH(mW.y, 4),         _WIDTH(mW.z, 4))        << "] ";
-    _log << "[ acc "  << SpaceIt( _WIDTH(mAcc.x, 6),     _WIDTH(mAcc.y, 6),       _WIDTH(mAcc.z, 6))      << "] ";
-    _log << "[ real " << SpaceIt( _WIDTH(mAccReal.x, 6), _WIDTH(mAccReal.y, 6),   _WIDTH(mAccReal.z, 6))  << "] ";
+    _log << "[ dt "         <<    _WIDTH(mdt * .001, 6) << "ms - smooth " <<      _WIDTH(smooth / 65536.,  6) << "] ";
+    _log << "[ smooth acc " <<    _WIDTH(mAccY, 6)      << " - smooth w " <<      _WIDTH(mWZ, 6)              << "] ";
+    _log << "[ ouput acc "  <<    _WIDTH(output.acc, 6) << " - ouput w "  <<      _WIDTH(output.w, 4)         << "] ";
+    _log << "[ grav " << SpaceIt( _WIDTH(mGrav.x, 5),    _WIDTH(mGrav.y, 5),      _WIDTH(mGrav.z, 5))         << "] ";
+    _log << "[ gyr "  << SpaceIt( _WIDTH(mW.x, 4),       _WIDTH(mW.y, 4),         _WIDTH(mW.z, 4))            << "] ";
+    _log << "[ acc "  << SpaceIt( _WIDTH(mAcc.x, 6),     _WIDTH(mAcc.y, 6),       _WIDTH(mAcc.z, 6))          << "] ";
+    _log << "[ real " << SpaceIt( _WIDTH(mAccReal.x, 6), _WIDTH(mAccReal.y, 6),   _WIDTH(mAccReal.z, 6))      << "] ";
     _log << "\r";
   #endif
 }

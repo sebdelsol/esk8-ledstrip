@@ -14,8 +14,7 @@
 
 //----------------------------- dmp Version & Debug
 // #define USE_V6_12
-// #define USE_MEASURED_GRAVITY // use the measured gravity for real acc computation, instead a (more precise?) rotated gravity
-#define MPU_DBG
+// #define MPU_DBG
 
 //----------------------------- calibration & I2c clock
 #define CALIBRATION_LOOP  6
@@ -50,14 +49,12 @@ class MPU : public OBJVar, public MPU6050
   ulong       mT = 0;     // µs
   ulong       mdt = 1000; // µs
 
-  Quaternion  mQuat;      // quat from dmp fifobuffer
-  VectorInt16 mW;         // gyro 
-  VectorInt16 mAcc;       // accel 
-  VectorInt16 mAccReal;   // gravity-free accel
+  Quaternion  mQuat;    // quat from dmp fifobuffer
+  VectorInt16 mW;       // gyro 
+  VectorInt16 mAcc;     // accel 
+  VectorInt16 mAccReal; // gravity-free accel
+  VectorFloat mGrav;    // measured gravity  
   
-  #ifndef USE_MEASURED_GRAVITY
-    void getLinearAccel(VectorInt16 *v, VectorInt16 *vRaw, Quaternion *q); // use rotated gravity
-  #endif
   void getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q);
 
   int16_t mXGyroOffset,   mYGyroOffset,   mZGyroOffset;
@@ -68,9 +65,11 @@ class MPU : public OBJVar, public MPU6050
   void printOffsets(const __FlashStringHelper* txt);
   bool setOffsets();
 
-  int16_t  mAccY  = 0;
-  int16_t  mWZ    = 0;
+  int16_t  mAccY       = 0;
+  int16_t  mWZ         = 0;
+  int16_t  mAccYsmooth = 0;
 
+  // value to tweak
   uint16_t mSmoothAcc  = 1600;
   uint16_t mNeutralAcc = 60;
   byte     mDivAcc     = 2;

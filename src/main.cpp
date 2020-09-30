@@ -1,7 +1,7 @@
 #define USE_BT
 #define USE_OTA 
 // #define USE_TELNET 
-#define USE_LEDSERVER
+// #define USE_LEDSERVER
 
 // #define DEBUG_RASTER
 // #define DEBUG_LED_INFO
@@ -190,17 +190,8 @@ inline void loopBT()
 }
 
 // ------------
-// inline byte getAlphaAcc(int& storedAcc, int acc)
-// {
-//   int wantedAcc = constrain(acc << 8, 0, 65535);
-//   storedAcc = wantedAcc > storedAcc ? wantedAcc : lerp16by16(storedAcc, wantedAcc, Twk.smoothAcc);
-//   return storedAcc >> 8;
-// }
-
-inline byte getNormalized(int acc, byte _min, byte _max)
-{
-  return _min + (((_max - _min) * acc) >> 8);
-}
+#define _max0(v) v >= 0 ? v : 0
+inline byte _normalized(int acc, byte _min, byte _max) { return _min + (((_max - _min) * acc) >> 8); }
 
 inline void loopLeds()
 {
@@ -210,47 +201,42 @@ inline void loopLeds()
     SensorOutput& m = Mpu.mOutput;
     if (m.updated)
     {
-      // -- Gyro
+      // -- gyro
       int8_t runSpeed =  ((m.w > 0) - (m.w < 0)) * Twk.runSpeed;
       byte rot = abs(m.w);
       byte invrot = 255 - rot;
 
-      // -- Front strip
-      // int fwd = getAlphaAcc(Twk.FWD, m.acc);
-      byte fwd = max(0, m.acc >> 8);
-      // _log << "\n----" << fwd << " " << (m.acc >> 8) << endl;
+      // -- acc
+      byte fwd = _max0(m.acc);
+      byte rwd = _max0(-m.acc);
 
+      // -- front strip
       if (Twk.stripFront)
       { 
         RunF.setSpeed(runSpeed);
         RunF.setAlpha(rot);
-        CylonF.setEyeSize(getNormalized(fwd, Twk.minEye, Twk.maxEye));
+        CylonF.setEyeSize(_normalized(fwd, Twk.minEye, Twk.maxEye));
         CylonF.setAlphaMul(255 - Twk.pacifica, invrot); 
         Pacifica.setAlphaMul(Twk.pacifica, invrot); 
         TwinkleF.setAlphaMul(fwd, invrot); 
       }
 
-      // -- Rear Strip
-      // int rwd = getAlphaAcc(Twk.RWD, -m.acc);
-      byte rwd = max(0, -m.acc >> 8);
-      // _log << rwd << " " << (-m.acc >> 8) << endl;
-      // _log << 255 - max(rwd, fwd) << endl;
-
+      // -- rear Strip
       if (Twk.stripRear)
       { 
-        byte dim = getNormalized(rwd, Twk.minDim, Twk.maxDim);
         RunR.setSpeed(runSpeed);
         RunR.setAlpha(rot);
-        CylonR.setEyeSize(getNormalized(rwd, Twk.minEye, Twk.maxEye));
+        CylonR.setEyeSize(_normalized(rwd, Twk.minEye, Twk.maxEye));
         CylonR.setAlphaMul(255 - Twk.fire, invrot); 
         FireR.setAlphaMul(Twk.fire, invrot); 
         FireL.setAlphaMul(Twk.fire, invrot);
+        byte dim = _normalized(rwd, Twk.minDim, Twk.maxDim);
         FireR.setDimRatio(dim); 
         FireL.setDimRatio(dim); 
         TwinkleR.setAlphaMul(max(Twk.minTwkR, rwd), invrot); 
       }
 
-      // -- Middle Strip
+      // -- mid Strip
       if (Twk.stripMid)
       {
         AquaRun.setAlpha(fwd);
