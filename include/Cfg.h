@@ -33,10 +33,6 @@ struct Tweaks : public OBJVar
 
   byte runSpeed   = 3;
 
-  // // for acc lerping
-  // int FWD         = 0;
-  // int RWD         = 0;
-
   // front & rear Cylons
   byte minEye     = 5;
   byte maxEye     = 10;
