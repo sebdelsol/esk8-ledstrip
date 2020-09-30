@@ -210,7 +210,7 @@ void MPU::compute(SensorOutput& output)
   #ifdef MPU_DBG
     _log << "[ dt "         <<    _WIDTH(mdt * .001, 6) << "ms - smooth " <<      _WIDTH(smooth / 65536.,  6) << "] ";
     _log << "[ smooth acc " <<    _WIDTH(mAccY, 6)      << " - smooth w " <<      _WIDTH(mWZ, 6)              << "] ";
-    _log << "[ ouput acc "  <<    _WIDTH(output.acc, 6) << " - ouput w "  <<      _WIDTH(output.w, 4)         << "] ";
+    _log << "[ ouput acc "  <<    _WIDTH(output.acc, 4) << " - ouput w "  <<      _WIDTH(output.w, 4)         << "] ";
     _log << "[ grav " << SpaceIt( _WIDTH(mGrav.x, 5),    _WIDTH(mGrav.y, 5),      _WIDTH(mGrav.z, 5))         << "] ";
     _log << "[ gyr "  << SpaceIt( _WIDTH(mW.x, 4),       _WIDTH(mW.y, 4),         _WIDTH(mW.z, 4))            << "] ";
     _log << "[ acc "  << SpaceIt( _WIDTH(mAcc.x, 6),     _WIDTH(mAcc.y, 6),       _WIDTH(mAcc.z, 6))          << "] ";
