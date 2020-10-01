@@ -44,8 +44,7 @@ struct Raster
       _log << "  - " << r[i].name << " " << _WIDTH(r[i].time - start, 5) << "µs"; 
       start = r[i].time;
     }
-    _log << "\r";
-    // _log << endl;
+    _log << endl;
     lastEnd = end;
   };
 
