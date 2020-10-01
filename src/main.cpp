@@ -190,8 +190,8 @@ inline void loopBT()
 }
 
 // ------------
-#define _max0(v) v >= 0 ? v : 0
-inline byte _normalized(int acc, byte _min, byte _max) { return _min + (((_max - _min) * acc) >> 8); }
+inline byte max0(int acc) { return acc >=0 ? acc : 0; }
+inline byte normalized(int acc, byte _min, byte _max) { return _min + (((_max - _min) * acc) >> 8); }
 
 inline void loopLeds()
 {
@@ -207,15 +207,15 @@ inline void loopLeds()
       byte invrot = 255 - rot;
 
       // -- acc
-      byte fwd = _max0(m.acc);
-      byte rwd = _max0(-m.acc);
+      byte fwd = max0(m.acc);
+      byte rwd = max0(-m.acc);
 
       // -- front strip
       if (Twk.stripFront)
       { 
         RunF.setSpeed(runSpeed);
         RunF.setAlpha(rot);
-        CylonF.setEyeSize(_normalized(fwd, Twk.minEye, Twk.maxEye));
+        CylonF.setEyeSize(normalized(fwd, Twk.minEye, Twk.maxEye));
         CylonF.setAlphaMul(255 - Twk.pacifica, invrot); 
         Pacifica.setAlphaMul(Twk.pacifica, invrot); 
         TwinkleF.setAlphaMul(fwd, invrot); 
@@ -226,11 +226,11 @@ inline void loopLeds()
       { 
         RunR.setSpeed(runSpeed);
         RunR.setAlpha(rot);
-        CylonR.setEyeSize(_normalized(rwd, Twk.minEye, Twk.maxEye));
+        CylonR.setEyeSize(normalized(rwd, Twk.minEye, Twk.maxEye));
         CylonR.setAlphaMul(255 - Twk.fire, invrot); 
         FireR.setAlphaMul(Twk.fire, invrot); 
         FireL.setAlphaMul(Twk.fire, invrot);
-        byte dim = _normalized(rwd, Twk.minDim, Twk.maxDim);
+        byte dim = normalized(rwd, Twk.minDim, Twk.maxDim);
         FireR.setDimRatio(dim); 
         FireL.setDimRatio(dim); 
         TwinkleR.setAlphaMul(max(Twk.minTwkR, rwd), invrot); 
