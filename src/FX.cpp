@@ -62,11 +62,11 @@ void FireFX::initFX()
 void FireFX::update(ulong time, ulong dt)
 {
   // upstream and move through z as well for changing patterns
-  uint32_t Y = 15 * time * mSpeed;
-  uint32_t Z = 3 * time * mSpeed;
+  uint32_t YY = 15 * time * mSpeed;
+  uint32_t ZZ = 3 * time * mSpeed;
   uint32_t scale = inoise16(17 * time) >> 1;
-  uint32_t centre = (mNLEDS / 2) - 1;
-  #define NOISE(y) (inoise16(Y + scale * (y - centre), Z) + 1)
+  uint32_t center = (mNLEDS / 2) - 1;
+  #define NOISE(y) (inoise16(YY + scale * (y - center), ZZ) + 1)
 
   // seed the fire
   mHeat[mNLEDS - 1] = NOISE(0);
