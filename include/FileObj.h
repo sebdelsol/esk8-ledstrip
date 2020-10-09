@@ -5,9 +5,7 @@
 #include <myNVS.h>
 #include <variadic.h>
 
-//------------------- Dbg
-#define DBG_SHOWFILES  // to see files in SPIFFS
-
+//------------------- cfg
 static auto CFG_CURRENT = "/config.cfg";
 static auto CFG_DEFAULT = "/config.def";
 
