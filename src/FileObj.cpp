@@ -53,13 +53,10 @@ FileObj::~FileObj()
   if (f)
   {
     _log << (isloading ? "loaded" : "saved");
-
     if (mNVS.isOK()) handleCRC();
-
     _log << endl;
 
-    // no need to manually close the file
-    // it's already done in file destructor
+    // no need to manually close the file, it's already done in file destructor
   }
 }
 
