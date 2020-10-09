@@ -55,7 +55,7 @@ class AllObj : public CfgFiles
   
 protected:
   void readCmd(Stream& stream, BUF& buf, TrackChange trackChange, Decode decode);
-  void sendCmdForAllVars(Stream& stream, const char* cmdKeyword, TrackChange trackChange, Decode decode, MyVar::TestFunc test = nullptr);
+  void CmdAllVars(Stream& stream, const char* cmdKeyword, TrackChange trackChange, Decode decode, MyVar::TestFunc test = nullptr);
 
 public:
   void save(CfgType cfgtype);

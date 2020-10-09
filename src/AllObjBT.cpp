@@ -8,7 +8,7 @@ void AllObjBT::sendInits(BlueTooth &BT)
     BluetoothSerial& BTserial = BT.getSerial();
 
     // for all vars, send an init cmd and output the result in BTSerial (a list of init of vars)
-    sendCmdForAllVars(BTserial, CMD_INIT, TrackChange::undefined, Decode::undefined, &MyVar::isShown); 
+    CmdAllVars(BTserial, CMD_INIT, TrackChange::undefined, Decode::undefined, &MyVar::isShown); 
 
     // end of inits
     BTserial << CMD_INIT_DONE << endl;
@@ -23,7 +23,7 @@ void AllObjBT::sendUpdate(BlueTooth &BT, MPU& mpu)
     BluetoothSerial& BTserial = BT.getSerial();
 
     // for all vars, send a get cmd and output the result in BTSerial (a list of set of changed vars)
-    sendCmdForAllVars(BTserial, CMD_GET, TrackChange::undefined, Decode::compact, &MyVar::hasChanged); 
+    CmdAllVars(BTserial, CMD_GET, TrackChange::undefined, Decode::compact, &MyVar::hasChanged); 
 
     // send mpu update 
     SensorOutput& m = mpu.mOutput;
