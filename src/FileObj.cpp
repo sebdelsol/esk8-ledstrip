@@ -78,14 +78,11 @@ void FileObj::remove()
 //----------------
 uint32_t FileObj::getCRC()
 {
-  CRC32 crc;
-  
   f.flush();
   f.seek(0, SeekMode::SeekSet);
   
-  for (size_t i = 0; i < f.size(); i++) 
-    crc.update(f.read());
-  
+  CRC32 crc;
+  for (size_t i = 0; i < f.size(); i++) crc.update(f.read()); 
   return crc.finalize();
 }
 
