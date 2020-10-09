@@ -15,14 +15,12 @@ void CfgFiles::init()
   spiffsOK = logTst(SPIFFS.begin(true), "Mount SPIFFS", "ok", "failed");
   _log << endl;
 
-#ifdef DBG_SHOWFILES
   if (spiffsOK)
   {
     File root = SPIFFS.open("/");
     while(File file = root.openNextFile())
       _log << "File " << file.name() << " - " << file.size() << " Bytes" << endl;
   }
-#endif
 }
 
 //-----------------
