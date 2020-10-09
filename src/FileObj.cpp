@@ -12,7 +12,7 @@ void CfgFiles::init()
 {
   mNVS.begin("storage");
 
-  spiffsOK = logTst(SPIFFS.begin(true), "Mount SPIFFS", "ok", "failed");
+  spiffsOK = logTst(SPIFFS.begin(true), "Mount FS", "ok", "failed");
   _log << endl;
 
   if (spiffsOK)
@@ -68,7 +68,7 @@ void FileObj::remove()
   {
     f.close(); // close the file before removing it
     
-    if (logTst(SPIFFS.remove(path), "delete the file", "ok", "failed"))
+    if (logTst(SPIFFS.remove(path), "delete file", "ok", "failed"))
       mNVS.erase(path);
 
     free(path);
