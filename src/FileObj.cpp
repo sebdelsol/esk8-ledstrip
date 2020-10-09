@@ -103,7 +103,7 @@ void FileObj::handleCRC()
   {
     uint32_t oldcrc;
     
-    logTst(mNVS.getuint(f.name(), oldcrc), "crc", "found", "doesn't exist");
+    if (logTst(mNVS.getuint(f.name(), oldcrc), "crc", "found", "doesn't exist"))
     {
       if (logTst(crc != oldcrc, "check crc", "BAD", "ok")) remove();
       return;
