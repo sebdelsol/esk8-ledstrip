@@ -6,7 +6,7 @@ class iterArr
 {
   T* ptr;
 public:
-  iterArr(T* ptr) : ptr(ptr) {};                                               // constructor
+  iterArr(T* ptr) : ptr(ptr) {};                                               // construct
   iterArr operator++()                           { ++ptr; return *this; };     // increment
   bool    operator!=(const iterArr& other) const { return ptr != other.ptr; }; // compare
   T&      operator*()                      const { return *ptr; };             // deference
