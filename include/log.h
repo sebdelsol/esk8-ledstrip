@@ -7,8 +7,8 @@
 extern Stream& _log;
 
 // -- Stream extension
-// -- _HEXS() for signed hexadecimal print : _HEXS(-16) gives -10 instead of FFFFFFF0 if an int
-// -- _HEXS() works for CRGB too
+// _HEXS() for signed hexadecimal print : _HEXS(-16) gives -10 instead of FFFFFFF0 if an int
+// _HEXS() works for CRGB too
 
 template<typename T>
 struct _SignedHEX
@@ -17,7 +17,7 @@ struct _SignedHEX
   _SignedHEX(T v): v(v) {};
 };
 
-// -- stream << _HEXS(v) for any type of v
+// stream << _HEXS(v) for any type of v
 template<typename T>
 inline Print &operator <<(Print &obj, const _SignedHEX<T> &arg)
 { 
@@ -31,7 +31,7 @@ inline Print &operator <<(Print &obj, const _SignedHEX<T> &arg)
   return obj; 
 }
 
-// -- stream << _HEXS(v) for CRGB v
+// stream << _HEXS(v) for CRGB v
 inline Print &operator <<(Print &obj, const _SignedHEX<CRGB> &arg)
 { 
   #define _HEX2(a) _WIDTHZ(_HEX(a), 2) // leading 0s if less than 2 chars
@@ -39,7 +39,7 @@ inline Print &operator <<(Print &obj, const _SignedHEX<CRGB> &arg)
   return obj << _HEX2(c.r) << _HEX2(c.g) << _HEX2(c.b); 
 }
 
-// -- _HEXS def
+// _HEXS def
 #define _HEXS(a) _SignedHEX<typeof(a)>(a)
 
 // _log << SpaceIt(mpu.axis.x, mpu.axis.y, mpu.axis.z, mpu.angle, mpu.acc, mpu.w) << endl;
