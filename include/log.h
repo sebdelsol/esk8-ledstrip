@@ -32,9 +32,9 @@ inline Print &operator <<(Print &obj, const _SignedHEX<T> &arg)
 }
 
 // -- stream << _HEXS(v) for CRGB v
-#define _HEX2(a) _WIDTHZ(_HEX(a), 2) // leading 0s if less than 2 chars
 inline Print &operator <<(Print &obj, const _SignedHEX<CRGB> &arg)
 { 
+  #define _HEX2(a) _WIDTHZ(_HEX(a), 2) // leading 0s if less than 2 chars
   const CRGB& c = arg.v;
   return obj << _HEX2(c.r) << _HEX2(c.g) << _HEX2(c.b); 
 }

@@ -25,7 +25,7 @@ public:
 
   bool begin(const char* namespaceNvs)
   {
-    _log << "NVS begin";
+    _log << "NVS";
     #define TASKTEST(tst, task, failed, ok) _log << "..." << task << "..." << (tst ? failed : ok); if(tst)
 
     esp_err_t err = nvs_flash_init();

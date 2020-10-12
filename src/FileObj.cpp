@@ -11,7 +11,6 @@ inline bool logTst(bool tst, const char* task, const char* ok, const char* faile
 void CfgFiles::init()
 {
   mNVS.begin("storage");
-
   spiffsOK = logTst(SPIFFS.begin(true), "Mount FS", "ok", "failed");
   _log << endl;
 
