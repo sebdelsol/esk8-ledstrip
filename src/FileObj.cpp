@@ -37,13 +37,13 @@ FileObj::FileObj(const char* path, FileMode mode, MyNvs& nvs) : isloading(mode =
     f = SPIFFS.open(path, isloading ? "r" : "w+"); // need to be readable to compute crc
     if (f)
     {
-      _log << (isloading ? "Loading from " : "Saving to ") << path << "...";
+      _log << (isloading ? "Loading " : "Saving  ") << path << "...";
       return;
     }
   }
 
   mNVS.erase(path);
-  _log << "FAIL to " << (isloading ? "load from " : "save to ") << path << endl;
+  _log << "FAIL to " << (isloading ? "load " : "save ") << path << endl;
 };
 
 //----------------
@@ -51,7 +51,7 @@ FileObj::~FileObj()
 {
   if (f)
   {
-    _log << (isloading ? "loaded" : "saved");
+    _log << (isloading ? "loaded" : "saved ");
     if (mNVS.isOK()) handleCRC();
     _log << endl;
 
