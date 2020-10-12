@@ -14,24 +14,33 @@ template<typename T>
 struct _SignedHEX
 {
   T val;
-  _SignedHEX(T v): val(v) {}
+  _SignedHEX(T v): val(v) {};
 };
 
+// -- stream << _HEXS(v) for any type of v
 template<typename T>
 inline Print &operator <<(Print &obj, const _SignedHEX<T> &arg)
 { 
-  if (arg.val >= 0) obj.print(arg.val, HEX);
+  if (arg.val >= 0) 
+    obj.print(arg.val, HEX);
   else 
-  {
-    obj.print("-"); obj.print(-arg.val, HEX);
+  { 
+    obj.print("-"); 
+    obj.print(-arg.val, HEX); 
   } 
   return obj; 
 }
 
-#define _WIDTH2Hex(a) _WIDTHZ(_HEX(a), 2)
-inline Print &operator <<(Print &obj, const _SignedHEX<CRGB> &arg) { return obj << _WIDTH2Hex(arg.val.r) << _WIDTH2Hex(arg.val.g) << _WIDTH2Hex(arg.val.b); }
+// -- stream << _HEXS(v) for CRGB v
+#define _HEX2(a) _WIDTHZ(_HEX(a), 2) // leading 0s if less than 2 chars
+inline Print &operator <<(Print &obj, const _SignedHEX<CRGB> &arg)
+{ 
+  const CRGB& c = arg.val;
+  return obj << _HEX2(c.r) << _HEX2(c.g) << _HEX2(c.b); 
+}
 
-#define _HEXS(a)      _SignedHEX<typeof(a)>(a)
+// -- _HEXS def
+#define _HEXS(a) _SignedHEX<typeof(a)>(a)
 
 // _log << SpaceIt(mpu.axis.x, mpu.axis.y, mpu.axis.z, mpu.angle, mpu.acc, mpu.w) << endl;
 // _log << SpaceIt(_HEXS(mpu.axis.x), _HEXS(mpu.axis.y), _HEXS(mpu.axis.z), _HEXS(mpu.angle), _HEXS(mpu.acc), _HEXS(mpu.w)) << endl;
