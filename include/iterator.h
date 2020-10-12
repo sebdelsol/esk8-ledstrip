@@ -12,7 +12,7 @@ public:
   T&      operator*()                      const { return *ptr; };             // deference
 };
 
-// declaration for iterator on type* arr[] with a variable max
+// iterator for type* arr[] with a variable max
 #define ArrayOfPtr_Iter(type, arr, max)                 \
 using iterator = iterArr<type* const>;                  \
 iterator begin() const { return iterator(arr); };       \
