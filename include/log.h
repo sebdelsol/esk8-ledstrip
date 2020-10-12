@@ -13,20 +13,20 @@ extern Stream& _log;
 template<typename T>
 struct _SignedHEX
 {
-  T val;
-  _SignedHEX(T v): val(v) {};
+  T v;
+  _SignedHEX(T v): v(v) {};
 };
 
 // -- stream << _HEXS(v) for any type of v
 template<typename T>
 inline Print &operator <<(Print &obj, const _SignedHEX<T> &arg)
 { 
-  if (arg.val >= 0) 
-    obj.print(arg.val, HEX);
+  if (arg.v >= 0) 
+    obj.print(arg.v, HEX);
   else 
   { 
     obj.print("-"); 
-    obj.print(-arg.val, HEX); 
+    obj.print(-arg.v, HEX); 
   } 
   return obj; 
 }
@@ -35,7 +35,7 @@ inline Print &operator <<(Print &obj, const _SignedHEX<T> &arg)
 #define _HEX2(a) _WIDTHZ(_HEX(a), 2) // leading 0s if less than 2 chars
 inline Print &operator <<(Print &obj, const _SignedHEX<CRGB> &arg)
 { 
-  const CRGB& c = arg.val;
+  const CRGB& c = arg.v;
   return obj << _HEX2(c.r) << _HEX2(c.g) << _HEX2(c.b); 
 }
 
