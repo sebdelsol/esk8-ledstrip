@@ -46,7 +46,7 @@ inline Print &operator <<(Print &obj, const _SignedHEX<CRGB> &arg)
 // _log << SpaceIt(_HEXS(mpu.axis.x), _HEXS(mpu.axis.y), _HEXS(mpu.axis.z), _HEXS(mpu.angle), _HEXS(mpu.acc), _HEXS(mpu.w)) << endl;
 // _log << SpaceItHex(mpu.axis.x, mpu.axis.y, mpu.axis.z, mpu.angle, mpu.acc, mpu.w) << endl;
 
-s// CRGB c = strtol("FF0000", nullptr, 16);
+// CRGB c = strtol("FF0000", nullptr, 16);
 // CRGB c2 = CRGB::Red;
 // _log << SpaceIt(_HEXS(c2), _HEXS(c), c.r, c.g, c.b) << endl; // FF0000 FF0000 255 0 0
 // int  v = strtol("-10", nullptr, 16);
