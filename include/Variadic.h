@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Streaming.h>
+#include <log.h>
 
 // -----------------------------------------------------
 #include <varMac.h> 
@@ -19,6 +19,11 @@
 #define _join(txt)       (txt) << F(" ") <<
 #define _joinLast(txt)   (txt)
 #define SpaceIt(...)     ForEachMacro(_join, _joinLast, __VA_ARGS__)
+
+// create SpaceItHex(...) // need @least one args...
+#define _joinH(txt)       _HEXS(txt) << F(" ") <<
+#define _joinHLast(txt)   _HEXS(txt)
+#define SpaceItHex(...)   ForEachMacro(_joinH, _joinHLast, __VA_ARGS__)
 
 // -----------------------------------------------------
 // create the _methods(...) that calls _method(arg) for each arg
