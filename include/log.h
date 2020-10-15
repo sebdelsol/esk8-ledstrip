@@ -51,6 +51,3 @@ inline Print &operator <<(Print &obj, const _SignHEX<CRGB> &arg)
 // _log << SpaceIt(_HEXS(c2), _HEXS(c), c.r, c.g, c.b) << endl; // FF0000 FF0000 255 0 0
 // int  v = strtol("-10", nullptr, 16);
 // _log << SpaceIt(v, _HEX(v), _HEXS(v)) << endl; // -16 FFFFFFF0 -10
-// _log << (CRGB(c2) >= CRGB(0)) << endl;
-
-
