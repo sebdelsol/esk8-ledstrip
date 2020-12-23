@@ -39,15 +39,16 @@ class AllLedStrips : public OBJVar
   byte          mNStrips  = 0;
 
   ulong     mLastT      = 0;
-  bool      mDither     = true;
-  int       mMaxmA      = 800;
-  byte      mBright     = 255; // half brightness (128) is enough & avoid reaching maxmA
   byte      mRawBright  = 0;   // with fade 
   int       mFade       = 0;   // for the fade in
-  int       mFadeTime   = 1000; // ms
-  int       mMinProbe   = 400;
   const int mMaxProbe   = 4095;
-  bool      mProbe      = false;
+
+  bool      mDither;
+  int       mMaxmA;
+  byte      mBright;   
+  int       mFadeTime; 
+  int       mMinProbe;
+  bool      mProbe;
 
   // time to show & fadein
   bool      mHasbegun   = false;

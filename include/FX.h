@@ -6,12 +6,13 @@
 #include <ObjVar.h>
 
 #define ClearLeds(l, n) memset8(l, 0, n * sizeof(CRGB)); 
+#define maxCOLOR (2 << 24)
 
 //--------------------------------------
 class FX : public OBJVar
 {
-  byte mAlpha = 255; // visible
-  byte mLinearAlpha = 255; // no Gamma applied 
+  byte mAlpha; 
+  byte mLinearAlpha; 
 
 protected:
   int mNLEDS = 0;
@@ -40,7 +41,7 @@ protected:
   CRGBPalette16 mPal;
 
 public:
-  FireFX(const bool reverse = false, const byte speed = 27, const int dimRatio = 4);
+  FireFX(const bool reverse = false);
   void setDimRatio(const int dimRatio) { mDimRatio = dimRatio; };
   void initFX();
   void update(ulong time, ulong dt);
@@ -50,7 +51,7 @@ public:
 class AquaFX : public FireFX
 {
 public:
-  AquaFX(const bool reverse = false, const byte speed = 27, const float dimRatio = 10.);
+  AquaFX(const bool reverse = false);
 };
 
 //--------------------------------------
@@ -59,7 +60,6 @@ class PlasmaFX : public FX
   byte mK, mP1, mP2;
 
 public:
-  PlasmaFX(const byte wavelenght = 5, const byte period1 = 3, const byte period2 = 5);
   void initFX();
   void update(ulong time, ulong dt);
 };
@@ -68,14 +68,14 @@ public:
 class CylonFX : public FX
 {
 protected:
-  int mEyeSize, mSpeed;  
   CRGB mColor;
+  int mEyeSize, mSpeed;  
 
   void showEye(int p); 
   int  getPos(ulong time);
 
 public:
-  CylonFX(const CRGB color=0x0000FF, const int eyeSize = 3, const int speed = 3<<3);
+  CylonFX(const CRGB color=0x0000FF);
   void setEyeSize(const int eyeSize) {mEyeSize = eyeSize;};
   void initFX();
   void update(ulong time, ulong dt);
@@ -97,7 +97,7 @@ protected:
   CRGB mColor;
 
 public:
-  RunningFX(const CRGB color=0x0000FF, const int speed = 2, const int width = 10);
+  RunningFX(const CRGB color=0x0000FF, const int speed = 3);
   void setSpeed(const int speed) {mSpeed = speed;};
   void initFX();
   void update(ulong time, ulong dt);
@@ -107,15 +107,14 @@ public:
 class TwinkleFX : public FX
 {
   CHSV mHSV; CRGB mColor;
-  byte mHueDiv;
   byte mDiv;
 
   void setHue(const CRGB color);
   void setHue(const byte hue);
 
 public: 
-  TwinkleFX(const byte hue=0, const byte hueDiv=5, const byte div=5);
-  TwinkleFX(const CRGB color=0xff0000, const byte hueDiv=5, const byte div=5);
+  TwinkleFX(const byte hue=0);
+  TwinkleFX(const CRGB color=0xff0000);
   void initFX();
   void update(ulong time, ulong dt);
 };
@@ -130,7 +129,7 @@ class PacificaFX : public FX
   void oneLayer(CRGBPalette16& p, uint16_t cistart, uint16_t wavescale, uint8_t bri, uint16_t waveangle);
   
 public: 
-  PacificaFX(const byte speed = 4);
+  PacificaFX();
   void initFX();
   void update(ulong time, ulong dt);
 };

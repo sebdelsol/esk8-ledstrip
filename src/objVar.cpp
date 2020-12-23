@@ -1,11 +1,18 @@
 #include <ObjVar.h>
 
 // ------------------------------
-MyVar::MyVar(const char* name, SetFunc* set, GetFunc* get, int min, int max, bool show) 
+MyVar::MyVar(byte n, const char* name, SetFunc* set, GetFunc* get, int def, int min, int max, bool show) 
 : mName(name), mSetF(set), mGetF(get), mMin(min), mMax(max), mShow(show) 
 {
   assert(name!=nullptr);
   assert(strchr(name, ' ')==nullptr); // no space !
+
+  if (n==1)
+  {
+    Args defaults;
+    defaults[0] = def;
+    this->set(defaults, 1, TrackChange::no);
+  }
 }
 
 //----------------
@@ -33,7 +40,7 @@ byte MyVar::get(GetArgs toGet)
 //----------------
 bool MyVar::hasChanged()
 {
-  int cur[MAX_ARGS]; 
+  Args cur; 
   byte n = get(cur); // write current values in cur
 
   for (byte j=0; j < n; j++)
@@ -46,12 +53,12 @@ bool MyVar::hasChanged()
 }
 
 // ----------------------------------------------------
-bool OBJVar::addVar(const char* name, SetFunc* set, GetFunc* get, int min, int max, bool show)
+bool OBJVar::addVar(byte n, const char* name, SetFunc* set, GetFunc* get, int def, int min, int max, bool show)
 {
   bool ok = mNVAR < MAX_VAR;
   if (ok)
   {
-    MyVar* var = new MyVar(name, set, get, min, max, show);
+    MyVar* var = new MyVar(n, name, set, get, def, min, max, show);
     assert (var!=nullptr);
 
     mVar[mNVAR++] = var;

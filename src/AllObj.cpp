@@ -35,6 +35,7 @@ bool AllObj::isNumber(const char* txt)
 { 
   for (int i = 0; i < strlen(txt); i++) 
     if (!(isdigit(txt[i]) || txt[i]=='-')) 
+    // if (!(isxdigit(txt[i]) || txt[i]=='-')) 
       return false; 
 
   return true; 
@@ -46,7 +47,8 @@ void AllObj::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, 
     _log << SpaceIt(cmdKeyword, parsed.obj->getName(), parsed.var->getName());
     
     for (byte i=0; i < nbArg; i++) 
-      _log << " " << args[i];
+      // _log << " " << _HEX(args[i]);
+      _log << " " << args[i]);
     if (line) _log << endl;
   #endif
 }
@@ -55,6 +57,7 @@ void AllObj::dbgCmd(const char* cmdKeyword, const parsedCmd& parsed, int nbArg, 
 {
   #ifdef DBG_CMD
     dbgCmd(cmdKeyword, parsed, nbArg, args, false);
+    // _log << " [" << _HEX(min) << "-" << _HEX(max) << "]" << endl;
     _log << " [" << min << "-" << max << "]" << endl;
   #endif
 }
@@ -68,13 +71,14 @@ void AllObj::setCmd(const parsedCmd& parsed, BUF& buf, TrackChange trackChange)
   int min, max;
   parsed.var->getRange(min, max);
 
-  int args[MAX_ARGS];
+  Args args;
   byte nbArg = 0;
 
   for (; nbArg < MAX_ARGS; nbArg++) // get the args
   {
     const char* a = buf.next();
     if (a!=nullptr && isNumber(a))
+      // args[nbArg] = constrain(strtol(a, nullptr, 16), min, max);
       args[nbArg] = constrain(strtol(a, nullptr, 10), min, max);
     else 
       break;
@@ -91,7 +95,7 @@ void AllObj::getCmd(const parsedCmd& parsed, Stream& stream, Decode decode)
 {
   assert(decode != Decode::undefined);
 
-  int args[MAX_ARGS];
+  Args args;
   byte nbArg = parsed.var->get(args); //get the value in args
 
   // remove pure cmd (no args)
@@ -104,6 +108,7 @@ void AllObj::getCmd(const parsedCmd& parsed, Stream& stream, Decode decode)
 
     for (byte i=0; i < nbArg; i++)
       stream << " " << args[i];
+      // stream << " " << _HEX(args[i]);
     stream << endl;
     
     dbgCmd(CMD_GET, parsed, nbArg, args);
@@ -118,12 +123,14 @@ void AllObj::initCmd(const parsedCmd& parsed, Stream& stream)
 
   int min, max;
   parsed.var->getRange(min, max);
+  // stream << " " << _HEX(min) << " " << _HEX(max);
   stream << " " << min << " " << max;
 
-  int args[MAX_ARGS];
+  Args args;
   byte nbArg = parsed.var->get(args); 
 
   for (byte i=0; i < nbArg; i++)
+    // stream << " " << _HEX(args[i]);
     stream << " " << args[i];
   stream << endl;
 

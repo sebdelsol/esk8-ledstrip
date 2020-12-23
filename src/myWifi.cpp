@@ -1,7 +1,7 @@
 #include <myWifi.h>
 
 // --------------
-void myWifi::stop(const char* reason = nullptr)
+void myWifi::stop(const char* reason)
 {
   WiFi.mode(WIFI_OFF);
   digitalWrite(BUILTIN_LED, HIGH); // led off

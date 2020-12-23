@@ -19,7 +19,7 @@ class myWifi
 
 public:
   void start();
-  void stop(const char* reason);
+  void stop(const char* reason = nullptr);
   bool update();
 };
 

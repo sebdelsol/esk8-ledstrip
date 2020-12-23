@@ -37,13 +37,15 @@ AllLedStrips::AllLedStrips() : mBeginTime(millis())
 
 void AllLedStrips::init() 
 {
-  AddVarCode ("dither",     mDither = args[0]; setDither(args[0]),     mDither, 0,   1);
-  AddVarCode ("maxmA",      mMaxmA  = args[0]; setMaxmA(args[0]),      mMaxmA,  100, 1000);
-  AddVarCode ("bright",     mBright = args[0]; setBrightness(args[0]), mBright, 1,   255);
-  AddVarName ("fadeTime",   mFadeTime, 500, 3000);
+  _log << "FastLed v" << FASTLED_VERSION / (1000 * 1000) << "." << (FASTLED_VERSION / 1000) % 1000 << "." << FASTLED_VERSION % 1000 << endl;
+
+  AddVarCode ("dither",     mDither = args[0]; setDither(args[0]),     mDither, true, 0,   1);
+  AddVarCode ("maxmA",      mMaxmA  = args[0]; setMaxmA(args[0]),      mMaxmA,  800,  100, 1000);
+  AddVarCode ("bright",     mBright = args[0]; setBrightness(args[0]), mBright, 255,  1,   255);
+  AddVarName ("fadeTime",   mFadeTime, 1000, 500, 3000);
   AddCmd     ("fadeIn",     mBeginTime = millis());
-  AddBoolName("probe",      mProbe);
-  AddVarName ("minProbe",   mMinProbe, 1, mMaxProbe);
+  AddBoolName("probe",      mProbe, false);
+  AddVarName ("minProbe",   mMinProbe, 400, 1, mMaxProbe);
 
   #ifdef FASTLED_CORE
     xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", FASTLED_STACK, nullptr, FASTLED_PRIO, &FastLEDshowTaskHandle, FASTLED_CORE);  
@@ -107,7 +109,11 @@ void AllLedStrips::update()
   setBrightness(mBright); // use mFade
 
   // showing if dithering is off
-  if (!mDither) show();
+  if (!mDither)
+  {
+    // delay(5);
+    show();
+  }
 }
 
 bool AllLedStrips::doDither()

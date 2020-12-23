@@ -55,12 +55,12 @@ class MPU : public OBJVar, public MPU6050
   VectorInt16 mAccReal; // gravity-free accel
   VectorFloat mGrav;    // measured gravity  
   
-  void getAxiSAngle(VectorInt16 &v, int &angle, Quaternion &q);
+  void getAxiSAngle(VectorInt16& v, int& angle, Quaternion& q);
 
   int16_t mXGyroOffset,   mYGyroOffset,   mZGyroOffset;
   int16_t mXAccelOffset,  mYAccelOffset,  mZAccelOffset;
-  bool    mGotOffset     = false;
-  bool    mAutoCalibrate = false;
+  bool    mGotOffset;
+  bool    mAutoCalibrate;
 
   void printOffsets(const __FlashStringHelper* txt);
   bool setOffsets();
@@ -68,13 +68,13 @@ class MPU : public OBJVar, public MPU6050
   int16_t  mAccY       = 0;
   int16_t  mWZ         = 0;
   int16_t  mAccYsmooth = 0;
-
+ 
   // value to tweak
-  uint16_t mSmoothAcc  = 1600;
-  uint16_t mNeutralAcc = 60;
-  byte     mDivAcc     = 2;
-  uint16_t mNeutralW   = 3000;
-  int      mMaxW       = 7000; 
+  uint16_t mSmoothAcc;
+  uint16_t mNeutralAcc;
+  uint16_t mMaxAcc;
+  uint16_t mNeutralW;
+  int      mMaxW; 
 
 public:
   SensorOutput  mOutput; // public outpout

@@ -46,28 +46,29 @@
 void MPU::init()
 {
   // save calibration
-  #define AddOffset(var)     AddVarHid(var, -32768, 32767)
+  #define AddOffset(var)     AddVarHid(var, 0, -32768, 32767)
   AddOffset(mXGyroOffset);   AddOffset(mYGyroOffset);  AddOffset(mZGyroOffset);
   AddOffset(mXAccelOffset);  AddOffset(mYAccelOffset); AddOffset(mZAccelOffset);
   
-  AddBoolNameHid("gotOffset", mGotOffset);
+  AddBoolNameHid("gotOffset", mGotOffset, false);
   
   #ifdef MPU_GET_CORE
     xTaskCreatePinnedToCore(MPUComputeTask, "mpuTask", MPU_GET_STACK, this, MPU_GET_PRIO, &NotifyToCalibrate, MPU_GET_CORE);  
-    AddCmd("calibrate",  xTaskNotifyGive(NotifyToCalibrate) ) // trigger a calibration
     _log << _FMT(F("Mpu runs on Core % with Prio %"), MPU_GET_CORE, MPU_GET_PRIO) << endl;
+    AddCmd("calibrate", xTaskNotifyGive(NotifyToCalibrate) ) // trigger a calibration
 
   #else
-    AddCmd("calibrate",  calibrate() ) 
+    AddCmd("calibrate", calibrate() ) 
   #endif
 
-  AddBoolName("auto",       mAutoCalibrate);
+  AddBoolName("auto",       mAutoCalibrate, false);
 
-  AddVarName ("neutralAcc", mNeutralAcc, 0, 300);
-  AddVarName ("divAcc",     mDivAcc,     1, 10);
-  AddVarName ("smoothAcc",  mSmoothAcc,  1, 32767)
-  AddVarName ("neutralW",   mNeutralW,   0, 32767);
-  AddVarName ("maxW",       mMaxW,       0, 32767);
+  AddVarName ("neutralAcc", mNeutralAcc, 60,   0, 300);
+  AddVarName ("maxAcc",     mMaxAcc,     2000, 500, 8192);
+  AddVarName ("smoothAcc",  mSmoothAcc,  1600, 1, 32767)
+
+  AddVarName ("neutralW",   mNeutralW,   3000, 0, 32767);
+  AddVarName ("maxW",       mMaxW,       7000, 0, 32767);
 }
 
 //--------------------------------------
@@ -84,7 +85,7 @@ void MPU::calibrate()
 
 bool MPU::setOffsets()
 {
-  _log << F("Try to get Offset...");
+  _log << F("Get Offset...");
 
   if (mGotOffset)
   {
@@ -167,13 +168,10 @@ bool MPU::getFiFoPacket()
 }
 
 //--------------------------------------
-inline int thresh(const int v, const uint16_t t) 
-{
-  return v > 0 ? max(0, v - t) : min(v + t, 0);
-}
-
-#define _stayShort(x) constrain(x, -32768, 32767)
-#define SHIFTR_VECTOR(v, n) v.x = v.x >> n;   v.y = v.y >> n;   v.z = v.z >> n; 
+inline int thresh(int v, uint16_t t) { return v > 0 ? max(0, v - t) : min(v + t, 0); }
+inline int16_t stayshort(int v)      { return constrain(v, -32768, 32767); }
+inline int16_t staybyte(int16_t v)   { return constrain(v, -255, 255); }
+inline void shiftrVector(VectorInt16 &v, byte n) { v.x = v.x >> n; v.y = v.y >> n; v.z = v.z >> n; }
 
 void MPU::compute(SensorOutput& output)
 {
@@ -184,8 +182,8 @@ void MPU::compute(SensorOutput& output)
 
   #ifdef USE_V6_12 
     // fix sensibility bug in MPU6050_6Axis_MotionApps_V6_12.h
-    SHIFTR_VECTOR(mW, 2) 
-    SHIFTR_VECTOR(mAcc, 1) 
+    shiftrVector(mW, 2) 
+    shiftrVector(mAcc, 1) 
   #endif
 
   // gravity & corrected accel
@@ -194,22 +192,27 @@ void MPU::compute(SensorOutput& output)
 
   // smooth acc & gyro
   uint16_t smooth = - int(pow(1. - ACCEL_AVG, mdt * ACCEL_BASE_FREQ * .000001) * 65536.); // 1 - (1-accel_avg) ^ (dt * 60 / 1000 000) using fract16
-  mAccY = lerp15by16(mAccY, _stayShort(mAccReal.y),  smooth);
-  mWZ   = lerp15by16(mWZ,   _stayShort(mW.z * -655), smooth);
+  mAccY = lerp15by16(mAccY, stayshort(mAccReal.y),  smooth);
+  mWZ   = lerp15by16(mWZ,   stayshort(mW.z * -655), smooth);
 
   // output
   getAxiSAngle(output.axis, output.angle, mQuat);
 
-  int16_t acc = _stayShort(thresh(mAccY / mDivAcc, mNeutralAcc) << 8);
+  // int16_t acc = stayshort(thresh(mAccY / mDivAcc, mNeutralAcc) << 8);
+  // mAccYsmooth = acc * mAccYsmooth < 0 || abs(acc) > abs(mAccYsmooth) ? acc : lerp15by16(mAccYsmooth, acc, mSmoothAcc);
+  // output.acc = staybyte(mAccYsmooth >> 7);
+
+  // _log << mAccY << " " << mMaxAcc << " " << thresh(mAccY, mNeutralAcc) << " " << constrain(thresh(mAccY, mNeutralAcc),-mMaxAcc, mMaxAcc);
+  int16_t acc = map(constrain(thresh(mAccY, mNeutralAcc),-mMaxAcc, mMaxAcc), -mMaxAcc, mMaxAcc, -32767, 32767);
   mAccYsmooth = acc * mAccYsmooth < 0 || abs(acc) > abs(mAccYsmooth) ? acc : lerp15by16(mAccYsmooth, acc, mSmoothAcc);
-  output.acc = constrain(mAccYsmooth >> 7, -255, 255);
-  
-  output.w = constrain((thresh(mWZ, mNeutralW) << 8) / mMaxW, -255, 255);
+  output.acc = mAccYsmooth >> 7;
+
+  output.w = staybyte((thresh(mWZ, mNeutralW) << 8) / mMaxW);
   output.updated = true;
 
   #ifdef MPU_DBG
     _log << "[ dt "         <<    _WIDTH(mdt * .001, 6) << "ms - smooth " <<      _WIDTH(smooth / 65536.,  6) << "] ";
-    _log << "[ smooth acc " <<    _WIDTH(mAccY, 6)      << " - smooth w " <<      _WIDTH(mWZ, 6)              << "] ";
+    _log << "[ smooth acc " <<    _WIDTH(acc, 6) << " " << _WIDTH(mAccYsmooth, 6)      << " - smooth w " <<      _WIDTH(mWZ, 6)              << "] ";
     _log << "[ ouput acc "  <<    _WIDTH(output.acc, 4) << " - ouput w "  <<      _WIDTH(output.w, 4)         << "] ";
     _log << "[ grav " << SpaceIt( _WIDTH(mGrav.x, 5),    _WIDTH(mGrav.y, 5),      _WIDTH(mGrav.z, 5))         << "] ";
     _log << "[ gyr "  << SpaceIt( _WIDTH(mW.x, 4),       _WIDTH(mW.y, 4),         _WIDTH(mW.z, 4))            << "] ";

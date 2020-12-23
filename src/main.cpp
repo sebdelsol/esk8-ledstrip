@@ -6,22 +6,23 @@
 // #define DEBUG_RASTER
 // #define DEBUG_LED_INFO
 
-// ----------------------------------------------------
+// --------------------------- 
 #include <ledstrip.h>
 #include <mpu.h>
-#include <Raster.h>
 #include <myWifi.h>
+#include <Raster.h>
 
 #define USE_WIFI (defined(USE_LEDSERVER) || defined(USE_OTA) || defined(USE_TELNET))
 
+// --------------------------- GLOBALS
 // -- Telnet Serial 
 #ifdef USE_TELNET
   #include  <TelnetSpy.h>  
-  TelnetSpy Telnet;  // output on Serial and Telnet
+  TelnetSpy Telnet;  
   #define   Serial  Telnet // redefine Serial
 #endif
 
-// -- log, depends on Serial possible redefinition 
+// -- _log 
 #include <log.h>
 Stream& _log = Serial;
 
@@ -37,7 +38,7 @@ Stream& _log = Serial;
   LedServer LedServer;
 #endif
 
-// -- Acc & Wifi
+// -- wifi & mpu
 myWifi  MyWifi;
 MPU     Mpu;
 
@@ -62,37 +63,36 @@ MPU     Mpu;
 CFG       Cfg CfgArgs;
 Tweaks    Twk;
 
-// --- Strips & Fxs
+// -- Strips & Fxs
 AllLedStrips AllStrips;
 
-LedStrip    <NBLEDS_MIDDLE, LEDM_PIN> StripM("mid");
-RunningFX   FireRun(LUSH_LAVA, 3);     
-RunningFX   AquaRun(AQUA_MENTHE, -3);  
-TwinkleFX   FireTwk(HUE_RED); 
-TwinkleFX   AquaTwk(HUE_AQUA_BLUE);
-PlasmaFX    Plasma;
+LedStrip     <NLED_MID, LEDM_PIN> StripM("mid");
+RunningFX    FireRun(LUSH_LAVA, 3);     
+RunningFX    AquaRun(AQUA_MENTHE, -3);  
+TwinkleFX    FireTwk(HUE_RED); 
+TwinkleFX    AquaTwk(HUE_AQUA_BLUE);
+PlasmaFX     Plasma;
 
-LedStrip    <NBLEDS_TIPS, LEDR_PIN>  StripR("rear");
-DblCylonFX  CylonR(LUSH_LAVA); 
-FireFX      FireL;
-FireFX      FireR(true); // reverse
-TwinkleFX   TwinkleR(CRGB::Red);
-RunningFX   RunR(CRGB::Gold); 
+LedStrip     <NLED_TIP, LEDR_PIN> StripR("rear");
+DblCylonFX   CylonR(LUSH_LAVA); 
+FireFX       FireL;
+FireFX       FireR(true); // reverse
+TwinkleFX    TwinkleR(CRGB::Red);
+RunningFX    RunR(CRGB::Gold); 
 
-LedStrip    <NBLEDS_TIPS, LEDF_PIN>  StripF("front");
-DblCylonFX  CylonF(AQUA);   
-PacificaFX  Pacifica;
-TwinkleFX   TwinkleF(HUE_AQUA_BLUE); 
-RunningFX   RunF(CRGB::Gold);
+LedStrip     <NLED_TIP, LEDF_PIN> StripF("front");
+DblCylonFX   CylonF(AQUA);   
+PacificaFX   Pacifica;
+TwinkleFX    TwinkleF(HUE_AQUA_BLUE); 
+RunningFX    RunF(CRGB::Gold);
 
-// ----------------------------------------------------
+// --------------------------- SETUP
 void setup()
 {
   // -- log
   Serial.begin(SERIAL_BAUD);
-  _log << "\n---------\n- START -\n---------\n";
-  _log << _FMT("ESP32 %", esp_get_idf_version()) << endl;
-  _log << _FMT("Main runs on Core % @ % MHz", xPortGetCoreID(), getCpuFrequencyMhz()) << endl;
+  _log << endl << "---- START ----" << endl;
+  _log << _FMT("ESP32 %...Loop on Core % @ %MHz", esp_get_idf_version(), xPortGetCoreID(), getCpuFrequencyMhz()) << endl;
 
   // -- main inits
   AllStrips.init();
@@ -139,83 +139,82 @@ void setup()
   #endif
 }
 
-// ----------------------------------------------------
-Raster Raster; // use only string literals for .add()
+// --------------------------- LOOP
+Raster Raster; 
 
-// --------------
+// -- loop Mpu
 inline void loopMpu()
 {
   EVERY_N_MILLISECONDS(MPU_TICK) Mpu.update(); 
-  Raster.add("MPU");
+  Raster.add("Mpu");
 }
 
-// ------------
+// -- loop Wifi
 inline void loopWifi()
 {
-#if USE_WIFI
-  EVERY_N_MILLISECONDS(WIFI_TICK) if(MyWifi.update())
-  {
-    bool isClient = false;
+  #if USE_WIFI
+    EVERY_N_MILLISECONDS(WIFI_TICK) if(MyWifi.update())
+    {
+      bool isClient = false;
 
-    #ifdef USE_TELNET
-      Telnet.handle();
-      isClient |= Telnet.isClientConnected();
-    #endif
+      #ifdef USE_TELNET
+        Telnet.handle();
+        isClient |= Telnet.isClientConnected();
+      #endif
 
-    #ifdef USE_LEDSERVER
-      isClient |= LedServer.update();
-    #endif
+      #ifdef USE_LEDSERVER
+        isClient |= LedServer.update();
+      #endif
 
-    #ifdef USE_OTA
-      // ota crash when other socket clients are connected
-      if (!isClient) Ota.update();
-    #endif
-  }
-  Raster.add("Wifi");
-#endif
+      #ifdef USE_OTA
+        if (!isClient) Ota.update(); // ota crashes when other socket clients are connected
+      #endif
+    }
+    Raster.add("Wifi");
+  #endif
 }
 
-// ----------
+// -- Loop BT
 inline void loopBT()
 {
-#ifdef USE_BT
-  EVERY_N_MILLISECONDS(BT_TICK)
-  {
-    if (Button.debounce()) BT.toggle();
-    
-    AllObj.receiveUpdate(BT);
-  }
-  Raster.add("BlueTooth");
-#endif
+  #ifdef USE_BT
+    EVERY_N_MILLISECONDS(BT_TICK)
+    {
+      if (Button.debounce()) BT.toggle();
+      
+      AllObj.receiveUpdate(BT);
+    }
+    Raster.add("BlueTooth");
+  #endif
 }
 
-// ------------
-inline byte max0(int acc) { return acc >=0 ? acc : 0; }
-inline byte normalized(int acc, byte _min, byte _max) { return _min + (((_max - _min) * acc) >> 8); }
+// -- Loop Leds
+inline int8_t  sign(int x) { return (x > 0) - (x < 0); }
+inline byte  above0(int x) { return x > 0 ? x : 0; }
+inline byte mapbyte(int x, byte mi, byte ma) { return mi + (((ma - mi) * x) >> 8); }
 
 inline void loopLeds()
 {
   EVERY_N_MILLISECONDS(LED_TICK)
   {
-    // led setup modified by MPU
-    SensorOutput& m = Mpu.mOutput;
-    if (m.updated)
+    // -- led setup modified by MPU
+    SensorOutput& mpu = Mpu.mOutput;
+    if (mpu.updated)
     {
-      // -- gyro
-      int8_t runSpeed =  ((m.w > 0) - (m.w < 0)) * Twk.runSpeed;
-      byte rot = abs(m.w);
+      // -- gyro & acc
+      int8_t runSpeed = sign(mpu.w) * Twk.runSpeed;
+      byte rot = abs(mpu.w);
       byte invrot = 255 - rot;
 
-      // -- acc
-      byte fwd = max0(m.acc);
-      byte rwd = max0(-m.acc);
+      byte fwd = above0(mpu.acc);
+      byte rwd = above0(-mpu.acc);
 
       // -- front strip
       if (Twk.stripFront)
       { 
         RunF.setSpeed(runSpeed);
         RunF.setAlpha(rot);
-        CylonF.setEyeSize(normalized(fwd, Twk.minEye, Twk.maxEye));
+        CylonF.setEyeSize(mapbyte(fwd, Twk.minEye, Twk.maxEye));
         CylonF.setAlphaMul(255 - Twk.pacifica, invrot); 
         Pacifica.setAlphaMul(Twk.pacifica, invrot); 
         TwinkleF.setAlphaMul(fwd, invrot); 
@@ -224,13 +223,13 @@ inline void loopLeds()
       // -- rear Strip
       if (Twk.stripRear)
       { 
+        byte dim = mapbyte(rwd, Twk.minDim, Twk.maxDim);
         RunR.setSpeed(runSpeed);
         RunR.setAlpha(rot);
-        CylonR.setEyeSize(normalized(rwd, Twk.minEye, Twk.maxEye));
+        CylonR.setEyeSize(mapbyte(rwd, Twk.minEye, Twk.maxEye));
         CylonR.setAlphaMul(255 - Twk.fire, invrot); 
         FireR.setAlphaMul(Twk.fire, invrot); 
         FireL.setAlphaMul(Twk.fire, invrot);
-        byte dim = normalized(rwd, Twk.minDim, Twk.maxDim);
         FireR.setDimRatio(dim); 
         FireL.setDimRatio(dim); 
         TwinkleR.setAlphaMul(max(Twk.minTwkR, rwd), invrot); 
@@ -249,7 +248,7 @@ inline void loopLeds()
       Raster.add("Leds setup");
     }
 
-    // -- update
+    // -- Leds update
     AllStrips.update();
     Raster.add("Leds update");
   }
@@ -262,14 +261,13 @@ inline void loopLeds()
   #endif
 }
 
-// --------
+// --------------------------- Actual LOOP
 void loop()
 {
   Raster.begin();
 
   loopWifi();
   loopBT();
-
   loopMpu();
   loopLeds();
 
